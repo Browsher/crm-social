@@ -1,0 +1,1 @@
+Aceite de instalacao: nao ha testes de aplicativo; quality-gate deve reprovar por nenhum teste encontrado.
