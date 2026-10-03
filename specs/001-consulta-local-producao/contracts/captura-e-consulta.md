@@ -1,58 +1,274 @@
 # Contrato de captura e consulta v1
 
-02/10/2026. Especificação para a feature 001, ainda não implementada. Coletor: Central com conector autenticado. Consumidor: CRM local, sem credenciais Google.
+03/10/2026. Feature 001 especificada, ainda não implementada. Coletor: Central com
+conector autenticado. Consumidor: CRM neste computador, sem credenciais Google.
+Requisitos em [spec.md](../spec.md); decisão de interface em
+[telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
-## Envelope
+## Envelope privado da captura
 
 | Campo | Restrição |
 | --- | --- |
 | `schemaVersion` | inteiro `1` |
 | `capturaId` | string de 1–100 caracteres, somente `[A-Za-z0-9_-]`; nunca caminho |
-| spreadsheetId | Identificador da fonte configurada privadamente, conferido na captura |
+| `spreadsheetId` | identificador da fonte configurada privadamente, conferido na captura |
 | `brandId` | `ntv` |
 | `source` | `google-drive-connector` |
 | `startedAt`, `completedAt` | ISO 8601 UTC com `Z`, início menor ou igual ao fim |
-| `metadataBefore`, `metadataAfter` | mapa das seis abas para `{sheetId, rowCount, columnCount}`; inteiros positivos, sheetId não negativo |
+| `metadataBefore`, `metadataAfter` | mapa das seis abas para `{sheetId, rowCount, columnCount}`; inteiros positivos, `sheetId` não negativo |
 | `firstReadSha256`, `secondReadSha256` | SHA-256 hexadecimal minúsculo com 64 caracteres |
 | `tables` | exatamente Semanas, Produções, Páginas, Cenas, Arquivos, Revisoes |
 
-Cada tabela contém `{sheetId, range, readAt, complete, values}`. `values` é matriz de células JSON escalares (string, número finito, booleano ou null), primeira linha com cabeçalhos. `readAt` é ISO UTC dentro do intervalo da captura. `complete` deve ser true. `range` cobre o retângulo A1 até a última linha/coluna alocada registrada nos metadados. Linhas/células vazias finais omitidas pela API são aceitas como vazias dentro desse retângulo.
+Cada tabela contém `{sheetId, range, readAt, complete, values}`. `values` é matriz de
+células escalares JSON (string, número finito, booleano ou null), primeira linha com
+cabeçalhos. `readAt` é ISO UTC dentro do intervalo da captura. `complete` deve ser true.
+`range` cobre A1 até a última linha/coluna alocada registrada nos metadados. Linhas/células
+vazias finais omitidas pela API são aceitas como vazias dentro desse retângulo.
 
 ## Coleta e integridade
 
-1. Ler metadados da planilha e localizar as seis abas por nome, conferindo seus IDs conhecidos. Registrar dimensões.
-2. Ler cada retângulo completo em intervalos delimitados; fragmentar para não exceder 50.000 células por chamada. Normalizar a montagem de fragmentos para a mesma matriz, removendo somente linhas e células vazias finais. Não confundir resposta parcial de ferramenta com matriz vazia.
-3. Calcular o primeiro hash canônico. Repetir as seis leituras completas, calcular o segundo hash e guardar os valores da segunda leitura.
-4. Reler metadados. Se aba, ID, dimensão ou hash mudou, marcar conflito e não promover. Uma nova tentativa futura é outra captura, sem loop infinito nesta operação.
-5. O importador recalcula o hash das matrizes entregues e o compara ao segundo hash, exige igualdade dos dois hashes e dos metadados antes/depois. Confere cobertura, timestamps, cabeçalhos e IDs. `complete=true` isoladamente não basta.
+1. Ler metadados e localizar as seis abas por nome, conferindo seus IDs conhecidos e dimensões.
+2. Ler cada retângulo inteiro em intervalos delimitados, até 50.000 células por chamada.
+   Montar os fragmentos numa matriz, removendo somente linhas/células vazias finais.
+   Resposta parcial da ferramenta não é matriz vazia.
+3. Calcular primeiro hash canônico; repetir as seis leituras completas, calcular segundo
+   hash e guardar os valores da segunda leitura.
+4. Reler metadados. Mudança de aba, ID, dimensão ou hash é conflito e impede promoção.
+   Nova tentativa futura é outra captura, sem loop infinito.
+5. Importador recalcula hash das matrizes, compara ao segundo hash e exige igualdade
+   entre os dois hashes e metadados antes/depois. Confere cobertura, tempos, cabeçalhos
+   e identidades. `complete=true` isoladamente não basta.
 
-Representação canônica do hash: JSON compacto de uma lista de pares ordenada por nome de aba com comparação ordinal (`a < b`), cada par `[nome, {sheetId, range, values}]`, propriedades nessa ordem e codificação UTF-8. A normalização de vazios finais deve ser idêntica nas duas leituras. Não incluir timestamps no hash de células; o envelope completo tem sua própria identidade por bytes. Esta comparação detecta diferenças observáveis, não fornece transação atômica entre abas.
+Hash canônico: JSON compacto de lista de pares ordenada ordinalmente por nome de aba
+(`a < b`), cada par `[nome, {sheetId, range, values}]`, propriedades nessa ordem, UTF-8.
+Normalização de vazios finais idêntica nas duas leituras. Timestamps não entram no hash
+de células; identidade dos bytes do envelope é separada. Não há transação atômica entre abas.
 
-## Cabeçalhos mínimos obrigatórios
+## Os 66 cabeçalhos mínimos obrigatórios
 
-| Aba | Campos |
+| Aba | Quantidade | Campos |
+| --- | ---: | --- |
+| Semanas | 8 | `semana_id`, `marca_id`, `inicio_semana`, `tema`, `objetivo`, `plano_json_arquivo_id`, `redacao_json_arquivo_id`, `visual_json_arquivo_id` |
+| Produções | 17 | `producao_id`, `marca_id`, `semana_id`, `slot`, `tipo_producao`, `data_prevista`, `status`, `etapa_producao`, `estado_revisao`, `estado_liberacao`, `responsavel_atual`, `versao`, `titulo`, `legenda`, `publicado_em`, `url_video_final`, `id_drive_video_final` |
+| Páginas | 8 | `pagina_id`, `producao_id`, `versao`, `indice`, `funcao`, `titulo`, `corpo`, `arquivo_imagem_id` |
+| Cenas | 11 | `cena_id`, `producao_id`, `versao`, `indice`, `texto`, `texto_tela`, `inicio_segundos`, `duracao_segundos`, `arquivo_imagem_inicio_id`, `arquivo_imagem_final_id`, `arquivo_video_id` |
+| Arquivos | 12 | `arquivo_id`, `producao_id`, `semana_id`, `cena_id`, `pagina_id`, `tipo`, `papel`, `versao`, `id_drive`, `url`, `origens_json`, `sha256` |
+| Revisoes | 10 | `revisao_id`, `producao_id`, `cena_id`, `pagina_id`, `arquivo_id`, `versao`, `decisao`, `motivo`, `responsavel_correcao`, `estado_tratamento` |
+
+Cabeçalho obrigatório não significa valor preenchido em toda linha. IDs devem ser
+strings não vazias e únicos por aba; linha inteiramente vazia é ignorada, preenchida sem
+ID é erro. Mínimo ausente e qualquer cabeçalho não vazio repetido invalidam a tentativa.
+Relação órfã, versão inválida e JSON malformado geram aviso localizado sem excluir a peça.
+Colunas adicionais são conservadas na captura privada, sem exigir criação remota,
+sem exposição automática por HTTP e sem colunas extras na tela Planilha da 001.
+
+O levantamento do dicionário de 03/10 confirmou presença literal dos 66 nomes, não
+validade das linhas nem captura completa. Agentes, Controle e Execucoes estão fora da 001.
+
+## Persistência privada e Histórico
+
+Interface planejada: `node scripts/importar-captura.cjs <caminho-local> [--data-dir <diretorio-local>]`.
+O diretório padrão é `data/`; teste usa diretório temporário próprio. Importador recebe
+somente arquivo local já coletado, sem credencial, URL alternativa ou comando para fila.
+
+| Caminho relativo ao diretório privado | Responsabilidade |
 | --- | --- |
-| Semanas | `semana_id`, `marca_id`, `inicio_semana`, `tema`, `objetivo`, `plano_json_arquivo_id`, `redacao_json_arquivo_id`, `visual_json_arquivo_id` |
-| Produções | `producao_id`, `marca_id`, `semana_id`, `slot`, `tipo_producao`, `data_prevista`, `status`, `etapa_producao`, `estado_revisao`, `estado_liberacao`, `responsavel_atual`, `versao`, `titulo`, `legenda`, `publicado_em`, `url_video_final`, `id_drive_video_final` |
-| Páginas | `pagina_id`, `producao_id`, `versao`, `indice`, `funcao`, `titulo`, `corpo`, `arquivo_imagem_id` |
-| Cenas | `cena_id`, `producao_id`, `versao`, `indice`, `texto`, `texto_tela`, `inicio_segundos`, `duracao_segundos`, `arquivo_imagem_inicio_id`, `arquivo_imagem_final_id`, `arquivo_video_id` |
-| Arquivos | `arquivo_id`, `producao_id`, `semana_id`, `cena_id`, `pagina_id`, `tipo`, `papel`, `versao`, `id_drive`, `url`, `origens_json`, `sha256` |
-| Revisoes | `revisao_id`, `producao_id`, `cena_id`, `pagina_id`, `arquivo_id`, `versao`, `decisao`, `motivo`, `responsavel_correcao`, `estado_tratamento` |
+| `capturas/<capturaId>.json` | envelope e células completos; arquivo imutável após validação |
+| `tentativas/<tentativaId>.json` | recibo imutável preparado para uma tentativa, completa ou falhou; só integra o Histórico após confirmação no estado |
+| `atual.json` | estado único `{capturaId, ultimaTentativaId, historicoIds}`; captura e última tentativa podem ser null, lista inicial vazia |
+| `ultima-tentativa.json` | resumo derivado, sem autoridade concorrente ao ponteiro de estado |
 
-Colunas adicionais são preservadas e podem ser apresentadas como campos conhecidos opcionais, sem exigir sua criação na planilha. IDs não vazios e únicos por aba. Uma linha totalmente vazia é ignorada; linha preenchida sem ID é erro. Cabeçalhos obrigatórios ausentes e qualquer cabeçalho não vazio repetido invalidam captura. Relação órfã ou versão inválida gera aviso localizado, sem apagar a produção.
+Recibo mínimo privado: `{tentativaId, capturaId, concluidaEm, resultado, motivoResumo}`.
+`tentativaId` tem a mesma restrição de caracteres de `capturaId`; identifica a tentativa,
+não a produção. `capturaId` é null quando não pôde ser identificado. `concluidaEm` é
+instante ISO com fuso; `resultado` é exatamente `completa` ou `falhou`. Motivo é curto e
+saneado: aba/campo/regra, sem payload, segredo, stack, URL de serviço ou caminho local.
+Importação do mesmo ID e mesmos bytes retorna `sem_alteracao` somente se há recibo
+completo dessa captura já confirmado em `historicoIds`. Não duplica recibo, renova
+horário nem volta a uma captura antiga. Mesmo ID com bytes diferentes é conflito e
+resulta em tentativa falha, sem sobrescrever o arquivo existente.
 
-## Persistência local
+Gravar captura validada e recibo imutável antes de substituir atomicamente `atual.json`
+no mesmo diretório; testar falhas de I/O no Windows. A substituição confirma, em um
+único estado, captura vigente, última tentativa e inclusão do recibo em `historicoIds`.
+A lista conserva os IDs anteriormente confirmados, sem duplicação; `ultimaTentativaId`
+referencia seu último elemento ou é null com lista vazia. Falha confirmada conserva
+`capturaId`, acrescenta o recibo de falha e atualiza somente a última tentativa. Sem
+captura aceita, mantém `capturaId=null`.
 
-O importador recebe somente caminho local de uma captura já coletada; nunca credenciais, URL pública alternativa ou comando para executar a fila. Valida antes de publicar o ponteiro local. Guarda capturas imutáveis em `data/capturas/`, ponteiro `data/atual.json` e recibo resumido da última tentativa em `data/ultima-tentativa.json`.
+Arquivo preparado sem ID confirmado é órfão de uma interrupção, não tentativa concluída
+no Histórico nem prova de captura aceita. Reinício conserva o estado anterior. Repetir
+uma captura com os mesmos bytes, mas sem confirmação anterior, revalida e pode reaproveitar
+seus bytes imutáveis, prepara outro recibo e tenta a promoção; não retorna `sem_alteracao`.
+Um recibo preparado e não confirmado nunca é alterado para fabricar sucesso ou falha.
 
-Gravar arquivo temporário e promover ponteiro por substituição local, testada no Windows; falha preserva última válida. Mesmo `capturaId` e mesmos bytes: `sem_alteracao`. Mesmo ID e bytes diferentes: conflito. Nova captura com células iguais pode substituir o ponteiro para refletir nova leitura. Não remover capturas anteriores nesta feature. Erro menciona aba/campo/motivo sem incluir dados privados inteiros.
+Falha ao persistir recibo/estado é erro de persistência, nunca sucesso. Se ainda é
+possível gravar, registrar outro recibo de falha e confirmá-lo preservando a captura
+vigente; se o armazenamento não permite isso, informar explicitamente que a falha
+não pôde ser registrada, sem prometer Histórico durável. Não reescrever nem remover
+capturas, recibos ou o estado anterior para ocultar o incidente.
 
-## HTTP de consulta
+`lerEstado` lê ponteiro, captura vigente e recibos; `projetarVisao(estadoLocal, nowIso)`
+gera a consulta. Histórico lista todas as tentativas confirmadas em `historicoIds`,
+recentes primeiro, excluindo arquivos órfãos ou preparados sem confirmação;
+paginação é permitida desde que as anteriores continuem acessíveis. `ultimaTentativa`
+é projeção do recibo referenciado pelo estado, sem servir o arquivo privado inteiro.
+Nova captura com novo ID, fim de coleta novo e mesmas células pode atualizar frescor.
+Reimportar a mesma captura não encerra falha posterior. GET/releitura local não escreve,
+não gera recibo, não muda horário e não limpa erro.
 
-- `GET /api/visao`: retorna projeção NTV e estado de atualização; ausência de captura é resposta estruturada com lista vazia e indicação `sem_captura`, nunca dados de demonstração. Envelope mínimo `{schemaVersion:1, estado, fonte, captura, ultimaTentativa, semanas, producoes, avisos}`; `captura` pode ser null.
-- `GET /`, `/app.js`, `/styles.css`: apenas esses três arquivos estáticos conhecidos. HEAD usa mesmos controles e nenhum corpo. Outros métodos retornam 405; outras rotas 404. Não há endpoint de escrita/importação.
-- Bind `127.0.0.1:4318`. Host deve corresponder ao loopback e à porta configurada; Origin, se presente, deve ser da própria origem permitida. Sem CORS externo. Impedir traversal, inclusive codificado; nunca servir `data/`, `.specify/`, `.agents/` ou diretórios arbitrários.
-- Servidor não consulta Google nem gera mídia. Interface não carrega URLs remotas automaticamente. Navegar por link externo exige clique; aceitar apenas HTTPS com host exato `drive.google.com` ou `docs.google.com`, sem usuário/senha no URL. Usar `rel="noopener noreferrer"`.
-- Textos são dados: renderizar com `textContent`, sem executar HTML/scripts da planilha. Valores inválidos não viram comandos ou caminhos locais.
+## Precedência dos quatro estados de atualização
 
-O detalhe apresenta revisões e arquivos registrados com identidade, versão e avisos de vínculo. A projeção não resolve capacidades nem modifica decisões dos agentes. O aviso “Atualização por captura; reler aqui não consulta o Google” acompanha o comando de releitura local.
+Avaliar nesta ordem, usando a data civil de `completedAt` em `America/Sao_Paulo`:
+
+| Condição | `estado` | Selo / cor |
+| --- | --- | --- |
+| Não há captura válida promovida | `sem_captura` | Sem dados / cinza; falha, se existir, aparece no Histórico |
+| Há captura válida e tentativa posterior falhou, sem nova completa promovida | `falha_atualizacao` | Atualização falhou / vermelho; última válida continua visível |
+| Há captura válida de hoje, sem falha ativa | `atualizada_hoje` | Atualizado hoje, HH:MM / verde |
+| Há captura válida de outro dia, sem falha ativa | `anterior_hoje` | Dados de DD/MM / âmbar |
+
+Nova tentativa completa aceita encerra a falha ativa; o recibo antigo continua imutável.
+Fim de captura vem do envelope, nunca da maior data de uma linha, relógio da requisição
+ou momento de atualização da tela. O selo em todas as telas abre Planilha.
+
+## Datas, formatos e agrupamento por dia
+
+- Data prevista é `YYYY-MM-DD` civil válida; não converter UTC mudando o dia. Seriais
+  sem conversão documentada, vazios e datas inválidas vão para Sem data com aviso.
+- Formato usa os slots confirmados `imagem_a`/`imagem_b` → Imagem, `carrossel` → Carrossel,
+  `reels` → Reels. `tipo_producao` permanece registrado separado; não importar o filtro
+  `institucional` do seletor. Slot desconhecido fica Outro, visível em Todos, com original.
+- Grupo de dia inclui todas as peças NTV com a mesma data, mesmo se o filtro resumido
+  ocultar alguma. Ordem determinística por `producao_id` com comparação ordinal;
+  mesma ordem no primeiro cartão do calendário e no primeiro acordeão aberto.
+- Link global "N sem data" conta todas as peças NTV inválidas/sem data da captura,
+  sem depender de mês ou filtro, e abre lista delas agrupada por semana. Órfã fica em
+  Semana não identificada com aviso. No quadro, cartão sem data abre Sem data da semana.
+- Calendário: formato, título e estado registrados; tema no primeiro dia da semana;
+  primeiro cartão + "+N no dia". Lista: mesma informação, agrupada por tema/período semanal.
+- Objetivo mensal é "Ainda não definido"; `Semanas.objetivo` não preenche esse card.
+
+## Quadro e publicação: mapeamento literal confirmado
+
+Colunas fixas, nesta ordem: Planejamento, Redação, Visual, Mídia, Revisão, Pronta,
+Publicada, Outras. Sem drag. Primeiro avaliar publicação explícita; caso contrário
+comparar `etapa_producao` literalmente, preservando sempre o valor de origem.
+
+| Valor exato de `Produções.etapa_producao` | Coluna |
+| --- | --- |
+| `prompts_imagem_prontos` | Mídia |
+| `imagens_em_producao` | Mídia |
+| `voz_pronta_para_gerar` | Mídia |
+| `voz_em_producao` | Mídia |
+| `clipes_prontos_para_gerar` | Mídia |
+| `clipes_em_producao` | Mídia |
+| `montagem_pronta` | Mídia |
+| `montagem_em_producao` | Mídia |
+| Qualquer outro valor, inclusive vazio | Outras, com original visível |
+
+São somente os oito valores confirmados na seção 13 do dicionário. `planejamento`,
+`redacao`, `visual`, `editor`, `imagens`, `video`/`voz`, `motion` e `revisao` são etapas
+do envelope editorial, não whitelist da célula. Não adicionar aliases, não mapear
+`arte_aprovada` como Pronta. Planejamento/Redação/Visual/Revisão/Pronta podem ficar vazias
+até existir fonte explícita para novos valores e atualização rastreável deste contrato.
+Vazio tem rótulo "Não informada", conserva vazio original; desconhecido é exibido como texto.
+
+**Publicada** exige `Produções.publicado_em` não vazio, ISO 8601 completo com `Z` ou
+offset explícito, data real válida e instante menor ou igual a `completedAt`. É um
+registro explícito de publicação na captura, não verificação remota da plataforma.
+`status=publicado`, arquivo final, aprovação, liberação, previsão e nome da etapa não
+bastam. Sem timestamp coerente: "publicação não comprovada", aviso se inválido, e
+classificação pela etapa acima. Timestamp válido pode confirmar publicação mesmo
+quando `status` diverge; mostrar ambos como registrados e avisar a divergência.
+
+Cartão do quadro: formato, data prevista, título, responsável registrado e pendência
+localizada de revisão vigente que pede correção ou mídia ausente. "Com quem está" é
+somente `responsavel_atual`; vazio = A confirmar. `responsavel_correcao` pertence à
+revisão vigente e aparece separado. Sem inferir aguarda-de, próxima ação, agente vivo,
+capacidade, elegibilidade ou monitoramento.
+
+## Gaveta do dia e registros
+
+Título com dia da semana/data e subtítulo com quantidade. Uma seção por peça em
+acordeão, primeira aberta, sem filtrar o dia inteiro. Sem data usa título da seção da
+semana, sem inventar dia. Teclado controla acordeões; Escape fecha e restaura foco ao
+acionador. Em 390 px gaveta de tela inteira; lista semanal substitui calendário.
+
+Cada peça apresenta estado/formato, etapa, responsável, previsão, publicação,
+textos, páginas/cenas, revisões e arquivos. Revisão mostra decisão, motivo, versão e
+quem corrige. `resolvido`/`resolvida` é histórico cinza; estado desconhecido não é
+resolução. Revisão antiga aberta não se aplica automaticamente à versão nova;
+sem vínculo inequívoco, informar impacto a confirmar.
+
+Ordenar páginas/cenas por índice dentro da produção e versão pertinente, sem misturar
+versões para preencher uma sequência. Página mostra versão e indicador de design
+novo: **A confirmar** enquanto não houver classificação explícita documentada para
+aquela página/versão. Nenhum dos 66 mínimos fornece essa flag; arquivo presente,
+template ou estado sozinho não a comprovam. Não inventar coluna ou evidência.
+
+Arquivo mostra nome de apresentação derivado de tipo/papel (fallback "Arquivo registrado"),
+versão e rótulo "registro". Isso não promete nome original do Drive, ausente nos mínimos,
+nem download/conferência dos bytes. Resolver ponteiros por `arquivo_id` interno;
+Editor/Motion requerem produção, papel, versão e origens inequívocas, com aviso em empate.
+Mídia ausente e referência quebrada aparecem como tais; sem preview automática na 001.
+
+## Projeção HTTP LOCAL de campos selecionados
+
+- `GET /api/visao` retorna `{schemaVersion:1, estado, selo, fonte, captura, ultimaTentativa,
+  semanas, producoes, dias, quadro, planilha, historico, avisos}`. Sem captura: conjuntos
+  vazios, `captura=null`, estado sem_captura e Histórico disponível, sem demonstração.
+- `selo`: `{texto, cor, destino:'planilha'}`. `fonte`: rótulo de captura pela Central;
+  não é URI alternativa. `captura`: `{capturaId, completedAt, periodo:{inicio,fim}, contagens}`.
+  Período é intervalo dos `inicio_semana` válidos até o fim civil de suas semanas;
+  sem semana válida, início/fim null e aviso. Não inferir período a partir de publicação.
+- `semanas`/`producoes`: identidades internas e campos mínimos necessários aos resumos
+  e detalhes definidos acima, com unidades/revisões/arquivos vinculados e avisos;
+  não recebem extras arbitrários. `dias`: grupos por data ou Sem data/semana e IDs de peças.
+  `quadro`: colunas fixas, semana e IDs agrupados pela classificação documentada.
+- `planilha`: seis abas na ordem dos mínimos, cada uma `{nome, cabecalhos,
+  quantidadeLinhas, linhas}`. `cabecalhos` é a lista literal mínima; `linhas` conserva
+  os valores mínimos e sua identidade, exclui linhas vazias e registros de outra marca.
+  Contagem é das linhas NTV apresentadas, não das linhas alocadas na planilha inteira.
+- A Planilha local inclui todos os 66 mínimos e valores como dados de consulta,
+  inclusive `id_drive`, `sha256` e `origens_json` como registro/texto seguro. Não confundir
+  esta consulta privada local com mockup compartilhável, que usa somente dados fictícios.
+- `historico` e `ultimaTentativa`: apenas `{tentativaId, concluidaEm, resultado,
+  motivoResumo}`; identidade da fonte, erro bruto, payload e caminhos não são necessários.
+- Não servir envelope ou `tables.values` brutos, metadados de coleta, células extras,
+  credenciais/tokens ou caminhos de filesystem. Se célula mínima contém segredo/caminho
+  local indevido, suprimir esse conteúdo com aviso localizado; conservar original só na
+  captura privada. JSON de origem é texto, não instrução nem objeto que expande a whitelist.
+- Textos renderizam com `textContent`; não executar HTML/scripts, instruções ou comandos
+  das células, inclusive JSON. URLs registradas na tabela são texto; link interativo só
+  se selecionado/validado e acionado por clique: HTTPS, host exato `drive.google.com` ou
+  `docs.google.com`, sem usuário/senha, `rel="noopener noreferrer"`. Sem carga, mídia,
+  thumbnail ou download remoto automático.
+
+## HTTP e inicialização local
+
+- `GET /`, `/app.js`, `/styles.css`: somente esses três estáticos conhecidos. HEAD
+  mantém controles e nenhum corpo. Métodos restantes 405; rotas desconhecidas 404.
+  Não há endpoint de escrita/importação, geração, aprovação ou ação Google.
+- `criarServidor({dataDir, port, webDir})` admite `webDir` opcional somente como
+  argumento do chamador confiável, padrão `src/web/`. Testes HTTP usam três estáticos
+  sintéticos em diretório temporário próprio, antes da implementação da interface.
+  A allowlist permanece fixa; nenhum parâmetro HTTP seleciona diretório ou arquivo.
+- Bind padrão `127.0.0.1:4318`; porta local explícita em teste. Host corresponde ao
+  loopback/porta configurados; Origin, se presente, é a própria origem. Sem CORS externo.
+  Bloquear traversal inclusive codificado; nunca servir `data/`, `.specify/`, `.agents/`
+  ou arquivos/diretórios arbitrários. Servidor não consulta Google nem dispara agentes.
+- Iniciador planejado `Iniciar CRM.ps1 [-DataDir <diretorio-local>] [-Port <porta>]
+  [-NodePath <exe>]`; defaults locais do plano. Teste usa runtime, porta e diretório
+  temporário explícitos, sem tocar dados privados reais nem porta de produção.
+
+Planilha concentra fonte, cobertura, Histórico e a explicação curta "Reler captura local;
+não consulta o Google" junto a Atualizar dados. Nas demais telas só o selo curto.
+Cada tabela tem rolagem horizontal própria; em 390 px a página não rola lateralmente.
+
+## Fronteiras futuras
+
+002: leitura direta somente pelo servidor local, conta de serviço/chave fora do
+repositório, emenda futura da constituição e captura de Agentes/Controle/Execucoes.
+003: planejamento mensal. 004: revisões e solicitações. 005: prévias/biblioteca.
+006: Equipe/Workflow. Nenhuma dessas integrações foi implementada por esta documentação.
