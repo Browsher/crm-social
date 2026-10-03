@@ -1,0 +1,73 @@
+name: Release notes
+on:
+  pull_request:
+    types: [closed]
+permissions: {}
+concurrency:
+  group: release-notes-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+jobs:
+  release-notes:
+    if: >-
+      vars.NODEKIT_RELEASE_NOTES == 'true' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !startsWith(github.event.pull_request.head.ref, 'node-kit/release-notes-') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: main
+      - uses: anthropics/claude-code-action@ed670b4cf9de2a5a570d130d2f6197b9e543cd64 # v1.0.240
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Leia REPO/PR_NUMBER do ambiente. Consulte o PR mergeado via gh como dados.
+            Atualize somente CHANGELOG.md com resumo em português, data e número do PR.
+            Preserve historico; não repita uma entrada ja registrada para esse número.
+            Nao execute git commit/push ou crie PR. A publicação ocorre no passo validado.
+          claude_args: >-
+            --max-turns 15 --tools Read,Grep,Glob,Write,Edit,Bash
+            --allowedTools "Read,Grep,Glob,Write(CHANGELOG.md),Edit(CHANGELOG.md),Bash(gh pr view:*),Bash(gh pr diff:*)"
+            --disallowedTools "mcp__github_file_ops__commit_files"
+      - name: Abrir PR de changelog sem push na main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs'), cp = require('node:child_process');
+          const repo=process.env.REPO, n=process.env.PR_NUMBER;
+          if (!/^[\w.-]+\/[\w.-]+$/.test(repo) || !/^[1-9]\d*$/.test(n)) throw new Error('Contexto invalido');
+          const branch='node-kit/release-notes-'+n;
+          const gh=(...a)=>cp.execFileSync('gh',a,{encoding:'utf8'}).trim();
+          if (JSON.parse(gh('pr','list','--repo',repo,'--head',branch,'--state','all','--json','number')).length) process.exit(0);
+          const env={...process.env,GIT_CONFIG_COUNT:'1',GIT_CONFIG_KEY_0:'http.https://github.com/.extraheader',GIT_CONFIG_VALUE_0:'AUTHORIZATION: basic '+Buffer.from('x-access-token:'+process.env.GH_TOKEN).toString('base64')};
+          const git=(...a)=>cp.execFileSync('git',['-c','core.hooksPath=/dev/null',...a],{env,encoding:'utf8'}).trim();
+          const exists=git('ls-remote','--heads','https://github.com/'+repo+'.git','refs/heads/'+branch);
+          if (!exists) {
+            const changed=[...new Set([...git('ls-files','-m','-o','--exclude-standard','-z').split('\0'),...git('diff','--cached','--name-only','-z').split('\0')].filter(Boolean))];
+            if (!changed.length) process.exit(0);
+            if (changed.some(f=>f!=='CHANGELOG.md') || !fs.existsSync('CHANGELOG.md') || fs.lstatSync('CHANGELOG.md').isSymbolicLink()) throw new Error('Apenas CHANGELOG.md');
+            git('switch','-c',branch);
+            git('add','--','CHANGELOG.md');
+            git('-c','user.name=github-actions[bot]','-c','user.email=41898282+github-actions[bot]@users.noreply.github.com','commit','-m','docs: release notes PR #'+n);
+            git('push','https://github.com/'+repo+'.git','HEAD:refs/heads/'+branch);
+          }
+          gh('pr','create','--repo',repo,'--base','main','--head',branch,'--title','docs: release notes PR #'+n,'--body','Changelog gerado para revisao humana. Quando um commit de bot entrar neste PR, rodar Actions > Quality gate > Run workflow na branch do PR.');
+          NODE

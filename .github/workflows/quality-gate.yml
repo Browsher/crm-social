@@ -1,0 +1,85 @@
+name: Quality gate
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: quality-gate-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  quality-gate:
+    name: quality-gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Restaurar gate confiável da base do PR
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git check-ref-format --branch "$BASE_BRANCH" >/dev/null
+          base_ref="refs/remotes/origin/$BASE_BRANCH"
+          if ! git cat-file -e "$base_ref:tools" 2>/dev/null; then
+            echo "Base do PR sem tools/: instale o gate na base antes de validar PRs." >&2
+            exit 1
+          fi
+          for path in tools/package.json tools/package-lock.json tools/quality-gate.mjs tools/eslint.complexity.config.mjs quality-gate.config.json; do
+            if ! git cat-file -e "$base_ref:$path" 2>/dev/null; then
+              echo "Arquivo obrigatório do gate ausente na base: $path" >&2
+              exit 1
+            fi
+            git restore --source="$base_ref" --worktree -- "$path"
+          done
+          while IFS= read -r -d '' path; do
+            case "$path" in tools/*.mjs) git restore --source="$base_ref" --worktree -- "$path" ;; esac
+          done < <(git ls-tree -r -z --name-only "$base_ref" -- tools)
+      - name: Ler versão do Node da configuração
+        id: config
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('quality-gate.config.json', 'utf8'));
+          if (!/^\d+\.\d+\.\d+$/.test(config.nodeVersion)) throw new Error('nodeVersion inválida');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `node=${config.nodeVersion}\n`);
+          NODE
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ steps.config.outputs.node }}
+          package-manager-cache: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Preparar dependências da aplicação
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const {execFileSync} = require('node:child_process');
+          if (fs.existsSync('package.json')) {
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const needsInstall = ['dependencies', 'devDependencies', 'optionalDependencies'].some(key => Object.keys(pkg[key] || {}).length > 0);
+            if (needsInstall) {
+              if (!fs.existsSync('package-lock.json') && !fs.existsSync('npm-shrinkwrap.json')) {
+                throw new Error('Dependências da aplicação exigem package-lock.json ou npm-shrinkwrap.json compatível; versione o lock npm antes de rodar o CI.');
+              }
+              execFileSync('npm', ['ci', '--include=dev', '--no-audit', '--no-fund'], {stdio: 'inherit'});
+            }
+          }
+          NODE
+      - name: Instalar ferramentas isoladas
+        run: npm ci --prefix tools
+      - name: Instalar Semgrep fixado
+        run: python -m pip install --disable-pip-version-check semgrep==1.179.0
+      - name: Executar gate estrito
+        run: node tools/quality-gate.mjs --strict

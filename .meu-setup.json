@@ -1,0 +1,40 @@
+{
+    "kit":  "node-kit",
+    "version":  "0.4.0",
+    "preset":  "full",
+    "files":  {
+                  ".agents/skills/cyclomatic-complexity/SKILL.md":  "5a5af1d6d0657bb846b6607881f117fe8c6a26fca659cf47a30da95cafcfb24d",
+                  ".agents/skills/doc-init/SKILL.md":  "710ca42b2105bfc8261c131ed7ab81177b63fa1cfeed9266a32a1c8e714c9c25",
+                  ".agents/skills/tdd-workflow/SKILL.md":  "0c6ddc3602436701c6118a61f08b7b4a955ec441a31c3ea260a7ae9f9fa31184",
+                  ".claude/agents/doc-sync-onboarding.md":  "00c0ee8b1bc1a78d69046e3ad7d31d1e717c9f00270e1671a2929914dee58783",
+                  ".claude/agents/reviewer.md":  "2559a8544dd6f149916cbe3362a50d2815dba63e0d03b222093fffcfff588527",
+                  ".claude/agents/security-auditor.md":  "3ae6714814c5f3aae2c7c44f9bf7bbc333d4b848d8ab08d93e0e846e6125c8a3",
+                  ".claude/agents/test-writer.md":  "af44987d4a5f0301aa780d0fd5d69db44708f6859fb87ec37eb9c16460861dc1",
+                  ".claude/skills/cyclomatic-complexity/SKILL.md":  "5a5af1d6d0657bb846b6607881f117fe8c6a26fca659cf47a30da95cafcfb24d",
+                  ".claude/skills/doc-init/SKILL.md":  "710ca42b2105bfc8261c131ed7ab81177b63fa1cfeed9266a32a1c8e714c9c25",
+                  ".claude/skills/tdd-workflow/SKILL.md":  "0c6ddc3602436701c6118a61f08b7b4a955ec441a31c3ea260a7ae9f9fa31184",
+                  ".github/rulesets/main.json":  "ec9fbf88fbe94064198e3abd7945bedf2b72639b4cf083448ef5563475e9bc40",
+                  ".github/workflows/claude.yml":  "1ff1319312a646bc4732664288974f84af8a1df48f6431b9a5fd98e5dfca61a3",
+                  ".github/workflows/issue-triage.yml":  "c7c07198958eeae7663418901a8f3ed5f6e9e0518c8673732df0a8e40dc904d4",
+                  ".github/workflows/pr-review.yml":  "c31552bc3c64adbffce9ccf77d2097c7f7358dfaf30828654e74bc5b14caa3bb",
+                  ".github/workflows/quality-gate.yml":  "c3d544e0f9d788762965a119a7f4c9ae062962c7909d192428b606a081d0f6fd",
+                  ".github/workflows/release-notes.yml":  "2036808574195aaeda300a7ebea04572832c7568f31bc58542b0fccb0936f944",
+                  "docs/architecture.md":  "efb8ec66c773b14c31922f07452257fe05b1bcc75364c7631eae764d0a94ce47",
+                  "docs/index.md":  "a50f0de317b4e1c71a613c3a2b9880e6869a8d7a8a48b6a45363a179b7a34e1a",
+                  "quality-gate.config.json":  "573c6b9f3a8d6bdc6050020fd0c6fec96f1c71deb181f87654578abcae3927b2",
+                  "tools/eslint.complexity.config.mjs":  "9d5463668de1309dd9ee0953fd24db1582693dca967092f510e0986d4200d9c5",
+                  "tools/gate-complexity.mjs":  "36a6e576b93a7e81e05aa249ed469c375d6f4834ac92aa3c8a0cc900bd4271b2",
+                  "tools/gate-core.mjs":  "9646dafdc49fd263a6066536943ffb76c8976deee7122a8bd9c332b14e3475e6",
+                  "tools/gate-scope.mjs":  "992ceafe264e93eeaff89f8ff5607ac6a8cf6306a673019053842d733c319cfa",
+                  "tools/gate-security.mjs":  "96f8adad1c09b3600aa58cd30bad489048108cb3aa7c59ce11c194886ab75cd5",
+                  "tools/gate-tests.mjs":  "a2c0f2526b7394881283c9fce19c5120fd3fedfcea58eff4ede6b8e21107405e",
+                  "tools/package.json":  "3242ab762bcc84f4bd37a2d18538b4dc6827be29c4e59f35ec7e960a83886b27",
+                  "tools/package-lock.json":  "15d11c1eb662719286ae8536af2e9f2a8c70c51e4d8498d3ec8f55056752ddb4",
+                  "tools/quality-gate.mjs":  "ba8088ba4fce38c73d3b3ce4c5748a5b6231b11182162fe472ddfac76eb9c07a"
+              },
+    "blocks":  {
+                   ".gitignore":  "256be5787759a11211371e5064e9be20add35c0d1f88cfe535c8273206f4ca14",
+                   "AGENTS.md":  "141f67b434662338176cc198e25d0faa49e21d15733e24dd7c9c0eaa1f4f86ad",
+                   "CLAUDE.md":  "540b07b1734c97b44671d9f286af6ee663fab5ed6f78100c145f67a59f9cc60c"
+               }
+}

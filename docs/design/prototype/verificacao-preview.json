@@ -1,0 +1,64 @@
+{
+  "estado": "evidência histórica do protótipo de 02/10/2026; não valida a cópia saneada",
+  "verificado_em": "2026-10-02T19:06:18.781Z",
+  "html_sha256": "3acd5466c55665349a254bf41ece81991622deed8025f650fbe96d2c1e8ca60d",
+  "desktop": [
+    1440,
+    1000
+  ],
+  "mobile": [
+    390,
+    844
+  ],
+  "overflow_horizontal": false,
+  "erros_javascript": [],
+  "requisicoes_rede": [],
+  "interacoes": [
+    "12 datas sugeridas",
+    "calendario outubro 2026",
+    "4 resultados por formato",
+    "calendario/lista",
+    "detalhes e material ausente",
+    "Escape e retorno de foco",
+    "pagina 3 do carrossel",
+    "plano mensal",
+    "4 secoes",
+    "menu e detalhe mobile"
+  ],
+  "fontes_locais_conferidas": [
+    "Referência externa histórica removida; placeholder na cópia",
+    "Referência externa histórica removida; placeholder na cópia",
+    "Referência externa histórica removida; placeholder na cópia",
+    "Referência externa histórica removida; placeholder na cópia",
+    "Referência externa histórica removida; placeholder na cópia",
+    "Referência externa histórica removida; placeholder na cópia",
+    "Referência externa histórica removida; placeholder na cópia"
+  ],
+  "buttons": [
+    "Planejamento",
+    "Produção3",
+    "Conteúdos",
+    "Equipe",
+    "Recolher menu",
+    "Plano do mês",
+    "Estratégia e equipe ",
+    "Todos",
+    "Imagem",
+    "Carrossel",
+    "Reels",
+    "Calendário",
+    "Lista",
+    "ImagemSua TV tem HDMI?Arte disponível",
+    "CarrosselAntes de escolher sua TV BoxPrévia parcial",
+    "ReelsDa TV ao NTVBoxPlanejado · 22 s",
+    "ImagemConheça o NTVBoxIdeia",
+    "CarrosselO aparelho em detalhesIdeia",
+    "ReelsNTVBox no seu ambienteIdeia",
+    "ImagemVamos conversar sobre a compra?Ideia",
+    "CarrosselDa dúvida ao atendimentoIdeia",
+    "ReelsComo falar com a NTVIdeia",
+    "ImagemQual é a sua dúvida?Ideia",
+    "CarrosselAntes de decidirIdeia",
+    "ReelsUma dúvida, uma respostaIdeia"
+  ]
+}

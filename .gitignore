@@ -1,0 +1,18 @@
+# Dados privados e derivados locais; o projeto ainda nao e repositorio Git.
+/data/
+/test-results/
+/playwright-report/
+/node_modules/
+/dist/
+*.log
+.env
+.env.*
+!.env.example
+
+# meu-setup:begin v1
+tools/node_modules/
+quality-gate-report.json
+coverage/
+.quality-gate-run/
+.quality-gate/*.tmp
+# meu-setup:end

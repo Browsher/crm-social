@@ -1,0 +1,25 @@
+{
+  "estado": "previa_sintetica_saneada_sem_integracao",
+  "verificado_em": "2026-10-03T16:35:14.243Z",
+  "html_sha256": "caceab7b345bcd2b67adeb8abb5d9cbc3546ae43eb69579bd3ed7447a5328a66",
+  "desktop": [
+    1440,
+    1000
+  ],
+  "mobile": [
+    390,
+    844
+  ],
+  "overflow_horizontal": false,
+  "erros_javascript": [],
+  "requisicoes_rede": [],
+  "interacoes": [
+    "12 itens",
+    "4 por formato",
+    "calendario/lista",
+    "Escape e foco",
+    "detalhe sem fontes externas",
+    "conteudos",
+    "390 px"
+  ]
+}

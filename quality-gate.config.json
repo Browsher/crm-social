@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "nodeVersion": "24.19.0",
+  "testCommand": ["node", "--test"],
+  "baseBranch": "main",
+  "mode": "full",
+  "include": ["**/*.js", "**/*.cjs", "**/*.mjs"],
+  "exclude": ["**/node_modules/**", "tools/**", "data/**", "coverage/**", ".quality-gate/**", ".quality-gate-run/**", "**/*.test.*", "**/*.spec.*"],
+  "checks": {
+    "tests": { "enabled": true, "mode": "full" },
+    "coverage": { "enabled": true, "mode": "full", "maxDrop": 0.5 },
+    "complexity": { "enabled": true, "mode": "full", "warnAt": 11, "failAt": 21 },
+    "semgrep": { "enabled": true, "mode": "full", "minSeverity": "medium", "command": ["semgrep"], "rules": ["p/javascript", "p/security-audit", "p/secrets"] },
+    "audit": { "enabled": true, "mode": "full", "minSeverity": "high" }
+  }
+}
