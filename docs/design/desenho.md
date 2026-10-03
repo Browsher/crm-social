@@ -2,6 +2,8 @@
 
 Data: 02/10/2026. Estado: proposta de design para revisão, acompanhada de protótipo navegável. Não é contrato instalado, integração ou mudança da fila atual.
 
+**Revisão de 03/10/2026:** este documento preserva a proposta histórica. As [decisões das telas](telas.md) e o [mockup v2](mockups/telas-v2.html) refinam o desenho; a [spec da 001](../../specs/001-consulta-local-producao/spec.md) define o recorte atual. Na 001, o menu contém somente Planejamento, Produção e Planilha, o objetivo mensal é **Ainda não definido**, o detalhe é a gaveta do dia inteiro e responsáveis são os registrados. A inferência de próxima ação pertence à 006. O [roadmap](../../ROADMAP.md) inclui 002 Planilhas, 003 planejamento mensal, 004 revisões, 005 Conteúdos/biblioteca e 006 Equipe/Workflow. Os exemplos e variações abaixo não ampliam esse recorte.
+
 ## Intenção e decisões já recebidas
 
 O usuário quer visualizar a organização do conteúdo em um CRM simples, usando `CRM de referência local, caminho configurado fora do repositório` como referência. Confirmou acesso somente neste computador por enquanto. Propõe um agente para planejamento mensal e ajustes semanais pelo Diretor. A meta mais recente informada é uma imagem, um carrossel e um Reels por semana, sem Stories; marcas adicionais são uma direção futura.
