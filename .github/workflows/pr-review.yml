@@ -31,7 +31,6 @@ jobs:
         with:
           github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          show_full_output: true
           prompt: |
             Revise o PR identificado por REPO e PR_NUMBER no ambiente.
             Leia .claude/agents/reviewer.md e cumpra o checklist inteiro,
