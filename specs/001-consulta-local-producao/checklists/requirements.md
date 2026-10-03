@@ -23,8 +23,10 @@
 - [x] Menu da 001 e objetivo mensal indefinido, sem Plano do mês ou fonte inventada.
 - [x] Calendário/lista semanal e gaveta do dia inteiro, acordeão e foco definidos.
 - [x] Contagem global N sem data e seção semanal no quadro preservam todas as peças.
-- [x] Somente oito etapas confirmadas em Mídia; desconhecido/vazio/arte_aprovada em Outras.
-- [x] Publicada exige publicado_em explícito ISO com fuso válido/coerente.
+- [x] Publicação > liberação > revisão > etapa; arte_aprovada em Visual, oito etapas de mídia preservadas e desconhecido/vazio em Outras salvo prioridade superior.
+- [x] Publicada exige publicado_em preenchido; inconsistência de data é aviso e não verificação de publicação remota.
+- [x] Configuração versionada lida pelo servidor; coluna inexistente/rótulo repetido no mesmo campo geram erro claro ao carregar.
+- [x] Outras mostra rótulos originais e contador distinto da semana; duplicatas/exclusões por prioridade não aumentam N.
 - [x] Responsável atual registrado separado do responsável de correção, sem encaminhamento inferido.
 - [x] Planilha inclui os 66 cabeçalhos/valores mínimos locais; extras somente na captura privada.
 - [x] Histórico completo/falhou confirmado no estado local, com recibos imutáveis, órfãos excluídos e última válida preservada; erro de persistência explícito.
@@ -44,7 +46,7 @@ Marcas nesta lista significam qualidade da especificação, não requisitos impl
 ou cenários de software executados. FR-001–FR-012 preservados e atualizados;
 FR-013–FR-016 acrescentados. Branch 001 real; aplicativo continua não implementado.
 
-## Análise de consistência — 03/10/2026
+## Análise inicial de consistência — 03/10/2026
 
 A skill `speckit-analyze` foi executada em modo somente leitura contra spec, plano,
 tarefas e constituição. O script de pré-requisitos identificou a feature 001 e
@@ -60,11 +62,21 @@ documentais abaixo foram feitas depois da análise, conforme autorização do au
 | I4: teste HTTP dos estáticos precedia sua criação, sem fixture ou diretório injetável definido | Alta | Contrato/plano/T011–T012: webDir confiável e três estáticos sintéticos em TEMP; allowlist fixa, sem seleção por parâmetro HTTP |
 
 Nova conferência independente fechou os quatro achados, sem outra inconsistência
-material ou violação da constituição 1.0.0. Métricas finais: **25 requisitos**
+material ou violação da constituição 1.0.0. Métricas dessa análise inicial: **25 requisitos**
 (16 FR + 9 SC), **39 tarefas**, todas desmarcadas; **100% de cobertura documental**,
 zero requisitos/tarefas sem mapeamento, zero ambiguidades materiais pendentes,
 zero duplicações materiais e zero achados críticos. A [matriz de cobertura](../tasks.md)
-identifica os testes e tarefas de cada FR/SC.
+identifica os testes e tarefas de cada FR/SC. Os IDs/contagens acima registram o plano
+anterior à revisão aprovada do quadro; não são os IDs/contagens atuais.
+
+## Revisão aprovada do quadro — 03/10/2026
+
+Contrato, modelo, spec, plano, roteiro e tarefas alinhados à aprovação do autor.
+Dois testes/implementação de configuração foram inseridos em T009–T010 antes de
+projeção/HTTP; os antigos T009–T039 passaram a T011–T041. Prioridade e contador são
+testados antes do código em T027/T029, com implementação em T028/T030. Total atual:
+**41 tarefas**, todas desmarcadas; oito suítes planejadas nas cinco camadas, seis
+portáveis no CI e duas de aplicabilidade local. Os 25 FR/SC continuam rastreados.
 
 Próxima etapa: implementar a 001 conforme o plano e os pares RED/GREEN das tarefas,
 em uma rodada autorizada para código. Esta análise não executou os testes planejados,

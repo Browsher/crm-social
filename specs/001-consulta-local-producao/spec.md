@@ -89,7 +89,8 @@ com Escape, conferindo as versões e o foco restaurado.
    em acordeão, com a primeira aberta, inclusive peças escondidas pelo resumo "+N no dia".
 2. **Given** a gaveta aberta, **When** consulto uma peça,
    **Then** vejo estado, formato, etapa e responsável registrados, data prevista e
-   publicação; sem `publicado_em` explícito, válido e coerente, leio "não comprovada".
+   publicação; sem `publicado_em` preenchido, leio "não comprovada". Quando preenchido
+   mas inconsistente, vejo o registro com aviso de qualidade, sem comprovação remota.
 3. **Given** revisão vigente com pedido de correção, **When** consulto o detalhe,
    **Then** vejo decisão, motivo, versão/unidade e `responsavel_correcao` separado de
    `responsavel_atual`; revisões resolvidas aparecem em cinza como histórico.
@@ -110,26 +111,39 @@ sem alterar a fila nem receber encaminhamentos presumidos.
 
 **Why this priority**: organiza a produção e mantém desconhecidos visíveis.
 
-**Independent Test**: projetar os oito valores confirmados de mídia, etapa vazia,
-`arte_aprovada` e publicação com/sem timestamp válido; comparar coluna e valor original.
+**Independent Test**: conferir publicação > liberação > revisão > etapa, Visual para
+`arte_aprovada`, os oito valores de mídia e Outras com originais/contador distinto;
+carregar configuração válida e rejeitar coluna inexistente ou rótulo repetido.
 
 **Acceptance Scenarios**:
 
 1. **Given** a semana selecionada, **When** abro Produção ou uso as setas de semana,
    **Then** vejo tema e colunas Planejamento, Redação, Visual, Mídia, Revisão, Pronta,
    Publicada e Outras, sem arrastar cartões; colunas sem valores confirmados podem ficar vazias.
-2. **Given** qualquer um dos oito valores de mídia confirmados no contrato, sem publicação comprovada,
-   **When** projeto o quadro, **Then** a peça fica em Mídia. Valor desconhecido ou vazio
-   fica em Outras com o original preservado; etapas de envelope não viram aliases da coluna.
-3. **Given** `status=publicado`, aprovação ou arquivo final sem registro válido de publicação,
+2. **Given** nenhuma prioridade superior satisfeita,
+   **When** projeto o quadro, **Then** `arte_aprovada` fica em Visual e os oito valores
+   de mídia confirmados ficam em Mídia. Etapa desconhecida ou vazia fica em Outras
+   com o original preservado; etapas de envelope não viram aliases da coluna.
+3. **Given** `status=publicado`, aprovação ou arquivo final sem `publicado_em` preenchido,
    **When** projeto, **Then** nenhum desses sinais coloca a peça em Publicada;
-   somente `publicado_em` explícito, ISO com fuso e coerente confirma essa coluna.
+   `publicado_em` preenchido tem precedência, sem comprovar publicação remota.
 4. **Given** cartão, **When** o consulto,
-   **Then** vejo formato, data prevista, título, responsável registrado e pendência
+   **Then** vejo formato, data prevista, título, status registrado, responsável e pendência
    localizada de revisão vigente ou mídia ausente; "com quem está" é `responsavel_atual`,
    sem inferir "aguarda de", agente trabalhando ou próxima ação.
 5. **Given** peça sem data válida no quadro, **When** aciono seu cartão,
    **Then** abre a seção "Sem data" da semana com suas peças, sem inventar um dia.
+6. **Given** campos que satisfazem mais de uma regra, **When** classifico,
+   **Then** publicação vence liberação, liberação vence revisão e revisão vence etapa;
+   status nunca decide a coluna. As listas atuais de prontidão/revisão são vazias.
+7. **Given** rótulo novo aprovado, **When** altero a configuração versionada e reinicio,
+   **Then** o servidor aplica o mapa sem mudar código. Coluna inexistente ou rótulo
+   repetido no mesmo campo gera erro claro ao carregar, sem mapa parcial.
+8. **Given** cartões em Outras, **When** consulto a semana,
+   **Then** o título mostra quantos valores originais distintos não mapeados existem;
+   repetição conta uma vez e todas as formas de vazio contam um único valor;
+   outra semana/marca ou prioridade
+   superior não aumenta o contador. Cada cartão mostra o original.
 
 ### User Story 5 - Consultar Planilha e Histórico (Priority: P2)
 
@@ -171,8 +185,12 @@ preservando dados privados apenas neste computador.
   sem fingir que o recibo de falha foi gravado.
 - Arquivo inexistente, empate de versão, origem incompatível ou revisão de vigência incerta
   gera aviso localizado; não seleciona documento nem reprova versão nova arbitrariamente.
-- `arte_aprovada` é observação histórica sem mapeamento confirmado de etapa; permanece Outras.
-- Publicação com data sem fuso, inválida ou posterior ao fim da captura não comprova publicação.
+- `arte_aprovada` confirmado na leitura atual fica em Visual se não houver prioridade
+  superior. `bloqueado` não é prontidão; `aprovada`/`sem_rejeicao_documental` não são
+  revisão em andamento. Não inventar rótulos atuais para preencher colunas.
+- Publicação preenchida com data sem fuso, inválida ou posterior ao fim da captura
+  conserva Publicada com aviso do registro, sem comprovar publicação remota.
+- Configuração ausente/inválida não inicia o servidor com fallback silencioso.
 - Texto livre, JSON e URL são dados; nenhum deles executa HTML, instrução ou ação operacional.
 - Responsável vazio aparece "A confirmar"; vazio de etapa aparece "Não informada", com valor original vazio preservado.
 - Dados de outra marca não aparecem como produção ou exemplos NTV.
@@ -193,8 +211,9 @@ preservando dados privados apenas neste computador.
 - **FR-004**: coletar pela Central com acesso autorizado; Atualizar dados somente relê
   captura e histórico locais. Falha persistida só encerra quando nova tentativa completa é aceita,
   nunca por resposta HTTP de sucesso ou releitura da mesma captura.
-- **FR-005**: separar data prevista de publicação; aceitar publicação somente com
-  `publicado_em` explícito ISO com fuso e coerente. Manter "N sem data" acessível contando
+- **FR-005**: separar data prevista de publicação; classificar Publicada somente com
+  `publicado_em` preenchido, avisando inconsistências de data sem verificar publicação remota.
+  Manter "N sem data" acessível contando
   todas as peças NTV sem data válida, sem desaparecer por filtro ou navegação de mês.
 - **FR-006**: detalhar semana, textos, páginas/cenas, estados, responsável, revisões e
   documentos relacionados, mantendo suas versões e pendências de vínculo separadas.
@@ -215,10 +234,14 @@ preservando dados privados apenas neste computador.
   projeção segura, captura/histórico e cinco fluxos de usuário antes de concluir a implementação.
 - **FR-013**: menu da 001 contém somente Planejamento, Produção e Planilha; objetivo
   mensal discreto "Ainda não definido", sem Plano do mês ou objetivo inventado por semana.
-- **FR-014**: Produção é quadro semanal sem arrastar, com oito colunas fixas e mapeamento
-  literal documentado; somente os oito valores confirmados entram em Mídia, publicação
-  confirmada entra em Publicada, desconhecidos/vazios em Outras com original. Cartão exibe
-  formato, data, título, `responsavel_atual` e pendência; não infere encaminhamento.
+- **FR-014**: Produção é quadro semanal sem arrastar, com oito colunas fixas e prioridade
+  publicação preenchida > liberação/prontidão configurada > revisão em andamento
+  configurada > etapa. `arte_aprovada` entra em Visual, os oito valores de mídia
+  confirmados em Mídia e demais/vazios em Outras com original, salvo prioridade superior.
+  Mapa versionado lido pelo servidor, extensível sem alterar código e validado ao carregar:
+  coluna inexistente ou rótulo repetido no mesmo campo é erro claro. Outras mostra no título
+  o número de rótulos distintos não mapeados da semana selecionada. Cartão exibe formato,
+  data, título, status informativo, `responsavel_atual` e pendência; não infere encaminhamento.
 - **FR-015**: cartão ou dia abre gaveta do dia inteiro, título/data/quantidade e uma seção
   por peça em acordeão, primeira aberta. Peça sem data no quadro abre seção Sem data da semana;
   páginas/cenas ordenadas, correção separada, revisões resolvidas em cinza e mídias ausentes explícitas.
@@ -256,8 +279,10 @@ preservando dados privados apenas neste computador.
   100% das peças do grupo aparecem na gaveta, com primeira seção aberta e foco restaurado por Escape.
 - **SC-006**: testes e demonstração geram zero escritas remotas, mídias, publicações ou
   modificações de workflows; consulta HTTP não contém captura bruta, extras ou segredos.
-- **SC-007**: publicação coerente entra em Publicada; sem ela, os oito valores confirmados
-  entram em Mídia e 100% dos demais, incluindo vazio e `arte_aprovada`, permanecem em Outras.
+- **SC-007**: 100% dos casos respeitam publicação > liberação > revisão > etapa;
+  sem prioridade superior, `arte_aprovada` fica em Visual, oito etapas em Mídia e demais
+  em Outras com contador distinto correto. Rótulo novo funciona só alterando a configuração;
+  coluna inexistente ou rótulo repetido no mesmo campo é rejeitado ao carregar.
 - **SC-008**: Planilha contém as seis abas, contagens fiéis e os 66 cabeçalhos/valores mínimos;
   Histórico contém todas as tentativas confirmadas no estado local, exclui recibos
   preparados/órfãos e nenhuma célula extra é exposta automaticamente.
@@ -270,7 +295,8 @@ preservando dados privados apenas neste computador.
 - Captura oficial pela Central precede consulta local; o runtime do CRM não herda sessão Google.
 - A decisão de telas de 03/10/2026 complementa o protótipo aprovado; demonstrações não são fonte operacional.
 - Duas leituras completas iguais detectam diferenças observáveis, sem atomicidade entre abas.
-- Apenas oito etapas de mídia estão confirmadas; colunas editoriais vazias são resultado fiel.
+- Oito etapas de mídia e `arte_aprovada` em Visual estão confirmadas; listas atuais de
+  liberação/prontidão e revisão em andamento são vazias, sem aliases inferidos.
 - Campos mínimos garantem cabeçalho, não mídia, responsável, design novo ou publicação preenchidos.
 - A **002** será leitura direta da Planilha pelo servidor local, somente leitura, com conta
   de serviço/chave fora do repositório, emenda futura da constituição e extensão Agentes/Controle/Execucoes.

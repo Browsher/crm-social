@@ -27,6 +27,7 @@ $crmTestFiles = @(
   'tests/dados.test.cjs'
   'tests/snapshot.test.cjs'
   'tests/importador.test.cjs'
+  'tests/quadro-config.test.cjs'
   'tests/projecao.test.cjs'
   'tests/servidor.test.cjs'
   'tests/interface.test.cjs'
@@ -36,19 +37,19 @@ $crmTestFiles = @(
 & $crmNode --test
 ```
 
-Esperado após implementação: versão 24.19.0, sete suítes descobertas e todas as cinco camadas verdes — validação pura, I/O temporário real, serviços/projeções, HTTP real em porta efêmera e interface local. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner exigido pelo gate.
+Esperado após implementação: versão 24.19.0, oito suítes descobertas e todas as cinco camadas verdes — validação pura, I/O temporário real, serviços/projeções, HTTP real em porta efêmera e interface local. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner exigido pelo gate.
 
 Na conferência de 03/10, o PATH encontrava Node 24.14.0, mas o runtime 24.19.0 já
 existia na máquina. Defina `CRM_NODE_PATH` com o caminho desse executável somente no
 ambiente local, sem versionar caminho pessoal. CLI e gate usam o mesmo executável;
 o iniciador o recebe por `-NodePath`.
 
-O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, projeção e
+O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e
 HTTP rodam obrigatoriamente. Interface registra SKIP explícito com `CI=true` antes
 de carregar Playwright; iniciador registra SKIP fora de `win32` antes de chamar
 PowerShell. Esses pulos de aplicabilidade são visíveis no TAP, sem substituir o
 aceite Windows. No computador, Playwright/Windows PowerShell ausentes são falhas;
-as sete suítes precisam executar sem casos pulados. Não alterar workflows/configuração
+as oito suítes precisam executar sem casos pulados. Não alterar workflows/configuração
 ou instalar dependências para contornar essa fronteira. SKIP de ferramenta do gate
 continua regido pelo `--strict`, independentemente dos pulos de testes por plataforma.
 
@@ -70,8 +71,10 @@ Durante implementação, executar o arquivo pertinente **antes** do código e re
 | Selo vazio | Sem captura, inclusive primeira tentativa falha | “Sem dados”, cinza; falha aparece no Histórico; nova captura completa aceita encerra falha |
 | Gaveta | Clique em cartão/dia/lista/quadro, inclusive segunda peça e filtro ativo | Dia inteiro, título/quantidade, primeiro acordeão aberto; todas as peças do dia, não só a clicada |
 | Relações/revisões | Reels sem vídeo, páginas/cenas com versões e ordem, revisão antiga/resolvida, órfão/empate | Arquivo como registro, mídia ausente e avisos; responsável principal/correção separados; não inferir próxima ação ou design novo |
-| Quadro | Exercitar oito etapas de mídia, etapa desconhecida, vazia e `arte_aprovada` | Oito em Mídia, incluindo `montagem_pronta`; demais em Outras com texto original; colunas editoriais podem estar vazias; sem arrastar |
-| Publicação | `publicado_em` válido/coerente e independente de status; status publicado sem data, data inválida/sem fuso/futura | Publicada somente com registro explícito ISO com fuso válido e <= `completedAt`; demais não comprovados, com aviso |
+| Configuração | Carregar JSON válido em TEMP; coluna inexistente, rótulo repetido, JSON/arquivo inválido; acrescentar rótulo sintético só no JSON | Erro claro ao carregar impede iniciar; mapa novo entra sem mudar código. O arquivo versionado inicial conserva nove etapas e duas listas vazias |
+| Quadro/prioridade | Combinar publicação, rótulos sintéticos de liberação/revisão e etapa, retirando prioridades superiores | Publicação > liberação > revisão > etapa; sem prioridade superior, arte_aprovada em Visual e oito etapas em Mídia, inclusive montagem_pronta; status visível não decide coluna |
+| Outras | Rótulo desconhecido repetido, segundo rótulo, vazio, outras semanas/marcas e cartão vencido por prioridade superior | N conta distintos só dos cartões Outras da semana NTV; vazio conta uma vez, repetidos não somam e excluídos não entram. Título Outras · N valores novos, original visível, singular para um e zero sem cartões |
+| Publicação | publicado_em preenchido/vazio/null/espaços; status publicado sem campo; data preenchida inválida/sem fuso/futura | Preenchido dá Publicada com precedência; inconsistência gera aviso sem mudar coluna. Status/aprovação/arquivo sem o campo não comprovam; não há verificação remota |
 | Planilha | Alternar seis abas e Histórico por teclado | 66 mínimos com valores e contagens de linhas NTV apresentadas, mínimos 8/17/8/11/12/10, inclusive IDs/id_drive/sha256/origens_json como dados; todas as tentativas confirmadas no estado, recentes primeiro, e falha sem apagar sucesso; órfãos não aparecem como conclusões |
 | HTTP/segurança | Três estáticos sintéticos em TEMP via webDir confiável; métodos/HEAD, Host/Origin externos, traversal/privados, extras sentinela, célula mínima com conteúdo sensível indevido e texto malicioso | Rotas/status/bytes do contrato antes da criação da interface, allowlist fixa mesmo com webDir; zero escrita HTTP, sem captura bruta/envelope/extras arbitrários/credenciais/caminhos; sensível suprimido com aviso sem retirar coluna; texto não executa |
 | Interface/links | Navegar por teclado/Escape; links Drive/Docs e links não permitidos | Escape fecha e devolve foco; somente HTTPS/hosts autorizados por clique, sem carga automática ou requisição externa durante teste |
@@ -83,7 +86,7 @@ Os arquivos de cada cenário e pares RED/GREEN estão em [tasks.md](tasks.md), c
 
 ## Primeira leitura real e demonstração futura
 
-Executar somente após implementação e revisão, conforme T037. O dicionário não substitui a captura. Nenhum desses passos foi executado nesta atualização documental.
+Executar somente após implementação e revisão, conforme T039. O dicionário não substitui a captura. Nenhum desses passos foi executado nesta atualização documental.
 
 1. Central relê metadados e as seis abas completas pelo conector autenticado, por cabeçalho real e dentro dos limites de chamada do contrato. Duas observações canônicas e metadados estáveis precisam concordar; coleta parcial/conflitante não é promovida.
 2. Salvar a captura íntegra em `data/entrada/`, privado/ignorado. Atribuir a `$crmCapturePath` o caminho local real da coleta; não copiar fixtures nem um nome fictício para esse lugar. Importar pelo comando futuro:
@@ -100,7 +103,7 @@ Executar somente após implementação e revisão, conforme T037. O dicionário 
 
 4. Confirmar somente os três itens de menu; Planejamento com objetivo ainda não definido, calendário/lista/filtros e “N sem data”. Comparar os IDs de todas as peças NTV com a **mesma captura**, inclusive imagem B e registros concluídos/bloqueados. Não usar filtros da fila n8n para essa comparação.
 5. Clicar um dia com várias peças: conferir todas no acordeão e a primeira aberta, etapa/responsável registrados, revisão por versão e correção separada, páginas/cenas ordenadas e arquivos como registros. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Escape fecha e devolve foco.
-6. Conferir Produção por semana: Outras preserva o valor original, `montagem_pronta` em Mídia, Publicada só por `publicado_em` coerente. Clique abre dia inteiro ou Sem data da semana; não há arrastar, edição de etapa ou encaminhamento inferido.
+6. Conferir Produção por semana: mapa carregado do JSON, prioridade publicação > liberação > revisão > etapa, arte_aprovada em Visual e oito etapas de mídia preservadas quando não há prioridade superior. Status é informativo; Outras preserva original e conta distintos da semana, não cartões. Publicada vem de publicado_em preenchido, com aviso em dado inconsistente. Clique abre dia inteiro ou Sem data; sem arrastar/editar/encaminhamento inferido.
 7. Clicar o selo para Planilha. Comparar contagens/valores mínimos nas seis tabelas e Histórico com a captura/recibos privados; conferir período/horário e rolagem própria. “Atualizar dados” relê a última captura salva, sem buscar Google, importar pelo navegador ou criar nova coleta.
 8. Conferir teclado e 390/1440. Não compartilhar screenshot de dados operacionais privados; usar fixture sintética para evidência visual compartilhável. Falhas/importações destrutivas de teste permanecem no diretório temporário, não em `data/` real.
 9. Encerrar apenas a instância/PID criada pelo procedimento documentado. Registrar evidência e limitações em `validacao.md`; zero escrita remota, geração ou publicação.
@@ -123,6 +126,6 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 & $crmNode tools/quality-gate.mjs
 ```
 
-T038: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T039: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
+T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
 Não tratar comandos planejados como executados nem aprovação do mockup como cinco camadas verdes. Aceite da 001 exige evidência do aplicativo funcional; o planejamento atual não antecipa esse resultado.

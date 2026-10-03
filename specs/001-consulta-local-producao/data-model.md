@@ -37,16 +37,20 @@ como célula na captura; não é executado.
 
 ## Recortes de consulta
 
-`projetarVisao(estadoLocal, nowIso)` recebe o resultado de `lerEstado`: captura
+`projetarVisao(estadoLocal, nowIso, mapaQuadro)` recebe o resultado de `lerEstado`: captura
 vigente, recibos confirmados em `historicoIds` e ponteiro de estado. `nowIso` é relógio explícito
 para testar o selo; não renova a captura.
+
+`mapaQuadro` vem do carregamento validado de `config/quadro-etapas.json` pelo
+servidor. É configuração versionada, não entidade operacional nem parte da captura.
+Seu schema e conteúdo inicial estão no [contrato](contracts/captura-e-consulta.md).
 
 | Projeção | Conteúdo |
 | --- | --- |
 | `semanas` | agrupamento NTV, tema, início/fim civil e objetivo semanal registrado |
 | `producoes` | resumos e detalhe selecionado com facetas separadas, unidades e avisos |
 | `dias` | peças por data civil válida; grupos Sem data por semana e sem semana |
-| `quadro` | semana, oito colunas fixas, IDs de peças por classificação literal |
+| `quadro` | semana, oito colunas fixas, IDs por classificação prioritária; Outras tem quantidadeValoresNovos e título derivados de seus rótulos distintos |
 | `planilha` | seis abas com nomes, 66 cabeçalhos/valores mínimos e contagem de linhas NTV apresentadas |
 | `historico` | todas as tentativas confirmadas no estado, recentes primeiro, resultado/instante/motivo resumidos; arquivos preparados/órfãos excluídos |
 | `selo` | texto/cor/destino Planilha derivados de captura e falha ativa |
@@ -82,11 +86,14 @@ textos/JSON como dados, sem instruções, HTML executável ou navegação arbitr
 ## Quadro: registro e classificação separados
 
 Colunas fixas: Planejamento, Redação, Visual, Mídia, Revisão, Pronta, Publicada,
-Outras. Valor original de `etapa_producao` sempre preservado. Publicação coerente
-tem precedência; nos demais casos classificar somente estes valores literais:
+Outras. Valor original de `etapa_producao` sempre preservado. Primeira condição
+satisfeita: `publicado_em` preenchido → Publicada; liberação configurada como pronta
+→ Pronta; revisão configurada como em andamento → Revisão; senão etapa configurada;
+sem mapeamento → Outras. `status` permanece informação no cartão, sem decidir coluna.
 
 | Etapa registrada | Coluna |
 | --- | --- |
+| `arte_aprovada` | Visual |
 | `prompts_imagem_prontos` | Mídia |
 | `imagens_em_producao` | Mídia |
 | `voz_pronta_para_gerar` | Mídia |
@@ -97,14 +104,27 @@ tem precedência; nos demais casos classificar somente estes valores literais:
 | `montagem_em_producao` | Mídia |
 | Todo outro valor ou vazio | Outras |
 
-Etapas do envelope de delegação não são aliases de célula. `arte_aprovada` permanece
-Outras; colunas editoriais sem valor confirmado podem ficar vazias. Original vazio
-é apresentado como Não informada, sem inventar estado. Quadro não muda/arrasta etapa.
+O JSON inicial contém nove etapas (uma Visual e oito Mídia), com listas de
+liberação/prontidão e revisão em andamento vazias; `bloqueado`, `aprovada` e
+`sem_rejeicao_documental` não ativam essas prioridades. Atualizações de rótulos
+exigem só edição do JSON versionado e reinício, sem mudança de código. O servidor
+valida schema/listas/rótulos e colunas ao carregar: rótulo repetido no mesmo campo
+ou coluna inexistente é erro claro, sem iniciar com mapa parcial ou fallback silencioso.
+Publicada/Outras são destinos reservados à publicação/fallback, sem entrada direta de etapa.
 
-Publicação exige `publicado_em` explícito ISO completo com `Z`/offset, instante real
-válido e não posterior a `completedAt`. Status, aprovação, liberação, previsão ou
-arquivo não a substituem. Divergência de status e publicação válida gera aviso;
-sem timestamp coerente, publicação não comprovada e classificação pela etapa.
+Etapas do envelope de delegação não são aliases de célula. Original vazio é apresentado
+como Não informada, sem inventar estado. Quadro não muda/arrasta etapa. O contador de
+Outras conta distintos originais somente de seus cartões NTV na semana selecionada;
+null/célula omitida/string vazia/somente espaços usam uma chave única de vazio só
+para contagem, preservando originais na apresentação. Repetições não somam;
+valores de outra semana/marca e etapas
+desconhecidas vencidas por prioridade superior não entram. Título: Outras · N valores
+novos (1 valor novo no singular); sem cartões, zero. Cada cartão conserva o rótulo original.
+
+Publicação exige `publicado_em` preenchido, conforme definição do contrato. Data sem
+fuso, inválida ou posterior a `completedAt` gera aviso de qualidade do registro, sem
+alterar a coluna Publicada; ela não comprova publicação remota. Status, aprovação,
+liberação, previsão ou arquivo sem o campo preenchido não a substituem.
 
 Responsável principal é `responsavel_atual` como registrado, vazio A confirmar;
 correção é `responsavel_correcao` na revisão vigente, exibida separadamente. Não

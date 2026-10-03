@@ -19,8 +19,9 @@ O conector Google Drive/Sheets permitiu consultar metadados e intervalos delimit
 Na inspeção histórica de 02/10, as três artes consultadas tinham `arte_aprovada`;
 o Reels tinha `prompts_imagem_prontos`, duração de 22 s e nenhum vídeo final registrado.
 Liberação estava bloqueada. Esse retrato não é reconsulta de 03/10, captura completa
-ou enum global. **`arte_aprovada` permanece Outras**: o dicionário não confirmou seu
-mapeamento em `etapa_producao`; nome com “aprovada” não prova Pronta nem Publicada.
+ou enum global. A decisão inicial deixava `arte_aprovada` em Outras; a leitura
+restrita de 03/10 e a aprovação do autor abaixo substituem esse mapeamento por Visual,
+sem deduzir Pronta ou Publicada do nome com “aprovada”.
 
 ## Decisões
 
@@ -34,11 +35,14 @@ mapeamento em `etapa_producao`; nome com “aprovada” não prova Pronta nem Pu
    foi integrada em [telas.md](../../docs/design/telas.md); os requisitos canônicos
    continuam em [spec.md](spec.md), com US1–US5 e FR-001–FR-016. Menu da 001 apenas
    Planejamento/Produção/Planilha, objetivo mensal Ainda não definido e nenhum Plano do mês.
-8. **Mapeamento com evidência literal.** Seção 13 do dicionário confirma só oito valores
-   de `etapa_producao`, todos em Mídia. Vocabulário do envelope editorial não vira
-   whitelist da coluna. Outras conserva desconhecidos/vazio; colunas editoriais podem
-   ficar vazias. Publicada depende de `publicado_em` ISO com fuso, válido e coerente,
-   não de status, aprovação, arquivo ou hipótese de integração.
+8. **Mapeamento aprovado por prioridade.** Publicação preenchida > liberação/prontidão
+   configurada > revisão em andamento configurada > etapa. Os oito valores de mídia
+   do dicionário continuam; arte_aprovada entra em Visual. Configuração JSON versionada
+   é validada pelo servidor, sem rótulos fixos no código. Listas atuais de prontidão/
+   revisão em andamento são vazias. Status é informativo; Outras conserva desconhecidos/
+   vazio e conta rótulos distintos da semana. Data preenchida inconsistente gera aviso
+   em Publicada, sem verificar publicação remota. Essa aprovação substitui a condição
+   anterior de timestamp coerente para classificar a coluna.
 9. **Detalhe do dia.** Cartão/dia abre todas as peças do dia, acordeão primeiro aberto,
    Escape restaura foco. Link global N sem data mantém todas as peças acessíveis;
    no quadro, sem data abre seção da semana. Em 390 px lista semanal e gaveta de tela inteira.
@@ -68,6 +72,28 @@ mapeamento em `etapa_producao`; nome com “aprovada” não prova Pronta nem Pu
     servidor local, conta de serviço/chave fora do repositório e emenda futura da
     constituição; amplia Agentes/Controle/Execucoes. Mensal 003, revisões 004, prévias 005,
     Equipe/Workflow 006 continuam planejadas, sem instalação ou integração nesta tarefa.
+
+## Leitura restrita e aprovação do quadro — 03/10/2026
+
+Leitura ao vivo, somente das quatro colunas de estado da aba Produções, com cabeçalhos
+e limites conferidos. Registro agregado: apenas rótulos e contagens, sem outros dados
+de linhas. Nenhuma escrita remota.
+
+| Campo | Rótulo | Contagem |
+| --- | --- | ---: |
+| etapa_producao | arte_aprovada | 3 |
+| etapa_producao | prompts_imagem_prontos | 1 |
+| status | rascunho | 4 |
+| estado_revisao | aprovada | 3 |
+| estado_revisao | sem_rejeicao_documental | 1 |
+| estado_liberacao | bloqueado | 4 |
+
+O autor aprovou Visual para arte_aprovada e Mídia para prompts_imagem_prontos,
+preservando as oito etapas de mídia anteriores e a prioridade definida no contrato.
+Nenhum rótulo observado significa liberada/pronta ou revisão em andamento. Manter
+listas vazias, sem inventar enums. A decisão acrescenta configuração versionada,
+validação de coluna/rótulo e título Outras · N valores novos. O arquivo e o código
+serão criados depois dos testes previstos na implementação; esta revisão é documental.
 
 ## Fontes autorizadas do alinhamento de 03/10
 

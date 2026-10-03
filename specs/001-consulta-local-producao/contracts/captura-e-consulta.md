@@ -108,7 +108,7 @@ vigente; se o armazenamento não permite isso, informar explicitamente que a fal
 não pôde ser registrada, sem prometer Histórico durável. Não reescrever nem remover
 capturas, recibos ou o estado anterior para ocultar o incidente.
 
-`lerEstado` lê ponteiro, captura vigente e recibos; `projetarVisao(estadoLocal, nowIso)`
+`lerEstado` lê ponteiro, captura vigente e recibos; `projetarVisao(estadoLocal, nowIso, mapaQuadro)`
 gera a consulta. Histórico lista todas as tentativas confirmadas em `historicoIds`,
 recentes primeiro, excluindo arquivos órfãos ou preparados sem confirmação;
 paginação é permitida desde que as anteriores continuem acessíveis. `ultimaTentativa`
@@ -149,40 +149,87 @@ ou momento de atualização da tela. O selo em todas as telas abre Planilha.
   primeiro cartão + "+N no dia". Lista: mesma informação, agrupada por tema/período semanal.
 - Objetivo mensal é "Ainda não definido"; `Semanas.objetivo` não preenche esse card.
 
-## Quadro e publicação: mapeamento literal confirmado
+## Quadro: prioridade aprovada e configuração versionada
 
 Colunas fixas, nesta ordem: Planejamento, Redação, Visual, Mídia, Revisão, Pronta,
-Publicada, Outras. Sem drag. Primeiro avaliar publicação explícita; caso contrário
-comparar `etapa_producao` literalmente, preservando sempre o valor de origem.
+Publicada, Outras. Sem drag. A classificação aprovada pelo autor em 03/10 é a
+primeira condição satisfeita na tabela abaixo; todos os valores de origem permanecem
+visíveis, mesmo quando outra faceta define a coluna.
 
-| Valor exato de `Produções.etapa_producao` | Coluna |
+| Prioridade | Condição | Coluna |
+| ---: | --- | --- |
+| 1 | `publicado_em` preenchido | Publicada |
+| 2 | `estado_liberacao` consta em `liberacaoPronta` | Pronta |
+| 3 | `estado_revisao` consta em `revisaoEmAndamento` | Revisão |
+| 4 | `etapa_producao` consta em `etapas` | coluna configurada |
+| 5 | Etapa não mapeada, inclusive vazia | Outras, com original visível |
+
+Preenchido: valor diferente de null e de string vazia; string contendo apenas espaços
+também é vazia para essa condição. Preservar o original. `publicado_em` preenchido
+vence liberação, revisão e etapa; liberação vence revisão e etapa; revisão vence etapa.
+`status` aparece no cartão como informação e **nunca** decide a coluna.
+
+**Publicada** indica registro explícito preenchido na captura, sem verificação remota
+da plataforma. ISO sem fuso, data inválida, instante posterior a `completedAt` ou
+tipo inesperado geram aviso localizado, preservando registro e coluna; não voltam
+silenciosamente à regra da etapa. Status, aprovação ou arquivo sem `publicado_em`
+preenchido não colocam a peça em Publicada. Esse critério substitui a exigência
+anterior de timestamp válido/coerente para classificar a coluna.
+
+O servidor lê `config/quadro-etapas.json` na inicialização. Arquivo a criar na
+implementação, versionado e separado da captura privada. Conteúdo inicial aprovado:
+
+```json
+{
+  "schemaVersion": 1,
+  "liberacaoPronta": [],
+  "revisaoEmAndamento": [],
+  "etapas": [
+    {"rotulo": "arte_aprovada", "coluna": "Visual"},
+    {"rotulo": "prompts_imagem_prontos", "coluna": "Mídia"},
+    {"rotulo": "imagens_em_producao", "coluna": "Mídia"},
+    {"rotulo": "voz_pronta_para_gerar", "coluna": "Mídia"},
+    {"rotulo": "voz_em_producao", "coluna": "Mídia"},
+    {"rotulo": "clipes_prontos_para_gerar", "coluna": "Mídia"},
+    {"rotulo": "clipes_em_producao", "coluna": "Mídia"},
+    {"rotulo": "montagem_pronta", "coluna": "Mídia"},
+    {"rotulo": "montagem_em_producao", "coluna": "Mídia"}
+  ]
+}
+```
+
+As listas de liberação/prontidão e revisão em andamento começam vazias: nenhum
+rótulo atual indica essas condições. `bloqueado` não libera; `aprovada` e
+`sem_rejeicao_documental` não indicam revisão em andamento. Os oito valores de mídia
+do dicionário continuam mapeados, e a leitura atual confirmou `arte_aprovada`, que
+agora vai para Visual. Não inferir aliases por palavras, prefixos ou etapa do envelope
+editorial. Comparação literal, sensível a maiúsculas, sem normalizar a célula de origem.
+
+| Conteúdo da configuração | Validação ao carregar |
 | --- | --- |
-| `prompts_imagem_prontos` | Mídia |
-| `imagens_em_producao` | Mídia |
-| `voz_pronta_para_gerar` | Mídia |
-| `voz_em_producao` | Mídia |
-| `clipes_prontos_para_gerar` | Mídia |
-| `clipes_em_producao` | Mídia |
-| `montagem_pronta` | Mídia |
-| `montagem_em_producao` | Mídia |
-| Qualquer outro valor, inclusive vazio | Outras, com original visível |
+| Arquivo e JSON | obrigatório, legível, objeto, `schemaVersion=1` e três listas presentes com os tipos do exemplo |
+| Rótulos | strings não vazias nem somente espaços; nenhum rótulo repetido no mesmo campo, mesmo com coluna diferente; índices do conflito na mensagem |
+| `etapas[].coluna` | nome exato de coluna existente; Publicada é reservada ao registro de publicação e Outras ao fallback, sem mapeamento direto |
+| `liberacaoPronta` / `revisaoEmAndamento` | listas de rótulos exatos dos respectivos campos, destinos fixos Pronta / Revisão |
 
-São somente os oito valores confirmados na seção 13 do dicionário. `planejamento`,
-`redacao`, `visual`, `editor`, `imagens`, `video`/`voz`, `motion` e `revisao` são etapas
-do envelope editorial, não whitelist da célula. Não adicionar aliases, não mapear
-`arte_aprovada` como Pronta. Planejamento/Redação/Visual/Revisão/Pronta podem ficar vazias
-até existir fonte explícita para novos valores e atualização rastreável deste contrato.
-Vazio tem rótulo "Não informada", conserva vazio original; desconhecido é exibido como texto.
+Mesmo texto em campos diferentes é uma chave diferente; repetição é avaliada dentro
+de cada campo. Arquivo ausente, JSON inválido, coluna inexistente ou rótulo repetido
+impedem iniciar o servidor com erro claro de configuração/campo/índice, sem dump de
+captura, fallback silencioso ou classificação parcial. Adicionar rótulo aprovado
+exige editar somente o JSON e reiniciar o servidor; não alterar código nem operar a
+planilha. Não há endpoint de edição ou recarga de configuração.
 
-**Publicada** exige `Produções.publicado_em` não vazio, ISO 8601 completo com `Z` ou
-offset explícito, data real válida e instante menor ou igual a `completedAt`. É um
-registro explícito de publicação na captura, não verificação remota da plataforma.
-`status=publicado`, arquivo final, aprovação, liberação, previsão e nome da etapa não
-bastam. Sem timestamp coerente: "publicação não comprovada", aviso se inválido, e
-classificação pela etapa acima. Timestamp válido pode confirmar publicação mesmo
-quando `status` diverge; mostrar ambos como registrados e avisar a divergência.
+O título de Outras é **"Outras · N valores novos"**: N conta rótulos originais distintos
+de etapas não mapeadas dos cartões que efetivamente estão em Outras na semana NTV
+selecionada, não o número de cartões nem o total de todas as semanas. Repetições contam
+uma vez. Apenas para contagem, null, célula omitida, string vazia ou somente espaços
+compartilham uma única chave de vazio: contam um valor, exibido como "Não informada",
+preservando cada original. Demais rótulos são comparados literalmente. Cartão que
+caiu em Publicada/Pronta/Revisão pela prioridade não contribui
+ao contador, mesmo com etapa desconhecida. Sem cartões: N=0; com um valor, usar
+"Outras · 1 valor novo". Valor desconhecido continua texto seguro visível no cartão.
 
-Cartão do quadro: formato, data prevista, título, responsável registrado e pendência
+Cartão do quadro: formato, data prevista, título, `status`, responsável registrado e pendência
 localizada de revisão vigente que pede correção ou mídia ausente. "Com quem está" é
 somente `responsavel_atual`; vazio = A confirmar. `responsavel_correcao` pertence à
 revisão vigente e aparece separado. Sem inferir aguarda-de, próxima ação, agente vivo,
@@ -225,7 +272,9 @@ Mídia ausente e referência quebrada aparecem como tais; sem preview automátic
 - `semanas`/`producoes`: identidades internas e campos mínimos necessários aos resumos
   e detalhes definidos acima, com unidades/revisões/arquivos vinculados e avisos;
   não recebem extras arbitrários. `dias`: grupos por data ou Sem data/semana e IDs de peças.
-  `quadro`: colunas fixas, semana e IDs agrupados pela classificação documentada.
+  `quadro`: colunas fixas, semana e IDs agrupados pela classificação documentada;
+  coluna Outras inclui `quantidadeValoresNovos` e `titulo` derivados dos seus cartões,
+  mantendo nome canônico Outras. Não servir o arquivo de configuração bruto.
 - `planilha`: seis abas na ordem dos mínimos, cada uma `{nome, cabecalhos,
   quantidadeLinhas, linhas}`. `cabecalhos` é a lista literal mínima; `linhas` conserva
   os valores mínimos e sua identidade, exclui linhas vazias e registros de outra marca.
@@ -250,7 +299,9 @@ Mídia ausente e referência quebrada aparecem como tais; sem preview automátic
 - `GET /`, `/app.js`, `/styles.css`: somente esses três estáticos conhecidos. HEAD
   mantém controles e nenhum corpo. Métodos restantes 405; rotas desconhecidas 404.
   Não há endpoint de escrita/importação, geração, aprovação ou ação Google.
-- `criarServidor({dataDir, port, webDir})` admite `webDir` opcional somente como
+- `criarServidor({dataDir, port, webDir, quadroConfigPath})` carrega e valida o mapa
+  antes de iniciar; `quadroConfigPath` opcional é argumento confiável para testes,
+  padrão `config/quadro-etapas.json`, nunca parâmetro HTTP. Admite `webDir` somente como
   argumento do chamador confiável, padrão `src/web/`. Testes HTTP usam três estáticos
   sintéticos em diretório temporário próprio, antes da implementação da interface.
   A allowlist permanece fixa; nenhum parâmetro HTTP seleciona diretório ou arquivo.
