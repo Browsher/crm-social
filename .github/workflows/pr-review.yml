@@ -5,10 +5,11 @@ on:
 permissions: {}
 concurrency:
   group: pr-review-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event.action != 'labeled' }}
 jobs:
   review:
     if: >-
+      contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action) &&
       !github.event.pull_request.draft &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association)
@@ -33,11 +34,13 @@ jobs:
           python3 <<'PY'
           import json, os, pathlib, subprocess
           root = pathlib.Path(os.environ['GITHUB_WORKSPACE']) / '.review-context'
-          root.mkdir()
+          try: root.mkdir()
+          except FileExistsError:
+              raise SystemExit('.review-context já existe no checkout; remova a pasta, arquivo ou link versionado antes do review')
           repo, number = os.environ['REPO'], os.environ['PR_NUMBER']
           def gh(*args):
               return subprocess.check_output(['gh', 'pr', *args, '--repo', repo], text=True)
-          context = gh('view', number, '--json', 'number,url,baseRefOid,headRefOid,files,comments')
+          context = gh('view', number, '--json', 'number,url,baseRefOid,headRefOid,files')
           data = json.loads(context)
           if data['number'] != int(number): raise SystemExit('PR inesperado')
           head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
@@ -64,6 +67,7 @@ jobs:
             AGENTS.md, constituição, spec e docs/architecture.md.
             Confira testes de cada módulo novo e regressão do gate ao atualizar ESLint.
             Devolva JSON com a propriedade body contendo o review em Markdown, em português.
+            Limite o corpo a 60000 bytes UTF-8; priorize os achados mais relevantes.
             O próximo passo publica o comentário. Não use Bash, Write, Edit nem ferramentas
             para comentar, editar arquivos ou gerar commits; não aprove nem bloqueie merge.
             Não exponha segredos.
@@ -78,15 +82,22 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          REVIEW_JSON: ${{ steps.claude_review.outputs.structured_output }}
+          REVIEW_OUTPUT_FILE: ${{ steps.claude_review.outputs.execution_file }}
         shell: bash
         run: |
           python3 <<'PY'
           import json, os, pathlib, subprocess
-          data = json.loads(os.environ['REVIEW_JSON'])
-          body = data.get('body')
-          if not isinstance(body, str) or not body.strip() or len(body) > 65000:
-              raise SystemExit('Comentário ausente, vazio ou grande demais')
+          messages = json.loads(pathlib.Path(os.environ['REVIEW_OUTPUT_FILE']).read_text(encoding='utf-8'))
+          if not isinstance(messages, list):
+              raise SystemExit('Arquivo de execução inválido')
+          results = [message.get('structured_output') for message in messages
+                     if isinstance(message, dict) and message.get('type') == 'result'
+                     and message.get('subtype') == 'success' and message.get('is_error') is False]
+          if len(results) != 1 or not isinstance(results[0], dict):
+              raise SystemExit('Resultado estruturado de sucesso ausente ou ambíguo')
+          body = results[0].get('body')
+          if not isinstance(body, str) or not body.strip() or len(body.encode('utf-8')) > 60000:
+              raise SystemExit('Comentário ausente, vazio ou maior que 60000 bytes UTF-8')
           target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'node-kit-review-comment.md'
           target.write_text(body, encoding='utf-8')
           subprocess.run(['gh', 'pr', 'comment', os.environ['PR_NUMBER'],
