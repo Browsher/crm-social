@@ -2,6 +2,8 @@
 
 Data: 03/10/2026. **Estado: estrutura do Spec Kit inicializada; features ainda não implementadas.** A integração Codex/PowerShell e a [constituição 1.0.0](.specify/memory/constitution.md) estão presentes. Isso não instala perfis editoriais nem comprova integração com a operação.
 
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge; geração de testes pelo rótulo `gerar-testes`. O review foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974707424); o gate permanece vermelho por ausência de testes da aplicação.
+
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
 As seis features abaixo serão construídas em sequência. Somente a 001 recebe especificação detalhada agora; 002–006 são recortes de backlog, sujeitos ao detalhamento quando chegar sua vez. Os critérios abaixo são condições de aceite futuro, não resultados já verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
