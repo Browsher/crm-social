@@ -2,7 +2,7 @@
 
 CRM de conteúdo para uso somente neste computador. NTV é a primeira marca. O desenho aprovado é a base visual; Sheets e Drive continuam sendo as fontes operacionais.
 
-**Estado em 02/10/2026:** estrutura oficial GitHub Spec Kit 1.0.13 inicializada, constituição escrita e primeira feature especificada e planejada. O aplicativo funcional ainda não foi implementado. Nenhum agente editorial, agendamento ou workflow foi alterado nesta preparação.
+**Estado em 02/10/2026:** estrutura oficial GitHub Spec Kit 1.0.13 inicializada, constituição escrita e primeira feature especificada e planejada. O aplicativo funcional ainda não foi implementado. Nenhum agente editorial, agendamento ou workflow n8n foi alterado nesta preparação.
 
 CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge; geração de testes pelo rótulo `gerar-testes`.
 
