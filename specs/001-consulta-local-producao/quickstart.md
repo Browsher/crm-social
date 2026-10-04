@@ -90,6 +90,7 @@ Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída d
 | Clique em dia/cartão/lista | Abre grupo inteiro na gaveta compacta, primeira peça aberta, demais resumidas; revisões/versões/arquivos separados, dados preenchidos e documentos únicos; avisos técnicos na API, quantidade/link Planilha no dia; Esc devolve foco |
 | Resumo/revisão | Aberta somente com vigente; a confirmar com ambígua/anterior não resolvida sem vigente; sem revisão quando nenhuma/somente resolvidas. Linha visual legível sem IDs técnicos; +N com revisão aberta/revisões abertas |
 | Cena/mídia | Três slots inicial/final/vídeo na API; texto humano distingue imagens ausentes/inicial/final e/ou vídeo ausente, um aviso visual por linha; validações de índice/tempo/versão permanecem independentes |
+| Texto/avisos/links | Página/Cena número e versão em Texto registrado, sem ID técnico; arquivo ligado sem URL segura mostra link não permitido. Supressões de textos/recibos e avisos relacionados entram no contador; JSON decodificado é dado e validade original não muda após saneamento |
 | Sem data | Contagem global; link oculto quando zero, variante de interface tem uma |
 | Selo | Atualizado hoje, HH:MM / Dados de DD/MM / Atualização falhou / Sem dados; clique abre Planilha |
 | Planilha | Fonte, fim em São Paulo, cobertura semanal e avisos; tabelas/Histórico continuam futuros |

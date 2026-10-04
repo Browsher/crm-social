@@ -196,6 +196,66 @@ const estadosSelo=[
   {nome:'ausente',texto:'Sem dados',cor:'cinza',captura:false}
 ];
 
+test('U-ultima I1 avisos da própria linha entram na contagem e no link da gaveta', {skip}, async t=>{
+  for(const [aba,row,campo,value] of [
+    ['Produções',3,'data_prevista',''],['Produções',3,'semana_id','semana-ausente'],
+    ['Produções',3,'url_video_final','https://pessoa-ficticia:senha-ficticia@docs.google.com/x'],
+    ['Arquivos',2,'url','https://pessoa-ficticia:senha-ficticia@drive.google.com/x']
+  ]) await t.test(campo+' '+aba,async sub=>{
+    const page=await abrir(sub,1440,true,raw=>mudarCelula(raw,aba,row,campo,value),()=>{},capturaDetalhada);
+    const view=await (await page.request.get(new URL('/api/visao',page.url()).href)).json();
+    const d=view.producoes.find(p=>p.producao_id==='peca-3').detalhes;
+    assert.ok(d.avisos.some(a=>a.aba===aba && a.linha===row+1 && a.campo===campo));
+    assert.equal(d.avisos.length,4);
+    if(campo==='data_prevista') {
+      await page.locator('#abrir-sem-data').click();
+      await page.locator('#lista-sem-data [data-producao-id="peca-3"]').click();
+    } else await page.locator('#calendario [data-producao-id="peca-3"]').click();
+    const p=page.locator('#dia [data-peca="peca-3"]');
+    assert.match(await p.locator(':scope>summary .piece-hint').textContent(),/4 avisos$/);
+    assert.equal(await p.locator('.data-notice>span').textContent(),'4 avisos de dados nesta peça');
+    assert.equal(await p.getByRole('link',{name:'ver na Planilha'}).count(),1);
+  });
+});
+
+test('U-ultima m1 arquivo ligado sem link permitido não afirma mídia ausente', {skip}, async t=>{
+  for(const url of ['', 'http://drive.google.com/x', 'https://nao-permitido.invalid/x']) {
+    await t.test(url || 'URL vazia',async sub=>{
+      const page=await abrir(sub,1440,true,raw=>mudarCelula(raw,'Arquivos',2,'url',url),()=>{},capturaDetalhada);
+      await page.locator('#calendario [data-producao-id="peca-3"]').click();
+      const pagina=page.locator('#dia [data-pagina="pagina-02"]');
+      assert.equal(await pagina.locator('.notice').textContent(),'link não permitido');
+      assert.doesNotMatch(await pagina.textContent(),/Mídia ausente/);
+      assert.equal(await page.locator('#dia [data-pagina="pagina-01"] .notice').textContent(),'Mídia ausente');
+    });
+  }
+});
+
+test('U-ultima m3 texto registrado usa número/versão sem ID de página ou cena', {skip}, async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Páginas',2,'corpo','Corpo sintético da página');
+    mudarCelula(raw,'Cenas',2,'texto_tela','Texto sintético da cena');
+  },()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#dia [data-peca="peca-4"]>summary').click();
+  const c=page.locator('#dia [data-peca="peca-3"] details[data-textos]');
+  const r=page.locator('#dia [data-peca="peca-4"] details[data-textos]');
+  await c.locator('summary').click();await r.locator('summary').click();
+  assert.match(await c.textContent(),/Página 1 · versão 2 · Corpo: Corpo sintético/);
+  assert.match(await r.textContent(),/Cena 1 · versão 1 · Texto na tela: Texto sintético/);
+  assert.doesNotMatch(await c.textContent(),/pagina-01|pagina-02|pagina-antiga/);
+  assert.doesNotMatch(await r.textContent(),/cena-01|cena-02/);
+});
+
+test('U-ultima m1 cena conserva ausência e link não permitido em um só aviso', {skip}, async t=>{
+  const page=await abrir(t,1440,true,raw=>mudarCelula(raw,'Arquivos',3,'url','https://nao-permitido.invalid/clipe'),()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#dia [data-peca="peca-4"]>summary').click();
+  const notice=page.locator('#dia [data-cena="cena-02"] .notice');
+  assert.equal(await notice.count(),1);
+  assert.equal(await notice.textContent(),'imagens ausentes; link não permitido');
+});
+
 test('U-final I1 resumo fechado distingue revisão atual, a confirmar e sem revisão', {skip}, async t=>{
   const casos=[
     {versao:1,estado:'aberta',campo:'',esperado:'revisão aberta'},

@@ -3,6 +3,44 @@ const {COLUNAS}=require('./quadro-config.cjs');
 const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 // Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
 const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
+function candidatoComCredencial(candidato) {
+  try {
+    const url=candidato.startsWith('//')?new URL(candidato,'https://example.invalid'):new URL(candidato);
+    return Boolean(url.username || url.password);
+  }
+  catch {return false;}
+}
+function urlNoTextoSensivel(texto) {
+  // Regex delimita candidatos; somente o parser URL decide se há userinfo.
+  const normalizado=texto.replace(/[\t\r\n]/g,'');
+  for(const inicio of normalizado.matchAll(/[a-z][a-z\d+.-]*:|(?<![\w/.:])\/\//gi)) {
+    const candidato=normalizado.slice(inicio.index);
+    if(candidatoComCredencial(candidato)) return true;
+    for(const fim of candidato.matchAll(/[\s<>"'`\[\]})]/g)) {
+      if(candidatoComCredencial(candidato.slice(0,fim.index))) return true;
+    }
+  }
+  return false;
+}
+function textoSensivel(valor) {
+  const pendentes=[valor];
+  while(pendentes.length) {
+    const item=pendentes.pop();
+    if(typeof item==='string') {
+      if(sensivel.test(item) || urlNoTextoSensivel(item)) return true;
+      if(/^\s*[\[{"]/.test(item)) {
+        try {pendentes.push(JSON.parse(item));} catch { /* Texto não JSON permanece dado literal. */ }
+      }
+    } else if(item && typeof item==='object') {
+      // JSON é percorrido como dados, incluindo chaves; nunca executado.
+      for(const [chave,value] of Object.entries(item)) pendentes.push(chave,value);
+    }
+  }
+  return false;
+}
+function jsonValido(value) {
+  try {JSON.parse(value);return true;} catch {return false;}
+}
 function motivoUrl(value) {
   if(value.trim()==='') return null;
   try {const url=new URL(value);return url.username || url.password?'conteúdo sensível suprimido':null;}
@@ -11,8 +49,8 @@ function motivoUrl(value) {
 function selecionar(record,fields,nome,linha,avisos) {
   return Object.fromEntries(fields.map(field=>{
     const value=record[field] ?? '';
-    const motivo=typeof value==='string' && (sensivel.test(value)?'conteúdo sensível suprimido':
-      (['url','url_video_final'].includes(field)?motivoUrl(value):null));
+    const motivo=typeof value==='string' && ((['url','url_video_final'].includes(field)?motivoUrl(value):null) ||
+      (textoSensivel(value)?'conteúdo sensível suprimido':null));
     if (motivo) {
       avisos.push({aba:nome,linha,campo:field,motivo});
       return [field,'[conteúdo suprimido]'];
@@ -22,7 +60,9 @@ function selecionar(record,fields,nome,linha,avisos) {
 }
 function reciboPublico(receipt) {
   if (!receipt) return null;
-  return {tentativaId:receipt.tentativaId,concluidaEm:receipt.concluidaEm,resultado:receipt.resultado,motivoResumo:receipt.motivoResumo};
+  return Object.fromEntries(['tentativaId','concluidaEm','resultado','motivoResumo'].map(campo=>[
+    campo,typeof receipt[campo]==='string' && textoSensivel(receipt[campo])?'[conteúdo suprimido]':receipt[campo]
+  ]));
 }
 function base(estadoLocal) {
   const historico=estadoLocal.historico.map(reciboPublico).reverse();
@@ -30,7 +70,7 @@ function base(estadoLocal) {
     captura:null,ultimaTentativa:reciboPublico(estadoLocal.ultimaTentativa),semanas:[],producoes:[],dias:[],
     quadro:{colunas:COLUNAS.map(nome=>({nome,ids:[]}))},planilha:[],historico,avisos:[]};
 }
-function selecionarNtv(captura,avisos,origens) {
+function selecionarNtv(captura,avisos,origens,validadeJson) {
   const semanas=captura.semanas.filter(r=>r.marca_id==='ntv');
   const producoes=captura.producoes.filter(r=>r.marca_id==='ntv');
   const ids=new Set(producoes.map(r=>r.producao_id)), weeks=new Set(semanas.map(r=>r.semana_id));
@@ -43,6 +83,7 @@ function selecionarNtv(captura,avisos,origens) {
       const origem={aba:nome,linha:fisicas.get(r[fields[0]])};
       const selected=selecionar(r,fields,nome,origem.linha,avisos);
       origens.set(selected,origem);
+      if(Object.hasOwn(selected,'origens_json')) validadeJson.set(selected,jsonValido(r.origens_json));
       return selected;
     })];
   }));
@@ -206,9 +247,7 @@ function arquivosRegistrados(producao,records,ctx) {
   const files=records.filter(a=>a.producao_id===producao.producao_id),groups=new Map();
   for(const a of files) {
     validarNumeros(a,['versao'],[],ctx);
-    if(preenchido(a.origens_json)) {
-      try {JSON.parse(a.origens_json);} catch {avisoRegistro(a,'origens_json','JSON de origens inválido; registro preservado',ctx);}
-    }
+    if(preenchido(a.origens_json) && !ctx.validadeJson.get(a)) avisoRegistro(a,'origens_json','JSON de origens inválido; registro preservado',ctx);
     const key=JSON.stringify([a.papel,a.versao,a.pagina_id,a.cena_id]);
     if(preenchido(a.papel)) groups.set(key,[...(groups.get(key) ?? []),a]);
   }
@@ -237,11 +276,32 @@ function avisarPublicacao(p,completedAt,ctx) {
     avisoRegistro(p,'publicado_em','Publicação registrada inconsistente: formato, fuso ou instante posterior à captura; original preservado',ctx);
   }
 }
-function detalhar(result,ntv,origens) {
-  const ctxBase={origens,avisos:result.avisos,documentos:new Map(),arquivos:new Map(ntv.arquivos.map(a=>[a.arquivo_id,a])),
+function chaveOrigem(origem) {return JSON.stringify([origem.aba,origem.linha]);}
+function indexarAvisos(avisos) {
+  const indice=new Map();
+  for(const aviso of avisos) {
+    if(!aviso.aba || !Number.isInteger(aviso.linha)) continue;
+    const chave=chaveOrigem(aviso);
+    if(!indice.has(chave)) indice.set(chave,[]);
+    indice.get(chave).push(aviso);
+  }
+  return indice;
+}
+function avisosRelacionados(p,ntv,origens,indice) {
+  const semana=ntv.semanas.find(s=>s.semana_id===p.semanaId);
+  const documentos=new Set(semana?[semana.plano_json_arquivo_id,semana.redacao_json_arquivo_id,semana.visual_json_arquivo_id]:[]);
+  const arquivos=ntv.arquivos.filter(a=>a.producao_id===p.producao_id ||
+    (!preenchido(a.producao_id) && a.semana_id===p.semanaId) || documentos.has(a.arquivo_id));
+  const unidades=[ntv.paginas,ntv.cenas,ntv.revisoes].flatMap(records=>records.filter(r=>r.producao_id===p.producao_id));
+  const records=[p,...unidades,...arquivos,...(semana?[semana]:[])];
+  return [...new Set(records.flatMap(r=>indice.get(chaveOrigem(origens.get(r))) ?? []))];
+}
+function detalhar(result,ntv,origens,validadeJson) {
+  const indice=indexarAvisos(result.avisos);
+  const ctxBase={origens,validadeJson,avisos:result.avisos,documentos:new Map(),arquivos:new Map(ntv.arquivos.map(a=>[a.arquivo_id,a])),
     paginas:new Map(ntv.paginas.map(p=>[p.pagina_id,p])),cenas:new Map(ntv.cenas.map(c=>[c.cena_id,c]))};
   for(const p of result.producoes) {
-    const ctx={...ctxBase,locais:[]};
+    const ctx={...ctxBase,locais:avisosRelacionados(p,ntv,origens,indice)};
     validarNumeros(p,['versao'],[],ctx);
     p.detalhes={responsavelRegistrado:preenchido(p.responsavel_atual)?p.responsavel_atual:'A confirmar',
       publicacaoRegistrada:preenchido(p.publicado_em),paginas:unidades(p,ntv.paginas,'paginas',ctx),cenas:unidades(p,ntv.cenas,'cenas',ctx),
@@ -253,13 +313,13 @@ function detalhar(result,ntv,origens) {
 function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   const result=base(estadoLocal), captura=estadoLocal.captura;
   if (!captura) return result;
-  const origens=new WeakMap(),ntv=selecionarNtv(captura,result.avisos,origens);
+  const origens=new WeakMap(),validadeJson=new WeakMap(),ntv=selecionarNtv(captura,result.avisos,origens,validadeJson);
   result.semanas=ntv.semanas;
   result.producoes=ntv.producoes;
   result.captura={capturaId:captura.envelope.capturaId,completedAt:captura.envelope.completedAt,
     periodo:{inicio:null,fim:null},contagens:Object.fromEntries(chaves.map(k=>[k,ntv[k].length]))};
   planejar(result,origens);
-  detalhar(result,ntv,origens);
+  detalhar(result,ntv,origens,validadeJson);
   aplicarFrescor(result,estadoLocal,nowIso);
   return result;
 }

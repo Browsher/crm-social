@@ -225,6 +225,13 @@ preservando dados privados apenas neste computador.
   conserva Publicada com aviso do registro, sem comprovar publicação remota.
 - Configuração ausente/inválida não inicia o servidor com fallback silencioso.
 - Texto livre, JSON e URL são dados; nenhum deles executa HTML, instrução ou ação operacional.
+- Userinfo embutido em qualquer texto mínimo selecionado ou recibo público também
+  é suprimido usando new URL; JSON decodificado é percorrido como dados, sem ampliar
+  campos HTTP. Validade original de origens_json permanece privada e não é confundida
+  com o marcador de supressão. Avisos relacionados já globais entram no contador
+  da peça afetada, sem duplicar o conjunto global. Arquivo ligado sem link seguro
+  mostra link não permitido; Texto registrado usa Página/Cena número e versão,
+  mantendo IDs completos somente na API.
 - No cartão futuro de Produção, responsável vazio aparece "A confirmar" e etapa
   vazia "Não informada", com original preservado. Na faixa compacta da gaveta,
   campos vazios são omitidos; `detalhes.responsavelRegistrado` mantém o fallback na API.

@@ -77,7 +77,7 @@ imagem comprova captura Google, bytes de mídia, aprovação ou publicação rem
 [Desenho compactado](../mockups/gaveta-v2.html), [telas](../telas.md#2-gaveta-do-dia-001)
 e [evidências](../../../specs/001-consulta-local-producao/validacao.md) registram os limites.
 
-## Gaveta compacta — apresentação final
+## Gaveta compacta — revisão legível
 
 As duas imagens novas mostram carrossel e Reels sintéticos abertos no mesmo dia.
 O segundo acordeão foi expandido por clique para conferir páginas e cenas; abrir
@@ -95,3 +95,19 @@ conferência sem erro de página, requisição externa ou corte horizontal. Os a
 anteriores permanecem como evidência da apresentação anterior. Nenhuma imagem
 comprova coleta Google, mídia conferida, aprovação ou publicação. Estado, revisão
 e evidências de execução ficam somente na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+
+## Gaveta compacta — links e avisos relacionados
+
+As capturas mais recentes mostram carrossel e Reels sintéticos no mesmo dia,
+com identificação humana das unidades e avisos relacionados no contador da peça.
+Arquivo ligado sem URL segura é **link não permitido**, distinto de mídia ausente;
+URL recusada não é ecoada. A API conserva IDs e registros completos selecionados.
+
+| Desktop | Celular |
+| --- | --- |
+| [1440](001-us3-ultima-varias-pecas-1440.png) | [390](001-us3-ultima-varias-pecas-390.png) |
+
+Aplicação real em loopback, apenas fixture sintética e estado em TEMP, sem erro
+de página, requisição externa ou corte horizontal. As imagens anteriores ficam
+preservadas; nenhuma captura comprova coleta Google, bytes de mídia ou integração
+operacional. Estado e evidências reais ficam na [validação](../../../specs/001-consulta-local-producao/validacao.md).

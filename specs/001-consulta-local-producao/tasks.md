@@ -62,6 +62,8 @@ As correções da US3 também têm regressões de projeção/HTTP para userinfo 
 
 O acabamento de T023–T026 distingue revisão vigente/impacto a confirmar/ausência no resumo, linha visual sem IDs técnicos e +N com plural. Cenas conservam três slots e ausência humana específica, um aviso técnico agregado no primeiro ponteiro falho sem absorver índice/tempo/versão inválidos. Revisões localizam o primeiro vínculo falho. Caracterizações de unidade/semana/versão incompatíveis preservam o contrato, sem criar tarefas futuras ou avançar US4. Novas imagens com os dois acordeões abertos por clique estão no [índice visual](../../docs/design/screenshots/LEIA-ME.md).
 
+Regressões adicionais de US3 verificam userinfo embutido em texto mínimo/recibo e JSON decodificado, validade original privada sem falso aviso de JSON inválido, avisos relacionados no contador sem duplicação global, arquivo ligado com link não permitido e identificação humana Página/Cena número/versão. Evidências permanecem na [validação](validacao.md); nenhuma tarefa da US4 é marcada por essas correções.
+
 ## Fase 6 — US4: Produção por etapa (P2)
 
 **Teste independente:** nenhum cartão some; publicação > liberação > revisão > etapa, arte_aprovada em Visual, oito etapas em Mídia e Outras com originais/contador distinto. Rótulo novo entra por configuração, sem editar código.

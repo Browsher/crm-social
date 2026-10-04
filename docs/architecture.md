@@ -107,6 +107,8 @@ Host é exatamente `127.0.0.1:<porta real>`; `localhost` não passa. Origin ause
 
 O servidor não expõe `data/`, configuração bruta, envelope/metadados de coleta, células extras ou qualquer arquivo arbitrário. Texto é renderizado por `textContent`; supressão conservadora protege formatos conhecidos de conteúdo sensível sem confundir HTTPS com caminho Windows. Antes do HTTP, a projeção analisa `Arquivos.url` e `Produções.url_video_final` com `new URL`: usuário ou senha causam **[conteúdo suprimido]** e aviso fixo localizado, sem expor o valor. String não vazia recusada pelo construtor também é suprimida, com motivo fixo **URL inválida suprimida**; vazio/somente espaços é preservado sem esse aviso. Original permanece só na captura privada. Nenhuma URL registrada é carregada automaticamente; a UI também não ecoa URL recusada como texto bruto.
 
+A triagem cobre URLs embutidas em qualquer texto mínimo selecionado e em recibos públicos; JSON decodificado é percorrido como dados, sem execução ou expansão da whitelist. A validade original de origens_json fica em WeakMap privado para não confundir supressão com JSON inválido. Avisos globais de registros relacionados passam a integrar o contador de cada peça, sem duplicar o conjunto global. Na tela, arquivo ligado sem URL segura mostra **link não permitido** e Texto registrado identifica Página/Cena por número e versão, conservando IDs na API.
+
 ## Configuração e execução
 
 | Entrada real | Consumidor / limite |

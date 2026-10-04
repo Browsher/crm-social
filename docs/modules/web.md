@@ -2,7 +2,7 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura e gaveta implementados até T026/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `plural` (33), `fatosPeca` (39), `urlAutorizada` (52), `secaoUnidades` (98), `secaoRevisoes` (114), `revisaoLinha` (127), `documentosDoDia` (149), `resumoPeca` (164), `avisosPeca` (171), `acordeaoPeca` (178), `cartao` (195), `calendario` (210), `lista` (253), `render` (266), `controles` (289) e `detalhesCaptura` (304).
+Planejamento, frescor/releitura e gaveta implementados até T026/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `plural` (33), `fatosPeca` (39), `urlAutorizada` (52), `arquivosDaUnidade` (72), `secaoUnidades` (99), `secaoRevisoes` (115), `revisaoLinha` (128), `textosRegistrados` (140), `documentosDoDia` (150), `resumoPeca` (165), `avisosPeca` (172), `acordeaoPeca` (179), `cartao` (196), `calendario` (211), `lista` (254), `render` (267), `controles` (290) e `detalhesCaptura` (305).
 
 ## Inicialização e navegação
 
@@ -60,12 +60,12 @@ O diálogo nativo recebe título de data/sem data, quantidade e **todas** as pe�
 | Cabeçalho do acordeão | Formato, título e rótulo de status; peça recolhida resume quantidade de páginas/cenas vigentes, revisão e avisos em uma linha |
 | Identificação | Faixa de Etapa, Com quem está, Prevista e Versão; somente campos preenchidos, sem placeholders de ausência |
 | Publicação | Uma linha quando publicado_em está preenchido; não existe faixa vazia nem confirmação remota |
-| Texto registrado | Details fechado por padrão: legenda, corpo/função das páginas, texto na tela das cenas e Arquivos · registros; tudo por textContent |
+| Texto registrado | Details fechado: legenda, corpo/função das páginas, texto na tela das cenas e Arquivos · registros; unidades identificadas por Página/Cena número e versão, sem IDs técnicos; textContent |
 | Revisão vigente | Título legível de decisão/versão/motivo, abaixo Corrige: responsável e tratamento; sem IDs/rótulos técnicos, adicionais em +N revisão aberta/revisões abertas |
 | Páginas / Cenas | Versão vigente primeiro; outras versões em details recolhidos, com impacto atual a confirmar; índice em ordem dentro da versão |
 | Página | Linha compacta com número, título ou corpo, Design novo: A confirmar e link permitido ou mídia ausente |
 | Cena | Linha compacta com número, texto, início/duração e links permitidos; um texto humano agregado distingue imagens ausentes/inicial/final e/ou vídeo ausente |
-| Arquivos · registros | Dentro de Texto registrado: nome de apresentação, versão e registro, sem miniatura; URL recusada usa Link indisponível |
+| Arquivos · registros | Dentro de Texto registrado: nome de apresentação, versão e registro, sem miniatura; arquivo ligado sem URL segura mostra link não permitido |
 | Histórico | Details fechado por padrão; revisões resolvidas, de outras versões e com vínculo a confirmar em grupos próprios, sem virar revisão vigente |
 | Avisos da peça | Quantidade de aviso(s) de dados nesta peça e link ver na Planilha, com plural correto e sem separador pendurado; aba/linha/campo permanecem na API |
 | Documentos da semana | Uma seção no fim do dia; cada semana representada tem Plano/Redação/Visual uma vez, com — para ausentes, inclusive sem semana identificada |
@@ -76,11 +76,13 @@ Publicação preenchida permanece como registro explícito e conserva o valor or
 
 `resumoPeca` conta somente páginas/cenas vigentes e diferencia revisão: **revisão aberta** quando existe vigente; sem vigente, **revisão a confirmar** quando existe ambígua ou anterior não resolvida; **sem revisão** quando não existe ou há somente resolvidas. Contagens usam singular/plural em página, cena e aviso. `revisaoLinha` apresenta, por exemplo, **Revisar · versão 2 — motivo**, com **Corrige: pessoa · tratamento** abaixo; decisão desconhecida conserva o original. Acordeões adicionais usam **+1 revisão aberta** ou **+N revisões abertas**, sem inferir atividade de agente.
 
-`arquivosDaUnidade` usa `avisoMidia` da cena para mostrar no máximo um aviso humano por linha: imagens ausentes, imagem inicial/final ausente e/ou vídeo ausente. Se os três arquivos estão ligados mas algum link é recusado/ausente, informa **Link indisponível**; isso não transforma registro em bytes comprovados. Página conserva aviso genérico de mídia ausente. Avisos técnicos agregados da cena e demais validações continuam na API, não no texto da gaveta.
+`arquivosDaUnidade` usa `avisoMidia` da cena para mostrar no máximo um aviso humano por linha: imagens ausentes, imagem inicial/final ausente e/ou vídeo ausente. Arquivo ligado sem URL segura mostra **link não permitido**, preservando a distinção entre ausência de mídia e recusa de link. Quando coexistem, as mensagens se unem na mesma faixa, sem repetir avisos por slot. Página conserva aviso genérico para arquivo ausente; registro presente não vira ausente só por ter URL recusada. Isso não transforma registro em bytes comprovados. Avisos técnicos agregados da cena e demais validações continuam na API, não no texto da gaveta.
 
 `etapaLegivel` usa nove rótulos de apresentação: arte_aprovada → Arte aprovada; prompts_imagem_prontos → Prompts de imagem prontos; imagens_em_producao → Imagens em produção; voz_pronta_para_gerar → Voz pronta para gerar; voz_em_producao → Voz em produção; clipes_prontos_para_gerar → Clipes prontos para gerar; clipes_em_producao → Clipes em produção; montagem_pronta → Montagem pronta; montagem_em_producao → Montagem em produção. Desconhecido conserva exatamente o texto; não decide coluna nem altera o original da API. `cartao(p)` sempre cria botão que abre o dia, sem parâmetro de modo inativo.
 
 `urlAutorizada` transforma em link somente HTTPS nos hosts exatos `drive.google.com` ou `docs.google.com`, sem usuário/senha na URL. Um link abre somente por clique em aba separada, com `noopener noreferrer`; URL recusada nunca é ecoada como texto bruto. Antes do HTTP, a projeção já suprime userinfo de Arquivos.url/Produções.url_video_final usando new URL, com aviso fixo sem o valor; URL não vazia malformada também é suprimida e vazio/somente espaços permanece sem aviso de URL inválida. Registros não carregam imagem, iframe, vídeo ou arquivo remotamente. Textos são aplicados por `createElement`/`textContent` e `replaceChildren`, sem innerHTML, comandos ou execução de JSON. CSS fornece foco visível e breakpoint de 720 px; body acompanha a altura da página e a sidebar desktop mantém o fundo até o fim.
+
+A triagem de userinfo também cobre URLs embutidas em qualquer texto mínimo selecionado e em recibos públicos, incluindo JSON decodificado como dados. Avisos já globais dos registros relacionados são incorporados ao resumo/contador da peça; detalhes técnicos permanecem fora da gaveta. Em Texto registrado, Página/Cena e número/versão identificam a unidade sem expor seu ID técnico na apresentação.
 
 ## Verificação e limites
 

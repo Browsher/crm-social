@@ -65,6 +65,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Gaveta compacta com uma peça 1440](design/screenshots/001-us3-compacta-uma-peca-1440.png) / [390](design/screenshots/001-us3-compacta-uma-peca-390.png) | Aplicação com apresentação compacta e documentos semanais únicos |
 | [Gaveta compacta com várias peças 1440](design/screenshots/001-us3-compacta-varias-pecas-1440.png) / [390](design/screenshots/001-us3-compacta-varias-pecas-390.png) | Carrossel e Reels sintéticos na apresentação compacta |
 | [Gaveta final com várias peças 1440](design/screenshots/001-us3-final-varias-pecas-1440.png) / [390](design/screenshots/001-us3-final-varias-pecas-390.png) | Carrossel e Reels abertos por clique, revisão legível e avisos específicos de mídia |
+| [Gaveta com links/avisos corrigidos 1440](design/screenshots/001-us3-ultima-varias-pecas-1440.png) / [390](design/screenshots/001-us3-ultima-varias-pecas-390.png) | Apresentação com link não permitido distinto de mídia ausente e contador dos avisos relacionados |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Mockup da gaveta v2](design/mockups/gaveta-v2.html) | Referência compacta aprovada para a seção 2 das telas, somente dados sintéticos |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |
@@ -89,6 +90,8 @@ As evidências têm origem, estado e limites registrados somente na [validação
 ## Evidência local da US3
 
 [Resumo do gate da gaveta](reports/001-us3-gate-resumo.json); resultados, limites e estado corrente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+
+[Resumo sanitizado da última verificação local](reports/001-us3-ultima-local.json); origem, execução e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 ## Referências de desenvolvimento preservadas
 

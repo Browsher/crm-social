@@ -66,17 +66,18 @@ function arquivoRegistro(a) {
   box.append(node('strong',a.nomeApresentacao),node('small','Versão '+valor(a.versao)+' · registro'));
   const link=linkArquivo(a,'Abrir registro no Drive/Docs');
   if(link) box.append(link);
-  else if(a.url) box.append(node('p','Link indisponível.','record-text'));
+  else box.append(node('p','link não permitido','record-text'));
   return box;
 }
 function arquivosDaUnidade(records,avisoMidia) {
-  const list=node('span',undefined,'unit-files'),ids=new Set();let ausente=records.length===0;
+  const list=node('span',undefined,'unit-files'),ids=new Set();let ausente=records.length===0,recusado=false;
   for(const a of records) {
     const link=linkArquivo(a,a?.nomeApresentacao || 'Mídia');
-    if(!link) ausente=true;
+    if(!a) ausente=true;
+    else if(!link) recusado=true;
     else if(!ids.has(a.arquivo_id)) {ids.add(a.arquivo_id);list.append(link);}
   }
-  const aviso=avisoMidia===undefined?(ausente?'Mídia ausente':null):(avisoMidia || (ausente?'Link indisponível':null));
+  const aviso=[avisoMidia || (ausente?'Mídia ausente':null),recusado?'link não permitido':null].filter(preenchido).join('; ');
   if(aviso) list.append(node('span',aviso,'notice'));
   return list;
 }
@@ -139,9 +140,9 @@ function recolhido(titulo) {
 function textosRegistrados(p) {
   const el=recolhido('Texto registrado');el.dataset.textos='';
   if(preenchido(p.legenda)) el.append(node('p',p.legenda));
-  for(const u of [...p.detalhes.paginas,...p.detalhes.cenas]) {
+  for(const [tipo,records] of [['Página',p.detalhes.paginas],['Cena',p.detalhes.cenas]]) for(const u of records) {
     const partes=[['Corpo',u.corpo],['Função',u.funcao],['Texto na tela',u.texto_tela]].filter(([,v])=>preenchido(v));
-    if(partes.length) el.append(node('p',(u.pagina_id || u.cena_id)+' · versão '+valor(u.versao)+' · '+partes.map(([nome,v])=>nome+': '+v).join(' · ')));
+    if(partes.length) el.append(node('p',tipo+' '+valor(u.indice)+' · versão '+valor(u.versao)+' · '+partes.map(([nome,v])=>nome+': '+v).join(' · ')));
   }
   const files=secaoDetalhe('Arquivos · registros');files.append(...p.detalhes.arquivos.map(arquivoRegistro));
   el.append(files);return el;

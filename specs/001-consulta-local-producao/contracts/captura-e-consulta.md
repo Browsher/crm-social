@@ -328,7 +328,9 @@ Vídeo não ligado acrescenta **vídeo ausente**; quando também faltam imagens,
 causas são unidas por ponto e vírgula. Todos ligados: `avisoMidia=null`. A interface
 mostra no máximo um texto de ausência por linha de cena, sem confundir arquivo
 registrado com bytes comprovados. Se os registros estão ligados mas os links são
-recusados/ausentes, pode mostrar **Link indisponível**, sem exibir a URL bruta.
+recusados/ausentes, mostra **link não permitido**, sem exibir a URL bruta. Arquivo
+ligado sem link seguro não é tratado como mídia ausente; quando coexistem falta de
+arquivo e link recusado, os motivos ficam juntos em uma única faixa por unidade.
 
 Ausência, referência quebrada ou escopo/versão incompatível geram um único aviso
 técnico agregado de mídia por cena, com causas distintas reunidas e origem no
@@ -340,6 +342,12 @@ arquivo null. Na apresentação aparecem uma vez por semana representada no dia,
 no fim da gaveta, usando **—** na ausência. A projeção resolve os mesmos ponteiros
 uma vez por consulta/semana: aviso semanal ocorre uma vez no conjunto global e
 continua nos avisos locais de cada peça afetada, sem perder origem ou registro.
+
+Avisos já globais de origem e supressão também entram no conjunto local da peça
+afetada: produção, páginas/cenas/revisões, semana e arquivos relacionados, inclusive
+documentos apontados pela semana. A associação usa aba/linha física, sem repetir
+o mesmo objeto no local nem acrescentar cópias no conjunto global. Aviso sem origem
+localizada continua global; os novos avisos de detalhe mantêm suas próprias regras.
 
 Uma revisão não resolvida só é vigente com versão positiva igual à peça e todos os
 vínculos preenchidos identificados na mesma produção/versão. Outra versão fica
@@ -407,6 +415,19 @@ avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
   motivo fixo **URL inválida suprimida**, sem valor nem exceção bruta: parsing falho
   não permite devolver userinfo malformado. Vazio/somente espaços é preservado,
   sem aviso de URL inválida.
+- A triagem de userinfo se aplica também a URLs embutidas em **qualquer texto
+  mínimo selecionado** e nos quatro campos do recibo público, não apenas nas duas
+  colunas de URL. Candidatos são delimitados no texto; somente `new URL` decide
+  usuário/senha, inclusive URL relativa a protocolo com `//`. JSON parseável é
+  percorrido como dados, incluindo chaves/valores e strings decodificadas, sem
+  executar código nem expandir a whitelist HTTP. Conteúdo reconhecido recebe
+  **[conteúdo suprimido]**; aviso de célula tem origem e motivo fixo sem o valor.
+  A captura e os recibos privados permanecem intactos.
+- Validade de `origens_json` é calculada sobre o original antes da supressão e
+  guardada somente como booleano em WeakMap privado. JSON originalmente válido
+  suprimido não recebe falso aviso de JSON inválido por causa do marcador;
+  JSON originalmente inválido conserva seu aviso. Não expor o original para
+  explicar a supressão nem usar JSON decodificado como instrução.
 - Textos renderizam com `textContent`; não executar HTML/scripts, instruções ou comandos
   das células, inclusive JSON. URL recusada nunca aparece como texto bruto na tela; link interativo só
   se selecionado/validado e acionado por clique: HTTPS, host exato `drive.google.com` ou

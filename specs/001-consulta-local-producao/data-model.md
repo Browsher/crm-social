@@ -82,6 +82,15 @@ retorna ao HTTP. Vazio/somente espaços permanece sem aviso de URL inválida.
 Fixtures e mockups compartilháveis são sintéticos. HTTP e interface renderizam
 textos/JSON como dados, sem instruções, HTML executável ou navegação arbitrária.
 
+Userinfo embutido em qualquer texto mínimo selecionado e nos quatro campos do
+recibo público passa pela triagem com `new URL`, inclusive URL com // e conteúdo
+JSON decodificado. Chaves, valores e strings são dados percorridos, nunca código
+ou expansão de campos HTTP. Conteúdo reconhecido vira marcador, sem devolver a
+credencial; célula tem aviso fixo localizado, original e recibos privados intactos.
+A validade original de origens_json fica como booleano em WeakMap privado, antes
+da supressão: o marcador não cria falso aviso de JSON inválido quando o original
+era válido, e JSON originalmente inválido continua identificado.
+
 ## Formato, dia e objetivo
 
 - Slot confirmado `imagem_a`/`imagem_b` define Imagem, `carrossel` define Carrossel,

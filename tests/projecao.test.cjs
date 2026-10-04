@@ -50,6 +50,130 @@ test('P-review I1 URL malformada não devolve credencial e vazio continua vazio'
   }
 });
 
+test('P-round2 I1 avisos da própria produção entram nos locais sem duplicar globais', t=>{
+  const raw=capturaDetalhada(),table=raw.tables.Produções;
+  const foreign=table.values.pop();table.values.splice(1,0,[],foreign);
+  const row=table.values.findIndex(r=>r[0]==='peca-1');
+  mudarCelula(raw,'Produções',row,'data_prevista','');
+  mudarCelula(raw,'Produções',row,'semana_id','semana-ausente-sintetica');
+  mudarCelula(raw,'Produções',row,'url_video_final','https://usuario-sintetico:senha-sintetica@docs.google.com/x');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const p=view.producoes.find(p=>p.producao_id==='peca-1');
+  for(const campo of ['data_prevista','semana_id','url_video_final']) {
+    const globais=view.avisos.filter(a=>a.aba==='Produções' && a.linha===row+1 && a.campo===campo);
+    const locais=p.detalhes.avisos.filter(a=>a.aba==='Produções' && a.linha===row+1 && a.campo===campo);
+    assert.equal(globais.length,1,campo);assert.equal(locais.length,1,campo);
+    assert.deepEqual(locais,globais);
+  }
+  assert.equal(p.detalhes.avisos.length,3);
+  assert.ok(!view.producoes.find(p=>p.producao_id==='peca-2').detalhes.avisos.some(a=>a.aba==='Produções' && a.linha===row+1));
+});
+
+test('P-round2 I1 avisos selecionados de unidades/arquivos/revisões/documentos entram na peça relacionada', t=>{
+  const raw=capturaDetalhada(),token='sk-ant-'+'s'.repeat(30);
+  mudarCelula(raw,'Páginas',2,'corpo',token);mudarCelula(raw,'Cenas',2,'texto',token);
+  mudarCelula(raw,'Revisoes',2,'motivo',token);mudarCelula(raw,'Semanas',1,'tema',token);
+  mudarCelula(raw,'Arquivos',2,'url','https://usuario-sintetico:senha-sintetica@drive.google.com/x');
+  mudarCelula(raw,'Arquivos',4,'url','https://usuario-sintetico:senha-sintetica@docs.google.com/x');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const carousel=view.producoes[2].detalhes,reels=view.producoes[3].detalhes;
+  const origem=[['Páginas',3,'corpo'],['Revisoes',3,'motivo'],['Semanas',2,'tema'],['Arquivos',3,'url'],['Arquivos',5,'url']];
+  for(const [aba,linha,campo] of origem) {
+    const globais=view.avisos.filter(a=>a.aba===aba && a.linha===linha && a.campo===campo);
+    const locais=carousel.avisos.filter(a=>a.aba===aba && a.linha===linha && a.campo===campo);
+    assert.equal(globais.length,1,aba+'/'+campo);assert.equal(locais.length,1,aba+'/'+campo);
+    assert.deepEqual(locais,globais);
+  }
+  assert.equal(reels.avisos.filter(a=>a.aba==='Cenas' && a.linha===3 && a.campo==='texto').length,1);
+  assert.ok(!carousel.avisos.some(a=>a.aba==='Cenas'));
+  assert.ok(!reels.avisos.some(a=>a.aba==='Páginas' || a.aba==='Revisoes' && a.linha===3 || a.aba==='Arquivos' && a.linha===3));
+  assert.equal(reels.avisos.filter(a=>a.aba==='Semanas' && a.campo==='tema').length,1);
+  assert.equal(reels.avisos.filter(a=>a.aba==='Arquivos' && a.linha===5 && a.campo==='url').length,1);
+  const suprimidos=view.avisos.filter(a=>a.motivo==='conteúdo sensível suprimido');
+  assert.equal(suprimidos.length,6);
+});
+
+test('P-round2 m4 userinfo em texto livre é suprimido em todas as tabelas sem ecoar a URL', t=>{
+  const campos=[['Semanas',1,'objetivo'],['Produções',3,'titulo'],['Páginas',2,'corpo'],
+    ['Cenas',2,'texto_tela'],['Arquivos',2,'papel'],['Revisoes',2,'motivo']];
+  const urls=['https://usuario-sintetico:senha-sintetica@docs.google.com/x',
+    'https://usuario-sintetico@docs.google.com','https://:senha-sintetica@docs.google.com',
+    'HTTPS://usuario-sintetico:senha-sintetica@docs.google.com',
+    'https:usuario-sintetico:senha-sintetica@docs.google.com',
+    'https://usuario%2Dsintetico:senha%2Dsintetica@docs.google.com/x',
+    'ftp://usuario-sintetico:senha-sintetica@example.invalid/x',
+    '//usuario-sintetico:senha-sintetica@docs.google.com/x',
+    'https:\n//usuario-sintetico:senha-sintetica@docs.google.com',
+    'https://usuario sintetico:senha sintetica@docs.google.com'];
+  for(const url of urls) {
+    const raw=capturaDetalhada(),texto='Referência: "'+url+'" — texto sintético';
+    for(const [aba,row,campo] of campos) mudarCelula(raw,aba,row,campo,texto);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.doesNotMatch(JSON.stringify(view),/usuario(?:-|%2D| )sintetico|senha(?:-|%2D| )sintetica/);
+    for(const [aba,row,campo] of campos) {
+      assert.equal(raw.tables[aba].values[row][raw.tables[aba].values[0].indexOf(campo)],texto);
+      assert.equal(view.avisos.filter(a=>a.aba===aba && a.linha===row+1 && a.campo===campo && a.motivo==='conteúdo sensível suprimido').length,1);
+    }
+    assert.equal(view.semanas[0].objetivo,'[conteúdo suprimido]');
+    assert.equal(view.producoes[2].titulo,'[conteúdo suprimido]');
+    assert.equal(view.producoes[2].detalhes.paginas.find(p=>p.pagina_id==='pagina-02').corpo,'[conteúdo suprimido]');
+    assert.equal(view.producoes[3].detalhes.cenas.find(c=>c.cena_id==='cena-02').texto_tela,'[conteúdo suprimido]');
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').papel,'[conteúdo suprimido]');
+    assert.equal(view.producoes[2].detalhes.revisoes.vigentes.find(r=>r.revisao_id==='revisao-atual').motivo,'[conteúdo suprimido]');
+  }
+});
+
+test('P-round2 m4 JSON válido com URL escapada é dado, mas não expõe userinfo', t=>{
+  const url='https://usuario-sintetico:senha-sintetica@docs.google.com/x';
+  const textos=[JSON.stringify({url}),JSON.stringify({url}).replaceAll('/', '\\/'),
+    JSON.stringify({url}).replaceAll('usuario','\\u0075suario'),JSON.stringify({origem:JSON.stringify([url])}),
+    JSON.stringify({[url]:'valor sintético'}),JSON.stringify(url)];
+  for(const texto of textos) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Arquivos',2,'origens_json',texto);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico|senha-sintetica|u0075suario/);
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,'[conteúdo suprimido]');
+    assert.ok(view.avisos.some(a=>a.aba==='Arquivos' && a.linha===3 && a.campo==='origens_json' && a.motivo==='conteúdo sensível suprimido'));
+    assert.ok(!view.avisos.some(a=>a.aba==='Arquivos' && a.linha===3 && a.campo==='origens_json' && /JSON de origens inválido/.test(a.motivo)));
+    assert.equal(raw.tables.Arquivos.values[2][raw.tables.Arquivos.values[0].indexOf('origens_json')],texto);
+  }
+});
+
+test('P-round2 m4 JSON originalmente inválido conserva aviso mesmo após supressão', t=>{
+  for(const texto of ['{"url":"https://usuario-sintetico:senha-sintetica@docs.google.com/x','[conteúdo suprimido]']) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Arquivos',2,'origens_json',texto);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,'[conteúdo suprimido]');
+    assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico|senha-sintetica/);
+    assert.equal(view.avisos.filter(a=>a.aba==='Arquivos' && a.linha===3 && a.campo==='origens_json' && /JSON de origens inválido/.test(a.motivo)).length,1);
+  }
+});
+
+test('P-round2 m4 recibos públicos usam a mesma triagem sem alterar o estado privado', t=>{
+  const state={captura:null,historico:[{tentativaId:'tentativa-sintetica',concluidaEm:NOW,resultado:'falhou',
+    motivoResumo:'Falhou a leitura de https://usuario-sintetico:senha-sintetica@docs.google.com/x'}],ultimaTentativa:null};
+  state.ultimaTentativa=state.historico[0];
+  const view=projetarVisao(state,NOW,mapaQuadroValido());
+  assert.equal(view.historico[0].motivoResumo,'[conteúdo suprimido]');
+  assert.equal(view.ultimaTentativa.motivoResumo,'[conteúdo suprimido]');
+  assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico|senha-sintetica/);
+  assert.match(state.ultimaTentativa.motivoResumo,/usuario-sintetico/);
+});
+
+test('P-round2 m4 texto normal, e-mail e URL sem userinfo permanecem literais', t=>{
+  for(const texto of ['Texto normal: revisar a versão 2; contato equipe@example.invalid.',
+    'Referência "https://docs.google.com/document/d/exemplo-sintetico" e https://drive.google.com/x.',
+    '{"url":"https:\\/\\/docs.google.com/x","texto":"Contato: equipe@example.invalid"}',
+    'Estado: revisar; página 1; campo usuário e senha apenas como palavras, sem URL.']) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'legenda',texto);
+    mudarCelula(raw,'Arquivos',2,'origens_json',JSON.stringify({origem:texto}));
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.equal(view.producoes[2].legenda,texto);
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,JSON.stringify({origem:texto}));
+    assert.ok(!view.avisos.some(a=>a.motivo==='conteúdo sensível suprimido'));
+  }
+});
+
 test('P06 responsável registrado não vira correção; resolvidas/antigas ficam separadas', t=>{
   const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'responsavel_atual','');
   const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),d=view.producoes[2].detalhes;

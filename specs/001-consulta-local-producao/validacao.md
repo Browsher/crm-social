@@ -604,3 +604,47 @@ Continuam pendentes as dívidas fora deste recorte: detalhes da Planilha na US5,
 validações adicionais de arquivos apenas semanais, precisão de avisos de empate/
 ausência sem vínculo, índices/desempenho em T037, CLI fora do LCOV e UI com SKIP
 explícito no CI (M8). Não se declara aceite completo da feature ou captura real.
+
+## Pendências para a revisão final (Fase 8)
+
+Decisão do autor na última rodada da US3: Critical, segurança e regressão bloqueiam;
+Important/Minor novos fora dessas categorias são corrigidos se triviais ou registrados
+aqui para a Fase 8. O review continua sendo comentário, separado do quality-gate.
+O [review 5981923824](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981923824)
+no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
+
+| Origem | Pendência / impacto / verificação futura |
+| --- | --- |
+| PR #9, m-2 | Revisão com tratamento desconhecido fica no grupo vigente e recebe aviso, mas resumo/+N usam revisão aberta. Definir rótulo neutro ou decisão explícita na revisão final; manter estados originais na API |
+| PR #9, m-5 | A dívida textual de complexidade em architecture.md ainda aponta acordeaoPeca/localização desatualizada. Conferir nomes/linhas contra o relatório atual na Fase 8; não alterar limites, baseline ou código para ocultar avisos |
+| PR #9, m-6 | A seção histórica Revisão final da US3 não informa o SHA exato do código medido; seu resumo Linux estava pendente naquele momento. Reconciliar rastreabilidade dos recibos na Fase 8 sem reescrever medições históricas como novas |
+| PR #6, M8 | CLI fora do LCOV e Playwright com SKIP explícito no CI; interface precisa de aceite local. Preservar distinção entre as cinco camadas |
+| Revisões anteriores da US3 | Validações adicionais dos arquivos apenas semanais, precisão de aviso de empate/ausência sem vínculo e índices/escala pertencem às tarefas finais; tabelas detalhadas de avisos pertencem à US5 |
+
+## Última rodada da US3 — avisos e textos projetados
+
+Em 04/10/2026, alterações conferidas sobre o pai `244d9e7cc140be850434440bc5059f318ec288c5`.
+I-1 agrega aos avisos locais os da linha da produção e dos registros relacionados,
+com aba/linha físicas, sem duplicar os globais. As regressões cobrem sem data,
+semana desconhecida e URL suprimida; a gaveta mostra a contagem real.
+m-1 distingue registro ligado sem link permitido de mídia ausente, em um aviso por
+unidade; m-3 usa Página/Cena, número e versão no Texto registrado, sem IDs técnicos.
+m-4 aplica a triagem por `new URL` a todos os textos mínimos e recibos, inclusive
+userinfo dentro de JSON, chaves e strings aninhadas. JSON é dado, nunca código;
+validade original privada evita chamar o marcador de supressão de JSON inválido.
+Sem alterações em m-2/m-5/m-6, ferramentas, CI, baseline ou constituição.
+
+RED observado: projeção **35 PASS / 5 FAIL**, interface/HTTP **0/11**;
+cena com ausência e link recusado **0/1**. Proveniência de JSON **0/2** antes da
+correção. GREEN da projeção **41/0/0**; suíte completa **143/0/0**, incluindo
+**51 testes de interface**, em 30,06 s. Gate local **exit 0**, 32,91 s:
+tests/coverage/complexity PASS, cobertura **97,3398%**, complexidade máxima **13**;
+Semgrep SKIP no Windows e audit N/A. Nenhuma baseline atualizada.
+[Resumo sanitizado](../../docs/reports/001-us3-ultima-local.json).
+
+As imagens sintéticas novas preservam as anteriores, sem pageerror, requisição
+externa ou corte horizontal. Segundo acordeão aberto por clique; os recolhidos
+continuam fechados. Aceite Linux e decisão de merge serão registrados após o push.
+
+![Gaveta — última rodada, desktop](../../docs/design/screenshots/001-us3-ultima-varias-pecas-1440.png)
+![Gaveta — última rodada, celular](../../docs/design/screenshots/001-us3-ultima-varias-pecas-390.png)

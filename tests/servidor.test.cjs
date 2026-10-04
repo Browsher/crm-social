@@ -66,6 +66,25 @@ test('H02 três estáticos fixos têm bytes/HEAD corretos, extras nunca são ser
   }
   assert.equal((await request(port,'/extra.txt')).status,404);
 });
+
+test('H-ultima m4 HTTP suprime userinfo em texto livre e JSON de origens', async t=>{
+  const {port,dataDir}=await ambiente(t,false),raw=capturaValida();
+  const url='https://pessoa-ficticia:senha-ficticia@docs.google.com/x';
+  mudarCelula(raw,'Produções',1,'legenda','Leia '+url+' antes de revisar');
+  mudarCelula(raw,'Revisoes',1,'motivo','Conferir '+url);
+  mudarCelula(raw,'Arquivos',1,'origens_json',JSON.stringify({url}));
+  mudarCelula(raw,'Semanas',1,'tema','Tema '+url);
+  promoverCaptura(raw,dataDir);
+  const response=await request(port,'/api/visao');
+  assert.equal(response.status,200);
+  assert.doesNotMatch(response.body,/pessoa-ficticia|senha-ficticia/);
+  const view=JSON.parse(response.body),p=view.producoes[0];
+  assert.equal(p.legenda,'[conteúdo suprimido]');
+  assert.equal(p.detalhes.revisoes.vigentes[0].motivo,'[conteúdo suprimido]');
+  assert.equal(p.detalhes.arquivos[0].origens_json,'[conteúdo suprimido]');
+  assert.ok(p.detalhes.avisos.some(a=>a.campo==='legenda'));
+  assert.ok(p.detalhes.avisos.some(a=>a.campo==='origens_json'));
+});
 test('H03 métodos de escrita são 405, sem endpoint de importação', async t => {
   const {port}=await ambiente(t);
   for (const method of ['POST','PUT','DELETE','PATCH','OPTIONS']) {

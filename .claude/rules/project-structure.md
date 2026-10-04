@@ -29,6 +29,8 @@ T001–T026/US1, US2 e US3 implementadas; estado, evidências e pendências na [
 - Avisos técnicos na API; gaveta só quantidade/link Planilha; tabelas detalhadas ainda futuras.
 - Arquivos são registros; link por clique só HTTPS Drive/Docs sem credenciais; sem prévia remota.
 - URL com usuário/senha ou malformada não vazia é suprimida (new URL); recusada não vira texto bruto.
+- Userinfo em texto mínimo/recibo e JSON decodificado também é triado; original/validade privados.
+- Avisos globais relacionados entram no contador da peça; ligado sem link seguro é link não permitido.
 - Avisos conservam linha física por ID/WeakMap; valor sensível não acompanha motivo público.
 - tools/quality-gate.mjs é o entrypoint do gate; seus módulos são gate-*.mjs.
 - tools/package.json e package-lock.json isolam ESLint, sem dependência da aplicação.
