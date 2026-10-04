@@ -641,6 +641,8 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #10, review 5983143402, m-1 | Versão inválida não permite constatar ausência de mídia na versão vigente; não atribuir automaticamente Mídia ausente nesse caso. Definir mensagem/ausência de pendência com teste RED de projeção na Fase 8; a validação já conserva aviso de versão inválida |
 | PR #10, review 5983143402, m-2 | Manter a definição normativa de quadro só no contrato e substituir as repetições em data-model/plan por links. Conferir a fronteira entre modelo, plano e contrato na revisão documental final |
 | PR #10, review 5983143402, m-3 | Acrescentar rótulo acessível contextual ao contador de cartões da coluna, como 3 peças, com assert de interface. Teclado, Esc e abertura continuam cobertos; melhoria de acessibilidade fica na Fase 8 |
+| PR #10, review 5983186287, m-1 | Distinguir Imagem ausente de Imagem a confirmar no cartão quando o ponteiro de página está preenchido mas o arquivo não resolve ou pertence a outro escopo/versão. A gaveta já conserva o aviso localizado; acrescentar RED de projeção junto ao caso de versão inválida da peça |
+| PR #10, review 5983186287, m-2 | Decisão de produto: eventual sinal neutro Revisão a confirmar no cartão para revisão ambígua, sem atribuir correção. Hoje só revisões vigentes literais geram pendência, conforme o contrato; não é defeito nem regressão |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -798,3 +800,9 @@ m-5 textual foi corrigido: Produção consta da tabela web e do fluxo Mermaid da
 Head `2fbae73f31d9c810d1b555d9e82b49ba950a55f1`: [gate Linux 37225035503](https://github.com/Browsher/crm-social/actions/runs/37225035503/job/111502833655) **SUCCESS**, tests/coverage/complexity/**Semgrep PASS**, audit N/A, saída **0**, **baseline atualizada false**. O diff `cc35ff1..2fbae73 -- src tests` é vazio; só quatro Markdown mudaram. A ressalva de evidência I-1 do [segundo review](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983143402) é respondida por este job do head correto e pela comparação de fontes, sem inferência a partir do Windows.
 
 [Review 37225035483](https://github.com/Browsher/crm-social/actions/runs/37225035483/job/111502833626) **SUCCESS**, sem Critical, segurança ou regressão. Os três Minor novos estão registrados na Fase 8, sem correção de comportamento nesta rodada. generate-tests/publish-tests SKIPPED por ausência do rótulo. PR #10 permanece **OPEN**; a condição CLEAN consultada não foi usada para tentar merge. O registro posterior desta evidência altera somente este documento, mantendo o código medido e as screenshots.
+
+### Aceite do registro de pendências
+
+Head `811a82f3e5d71bb70233baad5036bfea96a17033`: [quality-gate Linux 37225347484](https://github.com/Browsher/crm-social/actions/runs/37225347484/job/111503740817) **SUCCESS**, tests/coverage/complexity/**Semgrep PASS**, audit N/A, **exit 0**, **baseline atualizada false**. O diff de src/tests contra `cc35ff1` continua vazio. [Review 37225347444](https://github.com/Browsher/crm-social/actions/runs/37225347444/job/111503740793) **SUCCESS**, [comentário 5983186287](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983186287): nenhum Critical ou Important de código, segurança ou regressão. Sua pendência de evidência é suprida pelo job deste head; M8 permanece registrada.
+
+Minor m-1 e a decisão m-2 estão na Fase 8; m-3 textual troca a referência frágil à linha da normalização por registros em captura.cjs. A API, interface, testes e screenshots permanecem os de `cc35ff1`. generate-tests/publish-tests SKIPPED sem rótulo; PR #10 aberto, sem merge nem exclusão da branch. Nenhuma tarefa da US5 ou da Fase 8 foi marcada concluída.

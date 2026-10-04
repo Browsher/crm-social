@@ -152,7 +152,7 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
-| null vira célula vazia na entidade | src/captura.cjs:81; envelope preservado; projeção recupera null de etapa_producao antes da triagem para US4; demais campos conservam a normalização |
+| null vira célula vazia na entidade | função registros em src/captura.cjs; envelope preservado; projeção recupera null de etapa_producao antes da triagem para US4; demais campos conservam a normalização |
 | Mapa restrito aos rótulos aprovados | config/quadro-etapas.json; nove etapas e liberação/revisão vazias; testes/demonstrações usam mapa sintético em TEMP |
 | I/O síncrono e validação por consulta | src/snapshot.cjs:20 e src/servidor.cjs:25; escala final ainda não exercitada em T037 |
 | Trava sobrevivente à interrupção | src/snapshot.cjs:72; exige reconciliação manual; aviso de liberação preserva resultado/erro |
