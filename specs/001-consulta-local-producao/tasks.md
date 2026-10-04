@@ -1,8 +1,8 @@
 # Tasks: Consulta local da produção NTV
 
-Como as páginas de um álbum montadas em ordem, estas tarefas dividem a consulta completa em entregas verificáveis. **Estado em 04/10/2026:** T001–T022 implementadas e marcadas após RED/GREEN; T023–T041, 19 tarefas, permanecem pendentes. O recorte cobre fundação, US1 Planejamento e US2/frescor e releitura local; não conclui a 001 nem o aceite operacional. Branch `001-consulta-local-producao`, atualizada com a `main`. Caminhos abaixo relativos a `crm-social/`. Evidência em [validacao.md](validacao.md).
+Como as páginas de um álbum montadas em ordem, estas tarefas dividem a consulta em entregas verificáveis: T001–T022 concluídas, T023–T041 pendentes; revisão corrente e evidências na [validação](validacao.md). Branch `001-consulta-local-producao`; caminhos relativos a `crm-social/`.
 
-**Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas](../../docs/design/telas.md). Uma spec vigente, sem repetir a criação da feature. Esta sincronização registra o código/testes do recorte, sem alterar requisitos, numeração ou checks. Próxima etapa: US3 (T023–T026); US4/US5, iniciador e entrega completa continuam posteriores. PR #6 integrado; node-kit 0.4.9 aceito no PR #7 e recebido nesta branch. Gate Linux e review da US2 conferidos no PR #8/head `7657d9e`, sem merge; captura operacional aguarda; nenhuma leitura Google nem mudança na operação.
+**Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas](../../docs/design/telas.md). Uma spec vigente, sem repetir a criação da feature. Próxima etapa: US3 (T023–T026); US4/US5, iniciador e entrega completa continuam posteriores. Captura operacional permanece pendente; sem leitura Google ou mudança na operação.
 
 ## Regra de execução e responsabilidade
 

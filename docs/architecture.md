@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-Estado em 04/10/2026: T001–T022/fundação, US1 e US2 implementadas localmente. Sete suítes passaram com 75 PASS, 0 FAIL, 0 SKIP, incluindo 14 casos de interface; gate local exit 0 e cobertura 96,19%, conforme a [validação](../specs/001-consulta-local-producao/validacao.md). As correções do PR #6 foram integradas em `19e222a` e a 0.4.9 foi aceita no PR #7, merge `7e17e85`. Gate Linux e review da US2 conferidos no PR #8/head `7657d9e`; PR aberto. Demonstração com captura operacional aguarda. Nenhuma leitura Google ocorreu no runtime desta entrega. A [spec](../specs/001-consulta-local-producao/spec.md) continua sendo a meta completa.
+T001–T022 estão implementadas (fundação, US1 e US2); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; captura operacional e leitura Google permanecem pendentes.
 
 ## Módulos e imports reais
 
@@ -106,7 +106,7 @@ O servidor não expõe `data/`, configuração bruta, envelope/metadados de cole
 | `CRM_NODE_PATH` | PowerShell seleciona Node existente; aplicação não lê variável |
 | `PATH` | Diretório do Node 24.19.0 à frente para subprocessos do gate; ver quickstart |
 | `CRM_PLAYWRIGHT_MODULE` | Teste de interface resolve Playwright existente; sem ela tenta playwright |
-| `CI=true` | 14 testes de interface fazem SKIP explícito; pendência M8 de aplicabilidade, sem substituir aceite local |
+| `CI=true` | Testes de interface fazem SKIP explícito; pendência M8 de aplicabilidade, sem substituir aceite local |
 
 Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). Não existe iniciador PowerShell neste recorte. A primeira captura oficial é futura e deve preservar os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); os hashes coerentes do JSON não comprovam coleta real.
 
@@ -131,9 +131,9 @@ flowchart LR
   Gate --> Security["gate-security.mjs"]
 ```
 
-O gate e seus imports foram conferidos no código de `tools/`; ESLint/lock estão isolados. `quality-gate.config.json` conserva Node 24.19.0, runner node --test e modo full. Gate local US2 exit 0: testes PASS (75), cobertura PASS (96,19%, queda 0) e complexidade PASS com aviso CLI argumentos 12; Semgrep SKIP por ausência no Windows; audit N/A sem dependências de aplicação. A UI fica fora do LCOV, dívida M8 de cobertura/aplicabilidade; os 14 testes locais de interface continuam obrigatórios para o aceite no computador. Não foi alterada baseline, configuração ou ferramenta.
+O gate e seus imports estão em `tools/`; ESLint/lock são isolados da aplicação. `quality-gate.config.json` define Node 24.19.0, runner node --test e modo full. A UI fica fora do LCOV (pendência M8) e seus testes continuam obrigatórios no computador. Os resultados do gate estão somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
-CI/review do node-kit 0.4.8 foi aceito no [PR #5](https://github.com/Browsher/crm-social/pull/5#issuecomment-5976475669), head bc0b02b, merge 4f20f20 e [execução 37176292254](https://github.com/Browsher/crm-social/actions/runs/37176292254). Repo público, main protegida por quality-gate. As correções do [PR #6](https://github.com/Browsher/crm-social/pull/6) tiveram CI/review verdes e foram integradas em `19e222a`; o aceite da 0.4.9 está registrado abaixo. Gate Linux e review da US2 conferidos no PR #8/head `7657d9e`, que permanece aberto. Os 14 casos de UI fazem pulo explícito no CI, enquanto dados/I/O/CLI/projeção/HTTP são obrigatórios; aplicabilidade dos pulos e UI fora do LCOV são a pendência M8, sem aceite remoto da interface.
+CI ativo com quality-gate obrigatório e review por comentário; histórico e estado corrente na [validação](../specs/001-consulta-local-producao/validacao.md). Dados, I/O, CLI, projeção e HTTP são obrigatórios no Linux; pulos de UI não comprovam aceite remoto da interface.
 
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
@@ -145,11 +145,8 @@ CI/review do node-kit 0.4.8 foi aceito no [PR #5](https://github.com/Browsher/cr
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Aviso de complexidade do CLI | scripts/importar-captura.cjs:5, valor 12; manutenção sem retirar validações |
 | Fonte/hashes no envelope não são prova de coleta | src/captura.cjs:27–118; Central e captura real ainda devem ser conferidas |
-| Review consumiu 23 turnos no PR #1 | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
+| Custo e limite do review | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
-| Aplicabilidade dos 14 pulos de UI e UI fora do LCOV | tests/interface.test.cjs; pendência M8; CI/cobertura não substituem os testes locais da interface |
+| Aplicabilidade dos pulos de UI e UI fora do LCOV | tests/interface.test.cjs; pendência M8; CI/cobertura não substituem os testes locais da interface |
 
 As dívidas Minor não foram corrigidas nesta rodada. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.
-
-
-A 0.4.9 está instalada: review com 60 turnos e timeout de 20 minutos; geração de testes mantém 20 turnos. O autor aprovou o aumento porque a execução 37196385840 do PR #6 usou 42 turnos e excedeu 40. A versão foi aceita no [PR #7](https://github.com/Browsher/crm-social/pull/7#issuecomment-5979972293), head `ef9ac93`, merge `7e17e85`: [quality-gate](https://github.com/Browsher/crm-social/actions/runs/37202478722/job/111436807063) e [review](https://github.com/Browsher/crm-social/actions/runs/37202478729/job/111436806960) terminaram SUCCESS. O [PR #8 da US2](https://github.com/Browsher/crm-social/pull/8) teve gate Linux verde (Semgrep real) e review publicado no head `7657d9e`; permanece aberto, sem merge. Evidência e pendências na validação.

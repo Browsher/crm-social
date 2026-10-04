@@ -1,7 +1,7 @@
 'use strict';
 const $=selector=>document.querySelector(selector);
 const state={view:null,mes:new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).format(new Date()),
-  formato:'Todos',modo:matchMedia('(max-width:720px)').matches?'Lista':'Calendário',tela:'planejamento'};
+  formato:'Todos',modo:matchMedia('(max-width:720px)').matches?'Lista':'Calendário'};
 function node(tag,text,className) {
   const el=document.createElement(tag);
   if (text!==undefined) el.textContent=text;
@@ -104,14 +104,15 @@ function render() {
   $('#sem-captura').hidden=!empty;
   $('#calendario').hidden=empty || state.modo!=='Calendário';
   $('#lista').hidden=empty || state.modo!=='Lista';
-  $('#abrir-sem-data').textContent=state.view.producoes.filter(p=>p.dataCivil===null).length+' sem data';
+  const semData=state.view.producoes.filter(p=>p.dataCivil===null).length;
+  $('#abrir-sem-data').textContent=semData+' sem data';
+  $('#abrir-sem-data').hidden=semData===0;
   $('#total').textContent=state.view.producoes.length+' peças registradas';
   for (const b of document.querySelectorAll('[data-formato]')) { const active=b.dataset.formato===state.formato;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active)); }
   for (const b of document.querySelectorAll('[data-modo]')) { const active=b.dataset.modo===state.modo;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active)); }
   calendario();lista();lista(true);
 }
 function navegar(tela) {
-  state.tela=tela;
   for (const id of ['planejamento','producao','planilha']) $('#'+id).hidden=id!==tela;
   for (const b of document.querySelectorAll('[data-tela]')) b.classList.toggle('active',b.dataset.tela===tela);
   const nome={planejamento:'Planejamento',producao:'Produção',planilha:'Planilha'}[tela];

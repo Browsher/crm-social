@@ -8,6 +8,42 @@ const clock='2026-10-02T14:00:00Z';
 function bytes(dir) {
   return fs.readFileSync(path.join(dir,'atual.json'),'utf8');
 }
+
+test('S-review m4 futuro excessivo, empate e captura antiga confirmam falha sem trocar a vigente', t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
+  const dir=temporario(t),old=capturaValida();
+  assert.equal(promoverCaptura(old,dir).resultado,'completa');
+  const file=path.join(dir,'capturas',old.capturaId+'.json'),immutable=fs.readFileSync(file,'utf8');
+  const casos=[
+    ['captura-futura','2026-10-04T12:10:00.001Z',/inválida.*10 minutos/],
+    ['captura-empatada',old.completedAt,/desatualizada/],
+    ['captura-antiga','2026-10-02T12:04:59Z',/desatualizada/]
+  ];
+  for(const [id,end,reason] of casos) {
+    const raw=capturaValida();raw.capturaId=id;
+    redefinirHorario(raw,'2026-10-02T12:00:00Z',end);
+    const receipt=promoverCaptura(raw,dir),state=lerEstado(dir);
+    assert.equal(receipt.resultado,'falhou');assert.match(receipt.motivoResumo,reason);
+    assert.deepEqual(state.ultimaTentativa,receipt);
+    assert.equal(state.captura.envelope.capturaId,old.capturaId);
+    assert.equal(fs.existsSync(path.join(dir,'capturas',id+'.json')),false);
+    assert.equal(fs.readFileSync(file,'utf8'),immutable);
+  }
+  const pointer=bytes(dir);
+  assert.equal(promoverCaptura(old,dir).resultado,'sem_alteracao');
+  assert.equal(bytes(dir),pointer);
+  assert.equal(lerEstado(dir).historico.length,4);
+});
+
+test('S-review m4 aceita limite futuro e leitura posterior não revalida relógio da importação', t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
+  const dir=temporario(t),raw=capturaValida();
+  redefinirHorario(raw,'2026-10-04T12:00:00Z','2026-10-04T12:10:00Z');
+  assert.equal(promoverCaptura(raw,dir).resultado,'completa');
+  t.mock.timers.setTime(new Date('2026-10-03T12:00:00Z').getTime());
+  assert.equal(lerEstado(dir).captura.envelope.completedAt,raw.completedAt);
+  assert.equal(promoverCaptura(raw,dir).resultado,'sem_alteracao');
+});
 test('S01 ausência é estruturada e leitura não escreve', t => {
   const dir=temporario(t), state=lerEstado(dir,clock);
   assert.equal(state.captura,null);
@@ -57,6 +93,7 @@ test('S02 repetição antiga não volta a captura vigente nem encerra falha post
   const dir=temporario(t), old=capturaValida(), newer=capturaValida();
   promoverCaptura(old,dir);
   newer.capturaId='captura-sintetica-02';
+  redefinirHorario(newer,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
   promoverCaptura(newer,dir);
   const invalid=capturaValida(); invalid.tables.Cenas.complete=false;
   assert.equal(promoverCaptura(invalid,dir).resultado,'falhou');
@@ -93,6 +130,7 @@ test('S04 interrupção antes do estado deixa recibo órfão e retry promove de 
   const dir=temporario(t), raw=capturaValida();
   promoverCaptura(raw,dir);
   const next=capturaValida(); next.capturaId='captura-sintetica-02';
+  redefinirHorario(next,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
   const rename=fs.renameSync;
   t.mock.method(fs,'renameSync',(from,to)=>{
     if (to===path.join(dir,'atual.json')) throw Object.assign(new Error('falha sintética'),{code:'EIO'});
@@ -117,6 +155,7 @@ test('S04 uma falha de promoção recuperável confirma falha, sem promover nova
   const dir=temporario(t), old=capturaValida();
   promoverCaptura(old,dir);
   const raw=capturaValida(); raw.capturaId='captura-sintetica-02';
+  redefinirHorario(raw,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
   const rename=fs.renameSync;
   let failed=false;
   t.mock.method(fs,'renameSync',(from,to)=>{

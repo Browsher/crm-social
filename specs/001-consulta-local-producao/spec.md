@@ -6,9 +6,9 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Feature Directory**: `specs/001-consulta-local-producao`
 
-**Created**: 2026-10-02 | **Updated**: 2026-10-04 (estado de implementação; requisitos preservados)
+**Created**: 2026-10-02 | **Updated**: 2026-10-04 (regra temporal aprovada e correções da US2)
 
-**Status**: T001–T022 implementadas e testadas localmente: fundação, US1 Planejamento e US2/frescor e releitura. T023–T041 (19 tarefas) permanecem pendentes. Quatro estados do selo, clique até Planilha, fonte/fim/cobertura/avisos e GET local já existem; abertura do dia continua básica, detalhes/acordeões, classificação/quadro, seis tabelas/Histórico e iniciador ainda aguardam. Correções do PR #6 integradas em `19e222a`; 0.4.9 aceita no PR #7, merge `7e17e85`. Gate Linux e review da US2 conferidos no PR #8/head `7657d9e`, sem merge; captura operacional pendente; nenhuma leitura real Google. Evidência em [validacao.md](validacao.md).
+**Status**: Fundação, US1 e US2 implementadas; demais histórias e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
@@ -175,6 +175,8 @@ preservando dados privados apenas neste computador.
 
 ### Edge Cases
 
+- Na importação, `completedAt` até 10 minutos à frente do relógio local é aceito; mais que isso recusa a captura como inválida. Captura nova com fim igual ou anterior ao da vigente é desatualizada e recusada. Ambos confirmam recibo com motivo e preservam a vigente. Repetição do mesmo ID/bytes já aceitos continua sem alteração; GET não revalida essa política temporal.
+
 - Sem data válida permanece no total NTV e numa lista acessível; vínculo de semana
   ausente recebe grupo "Semana não identificada" e aviso, sem esconder a peça.
 - Semana cruzando o mês mantém sua identidade; calendário usa a data civil da peça.
@@ -212,7 +214,9 @@ preservando dados privados apenas neste computador.
   Falha ativa com captura válida prevalece sobre frescor; sem captura mantém falha no Histórico.
 - **FR-004**: coletar pela Central com acesso autorizado; Atualizar dados somente relê
   captura e histórico locais. Falha persistida só encerra quando nova tentativa completa é aceita,
-  nunca por resposta HTTP de sucesso ou releitura da mesma captura.
+  nunca por resposta HTTP de sucesso ou releitura da mesma captura. Na importação, tolerar até
+  10 minutos de relógio adiantado; recusar mais que isso como inválida e captura nova com
+  `completedAt` igual/anterior à vigente como desatualizada, com recibo e sem substituição.
 - **FR-005**: separar data prevista de publicação; classificar Publicada somente com
   `publicado_em` preenchido, avisando inconsistências de data sem verificar publicação remota.
   Manter "N sem data" acessível contando

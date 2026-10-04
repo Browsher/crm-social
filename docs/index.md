@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página indica onde encontrar decisões, código explicado e evidências sem confundir uma fotografia de demonstração com a operação. Estado em 04/10/2026: T001–T022 implementadas/testadas localmente, cobrindo fundação, US1 e US2; 19 tarefas pendentes. PR #6 integrado; node-kit 0.4.9 aceito no PR #7. Suíte local 75 PASS, gate verde, quatro selos e releitura somente local. Gate Linux e review da US2 conferidos no PR #8/head `7657d9e`, que permanece aberto; captura operacional aguarda. Links atuais no registro de validação.
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: T001–T022/US1 e US2 implementadas, com revisão corrente e pendências na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 ## Ordem de leitura
 
@@ -68,17 +68,17 @@ Como o índice de um álbum, esta página indica onde encontrar decisões, códi
 | [Estrategista mensal proposto](design/prototype/estrategista-mensal-proposto.md) | Perfil futuro da 003, sem instalação |
 | [Recibo da preparação](PREPARACAO-2026-10-02.md) | Estado histórico, sem transformar planejamento em integração |
 
-## Evidências sanitizadas do PR #6
+## Relatórios sanitizados
 
-Capturadas no head ab3b036, com fixtures fictícias e armazenamento temporário; interpretação e limites em [validação](../specs/001-consulta-local-producao/validacao.md).
+As evidências têm origem, estado e limites registrados somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
-- [node:test completo, 67 PASS e nove casos de UI](reports/001-pr6-node-test.txt).
+- [Saída histórica de node:test](reports/001-pr6-node-test.txt).
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
 
 ## Evidência local e remota da US2
 
-[Resumo do gate local e prova Linux](reports/001-us2-gate-resumo.json): métricas locais pelo código `3857816`; resultado remoto observado no head `7657d9e`, incluindo Semgrep real. [Validação](../specs/001-consulta-local-producao/validacao.md) registra os links, o comentário e as pendências do PR #8.
+[Resumo do gate local e prova Linux](reports/001-us2-gate-resumo.json); interpretação e estado corrente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 ## Referências de desenvolvimento preservadas
 

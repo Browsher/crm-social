@@ -2,13 +2,14 @@
 
 Como a conferência de uma fotografia e sua etiqueta, este módulo verifica se o arquivo recebido descreve uma observação completa e coerente. Ele recebe dados locais; não fotografa a operação nem chama o Google.
 
-Estado em 04/10/2026: implementado em T004, com testes de regras puras. Fonte: [src/captura.cjs](../../src/captura.cjs), principalmente `validarEnvelope` (linha 27), `registros` (74), `hashCelulas` (96) e `validarCaptura` (103). O [contrato canônico](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) contém os 66 nomes literais.
+Implementado com regras puras de estrutura e tempo; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/captura.cjs](../../src/captura.cjs), principalmente `validarEnvelope` (linha 27), `registros` (74), `hashCelulas` (96), `validarCaptura` (103) e `validarTempoImportacao` (120). O [contrato canônico](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) contém os 66 nomes literais.
 
 ## Interface e responsabilidades
 
 | Export | Uso real |
 | --- | --- |
 | `validarCaptura(raw)` | Valida e retorna `{envelope, semanas, producoes, paginas, cenas, arquivos, revisoes}`; o envelope recebe cópia independente |
+| `validarTempoImportacao(completedAt, nowIso, completedAtVigente=null)` | Confere tolerância futura e ordem estrita do fim de uma candidata já validada; relógio/instante vigente são fornecidos pelo importador sob trava |
 | `CAMPOS` | Listas explícitas de cabeçalhos mínimos por aba; consumidas também pela projeção |
 | `idSeguro(value)` | Restringe IDs de captura/tentativa usados em nomes de arquivos a 1–100 caracteres alfanuméricos, hífen ou sublinhado |
 | `instanteUtc(value)` | Confere timestamp UTC com `Z`, segundos e fração opcional de 1–3 dígitos |
@@ -45,6 +46,18 @@ A forma segura de ID de arquivo não é imposta às identidades editoriais: esta
 O hash usa JSON compacto de pares ordenados por nome de aba, com `sheetId`, `range` e `values` nessa ordem. Remove somente null/string vazia no fim das linhas e linhas finais vazias. Instantes e extras do envelope não entram no hash de células; a persistência compara separadamente a serialização do envelope completo.
 
 Erro segue `<aba/linha/campo/regra>: inválido`, sem incluir valores das células. Cabeçalhos válidos sem registros são conjunto vazio válido. Etapa desconhecida continua válida; este módulo não classifica prontidão/publicação.
+
+## Tempo na importação
+
+Depois de conferir a estrutura e tratar conflito/no-op de ID, a [persistência](snapshot.md) chama a regra temporal sob sua trava, antes de gravar a candidata:
+
+| Comparação de `completedAt` | Resultado |
+| --- | --- |
+| Até 10 minutos à frente de `nowIso`, inclusive o limite | Permitido pela tolerância do relógio local, desde que o fim seja posterior ao da vigente |
+| Mais de 10 minutos à frente de `nowIso` | Erro `captura inválida: completedAt excede o relógio local em mais de 10 minutos` |
+| ID novo e fim igual ou anterior ao da vigente | Erro `captura desatualizada: completedAt igual ou anterior ao da vigente` |
+
+As falhas temporais são motivos fixos do recibo `falhou` e preservam a captura vigente. A conferência do futuro ocorre antes da comparação com a vigente. Mesmo ID/serialização já aceitos retorna `sem_alteracao` antes dessas comparações. `validarCaptura` conserva apenas as regras estruturais e de intervalo do envelope: GET, releitura e reinício não reaplicam a política relativa ao relógio, portanto uma captura aceita não se torna inválida depois por esse motivo.
 
 ## Verificação e limites
 

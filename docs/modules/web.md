@@ -2,7 +2,7 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Estado em 04/10/2026: T018/US1 e T022/US2 implementadas e testadas localmente, com ajustes de apresentação e regressões do PR #6; arquivos [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes principais em app.js: `node` (linha 5), `statusLegivel` (17), `abrirDia` (20), `calendario` (43), `pecaVisivel` (80), `lista` (86), `render` (99), `navegar` (113), `detalhesCaptura` (135) e `reler` (148).
+Estado em 04/10/2026: T018/US1 e T022/US2 implementadas e testadas localmente, com ajustes de apresentação e regressões documentadas na [validação](../../specs/001-consulta-local-producao/validacao.md); arquivos [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes principais em app.js: `node` (linha 5), `statusLegivel` (17), `abrirDia` (20), `calendario` (43), `pecaVisivel` (80), `lista` (86), `render` (99), `navegar` (113), `detalhesCaptura` (135) e `reler` (148).
 
 ## Inicialização e navegação
 
@@ -59,12 +59,12 @@ Textos de captura são aplicados por `createElement`/`textContent` e `replaceChi
 
 ## Verificação e limites
 
-[tests/interface.test.cjs](../../tests/interface.test.cjs) usa Playwright existente por `CRM_PLAYWRIGHT_MODULE`, servidor loopback e dados/configuração em TEMP. Bloqueia e registra qualquer requisição fora da origem local e erros do navegador. Os 14 casos atuais verificam os nove cenários de US1 (menu, objetivo, calendário/lista/filtros, sem data, 390/1440, ausência real, remarcação, rótulos, título, semanas úteis e sidebar), os quatro estados do selo nas três telas e clique até Planilha, mais releitura/recuperação em 390 px. Conferem fonte/fim/cobertura, preservação de falha/horário/ponteiro, nova captura, 503 sem apagar visão e apenas GET local.
+[tests/interface.test.cjs](../../tests/interface.test.cjs) usa Playwright existente por `CRM_PLAYWRIGHT_MODULE`, servidor loopback e dados/configuração em TEMP. Bloqueia e registra qualquer requisição fora da origem local e erros do navegador. Os casos de interface verificam os nove cenários de US1 (menu, objetivo, calendário/lista/filtros, sem data, 390/1440, ausência real, remarcação, rótulos, título, semanas úteis e sidebar), os quatro estados do selo nas três telas e clique até Planilha, mais releitura/recuperação em 390 px. Conferem fonte/fim/cobertura, preservação de falha/horário/ponteiro, nova captura, 503 sem apagar visão e apenas GET local.
 
-Com `CI=true`, os 14 casos declaram SKIP explícito antes de carregar Playwright; fora do CI, ferramenta ausente falha. As correções do [PR #6](https://github.com/Browsher/crm-social/pull/6) tiveram CI/review verdes e foram integradas em `19e222a`; gate Linux e review da US2 conferidos no PR #8/head `7657d9e`, que permanece aberto. A aplicabilidade dos SKIP e a UI fora do LCOV permanecem pendência M8 da revisão. Evidência local executada e limites em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); [screenshots](../design/screenshots/LEIA-ME.md) são da aplicação com fixture fictícia.
+Com `CI=true`, os casos de interface declaram SKIP antes de carregar Playwright; fora do CI, ferramenta ausente falha. A aplicabilidade dos pulos e a UI fora do LCOV permanecem pendência M8. Estado e evidências somente na [validação](../../specs/001-consulta-local-producao/validacao.md); as [screenshots](../design/screenshots/LEIA-ME.md) usam apenas fixtures fictícias.
 
 Pegadinhas: trocar o tamanho da janela depois de iniciar não recalcula o modo inicial; a escolha é feita por matchMedia no carregamento. Busca por ID usa a coleção em memória e sem paginação; cenário final de 500 peças ainda não foi executado. Testes locais de US1/US2 não comprovam detalhes, quadro, tabelas ou integração operacional.
 
-## Pegadinha de uso prolongado — PR #8/M-b
+## Pegadinha de uso prolongado
 
 O selo é calculado no último GET. Se a página atravessar a meia-noite de São Paulo aberta, só muda ao clicar **Atualizar dados** ou recarregar. Não há timer, polling ou releitura automática nesta US2; essa limitação fica registrada para o aceite completo.

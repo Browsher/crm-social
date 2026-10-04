@@ -2,6 +2,21 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const {capturaValida,recalcularHashes,mudarCelula,carregarModulo} = require('./fixtures.cjs');
 const {validarCaptura} = carregarModulo('src/captura.cjs',['validarCaptura']);
+const {validarTempoImportacao}=require('../src/captura.cjs');
+
+test('D-review m4 tolera exatamente dez minutos de relógio adiantado, não mais', () => {
+  const now='2026-10-04T12:00:00.000Z';
+  assert.doesNotThrow(()=>validarTempoImportacao('2026-10-04T12:10:00.000Z',now));
+  assert.throws(()=>validarTempoImportacao('2026-10-04T12:10:00.001Z',now),/inválida.*10 minutos/);
+});
+
+test('D-review m4 captura nova tem de terminar depois da vigente', () => {
+  const now='2026-10-04T12:00:00Z',current='2026-10-04T11:05:00Z';
+  for(const end of [current,'2026-10-04T11:04:59.999Z']) {
+    assert.throws(()=>validarTempoImportacao(end,now,current),/desatualizada/);
+  }
+  assert.doesNotThrow(()=>validarTempoImportacao('2026-10-04T11:05:00.001Z',now,current));
+});
 
 test('D01 captura válida normaliza nomes e conserva extras só no privado', () => {
   const raw = capturaValida();

@@ -1,8 +1,6 @@
 {
   "observadoEm": "2026-10-04",
   "local": {
-    "codigoHead": "3857816",
-    "documentacaoHead": "7657d9e",
     "exitCode": 0,
     "results": [
       {
@@ -54,9 +52,6 @@
     ]
   },
   "linux": {
-    "head": "7657d9e1c6a83713c202854fede396a743f44b3f",
-    "runId": 37204282310,
-    "url": "https://github.com/Browsher/crm-social/actions/runs/37204282310/job/111442117283",
     "conclusion": "SUCCESS",
     "exitCode": 0,
     "semgrepVersion": "1.179.0",

@@ -1,8 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-Estado em 04/10/2026: T001–T022 implementadas (fundação, US1 Planejamento e US2).
-A 001 completa e a captura operacional ainda não foram aceitas; 19 tarefas pendentes.
+T001–T022/US1 e US2 implementadas; estado, evidências e pendências na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local não versionado; remoto usa branch/specs da 001.
@@ -14,6 +13,9 @@ A 001 completa e a captura operacional ainda não foram aceitas; 19 tarefas pend
 - EntryPoint real: scripts/importar-captura.cjs <arquivo-local> [--data-dir <diretorio>].
 - EntryPoint real: src/servidor.cjs [--data-dir <diretorio>] [--port <porta>].
 - src/captura.cjs valida seis abas/66 mínimos; src/snapshot.cjs confirma estado privado.
+- validarTempoImportacao confere candidata sob trava: futuro até 10 min; fim posterior ao vigente.
+- Falha temporal confirma recibo e mantém vigente; no-op de ID aceito precede essa regra.
+- GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
 - src/projecao.cjs seleciona NTV/datas/formatos e frescor São Paulo; quadro-config valida mapa.
 - config/quadro-etapas.json é versionado; mapa não é dado de linha nem entregue por HTTP.
@@ -30,6 +32,6 @@ A 001 completa e a captura operacional ainda não foram aceitas; 19 tarefas pend
 - Executar com Node 24.19.0 existente por CRM_NODE_PATH e seu diretório à frente do PATH.
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
 - Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
-- CI=true pula 14 testes de UI, fora do LCOV (M8); aceite local exige zero pulos.
+- CI=true pula os testes de UI, fora do LCOV (M8); aceite local exige zero pulos.
 - Detalhes/quadro/tabelas/Histórico/iniciador/escala continuam tarefas futuras.
 - Não alterar constituição, ferramentas/gate, agentes oficiais ou operação n8n.

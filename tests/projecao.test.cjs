@@ -56,6 +56,7 @@ test('P-review I1 falha posterior avisa sem apagar captura; nova completa encerr
   assert.equal(view.captura.capturaId,raw.capturaId);
   assert.ok(view.avisos.some(a=>a.motivo==='Última importação falhou; captura anterior preservada'));
   const newer=capturaValida(); newer.capturaId='captura-sintetica-02';
+  redefinirHorario(newer,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
   promoverCaptura(newer,dir);
   const next=projetarVisao(lerEstado(dir),NOW,mapaQuadroValido());
   assert.ok(!next.avisos.some(a=>a.motivo.includes('Última importação falhou')));

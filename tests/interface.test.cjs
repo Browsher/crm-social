@@ -47,6 +47,43 @@ const estadosSelo=[
   {nome:'falha',texto:'Atualização falhou',cor:'vermelho',fim:'2026-10-04T11:05:00Z',captura:true},
   {nome:'ausente',texto:'Sem dados',cor:'cinza',captura:false}
 ];
+test('U-review m1 primeira carga falha com erro visível e filtros continuam seguros', {skip}, async t=>{
+  const page=await abrir(t,1440,false,()=>{},dir=>{
+    fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'atual.json'),'{');
+  });
+  await page.locator('#erro').waitFor({state:'visible'});
+  assert.equal(await page.locator('#selo').textContent(),'Consulta indisponível');
+  assert.equal(await page.locator('#abrir-sem-data').isVisible(),false);
+  await page.getByRole('button',{name:'Imagem',exact:true}).click();
+  await page.getByRole('button',{name:'Lista',exact:true}).click();
+  assert.equal(await page.locator('#erro').isVisible(),true);
+  assert.equal(await page.locator('[data-producao-id]').count(),0);
+});
+
+test('U-review m1 Atualizar dados permanece desabilitado enquanto GET está pendente', {skip}, async t=>{
+  const page=await abrir(t);
+  await page.locator('#calendario [data-producao-id]').first().waitFor();
+  await page.locator('#selo').click();
+  let liberar,recebido;
+  const barreira=new Promise(resolve=>{liberar=resolve;}),entrada=new Promise(resolve=>{recebido=resolve;});
+  await page.route('**/api/visao',async route=>{recebido();await barreira;await route.continue();});
+  const button=page.getByRole('button',{name:'Atualizar dados',exact:true});
+  const response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
+  try {
+    await button.click();await entrada;
+    assert.equal(await button.isDisabled(),true);
+  } finally {liberar();}
+  await response;
+  await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+});
+
+for(const captura of [false,true]) {
+  test('U-review link Sem data fica oculto sem peças sem data, captura '+captura, {skip}, async t=>{
+    const page=await abrir(t,1440,captura,raw=>mudarCelula(raw,'Produções',6,'data_prevista','2026-10-03'));
+    await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+    assert.equal(await page.locator('#abrir-sem-data').isVisible(),false);
+  });
+}
 for(const scenario of estadosSelo) {
   test('U03 selo '+scenario.nome+' aparece nas três telas e abre detalhes locais', {skip}, async t=>{
     const page=await abrir(t,1440,scenario.captura,raw=>{
@@ -106,13 +143,14 @@ test('U04 celular relê só API local, conserva falha/horário e recupera erro s
   assert.match(await page.locator('#fim-captura').textContent(),/08:30/);
   assert.ok(!(await page.locator('#avisos-captura').textContent()).includes('Última importação falhou'));
   const saved=fs.readFileSync(pointer,'utf8');fs.writeFileSync(pointer,'{');
-  response=page.waitForResponse(r=>r.url().endsWith('/api/visao') && r.status()===503);
-  await button.click();await response;
-  await page.locator('#erro').waitFor({state:'visible'});
-  assert.equal(await page.locator('#selo').textContent(),'Atualizado hoje, 08:30');
-  assert.equal(await page.locator('#planilha').isVisible(),true);
-  assert.equal(await button.isEnabled(),true);
-  fs.writeFileSync(pointer,saved);
+  try {
+    response=page.waitForResponse(r=>r.url().endsWith('/api/visao') && r.status()===503);
+    await button.click();await response;
+    await page.locator('#erro').waitFor({state:'visible'});
+    assert.equal(await page.locator('#selo').textContent(),'Atualizado hoje, 08:30');
+    assert.equal(await page.locator('#planilha').isVisible(),true);
+    assert.equal(await button.isEnabled(),true);
+  } finally {fs.writeFileSync(pointer,saved);}
   assert.deepEqual(seen,[{url:'/api/visao',method:'GET'},{url:'/api/visao',method:'GET'},{url:'/api/visao',method:'GET'}]);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
 });

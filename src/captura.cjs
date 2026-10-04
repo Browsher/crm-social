@@ -117,4 +117,9 @@ function validarCaptura(raw) {
   exigir(raw.firstReadSha256===raw.secondReadSha256 && raw.secondReadSha256===hashCelulas(raw.tables),'hash');
   return result;
 }
-module.exports={validarCaptura,CAMPOS,idSeguro,instanteUtc};
+function validarTempoImportacao(completedAt,nowIso,completedAtVigente=null) {
+  const fim=Date.parse(completedAt);
+  if (fim>Date.parse(nowIso)+10*60*1000) throw new Error('captura inválida: completedAt excede o relógio local em mais de 10 minutos');
+  if (completedAtVigente!==null && fim<=Date.parse(completedAtVigente)) throw new Error('captura desatualizada: completedAt igual ou anterior ao da vigente');
+}
+module.exports={validarCaptura,validarTempoImportacao,CAMPOS,idSeguro,instanteUtc};

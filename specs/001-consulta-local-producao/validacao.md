@@ -4,7 +4,7 @@ Como conferir um álbum antes de entregá-lo: cada regra é provada com uma capt
 
 ## Preparação T001
 
-Em 04/10/2026, feature ativa e branch conferidas; árvore inicial limpa. Pré-requisitos oficiais encontrados. Hooks before/after_analyze de commit são opcionais e não foram executados. A regra project-structure foi gerada do estado real e sincronizada ao final da implementação: **35 linhas**, sem tratar módulos planejados como implementados.
+Em 04/10/2026, feature ativa e branch conferidas; árvore inicial limpa. Pré-requisitos oficiais encontrados. Hooks before/after_analyze de commit são opcionais e não foram executados. A regra project-structure foi gerada do estado real e sincronizada ao final da implementação: **37 linhas**, sem tratar módulos planejados como implementados.
 
 Ambiente: Node 24.19.0 existente via CRM_NODE_PATH; PATH padrão 24.14.0. Playwright existente resolvido por CRM_PLAYWRIGHT_MODULE fora do repositório; Windows PowerShell 5.1.26100.9444. ESLint já preparado em tools/. Configuração do gate preservada: node --test, modo full, Node 24.19.0.
 
@@ -87,7 +87,7 @@ Correções autorizadas em 04/10/2026, na mesma branch da 001. T019–T041 conti
 | M2 | Snapshot: 9 PASS / 2 FAIL / 0 SKIP | 11 PASS; temporário removido após rename falhar, mantendo captura/recibos imutáveis e erro original |
 | Tela 1–4 | Interface: 5 PASS / 4 FAIL / 0 SKIP | 9 PASS em Chromium: rótulos conhecidos legíveis, desconhecidos literais/API original; Outubro de 2026; sidebar inteira; outubro com 35 dias e fevereiro/2027 com 28, sem semana inteiramente fora do mês |
 
-M4: assinatura completa projetarVisao(estadoLocal, nowIso, mapaQuadro); relógio e mapa ficam reservados às US2/US4. M5: Mermaid registra o caminho padrão do mapa no servidor e snapshot → node:crypto. M6: nove etapas é conteúdo do JSON versionado, não quantidade fixa do validador. M7: contagem da regra conferida em disco, 35 linhas.
+M4: assinatura completa projetarVisao(estadoLocal, nowIso, mapaQuadro); relógio e mapa ficam reservados às US2/US4. M5: Mermaid registra o caminho padrão do mapa no servidor e snapshot → node:crypto. M6: nove etapas é conteúdo do JSON versionado, não quantidade fixa do validador. M7: contagem da regra conferida em disco, 37 linhas.
 
 Durante GREEN, uma expectativa nova de M1 usava o termo genérico captura, mas a mensagem real do contrato é Cenas complete: inválido; a expectativa foi corrigida para esse motivo, sem alterar a validação. A medição da sidebar usa arredondamento ao pixel: DOMRect retornou 1239,5 px e scrollHeight 1240; Math.ceil conserva a verificação da cobertura visual e evita comparar um inteiro com um subpixel. O RED original mostrava o fundo limitado à altura da janela, sem chegar ao fim da página.
 
@@ -203,3 +203,53 @@ O [review](https://github.com/Browsher/crm-social/actions/runs/37204282276/job/1
 | M-e / aviso global sem localização | Aviso de falha ativa tem somente motivo; não inventar aba/linha/campo para uma falha global. Registrar convenção explícita no contrato de avisos ao completar US3/US5/Histórico |
 
 Depois desta conferência só documentação/evidência mudou; código e testes continuam em `3857816`. O novo head documental dispara os checks outra vez, a serem conferidos pelo coordenador antes de encerrar. A **US2 permanece em PR aberto, sem merge**; T023–T041 e captura operacional continuam pendentes.
+
+## Revisão do PR #8 — correções solicitadas pelo autor
+
+Base observada: `4f9bdc461b9fbad883da3a146b349b991cf61957`, com código da US2 em `3857816`.
+O head `7657d9e` citado acima foi o primeiro aceite; o último head anterior a esta
+rodada foi `4f9bdc4`: [gate SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37204777931/job/111443578355)
+e [review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37204777927/job/111443578262),
+[comentário](https://github.com/Browsher/crm-social/pull/8#issuecomment-5980351907).
+São evidências históricas; o head corrigido terá seus próprios checks.
+
+- m3: removido o histórico duplicado dos documentos de entrada/módulos/spec/plan/tasks;
+  estados curtos apontam para este arquivo. A regra de estrutura tem 37 linhas.
+- m4: dados + persistência RED **25 PASS / 3 FAIL / 0 SKIP**, depois GREEN
+  com CLI **35 PASS / 0 FAIL / 0 SKIP**. Limite inclusivo de 10 minutos;
+  excesso, empate e regressão temporal geram falha confirmada preservando vigente.
+  No-op/conflito mantêm precedência; GET não reaplica o relógio da importação.
+- m1: primeira carga 503 com Consulta indisponível, erro visível e filtros sem
+  pageerror; botão desabilitado durante GET pendente. Ambos já passaram antes de
+  mudar código: cobertura de comportamento existente, sem RED artificial.
+- Tela: interface RED **16 PASS / 1 FAIL**, link zero visível; corrigido para
+  ocultar N sem data quando zero, inclusive sem captura.
+- m2: removido state.tela; navegação continua pela UI existente.
+- m5: ponteiro corrompido pelo teste restaurado em try/finally.
+
+Os fixtures de retry/promoção/concorrência foram ajustados para fins estritamente
+posteriores: preservam o propósito dos testes de I/O diante da política nova.
+Uma tentativa GREEN encontrou reativação de MockTimers no mesmo teste, erro do
+helper; cenários sem/com captura foram separados em testes independentes.
+Sem captura operacional, nova dependência, mudança de gate, CI ou baseline.
+
+### Histórico de aceites do CI instalado, centralizado
+
+O parágrafo a seguir registra o retrato histórico removido dos documentos de entrada;
+as rodadas da feature estão descritas acima, sem promover uma prova local a aceite remoto.
+
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review **0.4.4** foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). A **0.4.5** foi aceita no [PR #3](https://github.com/Browsher/crm-social/pull/3#issuecomment-5975683038), commit `afd8238` (merge `72efb98`), [execução 37170294491](https://github.com/Browsher/crm-social/actions/runs/37170294491). A **0.4.7** foi aceita no [PR #4](https://github.com/Browsher/crm-social/pull/4#issuecomment-5976055197), commit `c9d1e91` (merge `506d7a7`), [execução 37173190416](https://github.com/Browsher/crm-social/actions/runs/37173190416). A **0.4.8** foi aceita no [PR #5](https://github.com/Browsher/crm-social/pull/5#issuecomment-5976475669), head `bc0b02b` (merge `4f20f20`), [execução 37176292254](https://github.com/Browsher/crm-social/actions/runs/37176292254). Repositório público; ruleset ativo da `main` exige `quality-gate`.
+
+Conferência antes do push desta revisão: **41 arquivos** no diff completo
+contra `7e17e85` (inclui os arquivos da US2 anteriores à rodada). A contagem se refere
+ao conteúdo, não a linhas da regra: `.claude/rules/project-structure.md` tem **37 linhas**.
+Suíte completa corrigida: **83 PASS / 0 FAIL / 0 SKIP**, 11,42 s, **18 casos UI** locais.
+Gate local **exit 0**, cobertura **96,25%**, complexidade/ESLint PASS (aviso existente CLI 12),
+Semgrep SKIP no Windows, audit N/A; baseline não atualizada. O aceite remoto corrigido
+será acrescentado após a execução; nenhum SHA futuro é antecipado.
+
+Revisão independente contra `4f9bdc4`: zero Critical/Important, dois Minor do escopo
+solicitado. Link zero na primeira carga 503 reproduzido em RED **17 PASS / 1 FAIL**;
+HTML inicia `hidden` e render só exibe para N>0. Contagens antigas da interface
+foram retiradas dos documentos de entrada/módulos. A suíte e o gate foram repetidos
+após essa correção. Regra de estrutura: 37 linhas, não a contagem histórica anterior.
