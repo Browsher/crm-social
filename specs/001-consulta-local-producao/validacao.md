@@ -643,9 +643,9 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #10, review 5983143402, m-3 | Acrescentar rótulo acessível contextual ao contador de cartões da coluna, como 3 peças, com assert de interface. Teclado, Esc e abertura continuam cobertos; melhoria de acessibilidade fica na Fase 8 |
 | PR #10, review 5983186287, m-1 | Distinguir Imagem ausente de Imagem a confirmar no cartão quando o ponteiro de página está preenchido mas o arquivo não resolve ou pertence a outro escopo/versão. A gaveta já conserva o aviso localizado; acrescentar RED de projeção junto ao caso de versão inválida da peça |
 | PR #10, review 5983186287, m-2 | Decisão de produto: eventual sinal neutro Revisão a confirmar no cartão para revisão ambígua, sem atribuir correção. Hoje só revisões vigentes literais geram pendência, conforme o contrato; não é defeito nem regressão |
-| PR #10, review 5983234638, m-1 | Decidir com o autor se ausência de arquivo registrado deve ser pendência ativa, aviso neutro ou omitida nas etapas iniciais e em Publicada. Estado registrado de publicação não muda; localizar a mensagem na versão/unidade e cobrir a decisão com RED de projeção na Fase 8 |
-| PR #10, review 5983234638, m-2 | Na revisão dos testes, trocar índices de coluna fixos por leitura do cabeçalho, reduzir parâmetros posicionais do helper de interface com opções nomeadas e diferenciar os prefixos U07. Manutenção dos testes sem mudar a semântica ou dispensar o RED observado |
-| PR #10, review 5983234638, m-3 | Explicitar no comentário da recuperação de etapa que ela substitui a célula em todas as linhas e depende da normalização de registros, ou restringir a substituição ao null. Complementa m-6 sobre invariante/índice de cabeçalho; triagem e equivalência atuais estão testadas |
+| PR #10, review 5983234638, m-1 | Decisão do autor aplicada nesta revisão: somente o cartão omite mídia em Planejamento/Redação/Visual e mostra Mídia ausente em Mídia/Revisão/Pronta/Publicada/Outras. API conserva pendências completas. Localização por unidade e distinção de versão/vínculo inválidos continuam nos itens anteriores da Fase 8 |
+| PR #10, review 5983234638, m-2 | Índices fixos agora consultam cabeçalhos e caso sem captura usa prefixo U07-vazio. Resta reduzir os oito parâmetros posicionais do helper de interface para opções nomeadas na revisão dos testes; refatoração mais ampla segue na Fase 8 |
+| PR #10, review 5983234638, m-3 | Comentário corrigido: recuperação da célula de etapa ocorre em todas as linhas antes da triagem e depende da normalização por registros. Sem mudança de comportamento; otimização/índice de cabeçalho do m-6 continua pendente |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -817,3 +817,16 @@ Head final publicado do [PR #10](https://github.com/Browsher/crm-social/pull/10)
 [Review 37225695662](https://github.com/Browsher/crm-social/actions/runs/37225695662/job/111504761822) **SUCCESS**; [comentário final 5983234638](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983234638) leu as duas screenshots e não aponta Critical, Important de código, segurança ou regressão. Seus três Minor estão nas pendências acima. generate-tests/publish-tests **SKIPPED**, pois não foi adicionado gerar-testes. PR **OPEN**, mergeStateStatus consultado **CLEAN**; não houve tentativa de merge.
 
 Esta anotação do comentário recebido após a publicação fica em commit **local de documentação**, para acompanhar a próxima rodada. O PR permanece no head `14c9f8e`, já verificado; não se declara CI para este registro posterior. Código, testes, configuração e screenshots são idênticos aos publicados. T027–T030 concluídas; total **30/41**, US5/Fase 8 pendentes. PR #9 integrado por merge commit noreply; main recebida na 001; a branch foi preservada e `fd4ce50` incluído no histórico enviado.
+
+## Ajuste autorizado do cartão da US4
+
+Base local `d8d79c1`, incluída no próximo push do PR #10. O autor definiu que a pendência de mídia é filtrada **somente no cartão**: aparece em Mídia, Revisão, Pronta, Publicada e Outras; fica oculta em Planejamento, Redação e Visual. Texto humano **Mídia ausente**. Revisão continua visível em qualquer coluna; +N conta apenas pendências apresentadas. A API/gaveta mantém a informação e os textos completos, sem alterar estado operacional.
+
+RED observado de interface: **0 PASS / 2 FAIL / 0 SKIP**, exit 1, **2,45 s**, por mídia exibida em Planejamento e +1 contando uma pendência oculta. GREEN: **2/0/0**, exit 0, **2,25 s**. Os testes exercitam as oito colunas, API real preservada e revisão/mídia juntas, com Playwright existente e fixtures em TEMP. Suíte completa **174 PASS / 0 FAIL / 0 SKIP**, incluindo **62 de interface**, **43,34 s**. Índices/prefixo de teste e comentário foram corrigidos sem alterar a projeção de mídia.
+
+Gate local **exit 0**, **44,48 s**: tests/coverage/complexity PASS, cinco avisos, Semgrep SKIP no Windows (ferramenta ausente), audit N/A (sem dependências de aplicação), **baseline atualizada false**. Gate Linux e novo review serão conferidos após publicar este ajuste. Nenhuma ferramenta/CI/configuração/baseline/constituição ou captura operacional mudou.
+
+Screenshots novas, servidor real e captura/mapa exclusivamente sintéticos em TEMP: 8 colunas, 10 cartões, scrollWidth igual à largura, zero pageerror ou requisição externa. Conferidas visualmente; preservam as capturas anteriores e a informação de revisão nas etapas iniciais.
+
+![Produção ajustada — 1440 × 1200](../../docs/design/screenshots/001-us4-ajuste-producao-1440.png)
+![Produção ajustada — 390 × 2456](../../docs/design/screenshots/001-us4-ajuste-producao-390.png)

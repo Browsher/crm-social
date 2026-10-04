@@ -67,6 +67,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Gaveta final com várias peças 1440](design/screenshots/001-us3-final-varias-pecas-1440.png) / [390](design/screenshots/001-us3-final-varias-pecas-390.png) | Carrossel e Reels abertos por clique, revisão legível e avisos específicos de mídia |
 | [Gaveta com links/avisos corrigidos 1440](design/screenshots/001-us3-ultima-varias-pecas-1440.png) / [390](design/screenshots/001-us3-ultima-varias-pecas-390.png) | Apresentação com link não permitido distinto de mídia ausente e contador dos avisos relacionados |
 | [Produção 1440](design/screenshots/001-us4-producao-1440.png) / [390](design/screenshots/001-us4-producao-390.png) | Quadro executável com mapa e captura sintéticos em TEMP |
+| [Produção com pendências por coluna 1440](design/screenshots/001-us4-ajuste-producao-1440.png) / [390](design/screenshots/001-us4-ajuste-producao-390.png) | Cartões com mídia ausente somente nas colunas aplicáveis e +N das pendências visíveis; captura/mapa sintéticos em TEMP |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Mockup da gaveta v2](design/mockups/gaveta-v2.html) | Referência compacta aprovada para a seção 2 das telas, somente dados sintéticos |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |

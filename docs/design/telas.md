@@ -69,7 +69,8 @@ Referência de apresentação: [mockup da gaveta compacta v2](mockups/gaveta-v2.
 - Semana com setas (anterior/próxima) e tema.
 - **Quadro por etapa.** Primeiro publicação preenchida, depois liberação/prontidão, depois revisão em andamento; senão etapa por mapa aprovado. Mapeamento em JSON versionado, lido/validado pelo servidor; rótulo novo não exige mudar código. Colunas fixas do contrato; **Outras · N valores novos** conta rótulos distintos da semana e conserva o original no cartão.
 - "Publicada" só com registro explícito de publicação.
-- Cartão: formato, data prevista, título, status informativo, responsável registrado e pendência (revisão vigente que pede correção ou mídia ausente). Status não decide coluna. Clicar abre a gaveta do dia da peça.
+- Cartão: formato, data prevista, título, status informativo, responsável registrado e primeira pendência visível, com **+N pendências** para as demais visíveis. Status não decide coluna. Clicar abre a gaveta do dia da peça.
+- **Mídia ausente** aparece no cartão de Mídia, Revisão, Pronta, Publicada e Outras; fica oculta no cartão de Planejamento, Redação e Visual. Revisão vigente que pede correção continua no resumo de qualquer coluna, com responsável de correção separado quando registrado. O contador considera somente pendências visíveis; sem elas, não há resumo. A regra é somente de apresentação do cartão (`src/web/app.js:261`, `pendenciaQuadro`); API e gaveta conservam os detalhes de mídia e revisão.
 - Quadro não é arrastável: mudar etapa é na planilha, pela Central.
 
 ## 4. Planilha (001)

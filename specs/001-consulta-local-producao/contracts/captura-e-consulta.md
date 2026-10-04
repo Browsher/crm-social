@@ -1,6 +1,6 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1, US2, US3 e US4 implementadas; quadro por semana implementado; PR da US4, tabelas/Histórico e iniciador pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1, US2, US3 e US4 implementadas; quadro por semana implementado; revisão/aceite corrente da US4, tabelas/Histórico e iniciador pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
 Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura
@@ -242,6 +242,20 @@ somente `responsavel_atual`; vazio = A confirmar. `responsavel_correcao` pertenc
 revisão vigente e aparece separado. Sem inferir aguarda-de, próxima ação, agente vivo,
 capacidade, elegibilidade ou monitoramento.
 
+O resumo de pendências do cartão aplica a regra de apresentação abaixo, implementada
+em `src/web/app.js:261` (`pendenciaQuadro`). A coluna continua definida pelas
+prioridades e pelo mapa; este filtro não altera a projeção nem os detalhes da gaveta.
+
+| Coluna do cartão | Mídia ausente | Revisão vigente que pede correção |
+| --- | --- | --- |
+| Planejamento, Redação, Visual | Não aparece no cartão | Continua no resumo de pendências |
+| Mídia, Revisão, Pronta, Publicada, Outras | Aparece com o texto curto **Mídia ausente** | Continua no resumo de pendências |
+
+O cartão mostra a primeira pendência visível e **+N pendências** somente para as
+demais visíveis, com singular quando N=1. Se todas forem de mídia e estiverem
+ocultas pela coluna, não há resumo nem contador. API e gaveta conservam os
+detalhes de mídia e revisão definidos neste contrato, independentemente da coluna.
+
 ## Gaveta do dia e registros
 
 Título com dia da semana/data e subtítulo com quantidade. Uma seção por peça em
@@ -258,7 +272,7 @@ desktop com 520 px de largura, sem corte horizontal. A apresentação segue o
 Cada peça apresenta estado/formato e faixa de quatro dados: etapa, com quem está,
 prevista e versão, omitindo campos vazios. `responsavel_atual` preenchido é o
 responsável da faixa; o fallback A confirmar de `detalhes.responsavelRegistrado`
-continua na API e a regra do cartão futuro de Produção permanece separada. As nove
+continua na API e a regra do cartão de Produção permanece separada. As nove
 etapas conhecidas do mapa recebem rótulos legíveis somente na apresentação;
 desconhecida preserva o original. Publicação aparece em uma linha apenas quando
 `publicado_em` está preenchido; omissão não comprova publicação.
@@ -392,7 +406,7 @@ avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
   não recebem extras arbitrários. `dias`: grupos por data ou Sem data/semana e IDs de peças.
   `quadro.colunas:[{nome}]` mantém a ordem contratual; `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` contém oito colunas e IDs ordinais por semana, inclusive semanaId null das peças sem vínculo inequívoco. Sem captura, semanas vazias com nomes canônicos mantidos. Cada produção acrescenta `quadro:{coluna,pendencias}`.
   Coluna Outras deriva título/contador só dos seus cartões daquela semana;
-  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. UI resume primeira/+N, API conserva todas. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
+  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. O cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
 - `planilha`: seis abas na ordem dos mínimos, cada uma `{nome, cabecalhos,
   quantidadeLinhas, linhas}`. `cabecalhos` é a lista literal mínima; `linhas` conserva
   os valores mínimos e sua identidade, exclui linhas vazias e registros de outra marca.

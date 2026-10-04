@@ -126,3 +126,23 @@ nove etapas e liberação/revisão vazias. Outras distingue rótulos de cartões
 Servidor loopback, sem dado operacional, erro de página, requisição externa ou
 corte horizontal. Não comprova coleta Google, bytes de mídia ou a 001 completa;
 PR/aceite corrente na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+
+## US4 — pendências do cartão por coluna
+
+As duas capturas novas de 04/10/2026 mostram o quadro com oito colunas e dez
+cartões, usando somente `capturaQuadro` e `mapaQuadroSintetico` em TEMP. **Mídia
+ausente** aparece nos cartões de Mídia, Revisão, Pronta, Publicada e Outras;
+Planejamento, Redação e Visual conservam as revisões sem mostrar ausência de
+mídia. O resumo e **+N** consideram somente as pendências visíveis no cartão;
+API e gaveta mantêm os detalhes. A regra está no [contrato](../../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md#quadro-prioridade-aprovada-e-configuração-versionada)
+e nas [telas](../telas.md#3-produção-001).
+
+| Desktop | Celular |
+| --- | --- |
+| [1440 × 1200](001-us4-ajuste-producao-1440.png) | [390 × 2456](001-us4-ajuste-producao-390.png) |
+
+Aplicação real em loopback, captura e mapa exclusivamente sintéticos; conferência
+sem corte horizontal, erro de página ou requisição externa. Os arquivos anteriores
+permanecem como evidência da apresentação anterior. As imagens não comprovam
+captura Google, bytes de mídia ou integração operacional; revisão/aceite corrente
+continuam pendentes na [validação](../../../specs/001-consulta-local-producao/validacao.md).

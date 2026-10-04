@@ -691,7 +691,7 @@ test('U08 US4 Outras conta valores por semana e cartão abre dia inteiro por tec
   });
 });
 
-test('U07 US4 sem captura não inventa semana, cartão ou atividade', {skip},async t=>{
+test('U07-vazio US4 sem captura não inventa semana, cartão ou atividade', {skip},async t=>{
   const page=await abrir(t,390,false);
   await page.locator('#menu').click();await page.getByRole('button',{name:'Produção',exact:true}).click();
   assert.match(await page.locator('#quadro-vazio').textContent(),/primeira leitura à Central/);
@@ -699,4 +699,41 @@ test('U07 US4 sem captura não inventa semana, cartão ou atividade', {skip},asy
   assert.equal(await page.locator('#semana-anterior').isDisabled(),true);
   assert.equal(await page.locator('#semana-proxima').isDisabled(),true);
   assert.equal(await page.locator('#selo').textContent(),'Sem dados');
+});
+
+test('U08 revisão m1 filtra mídia por coluna só no cartão e conserva a API', {skip},async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Arquivos',1,'producao_id','peca-4');
+    for(let i=1;i<raw.tables.Revisoes.values.length;i++)mudarCelula(raw,'Revisoes',i,'decisao','aprovado');
+  },()=>{},capturaQuadro,mapaQuadroSintetico(),false);
+  await page.getByRole('button',{name:'Produção',exact:true}).click();
+  const view=await page.evaluate(async()=>await (await fetch('/api/visao')).json());
+  const casos=[['peca-1','Planejamento',false],['peca-2','Redação',false],['peca-3','Visual',false],
+    ['peca-4','Mídia',true],['peca-7','Revisão',true],['peca-8','Pronta',true],['peca-9','Publicada',true],['peca-10','Outras',true]];
+  for(const [id,coluna,visivel] of casos) {
+    const p=view.producoes.find(p=>p.producao_id===id);
+    assert.equal(p.quadro.coluna,coluna);
+    assert.ok(p.quadro.pendencias.some(r=>r.tipo==='midia'),'API conserva mídia em '+coluna);
+    const box=page.locator('#quadro [data-producao-id="'+id+'"] .board-pending');
+    assert.equal(await box.count(),visivel?1:0,coluna);
+    if(visivel) {
+      assert.equal(await box.locator('span').first().textContent(),'Mídia ausente',coluna);
+      assert.doesNotMatch(await box.textContent(),/sem arquivo registrado nesta versão/);
+    }
+  }
+});
+
+test('U08 revisão m1 mantém revisão e conta somente as pendências exibidas', {skip},async t=>{
+  const page=await abrir(t,390,true,raw=>mudarCelula(raw,'Arquivos',1,'producao_id','peca-4'),
+    ()=>{},capturaQuadro,mapaQuadroSintetico(),false);
+  await page.locator('#menu').click();await page.getByRole('button',{name:'Produção',exact:true}).click();
+  const view=await page.evaluate(async()=>await (await fetch('/api/visao')).json());
+  assert.deepEqual(view.producoes.find(p=>p.producao_id==='peca-1').quadro.pendencias.map(r=>r.tipo),['revisao','midia']);
+  const inicial=page.locator('#quadro [data-producao-id="peca-1"] .board-pending');
+  assert.match(await inicial.textContent(),/Revisão: Exemplo/);
+  assert.match(await inicial.textContent(),/Corrige: Equipe sintética/);
+  assert.doesNotMatch(await inicial.textContent(),/Mídia ausente|\+1 pendência/);
+  const revisao=page.locator('#quadro [data-producao-id="peca-7"] .board-pending');
+  assert.match(await revisao.textContent(),/Revisão: Ajustar texto de exemplo/);
+  assert.match(await revisao.textContent(),/\+1 pendência/);
 });

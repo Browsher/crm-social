@@ -79,7 +79,7 @@ test('P09 status, aprovação e arquivo final não substituem publicação expli
     const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t)),p=view.producoes[0];
     assert.equal(p.quadro.coluna,'Visual');assert.equal(p.status,'publicado');
     assert.ok(!p.detalhes.avisos.some(a=>a.campo==='publicado_em'));
-    assert.equal(raw.tables.Produções.values[1][14],vazio);
+    assert.equal(raw.tables.Produções.values[1][raw.tables.Produções.values[0].indexOf('publicado_em')],vazio);
   }
 });
 
@@ -180,7 +180,7 @@ test('P10 etapa original recuperada do envelope continua passando pela triagem',
     const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t)),p=view.producoes[0];
     assert.equal(p.etapa_producao,'[conteúdo suprimido]');assert.equal(p.quadro.coluna,'Outras');
     assert.ok(p.detalhes.avisos.some(a=>a.campo==='etapa_producao' && a.motivo==='conteúdo sensível suprimido'));
-    assert.equal(raw.tables.Produções.values[1][7],etapa);
+    assert.equal(raw.tables.Produções.values[1][raw.tables.Produções.values[0].indexOf('etapa_producao')],etapa);
   }
 });
 

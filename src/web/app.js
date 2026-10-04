@@ -259,10 +259,11 @@ function semanaDoQuadro(weeks) {
   state.semanaId=week?.semana_id;return week;
 }
 function pendenciaQuadro(p) {
-  const records=p.quadro.pendencias;
+  const mostrarMidia=['Mídia','Revisão','Pronta','Publicada','Outras'].includes(p.quadro.coluna);
+  const records=p.quadro.pendencias.filter(r=>r.tipo!=='midia' || mostrarMidia);
   if(!records.length)return null;
   const first=records[0],box=node('span',undefined,'board-pending');
-  box.append(node('span',first.tipo==='revisao'?'Revisão: '+first.texto:first.texto));
+  box.append(node('span',first.tipo==='revisao'?'Revisão: '+first.texto:'Mídia ausente'));
   if(first.tipo==='revisao' && preenchido(first.responsavelCorrecao))box.append(node('small','Corrige: '+first.responsavelCorrecao));
   if(records.length>1)box.append(node('small','+'+plural(records.length-1,'pendência')));
   return box;

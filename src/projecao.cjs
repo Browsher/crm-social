@@ -70,8 +70,8 @@ function selecionarNtv(captura,avisos,origens,validadeJson) {
     const fisicas=new Map(table.values.slice(1).map((row,index)=>[row[keyIndex],index+2]));
     return [chaves[i],linhas[i].map(r=>{
       const origem={aba:nome,linha:fisicas.get(r[fields[0]])};
-      // Só a etapa precisa conservar null original; a triagem acontece depois
-      // da recuperação da célula, antes de qualquer campo entrar na projeção.
+      // Recupera a célula de etapa em todas as linhas para conservar null:
+      // registros normaliza null/undefined; selecionar reaplica a triagem.
       const entrada=nome==='Produções'?{...r,etapa_producao:table.values[origem.linha-1][table.values[0].indexOf('etapa_producao')]}:r;
       const selected=selecionar(entrada,fields,nome,origem.linha,avisos);
       origens.set(selected,origem);
