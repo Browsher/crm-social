@@ -1,0 +1,53 @@
+# Captura e validação
+
+Como a conferência de uma fotografia e sua etiqueta, este módulo verifica se o arquivo recebido descreve uma observação completa e coerente. Ele recebe dados locais; não fotografa a operação nem chama o Google.
+
+Estado em 04/10/2026: implementado em T004, com testes de regras puras. Fonte: [src/captura.cjs](../../src/captura.cjs), principalmente `validarEnvelope` (linha 27), `registros` (74), `hashCelulas` (96) e `validarCaptura` (103). O [contrato canônico](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) contém os 66 nomes literais.
+
+## Interface e responsabilidades
+
+| Export | Uso real |
+| --- | --- |
+| `validarCaptura(raw)` | Valida e retorna `{envelope, semanas, producoes, paginas, cenas, arquivos, revisoes}`; o envelope recebe cópia independente |
+| `CAMPOS` | Listas explícitas de cabeçalhos mínimos por aba; consumidas também pela projeção |
+| `idSeguro(value)` | Restringe IDs de captura/tentativa usados em nomes de arquivos a 1–100 caracteres alfanuméricos, hífen ou sublinhado |
+| `instanteUtc(value)` | Confere timestamp UTC com `Z`, segundos e fração opcional de 1–3 dígitos |
+
+Único import externo: `node:crypto`. Não há rota, variável de ambiente, persistência nem dependência de aplicação neste módulo.
+
+## Dados de entrada
+
+| Grupo | Regra efetivamente validada |
+| --- | --- |
+| Identidade/fonte | `schemaVersion=1`, `capturaId` seguro, `brandId=ntv`, `source=google-drive-connector`, `spreadsheetId` string não vazia |
+| Instantes | `startedAt <= completedAt`; `readAt` de cada tabela está no intervalo |
+| Abas | Exatamente Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes em tables e nos dois mapas de metadados |
+| Metadados | `sheetId` inteiro não negativo; dimensões inteiras positivas; mesmos valores antes/depois |
+| Tabela | `complete=true`, ID da aba coerente, `range` literal de A1 até a dimensão alocada, matriz dentro desses limites |
+| Células | String, booleano, null ou número finito; objetos e listas em células são rejeitados |
+| Cabeçalhos | Mínimos por nome, em qualquer ordem; cabeçalho não vazio duplicado é erro; extras conservados no privado |
+| Registros | Chave de cada aba string não vazia e única; linha inteiramente vazia ignorada; célula omitida normalizada para string vazia |
+| Integridade | Primeiro/segundo hash iguais; segundo hash hexadecimal e igual ao SHA-256 recalculado das seis matrizes |
+
+| Aba | Chave de linha | Mínimos |
+| --- | --- | ---: |
+| Semanas | `semana_id` | 8 |
+| Produções | `producao_id` | 17 |
+| Páginas | `pagina_id` | 8 |
+| Cenas | `cena_id` | 11 |
+| Arquivos | `arquivo_id` | 12 |
+| Revisoes | `revisao_id` | 10 |
+
+A forma segura de ID de arquivo não é imposta às identidades editoriais: estas são conferidas como strings não vazias/únicas por aba. Não confundir ID interno com ID Drive.
+
+## Hash e erros
+
+O hash usa JSON compacto de pares ordenados por nome de aba, com `sheetId`, `range` e `values` nessa ordem. Remove somente null/string vazia no fim das linhas e linhas finais vazias. Instantes e extras do envelope não entram no hash de células; a persistência compara separadamente a serialização do envelope completo.
+
+Erro segue `<aba/linha/campo/regra>: inválido`, sem incluir valores das células. Cabeçalhos válidos sem registros são conjunto vazio válido. Etapa desconhecida continua válida; este módulo não classifica prontidão/publicação.
+
+## Verificação e limites
+
+[tests/dados.test.cjs](../../tests/dados.test.cjs) cobre reordenação, mínimos, IDs, dimensões, células, metadados, intervalos, duas marcas, hash e etapa desconhecida. Resultados executados ficam em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); esta documentação não reexecuta a suíte.
+
+Pegadinha: `validarEnvelope` exige um identificador de fonte não vazio, mas não consulta sua identidade configurada nem comprova que duas leituras remotas ocorreram. O importador confere a coerência do arquivo recebido. Captura oficial real, conferência da fonte pela Central e demonstração operacional seguem pendentes em T039.

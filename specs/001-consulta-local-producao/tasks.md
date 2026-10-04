@@ -1,102 +1,130 @@
 # Tasks: Consulta local da produção NTV
 
-**Estado em 02/10/2026:** 22 tarefas planejadas; nenhuma tarefa de implementação concluída. A estrutura Spec Kit já está criada. Caminhos abaixo relativos a `crm-social/`.
+Como as páginas de um álbum montadas em ordem, estas tarefas dividem a consulta completa em entregas verificáveis. **Estado em 04/10/2026:** T001–T018 implementadas e marcadas após RED/GREEN; T019–T041, 23 tarefas, permanecem pendentes. O recorte cobre fundação e US1 Planejamento; não conclui a 001 nem o aceite operacional. Branch `001-consulta-local-producao`, originada da `main`. Caminhos abaixo relativos a `crm-social/`. Evidência em [validacao.md](validacao.md).
 
-**Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md). Testes foram solicitados em FR-012. Executar teste antes da implementação correspondente, observar falha pelo comportamento ausente e repetir após implementar. Não alterar teste para acomodar resultado incorreto.
+**Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas](../../docs/design/telas.md). Uma spec vigente, sem repetir a criação da feature. Esta sincronização registra o código/testes do recorte, sem alterar requisitos, tarefas ou checks. Próxima etapa: US2 (T019–T022); US3/US4/US5, iniciador e entrega completa continuam posteriores. Captura operacional aguarda; nova validação remota das correções do PR #6 está pendente no retrato pré-push desta rodada (04/10/2026); nenhuma leitura Google nem mudança na operação.
+
+## Regra de execução e responsabilidade
+
+Cada tarefa de teste exige escrever casos com `node:test` e `node:assert/strict`, executar `node --test <arquivo>` pelo runtime 24.19.0 selecionado no quickstart e registrar RED pelo comportamento ausente. A tarefa de implementação seguinte deve produzir GREEN e pode refatorar preservando os casos. Não concluir o aceite Windows local com camadas vermelhas, casos pulados ou falha de importação usada como única evidência para todos os comportamentos. No CI Linux, aplicar somente os pulos de plataforma explicitamente definidos no plano para interface e iniciador, sem confundi-los com aceite das cinco camadas ou com SKIP de ferramenta do gate.
+
+Um dono por arquivo: Validação (`src/captura.cjs`/`tests/dados.test.cjs`), Persistência (`src/snapshot.cjs`/`tests/snapshot.test.cjs`), CLI (`scripts/importar-captura.cjs`/`tests/importador.test.cjs`), Configuração (`src/quadro-config.cjs`/`tests/quadro-config.test.cjs`/`config/quadro-etapas.json`), Projeção (`src/projecao.cjs`/`tests/projecao.test.cjs`), HTTP (`src/servidor.cjs`/`tests/servidor.test.cjs`), Interface (os três arquivos `src/web/`/`tests/interface.test.cjs`) e Iniciador (`Iniciar CRM.ps1`/`tests/iniciador.test.cjs`). O coordenador atribui as pessoas/agentes antes de executar; Interface e Projeção mantêm o mesmo dono entre fases ou recebem transferência explícita. Outros agentes trabalham no workspace: preservar mudanças alheias e não editar arquivo compartilhado simultaneamente.
 
 ## Fase 1 — Preparação
 
-- [ ] T001 Criar `tests/fixtures.cjs` com `capturaValida()` que devolve um novo objeto por chamada: seis abas, quatro peças NTV sintéticas, uma peça de outra marca, cabeçalhos completos e hashes calculados conforme o contrato. Nenhum dado privado da operação nas fixtures.
+- [x] T001 Conferir `.specify/feature.json`, AGENTS/constituição/contrato e preparar `.claude/rules/project-structure.md` pela skill `doc-init` antes de implementar. Selecionar Node 24.19.0 existente por `CRM_NODE_PATH`, confirmar versão efetiva, Playwright existente, Windows PowerShell 5.1 e configuração vigente do gate (`node --test`). Registrar interfaces, donos e aplicabilidade Linux/Windows em `specs/001-consulta-local-producao/validacao.md`, sem tocar `data/` ou mudar o gate. **Pré:** plano/contrato estabilizados. **Cobertura:** FR-010/012.
+- [x] T002 Criar `tests/fixtures.cjs` com `capturaValida()` e `mapaQuadroValido()` devolvendo objetos novos por chamada, e `recalcularHashes(raw)` conforme o contrato: seis abas, 66 mínimos, quatro peças NTV sintéticas incluindo imagem B e uma de outra marca; mapa com nove etapas e listas de liberação/revisão vazias. Incluir variações de datas/múltiplas peças/sem data, etapas conhecidas/desconhecidas/repetidas, publicação preenchida/vazia/inconsistente, versões, revisões, arquivos ausentes e extras sentinela. Rótulos de prontidão/revisão para provar prioridades são explicitamente sintéticos nos testes, sem incluí-los no JSON versionado. Usar diretórios temporários. **Pré:** T001. **Cobertura:** FR-002/005/012/014/016.
 
-## Fase 2 — Fundação
+## Fase 2 — Fundação de captura, consulta e HTTP
 
-- [ ] T002 Escrever D01–D05 em `tests/dados.test.cjs`: reordenação, cabeçalho faltante/duplicado, ID repetido, linha sem ID, aba ausente/parcial, retângulo incompleto, metadata divergente e hash recalculado incorreto. Exercitar `capturaId`: “string de 1–100 caracteres, somente `[A-Za-z0-9_-]`; nunca caminho”; “ISO 8601 UTC com `Z`, início menor ou igual ao fim”; `schemaVersion=1` e `brandId=ntv`.
-- [ ] T003 Implementar `validarCaptura(raw)` em `src/captura.cjs`, aplicando `contracts/captura-e-consulta.md`: “IDs não vazios e únicos por aba”; cabeçalhos por nome, matriz de escalares, dimensões/intervalo, duas leituras iguais e hash recalculado. Retornar registros normalizados por aba com linha de origem; não fazer rede.
-- [ ] T004 Escrever S01–S02 em `tests/snapshot.test.cjs`, usando diretório temporário: nenhuma captura, promoção válida, falha de gravação, nova coleta inválida, repetição e conflito do mesmo ID; última válida deve permanecer.
-- [ ] T005 Implementar `promoverCaptura(raw, dataDir)` e `lerEstado(dataDir, nowIso)` em `src/snapshot.cjs`, capturas imutáveis, ponteiro por substituição, último erro resumido e nenhuma exclusão. Mesmo ID+bytes é `sem_alteracao`; mesmo ID+outros bytes é conflito.
-- [ ] T006 Criar `scripts/importar-captura.cjs` com argumento obrigatório de caminho local, validação por T003 e promoção por T005; erro tem saída diferente de zero, sucesso informa ID e resultado, sem imprimir células. Não aceitar URL ou chamar o Google.
+- [x] T003 Escrever e executar RED D01–D05 em `tests/dados.test.cjs`: cabeçalhos reordenados, mínimo ausente, qualquer cabeçalho não vazio duplicado, ID duplicado/ausente, aba ausente/parcial, retângulo incompleto, metadata divergente e hashes diferentes/recalculado incorreto. Aplicar `capturaId` string de 1–100 caracteres somente `[A-Za-z0-9_-]`, `schemaVersion=1`, `brandId=ntv`, tempos ISO UTC com `Z` e início <= fim; aba só com cabeçalho é vazia válida. Etapa desconhecida não invalida captura. **Pré:** T002. **Cobertura:** FR-002/004/012.
+- [x] T004 Implementar `validarCaptura(raw)` em `src/captura.cjs` e obter GREEN de T003: normalizar por nome real de cabeçalho, exigir IDs não vazios/únicos por aba, conferir dimensões/intervalos/tempos/duas leituras e hash canônico. Manter extras apenas no privado e erros por aba/linha/campo, sem dump de células; nenhuma rede. **Pré:** T003 RED. **Cobertura:** FR-002/004/010.
+- [x] T005 Escrever e executar RED S01–S04 em `tests/snapshot.test.cjs` com arquivos/diretórios temporários reais: ausência, promoção, captura parcial, falha de gravação/promoção, conflito de bytes no mesmo ID, repetição já aceita sem novo recibo nem rollback e tentativas imutáveis. Interromper antes da confirmação do estado; conferir captura/horário anteriores, exclusão de recibo órfão do Histórico e nova promoção ao repetir bytes ainda não aceitos, sem no-op falso. Falha impossível de persistir deve dar erro explícito, sem fabricar recibo durável. **Pré:** T004. **Cobertura:** FR-003/004/012/016.
+- [x] T006 Implementar `promoverCaptura(raw, dataDir)` e `lerEstado(dataDir, nowIso)` em `src/snapshot.cjs`, obtendo GREEN de T005: capturas e recibos privados imutáveis preparados antes de substituir atomicamente `atual.json` com `{capturaId, ultimaTentativaId, historicoIds}` no mesmo diretório. Só IDs confirmados entram no Histórico e provam aceitação; falha confirmada conserva capturaId, acrescenta seu recibo e atualiza última tentativa. `ultima-tentativa.json` é resumo derivado. Erro ao gravar recibo/estado não é sucesso; não excluir arquivos nem gravar fora do diretório atribuído. Mesmo ID/bytes já aceitos é `sem_alteracao`; bytes preparados sem confirmação podem ser revalidados/promovidos em nova tentativa; outro conteúdo no mesmo ID é conflito. **Pré:** T005 RED. **Cobertura:** FR-003/004/010/016.
+- [x] T007 Escrever e executar RED C01–C03 em `tests/importador.test.cjs`, chamando o processo CLI real por `process.execPath` com diretório temporário: argumento ausente, URL recusada, arquivo ausente/inválido, sucesso, repetição e conflito. Asserções de código de saída e recibos/ponteiro, sem dump de células, credenciais ou chamada remota. **Pré:** T006. **Cobertura:** FR-004/010/012.
+- [x] T008 Criar `scripts/importar-captura.cjs` para `node scripts/importar-captura.cjs <caminho-local> [--data-dir <diretorio-local>]`, integrando T004/T006 e obtendo GREEN de T007. Padrão `data/`, erro com saída diferente de zero, sucesso resumido por ID/resultado; sem URL, Google ou fila. **Pré:** T007 RED. **Cobertura:** FR-004/010.
+- [x] T009 Escrever e executar RED Q01–Q03 em `tests/quadro-config.test.cjs`: validar JSON inicial do contrato, coluna inexistente e rótulo repetido no mesmo campo (inclusive destinos diferentes), rótulo vazio, schema/tipo inválido, JSON malformado e arquivo ausente. Usar funções puras e arquivos TEMP reais; adicionar rótulo sintético somente ao JSON e comprovar que o carregador retorna o mapa novo sem editar código. Listas atuais de liberação/revisão permanecem vazias; os rótulos dessas prioridades usados nos testes são sintéticos. **Pré:** T008. **Cobertura:** FR-010/012/014; SC-007.
+- [x] T010 Criar `config/quadro-etapas.json` com as nove etapas aprovadas e duas listas vazias do contrato; implementar `validarMapaQuadro(raw)`/`carregarMapaQuadro(configPath)` em `src/quadro-config.cjs` e obter GREEN de T009. Rejeitar coluna inexistente ou reservada e rótulo repetido no mesmo campo com erro claro de campo/índice; não manter tabela de rótulos no código nem fallback silencioso. JSON versionado, sem dados privados de linhas e sem rede. **Pré:** T009 RED. **Cobertura:** FR-010/014; SC-007.
 
-## Fase 3 — US1: calendário e lista (P1)
+- [x] T011 Escrever e executar RED da projeção básica em `tests/projecao.test.cjs`: `projetarVisao(estadoLocal, nowIso, mapaQuadro)` recebe `lerEstado` e mapa validado, conserva cada produção NTV uma única vez, exclui outra marca, aceita ausência de captura e não usa seletores n8n nem dados de demonstração. Asserir o envelope permitido pelo contrato e rejeitar exposição do estado privado/metadata/hash de captura/extras sentinela/configuração bruta. **Pré:** T006/T010. **Cobertura:** FR-002/003/010/012.
+- [x] T012 Implementar a base de `projetarVisao(estadoLocal, nowIso, mapaQuadro)` em `src/projecao.cjs`, obtendo GREEN de T011: seleção de campos permitidos e registros NTV, preservação das identidades editoriais e avisos, sem passagem direta de `values` ou do envelope privado ao HTTP. **Pré:** T011 RED. **Cobertura:** FR-002/003/010.
+- [x] T013 Escrever e executar RED H01–H04 em `tests/servidor.test.cjs`, com servidor real em loopback/porta efêmera, JSON de quadro válido em TEMP por `quadroConfigPath` e `webDir` confiável apontando a três estáticos sintéticos: GET `/api/visao`, ausência estruturada, GET/HEAD/bytes esperados, POST 405, privado/traversal inclusive codificado 404, Host/Origin externos recusados, sem CORS externo e nenhuma rota de escrita/importação. Configuração inválida deve impedir iniciar/listen com erro claro; `/config/quadro-etapas.json` não é servido nem caminho selecionável por query. Não depender de `src/web/`, criado somente em T018; arquivos extras da fixture não podem ser servidos. **Pré:** T012/T010. **Cobertura:** FR-009/010/012/014.
+- [x] T014 Implementar `criarServidor({dataDir, port, webDir, quadroConfigPath})` em `src/servidor.cjs`, integrando T006/T012/T010 e obtendo GREEN de T013. Carregar/validar o JSON antes de iniciar e passá-lo à projeção; padrão `config/quadro-etapas.json`, sem fallback silencioso nem mapa paralelo em código. O ponto de entrada faz bind `127.0.0.1`; somente rotas permitidas, sem cache para consulta, rede externa ou entrega arbitrária. `webDir` padrão `src/web/` e `quadroConfigPath` são argumentos confiáveis, nunca HTTP; allowlist dos três nomes fixa. **Pré:** T013 RED. **Cobertura:** FR-009/010/014.
 
-**Teste independente:** comparar IDs/datas das quatro peças da fixture em calendário, lista e filtro. A imagem B fica visível, inclusive com geração desligada; não preencher semana vazia.
+## Fase 3 — US1: Planejamento (P1)
 
-- [ ] T007 [P] [US1] Escrever P01–P03 em `tests/projecao.test.cjs`: quatro peças únicas, outra marca excluída, semana entre meses, calendário com outubro iniciando na quinta e “Data editorial é `YYYY-MM-DD` válida no calendário civil”; data inválida em lista separada, formato desconhecido como “Outro”.
-- [ ] T008 [P] [US1] Escrever H01–H04 em `tests/servidor.test.cjs`: `/api/visao`, ausência de captura, GET/HEAD estáticos, POST 405, privado/traversal 404, Host/Origin inválidos rejeitados. Servidor de teste usa porta temporária em loopback, nunca a fila.
-- [ ] T009 [US1] Implementar `projetarVisao(captura, nowIso)` em `src/projecao.cjs` para semanas e peças, mantendo IDs, datas e facetas distintas. Não importar seletores n8n nem descartar produções por status; devolver avisos localizados.
-- [ ] T010 [US1] Implementar `criarServidor({dataDir, port})` em `src/servidor.cjs`, usando T005/T009, somente rotas permitidas, bind loopback no ponto de entrada, cache desabilitado para `/api/visao`, sem rede externa ou escrita via HTTP.
-- [ ] T011 [US1] Escrever U01–U02 em `tests/interface.cjs` com Playwright existente: lista/calendário/filtro/semana concordam e calendário não inventa peças; estados vazios e retorno ao filtro geral. Usar servidor e dados temporários.
-- [ ] T012 [US1] Adaptar o desenho aprovado para `src/web/index.html`, `src/web/app.js` e `src/web/styles.css`: buscar apenas `/api/visao`, calendário/lista/filtros/semana e estado sem captura. Remover sugestões e ações demonstrativas; incluir origem/horário desde essa primeira entrega.
+**Teste independente:** todos os IDs NTV da fixture aparecem uma vez; calendário/lista/filtros concordam e peças sem data continuam acessíveis. Nenhuma peça ou objetivo mensal é inventado.
 
-## Fase 4 — US2: atualização compreensível (P1)
+- [x] T015 [US1] Escrever e executar RED P01–P03 em `tests/projecao.test.cjs`: quatro peças históricas, semana entre meses, calendário civil, formatos pelos slots confirmados mantendo tipo original, desconhecido como Outro, data inválida/ausente em Sem data e total global conservado após troca de mês/filtro. Produção sem semana inequívoca fica em Semana não identificada. Dia com várias peças tem ordem ordinal por ID; calendário usa `YYYY-MM-DD` civil válida sem deslocamento UTC. Objetivo mensal permanece “Ainda não definido”, sem usar objetivo semanal; cobertura semanal sem início válido tem limites null e aviso. **Pré:** T012/T014. **Cobertura:** FR-001/002/005/013.
+- [x] T016 [US1] Completar `src/projecao.cjs` para Planejamento e obter GREEN de T015: mês/cartões, tema no início da semana, facetas de formato, lista semanal, contagem global NTV sem data e agrupamentos. Não fixar quantidades/meses, preencher semana vazia ou retirar imagem B. **Pré:** T015 RED. **Cobertura:** FR-001/002/005/013.
+- [x] T017 [US1] Escrever e executar RED U01–U02 em `tests/interface.test.cjs`, usando `node:test`/`node:assert/strict` e Playwright existente: menu contém só Planejamento/Produção/Planilha; calendário/lista/filtros mantêm IDs, primeiro cartão + “+N no dia”, “N sem data” abre lista correta e objetivo mostra “Ainda não definido” sem botão. Em 390 px, começa em lista semanal e menu recolhido; em 1440 px não há corte. Usar servidor/dados temporários, bloquear rede externa e não depender do mockup como aplicação. Com `CI=true`, registrar motivo de interface exclusiva do computador antes de carregar Playwright; no aceite local, ferramenta ausente falha e nenhum caso é pulado. **Pré:** T014/T016. **Cobertura:** FR-001/005/011/012/013.
+- [x] T018 [US1] Criar/adaptar `src/web/index.html`, `src/web/app.js` e `src/web/styles.css` ao design aprovado e obter GREEN de T017: três telas no menu, Planejamento/calendário/lista/filtros/objetivo/sem data, tema e informações mínimas por cartão, estado sem captura e selo comum básico. Buscar somente `/api/visao`; sem ações demonstrativas, fallback fictício ou prévias remotas. **Pré:** T017 RED. **Cobertura:** FR-001/003/005/009/011/013.
 
-**Teste independente:** importar captura válida, falhar a próxima e verificar que o horário original permanece; coleta nova com células iguais renova a data de consulta.
+## Fase 4 — US2: frescor e releitura local (P1)
 
-- [ ] T013 [P] [US2] Acrescentar S03 em `tests/snapshot.test.cjs`: mesmo ID é no-op, outro ID com células iguais renova horário, falha não renova e transição de dia em America/Sao_Paulo marca dados anteriores a hoje.
-- [ ] T014 [P] [US2] Acrescentar cenários de US2 em `tests/interface.cjs`: horário/fonte em todas as visões, captura antiga e falha recente coexistem, botão “Reler dados locais” não faz consulta Google.
-- [ ] T015 [US2] Completar `src/snapshot.cjs`, `src/projecao.cjs` e `src/web/app.js` para frescor, última tentativa e releitura local conforme contrato; manter explicação explícita da captura. Um único implementador fica responsável por esses arquivos compartilhados nesta tarefa.
+**Teste independente:** hoje, outro dia, falha com última válida e ausência de captura produzem os quatro selos; reler não renova o horário nem limpa falha.
 
-## Fase 5 — US3: detalhe e próximo responsável (P2)
+- [ ] T019 [US2] Acrescentar e executar RED S03–S04/P04 em `tests/snapshot.test.cjs` e `tests/projecao.test.cjs`: mesmo ID/bytes já aceitos não cria recibo nem encerra falha; nova captura ID/horário com células iguais renova frescor; falha preserva `completedAt` e precede frescor com captura válida; sem captura permanece cinza mesmo com falha no Histórico. Exercitar virada de dia em America/Sao_Paulo e linha com data posterior que não altera selo. **Pré:** T006/T016. **Cobertura:** FR-003/004/012/016.
+- [ ] T020 [US2] Completar `src/snapshot.cjs` e `src/projecao.cjs`, por um responsável de integração, e obter GREEN de T019. Derivar `estado`/`selo` pelo ponteiro e tentativas do contrato; horário vem de `captura.completedAt`; GET/releitura não muta armazenamento nem falha. Só nova tentativa completa aceita encerra falha ativa. **Pré:** T019 RED. **Cobertura:** FR-003/004/016.
+- [ ] T021 [US2] Acrescentar e executar RED U03–U04 em `tests/interface.test.cjs`: “Atualizado hoje, HH:MM” verde, “Dados de DD/MM” âmbar, “Atualização falhou” vermelho com dados válidos preservados e “Sem dados” cinza; selo em todas as telas e clique abre Planilha. Botão Atualizar dados busca só API local, informa releitura da captura salva e conserva falha/horário. **Pré:** T018/T020. **Cobertura:** FR-003/004/011/012/016.
+- [ ] T022 [US2] Completar selo/navegação/Atualizar dados em `src/web/index.html`, `src/web/app.js` e `src/web/styles.css`, obtendo GREEN de T021. Detalhes da origem/período/atualização ficam em Planilha, com aviso curto; não prometer consulta Google. **Pré:** T021 RED. **Cobertura:** FR-003/004/016.
 
-**Teste independente:** abrir um Reels planejado sem vídeo final e localizar roteiro, revisões, origens e responsáveis; não anunciar mídia ausente como pronta.
+## Fase 5 — US3: gaveta do dia inteiro (P2)
 
-- [ ] T016 [P] [US3] Acrescentar P04–P06 em `tests/projecao.test.cjs`: ponteiros internos, documentos semanais, páginas/cenas/arquivos/revisões, origens inválidas, órfãos, empate e histórico. Aplicar “Versões e índices são inteiros positivos quando preenchidos” e “Duração e início, quando preenchidos, são números finitos não negativos”; vazio continua desconhecido.
-- [ ] T017 [P] [US3] Acrescentar U03–U04 em `tests/interface.cjs`: abrir peça em até dois acionamentos, detalhe acessível, Escape/restauração de foco, 390/1440 sem corte, HTML malicioso tratado como texto e link não HTTPS ou host não permitido não clicável.
-- [ ] T018 [US3] Completar `src/projecao.cjs` para detalhes e relações do modelo, incluindo campos opcionais de texto quando presentes; classificar arquivo apenas registrado, diferenciar aprovação/liberação/publicação e revisão histórica, preservar avisos sem ocultar a peça.
-- [ ] T019 [US3] Completar diálogo em `src/web/index.html`, `src/web/app.js` e `src/web/styles.css`: textos/páginas/cenas/documentos/revisões com versão e próximo responsável, links autorizados, mídia ausente explícita, navegação por teclado e layout responsivo.
+**Teste independente:** clicar uma peça abre todas as peças do dia; primeira seção aberta, revisões/versões/arquivos rastreáveis, sem mídia ou encaminhamento inferidos.
 
-## Fase 6 — Entrega
+- [ ] T023 [US3] Acrescentar e executar RED P05–P07 em `tests/projecao.test.cjs`: dias inteiros com peças de formatos diferentes em ordem ordinal por ID, Sem data da semana, documentos semanais/ponteiros internos, páginas/cenas por produção e versão, órfãos, empate/origens incompatíveis e mídia ausente. Versões/índices preenchidos são inteiros positivos; início/duração são números finitos não negativos; vazio é desconhecido. `responsavel_atual` principal (vazio A confirmar) e `responsavel_correcao` separados; revisão antiga/resolvido/resolvida não vira correção atual, desconhecido não prova resolução. Arquivo tem nome de apresentação por tipo/papel, fallback Arquivo registrado. Sem evidência explícita de design novo, “A confirmar”, mesmo com versão/template. **Pré:** T020. **Cobertura:** FR-006/007/008/015.
+- [ ] T024 [US3] Completar `src/projecao.cjs` para `dias`, relações e detalhes, obtendo GREEN de T023. Preservar versões e valores registrados; ordem numérica de páginas/cenas dentro da mesma versão. Arquivos são registro disponível; mídia ausente/referência quebrada é aviso. Não calcular responsável, “aguarda de”, próxima ação ou design novo por inferência. **Pré:** T023 RED. **Cobertura:** FR-006/007/008/015.
+- [ ] T025 [US3] Acrescentar e executar RED U05–U06 em `tests/interface.test.cjs`: cartão/dia/lista abrem dia inteiro mesmo com filtro; clique na segunda peça não reduz o dia; primeira seção aberta, outras recolhidas, navegação por teclado, Escape/restauração do foco, abertura em até dois acionamentos. Sem data abre grupo da semana. Em 390 px gaveta é tela cheia; 1440 px sem corte. HTML malicioso vira texto; somente links HTTPS Drive/Docs sem credenciais são clicáveis por ação explícita, sem requisição automática. **Pré:** T022/T024. **Cobertura:** FR-006/007/008/010/011/012/015.
+- [ ] T026 [US3] Completar gaveta/acordeões em `src/web/index.html`, `src/web/app.js` e `src/web/styles.css` e obter GREEN de T025: título/data/quantidade, etapa/responsáveis/revisões separados, páginas/cenas/arquivos/avisos, revisões resolvidas em cinza no histórico e publicação não comprovada sem evidência do contrato. Primeiro acordeão segue a ordem do primeiro cartão do calendário. Texto por `textContent`, links autorizados com `noopener noreferrer`, sem miniaturas remotas. **Pré:** T025 RED. **Cobertura:** FR-006/007/008/010/011/015.
 
-- [ ] T020 Criar `Iniciar CRM.ps1` com runtime Node existente e inicialização oculta em loopback; porta ocupada produz orientação sem matar processo. Registrar uso e encerramento em `README.md`; verificar rotas restritas no servidor iniciado.
-- [ ] T021 Executar `specs/001-consulta-local-producao/quickstart.md`, coletar leitura real completa pela Central em `data/` e comparar IDs/datas/pendências com a mesma captura. Registrar resultados e limitações em `specs/001-consulta-local-producao/validacao.md`; verificar também fixture de 500 peças sem confundir com produção.
-- [ ] T022 Fazer revisão independente de contrato/código e demonstração da feature; corrigir achados, repetir só verificações afetadas e atualizar `README.md`, `ROADMAP.md` e `specs/001-consulta-local-producao/validacao.md` com estado observado. Atualizar documentação pai se a arquitetura efetiva diferir do plano.
+## Fase 6 — US4: Produção por etapa (P2)
+
+**Teste independente:** nenhum cartão some; publicação > liberação > revisão > etapa, arte_aprovada em Visual, oito etapas em Mídia e Outras com originais/contador distinto. Rótulo novo entra por configuração, sem editar código.
+
+- [ ] T027 [US4] Acrescentar e executar RED P08–P10 em `tests/projecao.test.cjs`: oito colunas fixas; combinações sintéticas provam publicação > liberação > revisão > etapa, retirando cada condição superior para exercitar a seguinte. Usar listas de liberação/revisão somente sintéticas nos testes; as listas versionadas atuais são vazias. Sem prioridade superior, arte_aprovada vai para Visual e os oito valores do dicionário para Mídia, inclusive montagem_pronta. Status rascunho/publicado é informativo e não muda coluna; sem publicado_em, aprovação/arquivo/status não comprovam publicação. Campo preenchido inválido/sem fuso/futuro conserva Publicada com aviso; vazio/null/espaços não ativa publicação. Etapa desconhecida/vazia vai para Outras com original/Não informada. Contador: repetição do mesmo rótulo conta uma vez, dois rótulos contam dois, null/célula omitida/string vazia/somente espaços coexistentes contam uma única chave de vazio, preservando cada original; semana sem Outras dá zero; excluir outra semana/marca e etapa desconhecida cuja prioridade superior venceu. Conferir título plural/singular e mudança do contador após adicionar rótulo só ao JSON TEMP. Pendência vem de registro vigente; sem encaminhamento inventado. **Pré:** T024/T010. **Cobertura:** FR-002/005/008/014; SC-007.
+- [ ] T028 [US4] Completar `src/projecao.cjs` para `quadro`, semanas/colunas/cartões e obter GREEN de T027. Usar mapa validado e prioridade do contrato, sem rótulos paralelos em código; preservar todos os originais/status. Calcular quantidadeValoresNovos/título só dos cartões Outras da semana NTV selecionada, por valores distintos. Não inferir prontidão de arte_aprovada/montagem_pronta nem atividade do executor. **Pré:** T027 RED. **Cobertura:** FR-002/005/008/014.
+- [ ] T029 [US4] Acrescentar e executar RED U07–U08 em `tests/interface.test.cjs`: navegação semana/tema, cartões/prioridades/pendências/responsável/status informativo e colunas vazias; título Outras · N valores novos (singular para um), original visível em cada cartão, duplicatas não aumentam N e trocar semana atualiza o contador. Nenhum drag-and-drop ou ação de etapa. Clique abre dia inteiro; peça sem data abre Sem data da semana. Conferir 390/1440, teclado e contagens sem sumir cartão. **Pré:** T026/T028. **Cobertura:** FR-009/011/012/014/015.
+- [ ] T030 [US4] Implementar tela Produção em `src/web/index.html`, `src/web/app.js` e `src/web/styles.css`, obtendo GREEN de T029. Preservar identidade aprovada, status informativo, título/contador fornecidos pela projeção e original em Outras; não recalcular mapas no browser nem alterar estado pela UI. **Pré:** T029 RED. **Cobertura:** FR-009/011/014/015.
+
+## Fase 7 — US5: Planilha e Histórico (P2)
+
+**Teste independente:** seis tabelas correspondem à seleção de 66 mínimos da captura, com valores/contagens; Histórico conserva tentativas e falha, e cada tabela rola dentro da própria região.
+
+- [ ] T031 [US5] Acrescentar e executar RED P11–P12/H05 em `tests/projecao.test.cjs` e `tests/servidor.test.cjs`: seis abas ordenadas, 66 campos mínimos (8/17/8/11/12/10), valores incluindo IDs/id_drive/sha256/origens_json como dados, linhas vazias excluídas/contagens das linhas NTV apresentadas e Histórico. Sem captura: tabelas vazias e orientação estruturada. Extras sentinela, envelope bruto/metadata/hash da captura, credenciais/caminhos e dump de erro não chegam ao HTTP; célula mínima com conteúdo sensível indevido é suprimida com aviso sem retirar coluna. Origens JSON são texto, nunca instruções. Asserir todas as tentativas confirmadas no estado recentes primeiro, anteriores acessíveis, recibos imutáveis, último sucesso preservado após falha e exclusão de arquivo preparado/órfão mesmo com resultado completa. **Pré:** T020/T028. **Cobertura:** FR-003/004/010/012/016; SC-008.
+- [ ] T032 [US5] Completar `src/projecao.cjs` e a integração de leitura em `src/servidor.cjs`, somente se necessária, obtendo GREEN de T031. Projetar `planilha`/`historico` conforme contrato por seleção explícita dos mínimos, com todos os valores registrados permitidos e resumos; não servir `values`, envelope inteiro, extras arbitrários ou arquivos privados. **Pré:** T031 RED. **Cobertura:** FR-003/004/010/016.
+- [ ] T033 [US5] Acrescentar e executar RED U09–U10 em `tests/interface.test.cjs`: abas Semanas/Produções/Páginas/Cenas/Arquivos/Revisoes com contagens e Histórico final, seleção por teclado, todos os mínimos com valores, período/horário da captura e resultados completa/falhou/motivo resumido. “Atualizar dados” relê localmente; vazio pede primeira leitura à Central. Em 390/1440, tabelas têm rolagem horizontal própria e a página não corta; textos/origens não executam HTML e não geram navegação automática. **Pré:** T030/T032. **Cobertura:** FR-003/004/010/011/012/016.
+- [ ] T034 [US5] Completar tela Planilha/Histórico em `src/web/index.html`, `src/web/app.js` e `src/web/styles.css`, obtendo GREEN de T033. Nenhuma edição de célula/importação pelo navegador; fontes/horários/cobertura só vêm da projeção. Manter dados reais fora do mockup compartilhável. **Pré:** T033 RED. **Cobertura:** FR-003/004/009/011/016.
+
+## Fase 8 — Iniciador, revisão e entrega
+
+- [ ] T035 Escrever e executar RED L01–L02 em `tests/iniciador.test.cjs` com `node:test`/`node:assert/strict`: chamar Windows PowerShell 5.1/iniciador real com `-NodePath` apontando a `process.execPath`, diretório temporário e porta isolada; servidor escuta somente loopback, processo inicia oculto, runtime ausente/porta ocupada dão erro útil sem matar ocupante. Fora de `win32`, registrar SKIP de plataforma antes de chamar PowerShell; no Windows local, todos os casos são obrigatórios. Cleanup encerra só PID criado pelo teste. **Pré:** T034. **Cobertura:** FR-010/012.
+- [ ] T036 Criar `Iniciar CRM.ps1 [-DataDir <diretorio-local>] [-Port <porta>] [-NodePath <exe>]` com defaults locais e processo oculto, obtendo GREEN de T035. Porta 4318 padrão; ocupação gera orientação sem encerrar processo alheio. Procedimento de encerramento identifica a instância criada; não usar comando global por nome. **Pré:** T035 RED. **Cobertura:** FR-010.
+- [ ] T037 Executar `node --test` pelo runtime selecionado e os cenários do `specs/001-consulta-local-producao/quickstart.md` com fixtures/diretórios temporários no Windows local sem `CI=true`. Confirmar oito suítes, inclusive `tests/interface.test.cjs`, cinco camadas verdes com zero casos pulados, bloqueio de rede externa e fixture sintética de 500 peças. Registrar também a aplicabilidade Linux e seus pulos explícitos, sem declarar interface/iniciador aceitos pelo CI. Registrar resultados/tempo/limitações em `specs/001-consulta-local-producao/validacao.md`; se surgir ajuste de código, criar o teste de regressão antes. **Pré:** T036 e GREEN de todas as histórias. **Cobertura:** FR-001–016; SC-001–009.
+- [ ] T038 Fazer revisão independente de contrato/código/testes e cenários de `specs/001-consulta-local-producao/validacao.md`, com foco nos cinco riscos do plano. Corrigir achados no arquivo atribuído somente após teste de regressão RED, repetir verificações afetadas e registrar resultado; não mudar testes para legitimar comportamento incorreto. **Pré:** T037. **Cobertura:** FR-001–016; SC-001–009.
+- [ ] T039 Demonstrar 001 segundo `specs/001-consulta-local-producao/quickstart.md`: Central prepara uma captura real completa e privada, importador valida, CRM local compara IDs/datas/relações com essa mesma captura. Registrar em `specs/001-consulta-local-producao/validacao.md` apenas evidência compartilhável e limitações; nenhuma coleta agora, dados reais em `data/` ignorado, sem escrita Google/fila/mídia/publicação. **Pré:** T038 sem achados bloqueantes. **Cobertura:** FR-001–016; SC-001–009.
+- [ ] T040 Executar `node tools/quality-gate.mjs` como penúltima etapa com `quality-gate.config.json` vigente, incluindo `testCommand: ["node", "--test"]`. Registrar resultado real em `specs/001-consulta-local-producao/validacao.md`; não desabilitar checks nem concluir com falha. Correção de código exige teste e nova execução antes da tarefa final. **Pré:** T039 e todas as cinco camadas verdes. **Cobertura:** FR-012; SC-006.
+- [ ] T041 Como última etapa, ler `.claude/agents/doc-sync-onboarding.md` e seguir suas instruções: sincronizar somente os documentos afetados (`README.md`, `ROADMAP.md`, AGENTS/design/índice quando pertinente e `specs/001-consulta-local-producao/validacao.md`). Registrar separado planejado/implementado/testado/integrado, comandos reais e limitações; atualizar documentação pai/Graphify se arquitetura ou contrato efetivo mudou. Se requerer novo código, voltar ao ciclo de testes/revisão/gate antes de fechar a sincronização. **Pré:** T040 aprovado. **Cobertura:** FR-012; SC-001–009 e governança.
 
 ## Dependências, paralelismo e estratégia
 
-T001 → T002 → T003 → T004 → T005 → T006 precedem o primeiro painel. T007 e T008 podem ocorrer juntos; T009 antes de integrar T010; T011 antes de T012. T013/T014 podem ocorrer juntos após US1. T016/T017 podem ocorrer juntos após US2. T020–T022 dependem das três histórias.
+T001 → T002 → T003 → T004 → T005 → T006 → T007 → T008 estabelece a importação. T009/T010 validam a configuração após T008; T011/T012 usam T006/T010; T013/T014 usam T012/T010. US1 T015–T018 depende da fundação, US2 T019–T022 depende de US1, US3 T023–T026 de US2, US4 T027–T030 de US3 e US5 T031–T034 de US4. T035–T041 dependem das cinco histórias. Dentro de cada par, RED sempre antes de GREEN.
 
-Exemplos de delegação: US1 separa testes de projeção e HTTP; US2 separa testes de persistência e interface; US3 separa testes de relações e interface. Marca `[P]` significa paralelismo dentro da fase após os pré-requisitos, não permissão para pular fundação. Implementadores de `app.js` não trabalham simultaneamente; coordenador integra. Revisores não reescrevem arquivos sem atribuição.
+Há trabalho independente possível entre testes de projeção e HTTP, ou entre testes de serviços e interface, após seus pré-requisitos. Exemplos: o responsável por HTTP pode redigir H01–H04 enquanto Projeção finaliza a base; após US1, Persistência testa falha/identidade enquanto Interface testa os selos; em US4, Projeção prepara casos Outras/Publicada enquanto Interface prepara interação. A execução dos testes e integração respeitam dependências. Não marcar tarefas com `[P]` quando compartilham arquivo ou dependem de comportamento ainda não integrado; transferência de dono precisa ser explícita.
 
-Primeira demonstração: US1 com origem/horário básico; feature completa exige também US2 e US3. Entregar, demonstrar e discutir antes da feature 002. Não instalar novas agendas ou modificar flags para produzir a demonstração.
+Primeira demonstração parcial: US1 com origem/selo básico. Feature completa exige as cinco histórias, as cinco camadas verdes, revisão, demonstração, quality gate e sincronização final. Não iniciar a futura 002 — Planilhas por conveniência durante esta implementação.
 
-## Exemplos executáveis que orientam os testes
+## Cobertura rastreável
 
-Esses trechos definem comportamentos, não substituem os arquivos completos. `capturaValida()` é criada em T001; interfaces de produção estão no plano.
+| Requisito | Tarefas de teste e implementação |
+| --- | --- |
+| FR-001 calendário/lista/filtros | T015–T018 |
+| FR-002 registros/identidades históricos | T002–T004, T011–T012, T015–T016, T027–T028 |
+| FR-003 captura/frescor/falha | T005–T006, T011–T012, T019–T022, T031–T034 |
+| FR-004 Central/importação/releitura | T003–T008, T019–T022, T031–T034 |
+| FR-005 datas/publicação/sem data | T015–T018, T027–T028 |
+| FR-006 detalhe/versões/responsáveis | T023–T026 |
+| FR-007 ponteiros/arquivos/links | T023–T026 |
+| FR-008 estados/registro/evidência | T023–T028 |
+| FR-009 consulta sem operação | T013–T014, T017–T018, T029–T030, T033–T034 |
+| FR-010 loopback/proteção | T003–T014, T025–T026, T031–T032, T035–T036 |
+| FR-011 teclado/mobile/foco | T017–T018, T021–T022, T025–T026, T029–T030, T033–T034 |
+| FR-012 testes/verificação | RED/GREEN de T003–T036, T037–T041 |
+| FR-013 menu/objetivo | T015–T018 |
+| FR-014 quadro/mapa/responsável | T009–T010, T013–T014, T027–T030 |
+| FR-015 dia inteiro/acordeões | T023–T026, T029–T030 |
+| FR-016 Planilha/Histórico | T005–T006, T019–T022, T031–T034 |
 
-```js
-// D03: identidade duplicada deve invalidar a captura, mesmo se o hash for coerente.
-const assert = require('node:assert/strict');
-const { validarCaptura } = require('../src/captura.cjs');
-const { capturaValida, recalcularHashes } = require('./fixtures.cjs');
-const raw = capturaValida();
-raw.tables['Produções'].values.push([...raw.tables['Produções'].values[1]]);
-recalcularHashes(raw);
-assert.throws(() => validarCaptura(raw), /duplicad/i);
-```
+| Critério de sucesso | Evidência futura e tarefas |
+| --- | --- |
+| SC-001 | T011/T015/T027/T031 e T037/T039: 100% dos IDs NTV conservados, sem data global e grupo sem semana |
+| SC-002 | T019–T022/T033–T034 e T039: quatro selos corretos em todas as telas, um acionamento para fonte/fim/cobertura em Planilha |
+| SC-003 | T023–T026/T027–T030 e T039: pendências por registro/unidade, mídia ausente sem anúncio disponível e sem publicação inferida |
+| SC-004 | T005–T006/T019–T022/T031–T034 e T037: falha preserva dados/horário; recibo confirmado sobrevive a reinício/releitura e novo sucesso; erro de persistência explícito, sem conclusão falsa |
+| SC-005 | T017–T018/T025–T026/T029–T030: até duas ações para o grupo, 100% das peças no dia, primeiro acordeão aberto e Escape/foco |
+| SC-006 | T007–T014/T025/T031/T035–T040: zero escrita remota, mídia/publicação/workflow; HTTP sem captura bruta/extras/segredos |
+| SC-007 | T009–T010/T013–T014/T027–T030 e T037/T039: prioridade completa, arte_aprovada em Visual, mídia preservada, configuração válida/extensível ou erro claro, Outras com originais e contador distinto |
+| SC-008 | T005–T006/T031–T034 e T037/T039: seis abas, 66 mínimos/valores e contagens fiéis, todas as tentativas confirmadas no estado, órfãos excluídos e nenhum extra automático |
+| SC-009 | T017–T018/T021–T022/T025–T026/T029–T030/T033–T034 e T037/T039: teclado nos cinco fluxos, 390/1440 sem rolagem da página, lista e gaveta cheia no celular |
 
-```js
-// S02: tentativa inválida conserva a leitura anterior.
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { promoverCaptura, lerEstado } = require('../src/snapshot.cjs');
-const { capturaValida } = require('./fixtures.cjs');
-const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'crm-snapshot-'));
-try {
-  const boa = capturaValida();
-  promoverCaptura(boa, dir);
-  const ruim = capturaValida();
-  ruim.capturaId = 'tentativa-incompleta';
-  delete ruim.tables.Cenas;
-  assert.throws(() => promoverCaptura(ruim, dir), /Cenas/);
-  assert.equal(lerEstado(dir, boa.completedAt).captura.capturaId, boa.capturaId);
-} finally {
-  fs.rmSync(dir, { recursive: true, force: true }); // apenas temp criado neste teste
-}
-```
-
-T001 também exporta `recalcularHashes(raw)`, que recalcula ambos os hashes canônicos da fixture. O teste de hash incorreto não chama esse auxiliar depois de alterar a célula. Os comandos e resultados esperados estão no quickstart.
-
-## Cobertura
-
-FR-001/002/005: T007–T012; FR-003/004: T004–T006 e T013–T015; FR-006/007/008: T016–T019; FR-009/010: T008/T010/T017/T020; FR-011: T011/T017/T019; FR-012 e SC-001–006: testes correspondentes, T021–T022. Nenhum requisito ficou sem tarefa no autorrevisor documental de 02/10.
+**Contagem:** preparação 2; fundação 12; US1 4; US2 4; US3 4; US4 4; US5 4; entrega 7. Total 41, IDs únicos e sequenciais. Cobertura documental não significa testes executados.

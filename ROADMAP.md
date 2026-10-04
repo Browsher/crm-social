@@ -1,56 +1,70 @@
 # Roadmap — CRM Social local
 
-Data: 02/10/2026. **Estado: estrutura do Spec Kit inicializada; features ainda não implementadas.** A integração Codex/PowerShell e a [constituição 1.0.0](.specify/memory/constitution.md) estão presentes. Isso não instala perfis editoriais nem comprova integração com a operação.
+Como um álbum que ganha páginas em entregas pequenas, o CRM começa pela consulta de capturas e depois amplia as funções aprovadas. Data: 04/10/2026. **Estado: primeira entrega local da 001 implementada (T001–T018); 23 tarefas dessa feature pendentes; 002–006 ainda em backlog.** A integração Codex/PowerShell e a [constituição 1.0.0](.specify/memory/constitution.md) estão presentes. Isso não instala perfis editoriais nem comprova integração com a operação.
 
-CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review **0.4.4** foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). A **0.4.5** foi aceita no [PR #3](https://github.com/Browsher/crm-social/pull/3#issuecomment-5975683038), commit `afd8238` (merge `72efb98`), [execução 37170294491](https://github.com/Browsher/crm-social/actions/runs/37170294491). A **0.4.7** foi aceita no [PR #4](https://github.com/Browsher/crm-social/pull/4#issuecomment-5976055197), commit `c9d1e91` (merge `506d7a7`), [execução 37173190416](https://github.com/Browsher/crm-social/actions/runs/37173190416). A **0.4.8 aguarda o aceite deste PR**; aumenta o limite do review para 40 turnos, mantendo permissões e ferramentas.
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review **0.4.4** foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). A **0.4.5** foi aceita no [PR #3](https://github.com/Browsher/crm-social/pull/3#issuecomment-5975683038), commit `afd8238` (merge `72efb98`), [execução 37170294491](https://github.com/Browsher/crm-social/actions/runs/37170294491). A **0.4.7** foi aceita no [PR #4](https://github.com/Browsher/crm-social/pull/4#issuecomment-5976055197), commit `c9d1e91` (merge `506d7a7`), [execução 37173190416](https://github.com/Browsher/crm-social/actions/runs/37173190416). A **0.4.8** foi aceita no [PR #5](https://github.com/Browsher/crm-social/pull/5#issuecomment-5976475669), head `bc0b02b` (merge `4f20f20`), [execução 37176292254](https://github.com/Browsher/crm-social/actions/runs/37176292254). Repositório público; ruleset ativo da `main` exige `quality-gate`.
 
-Os cenários de retenção por possível segredo e de falha foram testados somente localmente; isso não comprova esses caminhos no Actions. Existe limite de arquivos por PR na lista retornada pelo gh: se `files` vier menor que `changedFiles`, o review recusa a lista incompleta; o teto numérico ainda não foi documentado. O gate fica vermelho até a 001 trazer testes reais; a geração de testes pelo rótulo `gerar-testes` ainda não foi exercitada.
+O review do [PR #1](https://github.com/Browsher/crm-social/pull/1) precisou de 23 turnos; a 0.4.8 mantém limite de 40 turnos e timeout de 20 minutos, dívida de custo/tempo a acompanhar. Retenção por possível segredo e falha foram testadas somente localmente; esses caminhos no Actions e o rótulo `gerar-testes` ainda não foram exercitados. Se `files` vier menor que `changedFiles`, o review recusa a lista incompleta; o teto numérico ainda não foi documentado.
 
-O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. O [desenho de referência](docs/design/desenho.md) e o protótipo descrevem a intenção, sem representar funcionalidades entregues.
+O gate local após as correções do PR #6 passou: 67 testes, zero falhas/pulos, cobertura 96,06% e complexidade PASS com aviso 12 no CLI; Semgrep SKIP por ausência no Windows, audit N/A sem `package.json` da aplicação. O primeiro [CI Linux do PR #6](https://github.com/Browsher/crm-social/actions/runs/37182000254) terminou SUCCESS, com Semgrep 1.179.0 PASS e [review publicado](https://github.com/Browsher/crm-social/pull/6#issuecomment-5977215935). Nova validação remota/aceite das correções estão pendentes no retrato pré-push desta rodada (04/10/2026). Os nove casos atuais de interface têm SKIP explícito no CI, com aplicabilidade pendente na revisão (M8). Consultar [validação da entrega](specs/001-consulta-local-producao/validacao.md); nenhuma captura operacional validada.
 
-As cinco features abaixo serão construídas em sequência. Somente a 001 recebe especificação detalhada agora; 002–005 são recortes de backlog, sujeitos ao detalhamento quando chegar sua vez. Os critérios abaixo são condições de aceite futuro, não resultados já verificados.
+O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
+
+As seis features abaixo serão construídas em sequência. Somente a 001 recebe especificação detalhada agora; 002–006 são recortes de backlog, sujeitos ao detalhamento quando chegar sua vez. Os critérios abaixo são condições de aceite futuro, não resultados já verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
 
 ## 001 — Consulta local da produção
 
-**Resultado visível:** calendário e lista da produção NTV a partir de uma captura oficial da planilha, preparada pela Central. Cada conteúdo permite consultar tema, formato, etapa, responsável, pendência e links dos arquivos no Drive. A interface mostra fonte, instante da captura e período coberto.
+**Entregue neste recorte, em 04/10:** captura validada/importada localmente, persistência com ponteiro confirmado e arquivos imutáveis, mapa de etapas validado, API em loopback e US1 Planejamento. Calendário/lista/filtros, imagem B, “N sem data”, objetivo indefinido e abertura básica do dia estão no aplicativo. Selo capturado = **Captura local**; ausência = **Sem dados**. [Screenshots reais](docs/design/screenshots/LEIA-ME.md) usam somente fixture sintética.
+
+**Ainda pendente na 001:** US2/frescor e Atualizar dados (T019–T022), US3/detalhes e acordeões (T023–T026), US4/quadro (T027–T030), US5/Planilha e Histórico (T031–T034), iniciador (T035–T036) e verificação/aceite completo (T037–T041). Produção e Planilha são mensagens de próxima entrega. Nenhuma captura operacional ou leitura Google foi validada. O resultado e o aceite abaixo continuam sendo a meta da feature completa.
+
+**Resultado visível:** menu com Planejamento, Produção e Planilha. Planejamento mostra calendário com cartões, lista semanal, objetivo **Ainda não definido** e **N sem data**. Clicar no cartão ou no dia abre a gaveta do dia inteiro, com acordeões por peça. Produção organiza as peças em quadro por etapa, com **Outras** preservando valores desconhecidos. Planilha apresenta as seis abas capturadas e Histórico. O selo de status tem quatro estados; no celular, Planejamento usa lista e a gaveta ocupa a tela.
 
 **Dependências:** definir o contrato da captura e conferir os registros disponíveis. Preservar IDs internos, versões e relações entre semana, produção e arquivos. Não há acesso contínuo à fonte nesta feature.
 
-**Aceite:** os conteúdos da captura aparecem sem duplicação, inclusive semanas que cruzam meses e a imagem B histórica. Calendário, lista, filtros e detalhes concordam entre si; links correspondem aos registros. Captura antiga, parcial, inválida ou indisponível fica identificada, sem converter ausência em zero ou conclusão. A consulta funciona por teclado e em tela de 390 px, sem corte horizontal. Consultar não edita dados, gera mídia, ativa controles nem publica.
+**Aceite:** os conteúdos da captura aparecem sem duplicação, inclusive semanas que cruzam meses e a imagem B histórica. Calendário, lista, quadro e gaveta concordam entre si; o dia inteiro não é reduzido pelo filtro de formato. **Publicada** exige registro explícito de publicação; **com quem está** mantém `responsavel_atual`, separado de `responsavel_correcao` da revisão vigente. Sem inferir encaminhamentos. Captura antiga, parcial, inválida ou indisponível fica identificada e falha mantém a anterior. **Atualizar dados** apenas relê a captura local. Teclado, Esc e 390 px funcionam sem corte da página; tabelas têm rolagem própria. Nenhuma consulta edita, gera, ativa ou publica.
 
 Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
-## 002 — Planejamento mensal e repasse ao Diretor
+## 002 — Planilhas
+
+**Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço com chave configurada fora do repositório e nunca enviada ao navegador. Não herdar autenticação deste chat.
+
+**Dependências:** concluir a 001 e aprovar uma emenda explícita da constituição antes de implementar a leitura direta. Definir contrato de acesso mínimo, erros, cobertura e integridade; ampliar a captura para **Agentes, Controle e Execucoes**, além das seis abas da 001. A identidade real de Agentes é `Coluna 1`. Não renomear cabeçalhos remotos nem colocar chave/captura em fixtures.
+
+**Aceite:** leitura sem escritas em Google/Drive, credenciais fora da interface e do Git, falha preservando a última captura válida e sua data. As três abas novas mantêm fonte/horário e servem à 006; cadastro ou flag não prova agenda ativa ou integração. A 002 não cria fonte de objetivo mensal: **Ainda não definido** permanece até o contrato da 003. Esta rodada registra a emenda como futura e conserva a constituição vigente.
+
+## 003 — Planejamento mensal e repasse ao Diretor
 
 **Resultado visível:** objetivo do mês, pautas sugeridas e ligação de cada semana ao plano mensal. O Estrategista de Conteúdo Mensal será um perfil delegado pela Central; o Diretor detalha e ajusta o recorte semanal, registrando a justificativa e preservando a origem mensal.
 
-**Dependências:** concluir a 001, definir identidade por marca/mês/versão e o contrato de repasse mês/semana. Planejar uma migração conjunta de documentos, perfis e consumidores para a meta futura de uma imagem, um carrossel de 4–6 páginas e um Reels de 15–30 segundos por semana. Conferir fontes antes de qualquer mudança remota.
+**Dependências:** concluir 001–002, definir identidade por marca/mês/versão e o contrato de repasse mês/semana. Planejar uma migração conjunta de documentos, perfis e consumidores para a meta futura de uma imagem, um carrossel de 4–6 páginas e um Reels de 15–30 segundos por semana. Conferir fontes antes de qualquer mudança remota.
 
 **Aceite:** o plano mensal mantém origem e versão; ajustes semanais não apagam a proposta anterior. Reentrada com as mesmas origens não duplica mês, semana ou entrega. A meta nova vale conforme a migração definida, preservando as duas imagens das semanas históricas, incluindo a imagem B. Hipóteses e datas sugeridas continuam identificadas. Este backlog não instala o perfil, muda prompts ou cria agenda; esses passos exigem escopo e evidência próprios quando a feature for detalhada.
 
-## 003 — Revisões e pedidos de ajuste
+## 004 — Revisões e pedidos de ajuste
 
 **Resultado visível:** o usuário solicita ajustes pelo CRM e acompanha o retorno. Toda solicitação identifica conteúdo, versão de origem e pedido; a Central confere a versão vigente e registra a decisão nos campos autorizados.
 
-**Dependências:** concluir 001–002 e definir o contrato de solicitação, confirmação, conflito e recibo, incluindo tratamento de reenvio.
+**Dependências:** concluir 001–003 e definir o contrato de solicitação, confirmação, conflito e recibo, incluindo tratamento de reenvio.
 
 **Aceite:** uma solicitação permanece pendente até existir confirmação da Central para a versão correta. Versão divergente produz conflito explícito; reenvio não aplica a mesma mudança duas vezes. O recibo permite conferir o resultado na fonte. Rejeição confirmada bloqueia as dependências pertinentes. A interface não se torna um segundo escritor operacional, e aprovação humana não substitui conferência técnica nem habilita geração ou publicação.
 
-## 004 — Materiais e biblioteca visual
+## 005 — Materiais e biblioteca visual
 
 **Resultado visível:** prévias reais dos arquivos autorizados, com origem, versão e relação com o conteúdo. Referências visuais e materiais de produção aparecem identificados; no carrossel, cada página mostra o arquivo efetivamente disponível.
 
-**Dependências:** concluir 001–003, conferir os registros de Biblioteca/Arquivos e definir como disponibilizar localmente os materiais permitidos.
+**Dependências:** concluir 001–004, conferir os registros de Biblioteca/Arquivos e definir como disponibilizar localmente os materiais permitidos. A tela **Conteúdos** entra aqui, com prévias somente dos arquivos liberados.
 
 **Aceite:** cada prévia corresponde a um arquivo real e à versão informada. Referência não aparece como peça produzida; arquivo ausente ou inacessível não recebe prévia fictícia. Mídia disponível, conferida e aprovada mantém estados distintos. Não há geração automática, exposição de credenciais nem mudança de permissões públicas do Drive.
 
-## 005 — Acompanhamento da operação
+## 006 — Acompanhamento da operação: Equipe e Workflow
 
-**Resultado visível:** execuções conhecidas, pendências, responsáveis e próxima ação, acompanhados da fonte e do instante de atualização. O usuário entende o que avançou e o que depende de material, capacidade ou integração.
+**Resultado visível:** **Equipe** em cartões dos seis agentes, com Central/Coordenação e Diretor criativo como duas funções; Estrategista Mensal como Proposto e Stories em Histórico recolhido. **Workflow** em painel com Controle, vários selos por workflow, gatilho, última execução conhecida, gargalos e histórico recolhido. Responsável registrado, correção e eventual interpretação de dependência continuam separados e rastreáveis à fonte.
 
-**Dependências:** concluir 001–004 e definir a leitura dos registros operacionais autorizados, com vínculo entre execução, conteúdo e versão.
+**Dependências:** concluir 001–005, aproveitar Agentes/Controle/Execucoes capturadas na 002 e definir os vínculos entre execução, conteúdo e versão. A **Fila de produção precisa gravar o próprio resumo em Execucoes** para explicar consultas sem avanço; essa escrita ainda não existe e exige mudança no n8n com autorização própria. Comparar cadastro com configuração real de agendas quando houver acesso autorizado; sem essa fonte, indicar **a confirmar**.
 
-**Aceite:** cada estado pode ser conferido na origem; configuração de agenda não aparece como execução comprovada. Dados antigos, falhas e pendências continuam explícitos. Abrir ou atualizar a visão não dispara geração, cobrança ou publicação. Não há métricas comerciais inventadas de alcance, leads ou vendas.
+**Aceite:** cada estado pode ser conferido na origem; configuração de agenda não aparece como execução comprovada. Divergências de cadastro/configuração mostram as duas fontes e horários. **Publicado · geração bloqueada · integração pendente** podem coexistir; planejado, implementado, testado e integrado são dimensões distintas. Prompts, configurações, IDs de serviço, logs brutos e caminhos privados não vão para os cartões. Dados antigos, falhas e pendências continuam explícitos. Abrir ou atualizar não dispara geração, cobrança ou publicação. Não há métricas comerciais inventadas.
 
 ## Como vamos construir
 
@@ -58,4 +72,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo:** revisar o [plano da feature 001](specs/001-consulta-local-producao/plan.md) e executar suas [22 tarefas](specs/001-consulta-local-producao/tasks.md). A especificação e o plano estão preparados; implementação não iniciada. Não avançar para a feature seguinte sem demonstrar a anterior, conferir seus critérios de aceite e registrar pendências reais.
+**Próximo passo:** executar T019–T022 do [plano da feature 001](specs/001-consulta-local-producao/plan.md) e suas [tarefas](specs/001-consulta-local-producao/tasks.md), com RED antes do GREEN. A [validação](specs/001-consulta-local-producao/validacao.md) registra a entrega parcial atual; novo gate remoto das correções está pendente no retrato pré-push desta rodada (04/10/2026), e aceite operacional completo aguarda. Não avançar para a feature seguinte sem demonstrar a anterior, conferir seus critérios de aceite e registrar pendências reais.

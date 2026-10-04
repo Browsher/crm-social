@@ -1,0 +1,150 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {capturaValida,mapaQuadroValido,temporario,carregarModulo,mudarCelula}=require('./fixtures.cjs');
+const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
+const {projetarVisao}=carregarModulo('src/projecao.cjs',['projetarVisao']);
+const NOW='2026-10-02T14:00:00Z';
+const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
+function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
+
+test('P-review I1 captura local usa estado provisório, sem afirmar frescor da US2', t => {
+  const input=estado(capturaValida(),t);
+  for (const now of [NOW,'2026-11-15T14:00:00Z']) {
+    const view=projetarVisao(input,now,mapaQuadroValido());
+    assert.equal(view.estado,'captura_local_provisoria');
+    assert.equal(view.selo.texto,'Captura local');
+    assert.equal(view.producoes[0].status,'em_planejamento');
+  }
+});
+test('P-review I1 falha posterior avisa sem apagar captura; nova completa encerra aviso', t => {
+  const dir=temporario(t), raw=capturaValida();
+  promoverCaptura(raw,dir);
+  const invalid=capturaValida(); invalid.tables.Cenas.complete=false;
+  promoverCaptura(invalid,dir);
+  promoverCaptura(raw,dir); // Repetição não encerra a falha posterior.
+  const view=projetarVisao(lerEstado(dir),NOW,mapaQuadroValido());
+  assert.equal(view.captura.capturaId,raw.capturaId);
+  assert.ok(view.avisos.some(a=>a.motivo==='Última importação falhou; captura anterior preservada'));
+  const newer=capturaValida(); newer.capturaId='captura-sintetica-02';
+  promoverCaptura(newer,dir);
+  const next=projetarVisao(lerEstado(dir),NOW,mapaQuadroValido());
+  assert.ok(!next.avisos.some(a=>a.motivo.includes('Última importação falhou')));
+});
+
+test('P-base conserva NTV uma vez, exclui outra marca sem filtro de elegibilidade', t => {
+  const raw=capturaValida();
+  mudarCelula(raw,'Produções',1,'status','concluida');
+  mudarCelula(raw,'Produções',2,'estado_liberacao','bloqueado');
+  const result=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(result.producoes.map(p=>p.producao_id).sort(),['peca-1','peca-2','peca-3','peca-4']);
+  assert.equal(new Set(result.producoes.map(p=>p.producao_id)).size,4);
+  assert.equal(result.producoes[1].slot,'imagem_b');
+  assert.equal(result.producoes[1].estado_liberacao,'bloqueado');
+});
+test('P-base envelope público não expõe metadados, hashes, extras ou mapa bruto', t => {
+  const result=projetarVisao(estado(capturaValida(),t),NOW,mapaQuadroValido());
+  assert.deepEqual(Object.keys(result).sort(),envelope);
+  const bytes=JSON.stringify(result);
+  for (const sentinel of ['sentinela-nao-publicar','spreadsheetId','metadataBefore','secondReadSha256','__extra_privado','liberacaoPronta','google-drive-connector']) {
+    assert.ok(!bytes.includes(sentinel),sentinel);
+  }
+  assert.deepEqual(Object.keys(result.captura).sort(),['capturaId','completedAt','contagens','periodo'].sort());
+});
+test('P-base sem captura não cria demonstração e conserva Histórico permitido', t => {
+  const dir=temporario(t), raw=capturaValida();
+  raw.tables.Cenas.complete=false;
+  promoverCaptura(raw,dir);
+  const result=projetarVisao(lerEstado(dir,NOW),NOW,mapaQuadroValido());
+  assert.equal(result.estado,'sem_captura');
+  assert.equal(result.captura,null);
+  assert.deepEqual(result.producoes,[]);
+  assert.deepEqual(result.semanas,[]);
+  assert.equal(result.historico.length,1);
+  assert.deepEqual(Object.keys(result.historico[0]).sort(),['tentativaId','concluidaEm','resultado','motivoResumo'].sort());
+  assert.deepEqual(Object.keys(result.ultimaTentativa).sort(),Object.keys(result.historico[0]).sort());
+});
+test('P-base saída é independente do estado privado, sem alterar entrada', t => {
+  const input=estado(capturaValida(),t), before=JSON.stringify(input);
+  const result=projetarVisao(input,NOW,mapaQuadroValido());
+  result.producoes[0].titulo='mudança somente na projeção';
+  assert.equal(JSON.stringify(input),before);
+});
+test('P-base célula mínima com token/caminho indevido é suprimida com aviso', t => {
+  const raw=capturaValida(), token='sk-ant-'+'a'.repeat(30), localPath='C:'+String.fromCharCode(92)+'Users'+String.fromCharCode(92)+'exemplo';
+  mudarCelula(raw,'Produções',1,'legenda',token);
+  mudarCelula(raw,'Semanas',1,'tema',localPath);
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.ok(!JSON.stringify(view).includes(token));
+  assert.ok(!JSON.stringify(view).includes(localPath));
+  assert.equal(view.producoes[0].legenda,'[conteúdo suprimido]');
+  assert.ok(view.avisos.some(a=>a.campo==='legenda'));
+  assert.ok(view.avisos.some(a=>a.campo==='tema'));
+});
+test('P-base URL legítima permanece texto e não é confundida com drive Windows', t => {
+  const urls=['https://docs.google.com/document/d/exemplo-sintetico','https://drive.google.com/file/d/exemplo-sintetico','http://exemplo.invalid/referencia'];
+  for (const url of urls) {
+    const raw=capturaValida();
+    mudarCelula(raw,'Produções',1,'titulo','Referência '+url);
+    mudarCelula(raw,'Produções',1,'url_video_final',url);
+    mudarCelula(raw,'Produções',1,'legenda',JSON.stringify({url}));
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.equal(view.producoes[0].titulo,'Referência '+url);
+    assert.equal(view.producoes[0].url_video_final,url);
+    assert.equal(view.producoes[0].legenda,JSON.stringify({url}));
+    assert.ok(!view.avisos.some(a=>a.motivo==='conteúdo sensível suprimido'));
+  }
+});
+test('P01 preserva quatro peças históricas e calendário civil entre meses', t => {
+  const view=projetarVisao(estado(capturaValida(),t),NOW,mapaQuadroValido());
+  assert.equal(view.producoes.length,4);
+  assert.deepEqual(view.dias.map(d=>d.data),['2026-09-30','2026-10-01','2026-10-02']);
+  assert.deepEqual(view.dias.find(d=>d.data==='2026-10-02').ids,['peca-3','peca-4']);
+  assert.deepEqual(view.semanas[0].periodo,{inicio:'2026-09-28',fim:'2026-10-04'});
+  assert.deepEqual(view.captura.periodo,{inicio:'2026-09-28',fim:'2026-10-04'});
+  assert.deepEqual(view.semanas[0].ids,['peca-1','peca-2','peca-3','peca-4']);
+});
+test('P02 formatos vêm do slot, sem mudar tipo original; desconhecido permanece Outro', t => {
+  const raw=capturaValida(); mudarCelula(raw,'Produções',4,'slot','novo-slot-sintético');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.producoes.map(p=>p.formato),['Imagem','Imagem','Carrossel','Outro']);
+  assert.equal(view.producoes[1].tipo_producao,'tipo-original-imagem_b');
+});
+test('P02 datas inválidas/seriais/vazias ficam Sem data, independentemente do mês', t => {
+  const raw=capturaValida();
+  for (const [i,value] of [[1,'2026-02-30'],[2,46700],[3,''],[4,'2026-10-02T00:00:00Z']]) mudarCelula(raw,'Produções',i,'data_prevista',value);
+  const state=estado(raw,t);
+  for (const now of [NOW,'2026-11-15T14:00:00Z']) {
+    const view=projetarVisao(state,now,mapaQuadroValido());
+    assert.equal(view.producoes.filter(p=>p.dataCivil===null).length,4);
+    assert.equal(view.dias.length,1);
+    assert.equal(view.dias[0].data,null);
+    assert.deepEqual(view.dias[0].ids,['peca-1','peca-2','peca-3','peca-4']);
+    assert.ok(view.avisos.some(a=>a.campo==='data_prevista'));
+  }
+});
+test('P03 peça órfã continua em Semana não identificada, sem período inventado', t => {
+  const raw=capturaValida(); mudarCelula(raw,'Produções',2,'semana_id','semana-inexistente');
+  mudarCelula(raw,'Produções',2,'data_prevista','');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const orphan=view.semanas.find(s=>s.semana_id===null);
+  assert.equal(orphan.tema,'Semana não identificada');
+  assert.deepEqual(orphan.ids,['peca-2']);
+  assert.deepEqual(orphan.periodo,{inicio:null,fim:null});
+  assert.equal(view.producoes.length,4);
+});
+test('P03 ordem por ID é ordinal e não segue a ordem física das linhas', t => {
+  const raw=capturaValida();
+  mudarCelula(raw,'Produções',3,'producao_id','z-peca');
+  mudarCelula(raw,'Produções',4,'producao_id','A-peca');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.dias.find(d=>d.data==='2026-10-02').ids,['A-peca','z-peca']);
+});
+test('P03 início semanal inválido deixa cobertura null e objetivo mensal indefinido', t => {
+  const raw=capturaValida(); mudarCelula(raw,'Semanas',1,'inicio_semana','data-inválida');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.captura.periodo,{inicio:null,fim:null});
+  assert.deepEqual(view.semanas[0].periodo,{inicio:null,fim:null});
+  assert.equal(view.semanas[0].objetivoMensal,'Ainda não definido');
+  assert.equal(view.semanas[0].objetivo,'Objetivo semanal sintético');
+  assert.ok(view.avisos.some(a=>a.campo==='inicio_semana'));
+});
