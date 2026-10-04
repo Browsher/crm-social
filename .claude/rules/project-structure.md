@@ -22,9 +22,12 @@ T001–T026/US1, US2 e US3 implementadas; estado, evidências e pendências na [
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas fixas: /, /app.js, /styles.css, /api/visao; GET/HEAD e Host/Origin locais.
 - src/web/ entrega Planejamento, selo, releitura e gaveta em acordeões; quadro/tabelas futuros.
-- Gaveta: dia inteiro, primeira aberta, versões/revisões separadas; Esc devolve foco; mobile cheio.
+- Gaveta compacta: primeira aberta, dados preenchidos, versões/texto/Histórico recolhidos; Esc devolve foco.
+- Documentos semanais uma vez no fim do dia; três papéis com — na ausência, inclusive órfãos.
+- Avisos técnicos na API; gaveta só quantidade/link Planilha; tabelas detalhadas ainda futuras.
 - Arquivos são registros; link por clique só HTTPS Drive/Docs sem credenciais; sem prévia remota.
-- Avisos conservam linha física por ID/WeakMap; valores inválidos ficam visíveis com motivo.
+- URL com usuário/senha ou malformada não vazia é suprimida (new URL); recusada não vira texto bruto.
+- Avisos conservam linha física por ID/WeakMap; valor sensível não acompanha motivo público.
 - tools/quality-gate.mjs é o entrypoint do gate; seus módulos são gate-*.mjs.
 - tools/package.json e package-lock.json isolam ESLint, sem dependência da aplicação.
 - .github/workflows contém CI; o bootstrap instalou os templates do node-kit.

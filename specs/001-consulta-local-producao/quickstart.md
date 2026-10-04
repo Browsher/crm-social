@@ -2,7 +2,7 @@
 
 Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T026/US1, US2 e US3 implementadas, com revisão corrente e evidências na [validação](validacao.md). T027–T041 e captura operacional permanecem pendentes; sem leitura real Google. Branch `001-consulta-local-producao`.
 
-Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). O mockup de [telas](../../docs/design/mockups/telas-v2.html) serve como referência visual; não valida backend ou persistência.
+Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). Os mockups de [telas](../../docs/design/mockups/telas-v2.html) e [gaveta compacta](../../docs/design/mockups/gaveta-v2.html) servem como referência visual; não validam backend ou persistência.
 
 ## Ambiente e testes da entrega atual
 
@@ -13,7 +13,7 @@ Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright exis
 | `CRM_NODE_PATH` | PowerShell seleciona o executável existente; a aplicação não lê esta variável |
 | `PATH` | Colocar o diretório do Node selecionado à frente para subprocessos do gate com `testCommand: ["node", "--test"]` |
 | `CRM_PLAYWRIGHT_MODULE` | `tests/interface.test.cjs` resolve o Playwright existente; sem ela tenta `playwright`; não versionar seu caminho |
-| `CI=true` | 26 testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
+| `CI=true` | Testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
 
 Não há variáveis Google, chave de serviço ou URL remota no runtime da 001. Configure as variáveis de ferramenta somente no ambiente local; nenhum caminho pessoal é necessário na documentação.
 
@@ -87,7 +87,7 @@ Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída d
 | --- | --- |
 | Menu e objetivo | Planejamento, Produção, Planilha; Ainda não definido |
 | Planejamento | Calendário/lista/filtros; imagem A/B, carrossel e Reels sintéticos; duas peças no mesmo dia |
-| Clique em dia/cartão/lista | Abre grupo inteiro em acordeões, primeira peça aberta; revisões com IDs de escopo, versões/arquivos separados, avisos com aba/linha/campo e Esc devolvendo foco |
+| Clique em dia/cartão/lista | Abre grupo inteiro na gaveta compacta, primeira peça aberta, demais resumidas; revisões/versões/arquivos separados, dados preenchidos e documentos únicos; avisos técnicos na API, quantidade/link Planilha no dia; Esc devolve foco |
 | Sem data | Contagem global; link oculto quando zero, variante de interface tem uma |
 | Selo | Atualizado hoje, HH:MM / Dados de DD/MM / Atualização falhou / Sem dados; clique abre Planilha |
 | Planilha | Fonte, fim em São Paulo, cobertura semanal e avisos; tabelas/Histórico continuam futuros |
@@ -126,7 +126,7 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T026 e suas
 | Publicação | publicado_em preenchido/vazio/null/espaços; status publicado sem campo; data preenchida inválida/sem fuso/futura | Preenchido dá Publicada com precedência; inconsistência gera aviso sem mudar coluna. Status/aprovação/arquivo sem o campo não comprovam; não há verificação remota |
 | Planilha | Alternar seis abas e Histórico por teclado | 66 mínimos com valores e contagens de linhas NTV apresentadas, mínimos 8/17/8/11/12/10, inclusive IDs/id_drive/sha256/origens_json como dados; todas as tentativas confirmadas no estado, recentes primeiro, e falha sem apagar sucesso; órfãos não aparecem como conclusões |
 | HTTP/segurança | Três estáticos sintéticos em TEMP via webDir confiável; métodos/HEAD, Host/Origin externos, traversal/privados, extras sentinela, célula mínima com conteúdo sensível indevido e texto malicioso | Rotas/status/bytes do contrato antes da criação da interface, allowlist fixa mesmo com webDir; zero escrita HTTP, sem captura bruta/envelope/extras arbitrários/credenciais/caminhos; sensível suprimido com aviso sem retirar coluna; texto não executa |
-| Interface/links | Navegar por teclado/Escape; links Drive/Docs e links não permitidos | Escape fecha e devolve foco; somente HTTPS/hosts autorizados por clique, sem carga automática ou requisição externa durante teste |
+| Interface/links | Navegar por teclado/Escape; links Drive/Docs, recusados, URLs com userinfo sintético e malformadas/vazias | Escape fecha e devolve foco; somente HTTPS/hosts autorizados por clique, sem carga automática; recusada não é texto bruto, userinfo não aparece no JSON nem no dia; malformada não vazia é suprimida com motivo fixo, vazio é preservado sem aviso de URL inválida |
 | Mobile | 390 px e 1440 px nas três telas/gaveta/tabelas | 390: lista semanal, menu recolhido, gaveta cheia; sem corte da página; rolagem horizontal própria de cada tabela |
 | Iniciador | Script real com diretório/porta isolados, porta ocupada e runtime ausente | Processo oculto, bind loopback, orientação em erro sem encerrar ocupante; cleanup só do PID criado |
 | Escala | Fixture sintética de 500 peças | Contagens/filtros/navegação coerentes; registrar tempo observado, sem confundir teste com produção |
@@ -151,7 +151,7 @@ Executar somente após implementação e revisão, conforme T039. O dicionário 
    ```
 
 4. Confirmar somente os três itens de menu; Planejamento com objetivo ainda não definido, calendário/lista/filtros e “N sem data”. Comparar os IDs de todas as peças NTV com a **mesma captura**, inclusive imagem B e registros concluídos/bloqueados. Não usar filtros da fila n8n para essa comparação.
-5. Clicar um dia com várias peças: conferir todas no acordeão e a primeira aberta, etapa/responsável registrados, revisão por versão e correção separada, páginas/cenas ordenadas e arquivos como registros. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Escape fecha e devolve foco.
+5. Clicar um dia com várias peças: conferir todas no acordeão e só a primeira aberta, resumo das demais, faixa de quatro dados preenchidos, publicação registrada em uma linha e etapa conhecida legível/desconhecida original. Conferir revisão inicial, adicionais em +N, páginas/cenas compactas com no máximo um aviso de ausência por linha e Texto registrado/versões/Histórico recolhidos abrindo por clique. Documentos Plano/Redação/Visual aparecem uma vez por semana representada no fim do dia, com — na ausência. Avisos técnicos ficam na API; a gaveta só conta e oferece link funcional para Planilha, cujas tabelas detalhadas são futuras. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Links só HTTPS Drive/Docs permitidos; URL recusada não aparece como texto bruto e userinfo não sai da projeção. Escape fecha e devolve foco.
 6. Conferir Produção por semana: mapa carregado do JSON, prioridade publicação > liberação > revisão > etapa, arte_aprovada em Visual e oito etapas de mídia preservadas quando não há prioridade superior. Status é informativo; Outras preserva original e conta distintos da semana, não cartões. Publicada vem de publicado_em preenchido, com aviso em dado inconsistente. Clique abre dia inteiro ou Sem data; sem arrastar/editar/encaminhamento inferido.
 7. Clicar o selo para Planilha. Comparar contagens/valores mínimos nas seis tabelas e Histórico com a captura/recibos privados; conferir período/horário e rolagem própria. “Atualizar dados” relê a última captura salva, sem buscar Google, importar pelo navegador ou criar nova coleta.
 8. Conferir teclado e 390/1440. Não compartilhar screenshot de dados operacionais privados; usar fixture sintética para evidência visual compartilhável. Falhas/importações destrutivas de teste permanecem no diretório temporário, não em `data/` real.

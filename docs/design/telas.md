@@ -7,7 +7,7 @@ Como uma agenda que começa pelas páginas do mês, a entrega atual implementa T
 ## Princípios
 
 - **Pouco texto.** Só o essencial na tela; nada de parágrafos explicativos.
-- **Dados completos só no detalhe do dia.** Calendário, lista e quadro mostram o mínimo para localizar a peça.
+- **Conteúdo da peça no detalhe do dia.** Calendário, lista e quadro mostram o mínimo para localizar; registros complementares abrem por clique na gaveta, enquanto avisos técnicos ficam na API/Planilha.
 - **Tudo sobre a planilha fica na página Planilha.** Nas outras telas, um selo curto de status leva até ela.
 - **Nada inventado.** Dia sem peça fica vazio. Campo vazio é "desconhecido", nunca zero. Valor fora do conhecido aparece como está, em "Outras".
 - **Registrado, evidência e sugestão são coisas diferentes.** A 001 mostra o registrado na planilha e avisos; interpretações de encaminhamento ficam para a 006.
@@ -48,12 +48,18 @@ O horário vem do fim da captura (envelope), não da maior data das linhas. Clic
 
 ## 2. Gaveta do dia (001)
 
-- Título: dia da semana e data. Subtítulo: quantidade de peças.
-- Uma seção por peça, em acordeão; a primeira aberta.
-- Por peça: estado e formato (selos); etapa registrada; responsável registrado; data prevista; publicação ("não comprovada" sem registro explícito).
-- Revisão vigente: decisão, motivo, versão avaliada e quem corrige (`responsavel_correcao`), separado do responsável da peça. Revisões resolvidas em cinza, como histórico.
-- Carrossel: páginas em ordem, com versão e indicador de design novo somente se existir classificação explícita documentada para a página e versão; sem essa fonte, mostrar "A confirmar", sem deduzir pelo número da versão. Reels: cenas em ordem.
-- Arquivos: nome, versão e "registro" (cadastrado na planilha, não conferido agora). Link só por clique, só HTTPS e só `drive.google.com` / `docs.google.com`. Mídia ausente aparece como ausente; referência quebrada aparece como aviso, sem mídia substituta.
+Referência de apresentação: [mockup da gaveta compacta v2](mockups/gaveta-v2.html), com os [limites da demonstração](mockups/LEIA-ME.md#gaveta-compacta-v2). Como fichas dobráveis de um mesmo dia, o resumo permite localizar a peça e o clique revela seus registros; a API continua completa.
+
+- Título: dia da semana e data. Subtítulo: quantidade de peças. Largura de 520 px no desktop; tela inteira no celular, sem corte horizontal.
+- Uma seção por peça em acordeão; só a primeira começa aberta. As demais mostram resumo de uma linha com quantidade de páginas/cenas da versão vigente, revisão e quantidade de avisos.
+- Estado e formato em selos; faixa de quatro dados: etapa, com quem está, prevista e versão. Campo vazio não aparece. Etapas conhecidas recebem rótulo legível; desconhecidas aparecem exatamente como registradas, sem mudar o valor da API.
+- Publicação aparece em uma linha somente com registro preenchido; ausência não comprova publicação e não ocupa uma faixa. Registro inconsistente permanece com aviso, sem conferência remota.
+- Primeira revisão vigente em uma linha: decisão, versão, motivo e quem corrige (`responsavel_correcao`), separado do responsável da peça; valores e IDs de escopo preenchidos permanecem identificados. Outras vigentes ficam em **+N**; resolvidas, outras versões e vínculos a confirmar ficam dentro de **Histórico**, recolhido.
+- Páginas e cenas em listas compactas: número, texto, link permitido ou **mídia ausente**, no máximo um aviso de ausência por linha. Versão vigente primeiro; versões anteriores recolhidas por clique. Design novo fica **A confirmar** sem classificação explícita documentada da página/versão; não deduzir por arquivo ou template.
+- **Texto registrado** (legenda, campos textuais complementares e arquivos como registros) e **Histórico** começam recolhidos. Arquivo conserva nome de apresentação por tipo/papel, versão e rótulo **registro**, sem comprovar bytes ou disponibilidade.
+- Link somente por clique em HTTPS nos hosts exatos `drive.google.com` / `docs.google.com`, sem usuário/senha. URL recusada nunca aparece como texto bruto. A projeção usa `new URL` e troca `Arquivos.url` e `Produções.url_video_final` com credenciais, ou não vazias que não podem ser analisadas, por **[conteúdo suprimido]**, com aviso localizado fixo sem o valor. URL inválida usa motivo **URL inválida suprimida**; vazio/somente espaços é preservado sem esse aviso. A captura privada conserva o original.
+- Avisos técnicos (aba, linha e campo) ficam fora da gaveta, preservados na API. Por peça aparece somente **N avisos de dados nesta peça · ver na Planilha**. O link abre Planilha; as tabelas detalhadas dos avisos vêm na US5, sem antecipar essa entrega.
+- Documentos da semana aparecem uma vez por semana representada no dia, no fim da gaveta, com os três papéis **Plano**, **Redação** e **Visual**; **—** quando ausentes, inclusive peça sem semana identificada. Não repetir a faixa em cada peça.
 - Esc fecha e devolve o foco. Sem prévia de imagem (feature 005).
 
 ## 3. Produção (001)

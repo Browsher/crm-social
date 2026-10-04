@@ -72,6 +72,13 @@ Todos os 66 campos mínimos e valores fazem parte da **Planilha local** como reg
 inclusive IDs, hashes e origens JSON. Isso não autoriza servir captura/envelope bruto,
 extras arbitrários, tokens, credenciais ou paths; célula mínima com segredo/caminho
 indevido recebe supressão localizada e aviso, original somente na captura privada.
+Em `Arquivos.url` e `Produções.url_video_final`, `new URL` detecta usuário ou senha:
+o campo projetado vira **[conteúdo suprimido]**, com origem e motivo fixo sem o valor.
+O JSON HTTP não transporta a credencial; URL recusada pela UI também não é ecoada
+como texto bruto. Não confundir essa seleção segura com alteração da captura privada.
+String não vazia recusada pelo construtor também recebe o marcador e o motivo fixo
+**URL inválida suprimida**, sem exceção bruta nem valor; userinfo malformado não
+retorna ao HTTP. Vazio/somente espaços permanece sem aviso de URL inválida.
 Fixtures e mockups compartilháveis são sintéticos. HTTP e interface renderizam
 textos/JSON como dados, sem instruções, HTML executável ou navegação arbitrária.
 
@@ -156,13 +163,29 @@ inferir responsável, aguarda-de, próxima ação, agente trabalhando ou elegibi
   Resolução explícita precede a classificação por versão; revisão sem versão/vínculo
   inequívoco é ambígua, outra versão válida é anterior e a versão atual é vigente.
   Tratamento desconhecido conserva a revisão vigente com aviso, sem fabricar encerramento.
-  IDs originais de página/cena/arquivo são exibidos no detalhe; vazio é Não informado,
-  sem descrição ou vínculo inventado. Avisos mostram aba/linha física/campo e motivo.
+  IDs originais de página/cena/arquivo preenchidos são exibidos no detalhe, sem
+  descrição ou vínculo inventado. A API conserva avisos com aba/linha física/campo
+  e motivo; a gaveta apresenta só quantidade e link para Planilha.
 - Arquivo é registro, não bytes conferidos/validado/agendamento. Nome de apresentação
   vem de tipo/papel, fallback Arquivo registrado; não promete nome original ausente nos mínimos.
   Sem mídia = ausente; referência quebrada = aviso, sem substituta ou miniatura.
 - URL selecionada interativa só HTTPS Drive/Docs exatos, sem userinfo e somente por clique;
-  tabela guarda URL como texto. Nenhum download ou busca remota por renderização.
+  URL recusada nunca aparece como texto bruto na tela. Nenhum download ou busca remota por renderização.
+
+A gaveta compacta não elimina dados: faixa de quatro campos preenchidos, publicação
+em uma linha quando registrada, revisão vigente inicial e adicionais em +N. Texto
+registrado, versões anteriores e Histórico ficam recolhidos por clique; páginas/cenas
+em linhas compactas têm no máximo um aviso de ausência por linha. Campo vazio na
+faixa é omitido, preservando o original/fallback de responsável na API e a regra
+separada do cartão futuro de Produção. Etapa conhecida usa rótulo legível só na UI;
+desconhecida mantém o original. Detalhes técnicos dos avisos continuam na projeção,
+com tabelas detalhadas de Planilha futuras na US5.
+
+`documentosSemana` sempre contém Plano/Redação/Visual, com arquivo null na ausência,
+inclusive peça sem semana identificada. A UI agrupa esses documentos uma vez por
+semana representada no fim do dia, usando **—**. A resolução é reaproveitada somente
+na mesma consulta: aviso semanal entra uma vez no conjunto global e permanece nos
+avisos locais de cada peça afetada, sem mudar as relações ou a captura original.
 
 Ponteiro de unidade exige arquivo da mesma produção/versão; página/cena preenchida
 no arquivo também precisa corresponder. Ausência, referência quebrada e escopo

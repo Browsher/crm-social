@@ -57,3 +57,22 @@ alteração da imagem. O teste móvel usa janela normal 390 × 1050 e confirma t
 cheia, rolagem interna e Esc/foco. Arquivos são registros com links por clique;
 nenhuma mídia foi carregada e as URLs apontam exemplos fictícios. Evidências de
 execução e revisão ficam apenas na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+
+## Gaveta compacta — apresentação corrente
+
+Quatro imagens novas em janelas 1440/390 × 1050, aplicação real em loopback,
+captura exclusivamente sintética em TEMP. A primeira peça fica aberta, o Reels
+do dia com várias peças fica recolhido; seus registros/cenas continuam completos
+na API e são exercitados nos testes ao expandir. Textos, versões anteriores e
+Histórico também ficam recolhidos. Documentos da semana aparecem no fim do dia.
+
+| Dia | Desktop | Celular |
+| --- | --- | --- |
+| Uma peça | [1440](001-us3-compacta-uma-peca-1440.png) | [390](001-us3-compacta-uma-peca-390.png) |
+| Carrossel + Reels | [1440](001-us3-compacta-varias-pecas-1440.png) | [390](001-us3-compacta-varias-pecas-390.png) |
+
+Conferidas visualmente sem corte horizontal, pageerror ou acesso externo. As
+imagens anteriores são históricas; estes arquivos não as sobrescrevem. Nenhuma
+imagem comprova captura Google, bytes de mídia, aprovação ou publicação remota.
+[Desenho compactado](../mockups/gaveta-v2.html), [telas](../telas.md#2-gaveta-do-dia-001)
+e [evidências](../../../specs/001-consulta-local-producao/validacao.md) registram os limites.

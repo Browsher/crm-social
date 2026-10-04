@@ -2,7 +2,7 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura e gaveta implementados até T026/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `urlAutorizada` (41), `secaoUnidades` (76), `secaoRevisoes` (92), `acordeaoPeca` (115), `calendario` (153), `lista` (196), `render` (209), `controles` (232), `detalhesCaptura` (247) e `reler` (260).
+Planejamento, frescor/releitura e gaveta implementados até T026/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `fatosPeca` (38), `urlAutorizada` (51), `secaoUnidades` (96), `secaoRevisoes` (112), `documentosDoDia` (145), `avisosPeca` (165), `acordeaoPeca` (172), `cartao` (189), `calendario` (204), `lista` (247), `render` (260), `controles` (283) e `detalhesCaptura` (298).
 
 ## Inicialização e navegação
 
@@ -53,32 +53,36 @@ A lista agrupa pelo tema/período da semana de origem. `pecaVisivel` considera a
 
 ## Gaveta do dia, texto e acessibilidade
 
-O diálogo nativo recebe título de data/sem data, quantidade e **todas** as peças do grupo. `abrirDia` guarda o elemento que abriu o detalhe e gera um `details` por peça, em ordem ordinal de ID; só a primeira seção começa aberta. O filtro de formato do calendário/lista não é reaplicado ao dia. Um dia vazio mostra **Nenhuma peça registrada neste dia**, sem acordeão fictício; Sem data conserva o grupo da própria semana.
+O diálogo nativo recebe título de data/sem data, quantidade e **todas** as peças do grupo. Como fichas dobráveis, `abrirDia` guarda o elemento que abriu o detalhe e gera um `details` por peça, em ordem ordinal de ID; só a primeira seção começa aberta. O filtro de formato do calendário/lista não é reaplicado ao dia. Um dia vazio mostra **Nenhuma peça registrada neste dia**, sem acordeão fictício; Sem data conserva o grupo da própria semana. A apresentação segue o [mockup da gaveta compacta](../design/mockups/gaveta-v2.html), preservando todos os detalhes seguros na API.
 
 | Seção da peça | Conteúdo real |
 | --- | --- |
-| Cabeçalho do acordeão | Formato, título e rótulo de status registrado |
-| Identificação | Etapa, responsável registrado, data prevista, versão e publicação explícita ou Não comprovada |
-| Textos registrados | Legenda como texto, sem HTML executável |
-| Revisão vigente | Decisão, motivo, versão avaliada, quem corrige, tratamento e IDs originais de Página/Cena/Arquivo; correção separada do responsável da produção |
-| Páginas / Cenas | Versão vigente primeiro; outras versões em histórico recolhido, com impacto atual a confirmar; índice em ordem dentro da versão |
-| Página | Título, corpo, função, versão e Design novo: A confirmar; arquivos dos ponteiros |
-| Cena | Texto, texto na tela, início/duração registrados e arquivos dos ponteiros |
-| Arquivos · registros | Nome de apresentação, versão e registro; ausência explícita, sem miniatura substituta |
-| Revisões adicionais | Resolvidas, de outras versões e com vínculo a confirmar em seções separadas/cinza, sem virar revisão vigente |
-| Documentos da semana / Avisos | Plano/Redação/Visual vinculados e avisos `aba · linha física · campo: motivo`, sem escolher substituto |
+| Cabeçalho do acordeão | Formato, título e rótulo de status; peça recolhida resume quantidade de páginas/cenas vigentes, revisão e avisos em uma linha |
+| Identificação | Faixa de Etapa, Com quem está, Prevista e Versão; somente campos preenchidos, sem placeholders de ausência |
+| Publicação | Uma linha quando publicado_em está preenchido; não existe faixa vazia nem confirmação remota |
+| Texto registrado | Details fechado por padrão: legenda, corpo/função das páginas, texto na tela das cenas e Arquivos · registros; tudo por textContent |
+| Revisão vigente | Primeira em uma linha com valores preenchidos de decisão, versão, motivo, quem corrige, tratamento e IDs de Página/Cena/Arquivo; adicionais num details +N |
+| Páginas / Cenas | Versão vigente primeiro; outras versões em details recolhidos, com impacto atual a confirmar; índice em ordem dentro da versão |
+| Página | Linha compacta com número, título ou corpo, Design novo: A confirmar e link permitido ou mídia ausente |
+| Cena | Linha compacta com número, texto, início/duração registrados e link permitido ou mídia ausente |
+| Arquivos · registros | Dentro de Texto registrado: nome de apresentação, versão e registro, sem miniatura; URL recusada usa Link indisponível |
+| Histórico | Details fechado por padrão; revisões resolvidas, de outras versões e com vínculo a confirmar em grupos próprios, sem virar revisão vigente |
+| Avisos da peça | Somente N avisos de dados nesta peça · ver na Planilha; aba/linha/campo permanecem na API, sem texto técnico na gaveta |
+| Documentos da semana | Uma seção no fim do dia; cada semana representada tem Plano/Redação/Visual uma vez, com — para ausentes, inclusive sem semana identificada |
 
-O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 640 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados.
+O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. O link dos avisos fecha a gaveta, abre Planilha e conserva um destino de foco no selo; a página atual apresenta motivos resumidos, com tabelas detalhadas reservadas à US5.
 
-Publicação preenchida permanece como registro explícito e conserva o valor original. Quando formato/fuso são inválidos ou o instante excede o fim da captura, a projeção acrescenta um aviso localizado em `publicado_em`; a gaveta mostra esse aviso junto ao registro, sem mudar para Não comprovada ou verificar publicação remotamente. Campo vazio continua Não comprovada. IDs vazios de escopo de revisão usam Não informado; ID registrado não recebe descrição inventada.
+Publicação preenchida permanece como registro explícito e conserva o valor original. Quando formato/fuso são inválidos ou o instante excede o fim da captura, a projeção acrescenta um aviso localizado em `publicado_em`; a gaveta conserva o registro e resume a quantidade de avisos, sem verificar publicação remotamente. Campo vazio omite a linha, sem comprovar publicação. IDs vazios de escopo de revisão também são omitidos da linha; ID registrado não recebe descrição inventada. A API ainda conserva `detalhes.responsavelRegistrado='A confirmar'` quando vazio, mas a faixa usa `responsavel_atual` e omite esse campo vazio.
 
-`urlAutorizada` transforma em link somente HTTPS nos hosts exatos `drive.google.com` ou `docs.google.com`, sem usuário/senha na URL. Um link abre somente por clique em aba separada, com `noopener noreferrer`; URL fora da regra permanece texto. Registros não carregam imagem, iframe, vídeo ou arquivo remotamente. Textos são aplicados por `createElement`/`textContent` e `replaceChildren`, sem innerHTML, comandos ou execução de JSON. CSS fornece foco visível e breakpoint de 720 px; body acompanha a altura da página e a sidebar desktop mantém o fundo até o fim.
+`etapaLegivel` usa nove rótulos de apresentação: arte_aprovada → Arte aprovada; prompts_imagem_prontos → Prompts de imagem prontos; imagens_em_producao → Imagens em produção; voz_pronta_para_gerar → Voz pronta para gerar; voz_em_producao → Voz em produção; clipes_prontos_para_gerar → Clipes prontos para gerar; clipes_em_producao → Clipes em produção; montagem_pronta → Montagem pronta; montagem_em_producao → Montagem em produção. Desconhecido conserva exatamente o texto; não decide coluna nem altera o original da API. `cartao(p)` sempre cria botão que abre o dia, sem parâmetro de modo inativo.
+
+`urlAutorizada` transforma em link somente HTTPS nos hosts exatos `drive.google.com` ou `docs.google.com`, sem usuário/senha na URL. Um link abre somente por clique em aba separada, com `noopener noreferrer`; URL recusada nunca é ecoada como texto bruto. Antes do HTTP, a projeção já suprime userinfo de Arquivos.url/Produções.url_video_final usando new URL, com aviso fixo sem o valor; URL não vazia malformada também é suprimida e vazio/somente espaços permanece sem aviso de URL inválida. Registros não carregam imagem, iframe, vídeo ou arquivo remotamente. Textos são aplicados por `createElement`/`textContent` e `replaceChildren`, sem innerHTML, comandos ou execução de JSON. CSS fornece foco visível e breakpoint de 720 px; body acompanha a altura da página e a sidebar desktop mantém o fundo até o fim.
 
 ## Verificação e limites
 
 [tests/interface.test.cjs](../../tests/interface.test.cjs) usa Playwright existente por `CRM_PLAYWRIGHT_MODULE`, servidor loopback e dados/configuração em TEMP. Bloqueia e registra qualquer requisição fora da origem local e erros do navegador. Os casos de interface verificam os nove cenários de US1 (menu, objetivo, calendário/lista/filtros, sem data, 390/1440, ausência real, remarcação, rótulos, título, semanas úteis e sidebar), os quatro estados do selo nas três telas e clique até Planilha, mais releitura/recuperação em 390 px. Conferem fonte/fim/cobertura, preservação de falha/horário/ponteiro, nova captura, 503 sem apagar visão e apenas GET local.
 
-As regressões também cobrem primeira carga falhando com filtros seguros, botão desabilitado enquanto GET não responde e link Sem data oculto quando zero. Os cenários U05–U06 verificam dia completo apesar do filtro, segunda peça, dia vazio, primeira seção aberta, versões de página/cena, revisão vigente separada, ausência/registro de arquivo, texto malicioso como dado, allowlist de links, tela cheia mobile e Esc com foco devolvido. Os resultados ficam exclusivamente na validação, sem inferir captura operacional a partir de fixture.
+As regressões também cobrem primeira carga falhando com filtros seguros, botão desabilitado enquanto GET não responde e link Sem data oculto quando zero. Os cenários U05–U06 verificam dia completo apesar do filtro, segunda peça, dia vazio, primeira seção aberta, versões de página/cena, revisão vigente separada, ausência/registro de arquivo, texto malicioso como dado, conjunto exato de links seguros, tela cheia mobile e Esc com foco devolvido. A revisão compacta acrescenta asserts dos recolhidos e +N, campos vazios omitidos, etapas conhecidas/desconhecidas, ausência de faixas/documentos repetidos, máximo de um aviso por linha, ocultação de aviso técnico com link funcional até Planilha, corte horizontal em 1440 e contador de acionamentos para abrir o dia/segunda peça. URLs com credenciais sintéticas não aparecem no JSON real nem em #dia. Os resultados ficam exclusivamente na validação, sem inferir captura operacional a partir de fixture.
 
 Com `CI=true`, os casos de interface declaram SKIP antes de carregar Playwright; fora do CI, ferramenta ausente falha. A aplicabilidade dos pulos e a UI fora do LCOV permanecem pendência M8. Estado e evidências somente na [validação](../../specs/001-consulta-local-producao/validacao.md); as [screenshots](../design/screenshots/LEIA-ME.md) usam apenas fixtures fictícias.
 

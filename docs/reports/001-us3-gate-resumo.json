@@ -1,27 +1,27 @@
 {
   "observadoEm": "2026-10-04",
   "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
-  "escopo": "US1-US3; somente fixtures sintéticas",
+  "escopo": "US1-US3; correção PR9/compacta, somente fixtures sintéticas",
   "local": {
     "exitCode": 0,
     "tests": {
-      "pass": 99,
+      "pass": 108,
       "fail": 0,
       "skip": 0,
-      "interface": 26
+      "interface": 31
     },
     "results": [
       {
         "name": "tests",
         "state": "PASS",
         "reason": "",
-        "count": 99
+        "count": 108
       },
       {
         "name": "coverage",
         "state": "PASS",
         "reason": "",
-        "percent": 97.01086956521739,
+        "percent": 97.05488621151271,
         "drop": 0
       },
       {
@@ -49,23 +49,14 @@
       },
       {
         "file": "src/web/app.js",
-        "line": 115,
+        "line": 145,
         "value": 13
       }
     ],
     "baselineAtualizada": false
   },
   "linux": {
-    "estado": "SUCCESS observado no log; histórico e links na procedência",
-    "exitCode": 0,
-    "semgrepVersion": "1.179.0",
-    "results": {
-      "tests": "PASS",
-      "coverage": "PASS",
-      "complexity": "PASS",
-      "semgrep": "PASS",
-      "audit": "N/A"
-    },
-    "limite": "Estados reais conferidos no log Linux; números de cobertura/complexidade são locais. Interface tem SKIP explícito no CI."
+    "estado": "Aguardando execução desta revisão; execução anterior é histórica na procedência",
+    "limite": "Não inferir Semgrep Linux ou interface a partir do resultado Windows"
   }
 }

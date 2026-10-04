@@ -299,8 +299,11 @@ leitura/escrita de data/ privado. Todas as capturas da entrega são sintéticas 
 
 Uma tentativa da suíte no sandbox produziu spawn EPERM antes dos casos; executada
 fora desse limite, passou. Isso foi impedimento do runner, sem alterar os testes.
-O [resumo sanitizado do gate](../../docs/reports/001-us3-gate-resumo.json) registra
-exit 0, cobertura **96,9697%**, complexidade/ESLint PASS (dois avisos, nenhum >=21),
+Na verificação inicial de `98a064b`, o gate registrou
+exit 0, cobertura **96,9697%**, complexidade/ESLint PASS (dois avisos, nenhum >=21).
+Esse número é histórico: o [resumo sanitizado do gate](../../docs/reports/001-us3-gate-resumo.json)
+acompanha a revisão corrente e sua métrica está registrada na última seção deste documento.
+Naquela verificação:
 Semgrep SKIP por ausência no Windows, audit N/A. A interface passou localmente;
 CI conserva SKIP explícito para os casos locais, fora do LCOV, como pendência M8.
 
@@ -308,7 +311,8 @@ Relações não inventam mídia, responsável, publicação ou design novo. As v
 ficam separadas e revisões resolvidas/antigas/ambíguas não viram correção atual.
 Esc e fechamento por botão restauram o foco; o dia não é recortado pelo filtro.
 A linha física dos avisos considera vazios e outra marca; fecha a pendência M3
-da projeção. A gaveta também apresenta a localização junto ao motivo, sem perder o registro afetado.
+da projeção. Naquele head a gaveta também apresentava a localização junto ao motivo;
+a revisão compacta abaixo conserva a localização na API e apresenta só contagem/link na gaveta.
 
 ### Quatro screenshots da aplicação real
 
@@ -391,3 +395,106 @@ sem rótulo gerar-testes. O coordenador confirmou o gate no log depois do review
 Somente este registro e o resumo sanitizado recebem as evidências remotas; os demais
 documentos mantêm estado com link. Esta atualização documental não altera o código
 testado `450e780`, nem corrige os novos achados do PR. O autor decide a próxima rodada.
+
+## PR #9 — supressão de credenciais e gaveta compacta
+
+Revisão autorizada sobre `aa7e8f4d5dbe781e7c273a8f8b42bb3a2147437f`, código
+validado em `48edc9a0a46dc385c469bf9da9939474437e374c` e endurecido em
+`ba77775d05d6c7b68a9a89b64eb1069a4214a595`, mantendo
+T001–T026 concluídas (**26/41**, 15 pendentes). PR #9 permanece aberto, sem merge.
+Nenhuma captura operacional, dependência nova ou mudança de gate/CI/baseline.
+Dados e servidor de todos os testes/demonstrações ficaram somente em TEMP.
+
+| Correção | RED observado antes do produto | GREEN observado |
+| --- | --- | --- |
+| I-1, segurança | Projeção + HTTP real + interface: **57 PASS / 3 FAIL / 0 SKIP**, por credencial sintética presente | **60 PASS / 0 FAIL / 0 SKIP**, cobrindo usuário, senha, userinfo percent-encoded, API real e #dia |
+| Apresentação compacta, m-1/m-B e T025 | Projeção + interface: **50 PASS / 7 FAIL / 0 SKIP**; faixa/recolhidos/documentos/avisos faltavam | Suíte completa **107 PASS / 0 FAIL / 0 SKIP**, incluindo **31 de interface**, em **18,82 s** |
+| URL malformada, achado da revisão estática | Projeção: **26 PASS / 1 FAIL / 0 SKIP**, userinfo de URL recusada pelo parser ainda aparecia | Suíte final **108 PASS / 0 FAIL / 0 SKIP**, incluindo **31 de interface**, em **18,69 s**; API e DOM reais sem credencial |
+
+A URL é analisada por `new URL`: username/password não vazios suprimem
+Arquivos.url e Produções.url_video_final, com marcador e aviso fixo localizado
+sem valor. A captura privada original fica intacta. A tela nunca mostra URL
+recusada como texto bruto, inclusive fora da lista de hosts permitidos.
+Se `new URL` recusa uma URL não vazia, ela também é suprimida conservadoramente
+com aviso **URL inválida suprimida**: evita devolver userinfo de host/porta
+malformados sem heurística de regex. Vazios e espaços continuam preservados.
+Fonte da API nativa conferida via Context7: [URL do Node 24](https://nodejs.org/docs/latest-v24.x/api/url.html).
+
+A implementação segue o [mockup da gaveta compacta](../../docs/design/mockups/gaveta-v2.html)
+e [telas, seção 2](../../docs/design/telas.md#2-gaveta-do-dia-001): largura 520 px
+no desktop, tela inteira no celular; primeira peça aberta, demais com resumo.
+Faixa de quatro campos omite vazios, etapa conhecida ganha rótulo legível sem
+mudar o valor na API e publicação preenchida fica em uma linha. Revisão vigente
+aparece primeiro; adicionais em +N; resolvidas/outras versões no Histórico
+recolhido. Textos e unidades antigas também abrem por clique. Lista de unidades
+mostra no máximo um aviso de mídia por linha; aba/linha/campo ficam na API,
+com somente contagem e link Planilha na peça. Tabelas detalhadas seguem para US5.
+
+Documentos semanais aparecem uma vez no fim do dia, separados por semana quando
+necessário. Plano/Redação/Visual ausentes usam travessão, inclusive sem semana
+identificada. A projeção resolve cada semana uma vez e registra o aviso global
+uma vez, mantendo-o nos detalhes de cada peça relacionada. Demais registros,
+versões e vínculos da API permanecem completos. O ramo/parâmetro interactive de
+cartao foi removido (m-4); nenhum modo de cartão não interativo era usado.
+
+T025 agora conta eventos reais: abrir o dia exige um acionamento, expandir a
+segunda peça totaliza dois; mede scrollWidth/clientWidth da gaveta/corpo em
+1440 px. Testes também verificam os recolhidos por clique e o conjunto exato
+de URLs sintéticas permitidas, sem asserção fraca de quantidade mínima (m-5).
+
+Dois ajustes de infraestrutura de teste, sem relaxar requisito: o GET por
+page.request usa URL absoluta (o contexto não possui baseURL); o seletor do
+acordeão usa somente seu summary direto, pois agora existem summaries internos.
+Na primeira tentativa de RED compacto, a lista esperada de links omitira o
+registro sintético do Reels recolhido; a expectativa foi corrigida antes do
+RED confirmado e antes da implementação. Essa falha não foi contada como RED
+do produto. A localização técnica antes exigida na gaveta foi substituída
+pela apresentação aprovada; a nova asserção continua exigindo a localização na API.
+
+### Gate local e cobertura citada (m-A)
+
+Gate final local exit **0**: tests PASS **108**, coverage PASS **97,0549%**,
+complexity/ESLint PASS (máximo **13**, dois avisos), Semgrep **SKIP** por ausência
+no Windows, audit **N/A** sem dependências de aplicação. Baseline atualizada:
+**false**. Node 24.19.0, Playwright e ESLint já existentes, nenhuma instalação.
+Interface continua fora do LCOV e com SKIP explícito no CI (M8); ela passou
+integralmente no computador. A citação anterior de 96,9697% é histórica,
+97,0109% pertence à revisão 450e780; 97,0430% é o primeiro GREEN compacto,
+e o resumo corrente traz **97,0549%** depois do teste/correção de URL malformada.
+Aceite Linux e revisão independente canônica serão registrados após o push,
+sem adaptação do reviewer a shell ou alegação de equivalência de ferramentas.
+
+Revisão estática independente recebeu um pacote de trechos/diff e evidências,
+**sem usar ferramentas**, executar código ou ler o disco. Identificou um Important
+no catch permissivo do parser; o RED acima confirmou o caso e a segunda análise
+lógica o considerou resolvido. Limite: pacote parcial, sem execução independente;
+não equivale à leitura integral que o reviewer remoto faz do checkout.
+Doc-sync-onboarding atualizou os documentos afetados. Project-structure tem
+**43 linhas**, contando vazias; links relativos conferidos, cercas balanceadas,
+sem caminhos pessoais e bloco gerenciado/constituição preservados.
+
+### Screenshots atuais, somente fixtures sintéticas
+
+Aplicação real, quatro viewports **1440/390 × 1050**, inspecionados: sem corte
+horizontal, erro de página ou requisição externa. Primeira peça aberta e Reels
+recolhido conforme o estado inicial aprovado; suas duas cenas são verificadas
+pelos testes que expandem o acordeão. A imagem de uma peça é de 01/10; o dia com
+carrossel e Reels é 02/10. Captura visual sintética terminada em
+04/10/2026 **12:07:13** em São Paulo. As imagens antigas conservam seu caráter histórico.
+
+| Dia | Desktop 1440 | Celular 390 |
+| --- | --- | --- |
+| Uma peça | [Imagem](../../docs/design/screenshots/001-us3-compacta-uma-peca-1440.png) | [Imagem](../../docs/design/screenshots/001-us3-compacta-uma-peca-390.png) |
+| Carrossel + Reels | [Imagem](../../docs/design/screenshots/001-us3-compacta-varias-pecas-1440.png) | [Imagem](../../docs/design/screenshots/001-us3-compacta-varias-pecas-390.png) |
+
+![Gaveta compacta uma peça desktop](../../docs/design/screenshots/001-us3-compacta-uma-peca-1440.png)
+
+![Gaveta compacta uma peça celular](../../docs/design/screenshots/001-us3-compacta-uma-peca-390.png)
+
+![Gaveta compacta carrossel e Reels desktop](../../docs/design/screenshots/001-us3-compacta-varias-pecas-1440.png)
+
+![Gaveta compacta carrossel e Reels celular](../../docs/design/screenshots/001-us3-compacta-varias-pecas-390.png)
+
+Pendências anteriores m-2/m-3 (precisão/escopo de vínculo), m-6 (complexidade),
+m-7/T037 (escala), M8/CI local e captura operacional não são promovidas a
+resolvidas. Esta rodada corrige I-1, m-1, m-B, m-4, m-5 e m-A conforme autorizado.

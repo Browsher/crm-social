@@ -18,3 +18,9 @@ O HTML conserva o seletor de variações e telas futuras para comparação do de
 - Selo com quatro estados e celular em lista semanal. Horários fixos da demonstração não são horário de captura.
 
 Nenhum dado real deve substituir esses exemplos no Git. A futura consulta real permanece local, com capturas privadas em `data/`.
+
+## Gaveta compacta v2
+
+[gaveta-v2.html](gaveta-v2.html) é a referência aprovada para a [seção 2 das telas](../telas.md#2-gaveta-do-dia-001). Como uma ficha dobrável, mostra a primeira peça aberta e as demais resumidas, faixa de dados, revisão em uma linha, unidades compactas e documentos semanais únicos. Texto registrado, versões anteriores e Histórico abrem por clique.
+
+A cópia foi conferida antes de entrar no repositório: peças, textos, responsabilidades, revisões e avisos são sintéticos; links usam apenas `#`. Sem dados reais, credenciais, URLs privadas, caminhos pessoais, mídia operacional ou fontes remotas. A fonte foi somente lida. Este HTML demonstra apresentação, sem API, persistência ou coleta; comportamento e campos efetivamente implementados estão no [módulo web](../../modules/web.md), com evidências na [validação](../../../specs/001-consulta-local-producao/validacao.md).

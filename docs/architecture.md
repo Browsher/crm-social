@@ -32,9 +32,9 @@ flowchart LR
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
 | quadro-config | Validador genérico; JSON versionado atual tem nove etapas e duas listas vazias; distribuição dos cartões ainda futura | [Configuração](modules/quadro-config.md) |
-| projecao | Seleção NTV e campos permitidos, semanas/dias/formatos, quatro estados de frescor e detalhes por versão/relação | [Projeção](modules/projecao.md) |
+| projecao | Seleção NTV e campos permitidos, supressão de URLs com credenciais, semanas/dias/formatos, frescor e detalhes por versão/relação | [Projeção](modules/projecao.md) |
 | servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
-| web | Planejamento/calendário/lista/filtros, gaveta com acordeões por peça, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, gaveta compacta com acordeões por peça, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -105,7 +105,7 @@ O ponto de entrada faz bind somente em `127.0.0.1:4318` por padrão. `criarServi
 
 Host é exatamente `127.0.0.1:<porta real>`; `localhost` não passa. Origin ausente é permitido; presente deve ser a própria origem HTTP. Sem CORS externo. CSP restringe scripts/estilos/conexões a self e proíbe imagens/objetos/incorporação. Respostas têm no-store/nosniff; HEAD não inclui corpo.
 
-O servidor não expõe `data/`, configuração bruta, envelope/metadados de coleta, células extras ou qualquer arquivo arbitrário. Texto é renderizado por `textContent`; supressão conservadora protege formatos conhecidos de conteúdo sensível sem confundir HTTPS com caminho Windows. Nenhuma URL registrada é carregada automaticamente.
+O servidor não expõe `data/`, configuração bruta, envelope/metadados de coleta, células extras ou qualquer arquivo arbitrário. Texto é renderizado por `textContent`; supressão conservadora protege formatos conhecidos de conteúdo sensível sem confundir HTTPS com caminho Windows. Antes do HTTP, a projeção analisa `Arquivos.url` e `Produções.url_video_final` com `new URL`: usuário ou senha causam **[conteúdo suprimido]** e aviso fixo localizado, sem expor o valor. String não vazia recusada pelo construtor também é suprimida, com motivo fixo **URL inválida suprimida**; vazio/somente espaços é preservado sem esse aviso. Original permanece só na captura privada. Nenhuma URL registrada é carregada automaticamente; a UI também não ecoa URL recusada como texto bruto.
 
 ## Configuração e execução
 
@@ -129,7 +129,9 @@ US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e 
 
 Planilha mostra fonte, fim da captura, cobertura semanal e motivos resumidos distintos dos avisos, com `role=status`; tabelas/Histórico permanecem em US5. **Atualizar dados** desabilita apenas o próprio botão durante `GET /api/visao` com cache no-store. Sucesso atualiza a visão mantendo a tela; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
-US3/T023–T026 entrega o detalhe de todas as peças do dia, independentemente do filtro do resumo: primeira seção em acordeão aberta, versões de páginas/cenas separadas, revisão vigente e resolvidas em grupos próprios, IDs de escopo avaliados, arquivos como registros e avisos com aba/linha física/campo. Publicação preenchida inconsistente conserva o original com aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo fecha com Esc e devolve foco; no celular ocupa a tela inteira. Classificação/quadro são US4/T027–T030; seis tabelas/Histórico são US5/T031–T034. Produção mantém a mensagem de próxima entrega; iniciador, escala e aceite completo continuam posteriores, com 15 tarefas T027–T041 pendentes.
+US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Primeira revisão vigente fica visível; adicionais ficam em +N, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
+
+A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra somente quantidade e link para Planilha, onde as tabelas detalhadas serão entregues na US5. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. Classificação/quadro são US4/T027–T030; seis tabelas/Histórico são US5/T031–T034. Produção mantém a mensagem de próxima entrega; iniciador, escala e aceite completo continuam posteriores, com 15 tarefas T027–T041 pendentes.
 
 ## Ferramentas de qualidade, evidência e dívidas
 
@@ -149,12 +151,12 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
 | null vira célula vazia na entidade | src/captura.cjs:81; envelope original preservado, mas projeção perde essa distinção |
-| Classificação pelo mapa pendente | src/projecao.cjs:222; mapa recebido, distribuição dos cartões reservada a US4 |
+| Classificação pelo mapa pendente | src/projecao.cjs:233; mapa recebido, distribuição dos cartões reservada a US4 |
 | I/O síncrono e validação por consulta | src/snapshot.cjs:20 e src/servidor.cjs:25; escala final ainda não exercitada em T037 |
 | Trava sobrevivente à interrupção | src/snapshot.cjs:72; exige reconciliação manual; aviso de liberação preserva resultado/erro |
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Aviso de complexidade do CLI | scripts/importar-captura.cjs:5, valor 12; manutenção sem retirar validações |
-| Complexidade da montagem do acordeão | src/web/app.js:115; reúne as seções da peça; preservar testes de comportamento em futuras extrações, métricas na validação |
+| Manutenção da montagem do acordeão | src/web/app.js:172; reúne as seções da peça com helpers compactos; preservar testes de comportamento em futuras extrações, métricas na validação |
 | Fonte/hashes no envelope não são prova de coleta | src/captura.cjs:27–118; Central e captura real ainda devem ser conferidas |
 | Custo e limite do review | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
