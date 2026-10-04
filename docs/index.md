@@ -4,6 +4,7 @@ Mapa da documentação deste projeto. Comece pelo [README](../README.md) e pelo 
 
 | Documento | Para que serve |
 | --- | --- |
+| [Validação da implementação 001](../specs/001-consulta-local-producao/validacao.md) | Ambiente, TDD e evidências do primeiro PR |
 | [architecture.md](architecture.md) | Módulos, fluxo de uma requisição e fronteiras do sistema |
 | [Telas decididas](design/telas.md) | Decisões do autor, telas da 001 e fronteiras das features 002–006 |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual com exemplos, sem dados operacionais |
