@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página localiza decisões, módulos e evidências: T001–T030/US1, US2, US3 e US4 implementadas, com revisão corrente e pendências na [validação](../specs/001-consulta-local-producao/validacao.md).
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: T001–T034/US1–US5 implementadas localmente (34 de 41 tarefas), com sete tarefas finais, captura operacional e aceite completo pendentes. Revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 ## Ordem de leitura
 
@@ -31,9 +31,9 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
 | [Importador](modules/importador.md) | scripts/importar-captura.cjs; argumentos/saída e falhas de entrada |
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
-| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor e detalhes por versão/relação; quadro por semana implementado; tabelas/Histórico futuros |
+| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas; Histórico confirmado |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; quatro rotas fixas e Host/Origin |
-| [Web/Planejamento e Produção](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro por semana e origem/releitura em Planilha |
+| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Histórico, releitura e avisos por peça |
 
 ## Feature 001 canônica
 
@@ -44,7 +44,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [research.md](../specs/001-consulta-local-producao/research.md) | Pesquisa histórica de 03/10 e justificativas; não é status atual da implementação |
 | [data-model.md](../specs/001-consulta-local-producao/data-model.md) | Modelo alvo completo, entidades e transições; estado parcial no início |
 | [Contrato captura/consulta](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) | Envelope e 66 mínimos, persistência e UI completas; pendências explícitas |
-| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T030 marcadas e T031–T041 pendentes; rastreabilidade |
+| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T034 marcadas e sete tarefas T035–T041 pendentes; rastreabilidade |
 | [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, sete suítes, demo TEMP e roteiro final futuro |
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
@@ -68,6 +68,9 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Gaveta com links/avisos corrigidos 1440](design/screenshots/001-us3-ultima-varias-pecas-1440.png) / [390](design/screenshots/001-us3-ultima-varias-pecas-390.png) | Apresentação com link não permitido distinto de mídia ausente e contador dos avisos relacionados |
 | [Produção 1440](design/screenshots/001-us4-producao-1440.png) / [390](design/screenshots/001-us4-producao-390.png) | Quadro executável com mapa e captura sintéticos em TEMP |
 | [Produção com pendências por coluna 1440](design/screenshots/001-us4-ajuste-producao-1440.png) / [390](design/screenshots/001-us4-ajuste-producao-390.png) | Cartões com mídia ausente somente nas colunas aplicáveis e +N das pendências visíveis; captura/mapa sintéticos em TEMP |
+| [Planilha/dados 1440](design/screenshots/001-us5-dados-1440.png) / [390](design/screenshots/001-us5-dados-390.png) | Seis abas com mínimos triados, contagens NTV e rolagem própria; fixture sintética em TEMP |
+| [Planilha/avisos 1440](design/screenshots/001-us5-avisos-1440.png) / [390](design/screenshots/001-us5-avisos-390.png) | Painel Aba/Linha/Campo/Motivo da peça, com dados das seis abas NTV preservados |
+| [Planilha/Histórico 1440](design/screenshots/001-us5-historico-1440.png) / [390](design/screenshots/001-us5-historico-390.png) | Aba final de tentativas confirmadas, recentes primeiro; dados sintéticos |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Mockup da gaveta v2](design/mockups/gaveta-v2.html) | Referência compacta aprovada para a seção 2 das telas, somente dados sintéticos |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |
@@ -99,7 +102,11 @@ As evidências têm origem, estado e limites registrados somente na [validação
 
 ## Evidência local da US4
 
-[Resumo sanitizado do quadro de Produção](reports/001-us4-local.json); origem, execução e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+[Resumo histórico do quadro de Produção](reports/001-us4-local.json) e [resumo do ajuste de pendências por coluna](reports/001-us4-ajuste-local.json); origem, execução, revisão e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md). A medição anterior permanece histórica.
+
+## Evidência local da US5
+
+[Resumo sanitizado de Planilha, avisos e Histórico](reports/001-us5-local.json); implementação local e verificações do incremento, sem aceite operacional. Origem, medições, revisão corrente e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 ## Referências de desenvolvimento preservadas
 

@@ -1,10 +1,10 @@
-# Projeção de Planejamento, detalhe do dia e Produção
+# Projeção de Planejamento, detalhe do dia, Produção e Planilha
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Projeção, detalhes e quadro implementados até T028/US4; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs).
+Projeção, detalhes, quadro e seis tabelas implementados até T032/US5; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs). A feature completa e captura operacional continuam pendentes.
 
-Funções conferidas na fonte: `redigirPedacoUrl` (linha 6), `redigirTexto` (17), `jsonValido` (29), `motivoUrl` (32), `selecionar` (37), `reciboPublico` (50), `selecionarNtv` (62), `planejar` (95), `agruparDias` (117), `aplicarFrescor` (126), `midiasCena` (191), `unidades` (202), `vinculoRevisao` (211), `revisoes` (220), `documentosSemana` (251), `avisosRelacionados` (282), `detalhar` (291), `colunaProducao` (305), `pendenciasRevisao` (311), `pendenciasMidia` (318), `colunaSemana` (330), `montarQuadro` (336) e `projetarVisao` (345).
+Funções conferidas na fonte: `redigirPedacoUrl` (linha 6), `redigirTexto` (17), `jsonValido` (29), `motivoUrl` (32), `selecionar` (37), `reciboPublico` (50), `selecionarNtv` (62), `planejar` (95), `agruparDias` (117), `aplicarFrescor` (126), `midiasCena` (191), `unidades` (202), `vinculoRevisao` (211), `revisoes` (220), `documentosSemana` (251), `avisosRelacionados` (282), `detalhar` (291), `colunaProducao` (305), `pendenciasRevisao` (311), `pendenciasMidia` (318), `colunaSemana` (330), `montarQuadro` (336), `montarPlanilha` (345) e `projetarVisao` (351).
 
 ## Interface, seleção e dados
 
@@ -21,8 +21,8 @@ Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro
 | `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null, formato por slot, detalhes e `quadro:{coluna,pendencias}` |
 | `dias` | Grupos por data civil; sem data agrupado por semanaId, inclusive null |
 | `quadro` | `colunas:[{nome}]` e `semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]`; oito colunas por semana, inclusive semanaId null; IDs ordinais |
-| `planilha` | Lista vazia; seis tabelas futuras em US5 |
-| `historico` / `ultimaTentativa` | Recibos confirmados selecionados, recentes primeiro; tela ainda pendente |
+| `planilha` | Sem captura, lista vazia; com captura, seis abas `{nome,cabecalhos,quantidadeLinhas,linhas}` com cópias dos mínimos triados e contagens NTV |
+| `historico` / `ultimaTentativa` | Todos os recibos confirmados selecionados, recentes primeiro; Histórico final na Planilha, sem órfãos/no-op duplicado |
 | `avisos` | Data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
 
 | Precedência | `estado` | Texto / cor |
@@ -37,6 +37,37 @@ Com captura vigente e `ultimaTentativa.resultado=falhou`, a projeção acrescent
 Semanas/produções exigem `marca_id=ntv`. Páginas, cenas e revisões são selecionadas pelo conjunto de produções; arquivos, pela produção ou semana quando não têm produção. Seus registros mínimos selecionados alimentam contagens e detalhes; nenhum seletor de elegibilidade do n8n é reutilizado.
 
 Somente campos mínimos explícitos são considerados; envelope, metadados/hash de coleta, extras arbitrários e mapa bruto não são servidos. Recibo público contém apenas tentativaId, concluidaEm, resultado e motivoResumo.
+
+## Seis tabelas de consulta
+
+`montarPlanilha` (`src/projecao.cjs:345`) percorre `CAMPOS` na ordem Semanas,
+Produções, Páginas, Cenas, Arquivos e Revisoes. Como cópias de folhas já selecionadas,
+as linhas carregam somente os mínimos triados, sem herdar os dados calculados das
+outras telas.
+
+| Campo | Regra |
+| --- | --- |
+| `nome` | Nome literal da aba |
+| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 no total |
+| `quantidadeLinhas` | Comprimento da lista de linhas NTV, não a alocação da fonte |
+| `linhas` | Objetos novos com somente chaves de `CAMPOS` e os valores já triados |
+
+A cópia ocorre antes de `planejar`, `detalhar` e `montarQuadro`, isolando as linhas
+de períodos/IDs calculados, `detalhes`, `quadro`, envelope e extras. Cabeçalhos e
+objetos de linha não são compartilhados com os registros enriquecidos. Semanas
+sem `marca_id=ntv`, produções de outra marca e seus registros relacionados não
+entram na consulta; arquivo semanal sem produção usa vínculo à semana NTV.
+
+`base` conserva Histórico de todos os recibos confirmados, recentes primeiro,
+mesmo sem captura válida; a US5 usa essa lista existente, sem alterar persistência.
+GET/no-op não cria tentativa. A Planilha exibe linhas triadas, não a matriz bruta:
+normalização null→string vazia permanece nos mínimos, exceto `etapa_producao`,
+recuperada antes da triagem. Essa dívida e seus limites continuam no contrato.
+
+Avisos gerais e `detalhes.avisos` conservam a origem física; o filtro visual da
+peça não altera as seis tabelas da API. URLs dedicadas já triadas fora da allowlist
+visual podem permanecer na API; a célula da interface mostra **link não permitido**.
+Texto livre legítimo segue a redação parcial, sem aplicar a allowlist a toda frase.
 
 ## Datas, formatos e agrupamento
 
@@ -90,7 +121,7 @@ Versão/índice preenchidos exigem inteiros positivos; início/duração preench
 
 `colunaProducao` aplica publicação preenchida > liberação configurada > revisão configurada > etapa mapeada, com fallback Outras; status é informativo. `colunaSemana` conta rótulos distintos apenas dos cartões Outras daquela semana NTV; vazio/null/espaços usam uma chave somente no contador. Etapa null é recuperada da célula original antes da triagem e conservada na API. Repetição, outra semana/marca ou etapa vencida por prioridade superior não aumenta N; zero/singular/plural vêm da projeção. Configuração versionada mantém nove etapas e liberação/revisão vazias; `capturaQuadro`/`mapaQuadroSintetico` são fixtures TEMP para todas as colunas.
 
-`quadro.pendencias` reúne revisões vigentes de decisão literal `revisar`, `refazer`, `reprovado` ou `rejeitado`, com revisãoId/decisão/versão/responsável de correção, seguidas de mídia ausente na página/cena vigente com unidade/identidade. Aprovação/desconhecido/versão anterior não gera correção inferida. Sem unidades vigentes, ausência de arquivo registrado na versão atual gera pendência; registro com URL vazia/recusada não vira mídia ausente, sem comprovar bytes. API conserva todas; UI mostra primeira/+N. Tratamento desconhecido continua dívida da revisão final. Casos US4 de prioridade, contador e pendências são conferidos em [tests/projecao.test.cjs](../../tests/projecao.test.cjs), com resultados somente na [validação](../../specs/001-consulta-local-producao/validacao.md).
+`quadro.pendencias` reúne revisões vigentes de decisão literal `revisar`, `refazer`, `reprovado` ou `rejeitado`, com revisãoId/decisão/versão/responsável de correção, seguidas de mídia ausente na página/cena vigente com unidade/identidade. Aprovação/desconhecido/versão anterior não gera correção inferida. Sem unidades vigentes, ausência de arquivo registrado na versão atual gera pendência; registro com URL vazia/recusada não vira mídia ausente, sem comprovar bytes. API conserva todas; o cartão aplica o filtro de mídia por coluna e mostra primeira/+N somente das pendências visíveis. Tratamento desconhecido continua dívida da revisão final. Casos US4 de prioridade, contador e pendências são conferidos em [tests/projecao.test.cjs](../../tests/projecao.test.cjs), com resultados somente na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 ## Supressão, testes e dívidas
 
@@ -104,4 +135,4 @@ A validade de `origens_json` é calculada sobre o texto original antes da supres
 
 [tests/projecao.test.cjs](../../tests/projecao.test.cjs) cobre seleção NTV, isolamento da entrada, campos selecionados, supressão e preservação de URLs, datas civis, formatos, cobertura, órfãos e ordem. US2 verifica fim da captura, virada do dia em São Paulo, quatro estados e precedência da falha sem payload privado; US3 cobre responsáveis/revisões, ordenação e isolamento de versões, mídias ausentes/incompatíveis/empatadas, números/JSON inválidos, linha física dos avisos e resolução semanal sem duplicar avisos globais. Casos de usuário/senha sintéticos, inclusive URLs malformadas, verificam supressão, motivos fixos, vazios preservados e captura original intacta; [servidor](../../tests/servidor.test.cjs) e [interface](../../tests/interface.test.cjs) conferem ausência das credenciais no JSON real e no dia. Regressões em [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) conferem GET/no-op preservando falha/horário e nova captura encerrando a falha. Resultados em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-Uma pegadinha permanece explícita: a função `registros` em `src/captura.cjs` normaliza null explícito para string vazia na entidade; o envelope privado conserva o original; etapa_producao null é recuperada antes da triagem na US4. A linha física dos avisos já é preservada, inclusive após linhas vazias ou de outra marca. Classificação de Produção implementada; seis tabelas de Planilha ainda futuras; detalhe e recibo não comprovam integração operacional.
+Uma pegadinha permanece explícita: a função `registros` em `src/captura.cjs` normaliza null explícito para string vazia na entidade; o envelope privado conserva o original; etapa_producao null é recuperada antes da triagem. As seis tabelas da US5 conservam essa normalização nos demais mínimos. A linha física dos avisos já é preservada, inclusive após linhas vazias ou de outra marca. Classificação de Produção e tabelas de Planilha implementadas; detalhe, tabela e recibo não comprovam integração operacional. Verificações locais e revisão ficam somente na validação.

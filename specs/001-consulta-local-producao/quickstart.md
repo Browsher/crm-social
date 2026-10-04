@@ -1,6 +1,6 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T030/US1, US2, US3 e US4 implementadas, com revisão corrente e evidências na [validação](validacao.md). T031–T041 e captura operacional permanecem pendentes; sem leitura real Google. Branch `001-consulta-local-producao`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T034/US1–US5 implementadas localmente (34 de 41 tarefas), com revisão corrente e evidências na [validação](validacao.md). Sete tarefas finais T035–T041, iniciador, captura operacional e aceite completo permanecem pendentes; sem leitura real Google. Branch da feature `001-consulta-local-producao`.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). Os mockups de [telas](../../docs/design/mockups/telas-v2.html) e [gaveta compacta](../../docs/design/mockups/gaveta-v2.html) servem como referência visual; não validam backend ou persistência.
 
@@ -93,12 +93,22 @@ Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída d
 | Texto/avisos/links | Página/Cena número e versão em Texto registrado, sem ID técnico; arquivo ligado sem URL segura mostra link não permitido. Texto livre/recibo redige só pedaço HTTP(S) credenciado separado por espaços em branco, preservando frase/espaços/pontuação; demais formas fora desse escopo. JSON é dado: só tokens de string alterados são reserializados, demais bytes intactos. Supressões de células e avisos relacionados entram no contador; validade original não muda |
 | Sem data | Contagem global; link oculto quando zero, variante de interface tem uma |
 | Selo | Atualizado hoje, HH:MM / Dados de DD/MM / Atualização falhou / Sem dados; clique abre Planilha |
-| Planilha | Fonte, fim em São Paulo, cobertura semanal e avisos; tabelas/Histórico continuam futuros |
+| Planilha | Fonte, fim em São Paulo, cobertura, seis abas com mínimos triados/contagens NTV, Histórico confirmado e painel detalhado de avisos; teclado/foco e rolagem própria |
 | Atualizar dados | Relê GET /api/visao; conserva tela/falha/horário, sem Google; erro HTTP mantém visão anterior e botão permite repetir |
 | Produção | Quadro por semana/tema, oito colunas/vazias, status informativo, responsável/correção separados, primeira pendência/+N e clique até dia inteiro/Sem data |
 | Interface mobile | Lista e menu recolhido em 390 px |
 
-Importar novamente os mesmos ID/serialização retorna `sem_alteracao`, sem criar recibo, renovar instante ou encerrar falha posterior. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. O selo vermelho e o aviso curto de preservação já aparecem com captura vigente; sem captura, eventual primeira falha conserva **Sem dados**. GET/releitura não grava nem encerra a falha; nova captura completa aceita a encerra. Erro HTTP, inclusive 503, conserva a visão carregada com mensagem local e botão habilitado para nova tentativa. A tela de Histórico permanece futura; os recibos já existem na persistência.
+Importar novamente os mesmos ID/serialização retorna `sem_alteracao`, sem criar recibo, renovar instante ou encerrar falha posterior. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. O selo vermelho e o aviso curto de preservação já aparecem com captura vigente; sem captura, eventual primeira falha conserva **Sem dados**. GET/releitura não grava nem encerra a falha; nova captura completa aceita a encerra. Erro HTTP, inclusive 503, conserva a visão carregada com mensagem local e botão habilitado para nova tentativa. Histórico apresenta todas as tentativas confirmadas, recentes primeiro, sem órfãos ou duplicação por no-op; sem captura, é a única aba disponível junto à orientação da Central.
+
+Na Planilha, setas esquerda/direita, Home e End alternam as abas com foco; releitura
+conserva uma aba disponível selecionada. **Ver na Planilha** da gaveta fecha o dia,
+abre Produções e dá rolagem/foco aos avisos da peça em Aba/Linha/Campo/Motivo.
+As seis tabelas permanecem NTV completas; menu/selo/Todos os avisos restauram os
+avisos gerais. Célula dedicada `url`/`url_video_final` recusada mostra **link não
+permitido**, mantendo o marcador exato de supressão; textos livres legítimos
+permanecem como texto, sem navegação automática. As tabelas copiam somente os 66
+mínimos triados e conservam a normalização null→string vazia preexistente, exceto
+etapa_producao; não são uma reprodução literal do envelope privado.
 
 Para uma captura nova, a importação admite fim até 10 minutos no futuro em relação ao relógio local, inclusive o limite. Mais que isso recusa a candidata como **captura inválida**; ID novo com fim igual ou anterior ao da vigente é **captura desatualizada**. Ambas confirmam recibo `falhou` com motivo e preservam a vigente, sem gravar a candidata. A comparação ocorre sob trava, depois da validação estrutural e do conflito/no-op de ID. GET/releitura/reinício não reaplicam a regra; repetição de ID/bytes já aceitos mantém seu no-op mesmo que o relógio recue. Conferir esses casos somente em TEMP com fixtures sintéticas e relógio controlado nos testes.
 
@@ -106,7 +116,7 @@ A importação adquire `.importacao.lock` no diretório escolhido. Segunda inst�
 
 ## Cenários sintéticos obrigatórios
 
-Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T030 e suas regressões já têm evidência em `validacao.md`; tabelas/Histórico, iniciador e escala permanecem futuros; PR/aceite corrente da US4 na validação. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
+Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T034 e suas regressões têm evidência em `validacao.md`; iniciador, escala, captura operacional e revisão final permanecem futuros. Executar os cenários finais somente quando suas tarefas existirem; não transformar o roteiro em resultado testado nem concluir T041 pelo doc-sync deste incremento.
 
 | Caso | Ação | Resultado a conferir |
 | --- | --- | --- |
@@ -154,7 +164,7 @@ Executar somente após implementação e revisão, conforme T039. O dicionário 
    ```
 
 4. Confirmar somente os três itens de menu; Planejamento com objetivo ainda não definido, calendário/lista/filtros e “N sem data”. Comparar os IDs de todas as peças NTV com a **mesma captura**, inclusive imagem B e registros concluídos/bloqueados. Não usar filtros da fila n8n para essa comparação.
-5. Clicar um dia com várias peças: conferir todas no acordeão e só a primeira aberta, resumo das demais, faixa de quatro dados preenchidos, publicação registrada em uma linha e etapa conhecida legível/desconhecida original. Conferir revisão inicial, adicionais em +N, páginas/cenas compactas com no máximo um aviso de ausência por linha e Texto registrado/versões/Histórico recolhidos abrindo por clique. Documentos Plano/Redação/Visual aparecem uma vez por semana representada no fim do dia, com — na ausência. Avisos técnicos ficam na API; a gaveta só conta e oferece link funcional para Planilha, cujas tabelas detalhadas são futuras. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Links só HTTPS Drive/Docs permitidos; URL recusada não aparece como texto bruto; os campos de URL dedicados têm guarda de userinfo/malformada. Texto livre conserva a frase e redige somente o pedaço HTTP(S) credenciado, nos limites do contrato. Escape fecha e devolve foco.
+5. Clicar um dia com várias peças: conferir todas no acordeão e só a primeira aberta, resumo das demais, faixa de quatro dados preenchidos, publicação registrada em uma linha e etapa conhecida legível/desconhecida original. Conferir revisão inicial, adicionais em +N, páginas/cenas compactas com no máximo um aviso de ausência por linha e Texto registrado/versões/Histórico recolhidos abrindo por clique. Documentos Plano/Redação/Visual aparecem uma vez por semana representada no fim do dia, com — na ausência. Avisos técnicos ficam na API; a gaveta só conta e oferece link funcional ao painel de avisos da peça já implementado na Planilha, sem recortar as seis tabelas NTV. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Links só HTTPS Drive/Docs permitidos; URL recusada não aparece como texto bruto; os campos de URL dedicados têm guarda de userinfo/malformada. Texto livre conserva a frase e redige somente o pedaço HTTP(S) credenciado, nos limites do contrato. Escape fecha e devolve foco.
 6. Conferir Produção por semana: mapa carregado do JSON, prioridade publicação > liberação > revisão > etapa, arte_aprovada em Visual e oito etapas de mídia preservadas quando não há prioridade superior. Status é informativo; Outras preserva original e conta distintos da semana, não cartões. Publicada vem de publicado_em preenchido, com aviso em dado inconsistente. Clique abre dia inteiro ou Sem data; sem arrastar/editar/encaminhamento inferido.
 7. Clicar o selo para Planilha. Comparar contagens/valores mínimos nas seis tabelas e Histórico com a captura/recibos privados; conferir período/horário e rolagem própria. “Atualizar dados” relê a última captura salva, sem buscar Google, importar pelo navegador ou criar nova coleta.
 8. Conferir teclado e 390/1440. Não compartilhar screenshot de dados operacionais privados; usar fixture sintética para evidência visual compartilhável. Falhas/importações destrutivas de teste permanecem no diretório temporário, não em `data/` real.
@@ -168,7 +178,7 @@ Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editori
 & './.specify/scripts/powershell/check-prerequisites.ps1' -Json -RequireSpec -RequireTasks -IncludeTasks
 ```
 
-Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T030 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
+Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T034 já foram marcadas na implementação; esta sincronização não altera checks nem as sete tarefas finais.
 
 ## Quality gate e sincronização final da implementação
 
@@ -180,4 +190,4 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 
 T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
-Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. As evidências das quatro histórias implementadas estão na [validação](validacao.md); o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.
+Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. As evidências das cinco histórias implementadas estão na [validação](validacao.md); o aceite completo da 001 continua dependendo do iniciador, cenários finais e captura oficial ainda pendentes.

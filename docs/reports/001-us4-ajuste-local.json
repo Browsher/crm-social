@@ -1,0 +1,86 @@
+{
+  "observadoEm": "2026-10-04",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
+  "escopo": "Ajuste autorizado do cartão da US4; somente fixtures sintéticas",
+  "local": {
+    "exitCode": 0,
+    "tests": {
+      "pass": 174,
+      "fail": 0,
+      "skip": 0,
+      "interface": 62
+    },
+    "results": [
+      {
+        "name": "tests",
+        "state": "PASS",
+        "reason": "",
+        "count": 174
+      },
+      {
+        "name": "coverage",
+        "state": "PASS",
+        "reason": "",
+        "percent": 97.5363941769317,
+        "drop": 0
+      },
+      {
+        "name": "complexity",
+        "state": "PASS",
+        "reason": ""
+      },
+      {
+        "name": "semgrep",
+        "state": "SKIP",
+        "reason": "Semgrep ausente; instalar CE 1.179.0"
+      },
+      {
+        "name": "audit",
+        "state": "N/A",
+        "reason": "sem package.json/dependencias do app"
+      }
+    ],
+    "complexityMax": 13,
+    "avisosComplexidade": [
+      {
+        "file": "scripts/importar-captura.cjs",
+        "line": 5,
+        "value": 12
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 72,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 84,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 150,
+        "value": 13
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 289,
+        "value": 11
+      }
+    ],
+    "baselineAtualizada": false,
+    "seconds": 44.48
+  },
+  "linux": {
+    "estado": "Conferido no job vinculado à procedência; tests, coverage, complexity e Semgrep PASS, audit N/A",
+    "limite": "Interface tem SKIP explícito no CI; aceite local exercitado."
+  },
+  "medicao": {
+    "estado": "Árvore medida antes da publicação do ajuste; heads e execuções somente na procedência",
+    "fontesSha256": {
+      "src/web/app.js": "7adb8c15cfe8317b29b40f8202e131f8d285d9a419f62b63f694fdf1f756516b",
+      "src/web/index.html": "fa7ffb7872ec4948fd1f6d00a16a24a7ab018b3b87159629191770dbea247e38",
+      "src/web/styles.css": "1cded6fb1219b8a8985dadc4f44b27654fdcb02506f259f4068a23db259e2ebf"
+    }
+  }
+}

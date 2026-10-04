@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-T001–T030 estão implementadas (fundação, US1, US2, US3 e US4); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; captura operacional e leitura Google permanecem pendentes.
+T001–T034 estão implementadas localmente (fundação e US1–US5, 34 de 41 tarefas); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes. Leitura Google pertence à 002.
 
 ## Módulos e imports reais
 
@@ -32,9 +32,9 @@ flowchart LR
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
-| projecao | Seleção NTV e campos permitidos, supressão de URLs com credenciais, semanas/dias/formatos, frescor e detalhes por versão/relação | [Projeção](modules/projecao.md) |
+| projecao | Seleção NTV e campos permitidos, supressão de URLs com credenciais, semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas | [Projeção](modules/projecao.md) |
 | servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
-| web | Planejamento/calendário/lista/filtros, Produção por semana e etapa, gaveta compacta com acordeões por peça, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Histórico e avisos detalhados | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -69,7 +69,7 @@ flowchart TD
   Confirmar --> Ler[lerEstado consulta apenas IDs confirmados]
   Ler --> Projetar[projetarVisao seleciona registros permitidos]
   Projetar --> API[GET /api/visao]
-  API --> UI[Planejamento, Produção por etapa, gaveta do dia e origem/releitura no navegador]
+  API --> UI[Planejamento, Produção, gaveta e Planilha com tabelas, avisos e Histórico]
 ```
 
 `atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`. Capturas e recibos são preparados com abertura exclusiva e fsync antes do rename. Falha na gravação/rename do ponteiro tenta remover somente seu temporário, preservando o erro original se a limpeza também falhar. Resumo `ultima-tentativa.json` é derivado; falha dele não muda o estado confirmado. Arquivo órfão de interrupção não comprova aceitação nem entra no Histórico.
@@ -129,11 +129,51 @@ Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” glo
 
 US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
 
-Planilha mostra fonte, fim da captura, cobertura semanal e motivos resumidos distintos dos avisos, com `role=status`; tabelas/Histórico permanecem em US5. **Atualizar dados** desabilita apenas o próprio botão durante `GET /api/visao` com cache no-store. Sucesso atualiza a visão mantendo a tela; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
+Planilha mostra fonte, fim da captura, cobertura semanal, motivos resumidos distintos dos avisos com `role=status`, seis abas de dados e Histórico final. **Atualizar dados** desabilita apenas o próprio botão durante `GET /api/visao` com cache no-store. Sucesso atualiza a visão mantendo a tela e uma aba que continua disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
-A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra somente quantidade e link para Planilha, onde as tabelas detalhadas serão entregues na US5. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. Seis tabelas/Histórico são US5/T031–T034; iniciador, escala e aceite completo continuam posteriores, com 11 tarefas T031–T041 pendentes. PR da US4 e captura operacional permanecem pendentes na validação.
+A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta somente nos cartões de Planejamento/Redação/Visual; detalhes continuam na API/gaveta. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico; iniciador, escala, captura operacional e aceite completo continuam posteriores, com sete tarefas T035–T041 pendentes. Revisão/integração corrente fica somente na validação.
+
+## Planilha: mínimos, avisos e Histórico
+
+Como folhas de consulta do mesmo álbum, as seis tabelas mostram a captura NTV
+completa; o atalho da gaveta localiza os avisos relacionados à peça.
+
+```mermaid
+flowchart TD
+  Estado[Estado confirmado por lerEstado] --> Selecionar[selecionarNtv e triagem dos mínimos]
+  Selecionar --> Copiar[montarPlanilha copia somente CAMPOS]
+  Selecionar --> Enriquecer[Planejamento, detalhes e quadro]
+  Estado --> Recibos[base seleciona recibos confirmados recentes primeiro]
+  Copiar --> API[GET /api/visao existente]
+  Enriquecer --> API
+  Recibos --> API
+  API --> Abas[Seis abas NTV e Histórico]
+  API --> Avisos[Avisos gerais e detalhes.avisos da peça]
+  Gaveta[ver na Planilha da gaveta] -->|fecha, abre Produções e dá foco| Filtro[Somente avisos da peça]
+  Avisos --> Filtro
+  Filtro --> Painel[Painel Aba, Linha, Campo, Motivo]
+  Avisos -->|menu, selo ou Todos os avisos| Painel
+```
+
+`src/projecao.cjs:345` (`montarPlanilha`) copia cabeçalhos e objetos de linha já
+triados antes dos enriquecimentos, evitando `quadro`, `detalhes`, envelope e extras.
+Contagens são das linhas NTV, não da alocação no Google. Normalização null→string
+vazia permanece nos mínimos, exceto `etapa_producao`; o original fica privado.
+Histórico mostra todas as tentativas confirmadas, sem órfãos nem novo recibo por
+no-op. HTTP, imports e persistência permanecem os mesmos.
+
+`src/web/app.js:433` (`renderPlanilha`) conserva a aba disponível; setas, Home e End
+mudam seleção e foco, e tabelas largas têm região própria de rolagem. Sem captura,
+somente Histórico e orientação à Central. O link da gaveta abre Produções e dá
+rolagem/foco ao painel da peça, sem recortar as seis tabelas; menu/selo/Todos os
+avisos restauram os avisos gerais. Painel fica oculto em Histórico ou sem avisos.
+
+`src/web/app.js:447` (`celulaPlanilha`) troca somente URL dedicada recusada por
+**link não permitido**, mantendo o marcador exato de supressão. A API pode conservar
+URL já triada fora da allowlist visual; textos livres legítimos mantêm suas URLs
+como texto segundo o contrato. Células não criam links ou navegação automática.
 
 ## Ferramentas de qualidade, evidência e dívidas
 
@@ -152,13 +192,13 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
-| null vira célula vazia na entidade | função registros em src/captura.cjs; envelope preservado; projeção recupera null de etapa_producao antes da triagem para US4; demais campos conservam a normalização |
+| null vira célula vazia na entidade e na tabela projetada | função registros em src/captura.cjs; envelope preservado; projeção recupera null de etapa_producao antes da triagem; demais mínimos da US5 conservam a normalização, sem prometer reprodução literal da matriz |
 | Mapa restrito aos rótulos aprovados | config/quadro-etapas.json; nove etapas e liberação/revisão vazias; testes/demonstrações usam mapa sintético em TEMP |
 | I/O síncrono e validação por consulta | src/snapshot.cjs:20 e src/servidor.cjs:25; escala final ainda não exercitada em T037 |
 | Trava sobrevivente à interrupção | src/snapshot.cjs:72; exige reconciliação manual; aviso de liberação preserva resultado/erro |
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Aviso de complexidade do CLI | scripts/importar-captura.cjs:5, valor 12; manutenção sem retirar validações |
-| Manutenção da montagem do acordeão | src/web/app.js:178; reúne as seções da peça com helpers compactos; preservar testes de comportamento em futuras extrações, métricas na validação |
+| Manutenção da montagem do acordeão | src/web/app.js:184; reúne as seções da peça com helpers compactos; preservar testes de comportamento em futuras extrações, métricas na validação |
 | Fonte/hashes no envelope não são prova de coleta | src/captura.cjs:27–118; Central e captura real ainda devem ser conferidas |
 | Custo e limite do review | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
