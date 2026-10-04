@@ -360,3 +360,34 @@ Diff da US3 contra `869f0bd`: **30 arquivos**, incluindo os quatro PNG e o resum
 sanitizado novo. O head de código acima é a referência testada; o commit documental
 seguinte mantém esse código. Todos os T001–T026 estão marcados; T027–T041 continuam
 desmarcados. Constituição, skills, gate/CI/baseline e bloco gerenciado intactos.
+
+### PR #9 — gate Linux, comentário publicado e achado pendente
+
+[PR #9](https://github.com/Browsher/crm-social/pull/9) aberto, **sem merge**, com head
+`15446201e4030174aa8a1fe4d9a5209315211a8f`, 30 arquivos contra `869f0bd`.
+[quality-gate SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37209150138/job/111456574271):
+tests, coverage, complexity e **Semgrep PASS**, audit N/A, exit 0 e baseline false.
+O log registra instalação e execução real de **Semgrep 1.179.0 no Linux**. As métricas
+numéricas do resumo continuam explicitamente locais; não inferir a UI a partir do CI.
+
+[Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37209150140/job/111456574276)
+publicou [o comentário do Claude](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981043366):
+**0 Critical, 2 Important, 8 Minor**. Generate-tests/publish-tests SKIPPED corretamente,
+sem rótulo gerar-testes. O coordenador confirmou o gate no log depois do review.
+
+| Item | Resultado / próximo encaminhamento |
+| --- | --- |
+| I-1 / segurança | URL com userinfo é recusada como link, porém seu texto pode sair na API/gaveta. Nenhuma credencial real foi usada nos testes ou imagens. Achado procede; corrigir com RED de supressão na API/DOM em rodada autorizada. Código preservado, PR aberto sem merge |
+| I-2 / evidência Linux | Resolvida documentalmente pelo job/log acima: Semgrep real PASS; o modelo não recebe status de checks no contexto, por desenho do workflow. UI continua comprovada somente localmente |
+| m-1 | Avisos de documentos semanais podem se repetir por produção; deduplicação futura |
+| m-2 | Campo do aviso de mídia/empate pouco preciso; localizar todos os registros empatados em melhoria futura |
+| m-3 | Avaliar escopo cruzado de página/cena e ponteiro semanal em arquivo de produção; comportamento conservado, sem inferir uma decisão nova |
+| m-4 | Parâmetro/ramo interactive de cartao não mais usado; limpeza futura |
+| m-5 | Fortalecer asserções de links/corte desktop/quantidade de acionamentos; evidências atuais são as registradas acima |
+| m-6 | acordeaoPeca complexidade 13, aviso; refatoração sem mudança de comportamento futura |
+| m-7 | Índices por produção para escala T037; custo atual filtra por peça |
+| m-8 | Limite de processo: adaptação do reviewer para leituras locais no Codex diverge da restrição de shell do template. Foi delimitada pelo coordenador, não uma autorização específica do autor; usar revisão remota com Read/Grep/Glob como evidência independente canônica, sem alegar equivalência de ferramentas |
+
+Somente este registro e o resumo sanitizado recebem as evidências remotas; os demais
+documentos mantêm estado com link. Esta atualização documental não altera o código
+testado `450e780`, nem corrige os novos achados do PR. O autor decide a próxima rodada.

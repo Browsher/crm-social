@@ -56,7 +56,16 @@
     "baselineAtualizada": false
   },
   "linux": {
-    "estado": "aguardando execução do PR",
-    "limite": "Semgrep deve executar realmente no Linux; métricas numéricas acima são locais."
+    "estado": "SUCCESS observado no log; histórico e links na procedência",
+    "exitCode": 0,
+    "semgrepVersion": "1.179.0",
+    "results": {
+      "tests": "PASS",
+      "coverage": "PASS",
+      "complexity": "PASS",
+      "semgrep": "PASS",
+      "audit": "N/A"
+    },
+    "limite": "Estados reais conferidos no log Linux; números de cobertura/complexidade são locais. Interface tem SKIP explícito no CI."
   }
 }
