@@ -40,7 +40,14 @@
       <div class="calendar-footer"><span id="total"></span><button type="button" id="abrir-sem-data" class="text-button" hidden>0 sem data</button></div>
       <section id="sem-data" aria-label="Peças sem data" hidden><div class="section-heading"><h2>Sem data</h2><button type="button" id="fechar-sem-data">Fechar lista</button></div><div id="lista-sem-data"></div></section>
     </section>
-    <section id="producao" hidden><h2>Produção</h2><p class="empty">O quadro estará disponível na próxima entrega.</p></section>
+    <section id="producao" aria-label="Produção por etapa" hidden>
+      <div class="week-heading"><div><small id="semana-periodo"></small><h2 id="semana-tema">Aguardando captura</h2></div>
+        <div class="month-nav"><button type="button" id="semana-anterior" aria-label="Semana anterior" disabled>‹</button><button type="button" id="semana-proxima" aria-label="Próxima semana" disabled>›</button></div>
+      </div>
+      <p id="quadro-vazio" class="empty" hidden></p>
+      <div id="quadro" class="production-board"></div>
+      <p id="quadro-total" class="board-total"></p>
+    </section>
     <section id="planilha" hidden>
       <section class="capture-info" aria-label="Origem e atualização">
         <h2>Origem e atualização</h2>

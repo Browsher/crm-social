@@ -1,0 +1,87 @@
+{
+  "observadoEm": "2026-10-04",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
+  "escopo": "US4 T027–T030: quadro por etapa; somente fixtures sintéticas",
+  "local": {
+    "exitCode": 0,
+    "tests": {
+      "pass": 172,
+      "fail": 0,
+      "skip": 0,
+      "interface": 60
+    },
+    "results": [
+      {
+        "name": "tests",
+        "state": "PASS",
+        "reason": "",
+        "count": 172
+      },
+      {
+        "name": "coverage",
+        "state": "PASS",
+        "reason": "",
+        "percent": 97.5363941769317,
+        "drop": 0
+      },
+      {
+        "name": "complexity",
+        "state": "PASS",
+        "reason": ""
+      },
+      {
+        "name": "semgrep",
+        "state": "SKIP",
+        "reason": "Semgrep ausente; instalar CE 1.179.0"
+      },
+      {
+        "name": "audit",
+        "state": "N/A",
+        "reason": "sem package.json/dependencias do app"
+      }
+    ],
+    "complexityMax": 13,
+    "avisosComplexidade": [
+      {
+        "file": "scripts/importar-captura.cjs",
+        "line": 5,
+        "value": 12
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 72,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 84,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 150,
+        "value": 13
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 288,
+        "value": 11
+      }
+    ],
+    "baselineAtualizada": false,
+    "seconds": 41.97
+  },
+  "linux": {
+    "estado": "Ainda não publicado no momento desta medição local; conferir check e evidência corrente na procedência",
+    "limite": "Estados Linux não inferidos do Windows; interface tem SKIP no CI e aceite local explícito."
+  },
+  "medicao": {
+    "estado": "Árvore de trabalho medida antes da publicação; histórico de heads somente na procedência",
+    "fontesSha256": {
+      "src/projecao.cjs": "d80c3d68c2de4aa1f95173d1d5a5a6787efb1bceb7e99d21e95de8aec9d8bf14",
+      "src/web/app.js": "78c8e8e4ed1a5941b8297c6d5d16583a6e553c49c29707b2877ebbbffe31ecd8",
+      "src/web/index.html": "fa7ffb7872ec4948fd1f6d00a16a24a7ab018b3b87159629191770dbea247e38",
+      "src/web/styles.css": "1cded6fb1219b8a8985dadc4f44b27654fdcb02506f259f4068a23db259e2ebf"
+    }
+  }
+}

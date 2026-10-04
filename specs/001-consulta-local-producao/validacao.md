@@ -607,6 +607,15 @@ explícito no CI (M8). Não se declara aceite completo da feature ou captura rea
 
 ## Pendências para a revisão final (Fase 8)
 
+Do [review de 74e60a1](https://github.com/Browsher/crm-social/pull/9#issuecomment-5982689184), sem bloqueio de código:
+
+- **m-1:** campo dedicado de URL com dois pedaços pode conservar texto redigido e formar link estranho; não vaza userinfo. Rever a política específica de campos de URL com teste antes de qualquer ajuste.
+- **m-2:** delimitadores adicionais/variantes de barra no texto livre estão fora da regra de pedaços HTTP(S) aprovada pelo autor; extensão opcional, mantendo as quatro regressões como guarda.
+- **m-3:** avisos de ausência/empate usam `versao`/`origens_json` em vez da coluna causadora; avaliar junto às tabelas de avisos da US5.
+- **m-4:** resumos históricos de gate não têm SHA medido e nome ambíguo; consolidar procedência/ordem na revisão final. Medições anteriores permanecem históricas, sem substituir o aceite remoto corrente.
+
+O comentário reiterou os estados de revisão desconhecidos, as localizações desatualizadas das dívidas na arquitetura e a indentação do teste HTTP, já registrados abaixo. Não representam regressão desta correção; ficam para a Fase 8.
+
 Decisão do autor na última rodada da US3: Critical, segurança e regressão bloqueiam;
 Important/Minor novos fora dessas categorias são corrigidos se triviais ou registrados
 aqui para a Fase 8. O review continua sendo comentário, separado do quality-gate.
@@ -624,6 +633,19 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #9, review 5982320198, m-2 | Referência da classificação pendente em architecture.md aponta projecao.cjs:253, enquanto projetarVisao passou a :313; reconciliar com a implementação do quadro. A parte da dívida de complexidade já está no m-5 anterior |
 | PR #9, review 5982320198, m-3 | Reitera tratamento de revisão desconhecido chamado aberto; mesma pendência m-2 anterior, sem novo comportamento nesta rodada |
 | PR #9, review 5982320198, m-4 | Indentação do loop HTTP e consolidação dos imports de fixtures; estilo sem efeito funcional. Adiado porque a regressão I-1 interrompeu a rodada antes de novas alterações de código |
+| PR #10, review 5983077547, m-1 | Localizar a pendência resumida do cartão com Página/Cena e número. A API já conserva unidade/unidadeId e a gaveta localiza; definir a representação e cobrir a projeção na Fase 8, sem inferir mídia concluída |
+| PR #10, review 5983077547, m-2 | Consolidar a abertura do dia no cartão de Planejamento e no quadro em abrirDiaDaPeca; ambos os caminhos já têm teste real de interface. Refatoração de manutenção agrupada na revisão final |
+| PR #10, review 5983077547, m-3 | Acrescentar teste HTTP dedicado de quadro.semanas/producoes[].quadro e ausência do mapa bruto em /api/visao. Projeção cobre o contrato e interface real cobre a rota local; ampliar a camada HTTP no CI na Fase 8 |
+| PR #10, review 5983077547, m-4 | Explicitamente decidir igualdade de rótulos não-string e contagem após triagem. Contador atual usa valor já saneado, preservando privacidade; rótulos distintos suprimidos podem formar uma única chave. Cobrir a regra na revisão final |
+| PR #10, review 5983077547, m-6 | Calcular o índice de etapa_producao uma vez por tabela e documentar a dependência de IDs únicos/não vazios validados por registros. A recuperação ocorre antes da triagem e os testes P10 protegem essa fronteira; otimização segue com T037 |
+| PR #10, review 5983143402, m-1 | Versão inválida não permite constatar ausência de mídia na versão vigente; não atribuir automaticamente Mídia ausente nesse caso. Definir mensagem/ausência de pendência com teste RED de projeção na Fase 8; a validação já conserva aviso de versão inválida |
+| PR #10, review 5983143402, m-2 | Manter a definição normativa de quadro só no contrato e substituir as repetições em data-model/plan por links. Conferir a fronteira entre modelo, plano e contrato na revisão documental final |
+| PR #10, review 5983143402, m-3 | Acrescentar rótulo acessível contextual ao contador de cartões da coluna, como 3 peças, com assert de interface. Teclado, Esc e abertura continuam cobertos; melhoria de acessibilidade fica na Fase 8 |
+| PR #10, review 5983186287, m-1 | Distinguir Imagem ausente de Imagem a confirmar no cartão quando o ponteiro de página está preenchido mas o arquivo não resolve ou pertence a outro escopo/versão. A gaveta já conserva o aviso localizado; acrescentar RED de projeção junto ao caso de versão inválida da peça |
+| PR #10, review 5983186287, m-2 | Decisão de produto: eventual sinal neutro Revisão a confirmar no cartão para revisão ambígua, sem atribuir correção. Hoje só revisões vigentes literais geram pendência, conforme o contrato; não é defeito nem regressão |
+| PR #10, review 5983234638, m-1 | Decisão do autor aplicada nesta revisão: somente o cartão omite mídia em Planejamento/Redação/Visual e mostra Mídia ausente em Mídia/Revisão/Pronta/Publicada/Outras. API conserva pendências completas. Localização por unidade e distinção de versão/vínculo inválidos continuam nos itens anteriores da Fase 8 |
+| PR #10, review 5983234638, m-2 | Índices fixos agora consultam cabeçalhos e caso sem captura usa prefixo U07-vazio. Resta reduzir os oito parâmetros posicionais do helper de interface para opções nomeadas na revisão dos testes; refatoração mais ampla segue na Fase 8 |
+| PR #10, review 5983234638, m-3 | Comentário corrigido: recuperação da célula de etapa ocorre em todas as linhas antes da triagem e depende da normalização por registros. Sem mudança de comportamento; otimização/índice de cabeçalho do m-6 continua pendente |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -717,3 +739,94 @@ do usuário foi encerrado. Repetição autônoma com diagnóstico apenas em TEMP
 máximo **13**, Semgrep SKIP no Windows e audit N/A; baseline não atualizada.
 [Resumo sanitizado](../../docs/reports/001-us3-regressao-local.json).
 Aceite Linux e novo review dependem do push desta correção.
+
+### Aceite remoto da correção e merge da US3
+
+Head corrigido: `74e60a117df3d538401e00070cd3678f87f15acf`, incluindo o commit `fd4ce50`.
+[Gate Linux 37221300623](https://github.com/Browsher/crm-social/actions/runs/37221300623/job/111492027672): SUCCESS, tests/coverage/complexity e Semgrep real PASS, saída 0, baseline inalterada. Interface continua sendo aceite Windows local, não uma prova do Linux.
+[Review 37221300608](https://github.com/Browsher/crm-social/actions/runs/37221300608/job/111492027614): SUCCESS; [comentário](https://github.com/Browsher/crm-social/pull/9#issuecomment-5982689184) confirma os quatro exemplos legítimos preservados e não aponta Critical nem Important novo de código. A pendência P-1 de evidência foi suprida pelo gate acima. Minor novos e reiterados estão na seção da Fase 8.
+
+[Merge do PR #9](https://github.com/Browsher/crm-social/commit/b24b25ed64d614925b638c804c62e6bc81ae2960): `b24b25ed64d614925b638c804c62e6bc81ae2960`, pais `869f0bd` e `74e60a1`, nessa ordem. Autor noreply do autor; committer noreply do GitHub. A branch 001 foi preservada e recebeu main por fast-forward. T027–T030 começam a partir desse merge, sem avançar US5 nem coletar captura real.
+
+
+## US4 — Produção por etapa (T027–T030)
+
+Base integrada: `b24b25e` (merge da US3 acima). As quatro tarefas foram executadas em ordem e marcadas concluídas; total 30/41, com 11 pendentes (US5 e Fase 8). Não houve captura operacional nem instalação de dependência.
+
+| Etapa | Evidência observada |
+| --- | --- |
+| T027 RED | 12 P08–P10 novos falharam no quadro ausente, exit 1; recorte 0 PASS/12 FAIL/0 SKIP. Projeção completa antiga: 48 PASS/12 FAIL, total 60 |
+| T028 GREEN | Projeção completa 60 PASS/0 FAIL/0 SKIP, exit 0, 4,91 s |
+| T029 RED | U07–U08: sete testes/subtestes falharam pela ausência de colunas/controles na tela ainda placeholder; 0 PASS/7 FAIL/0 SKIP, exit 1, 12,50 s |
+| T030 GREEN | U07–U08 completos 7 PASS/0 FAIL/0 SKIP, exit 0, 3,59 s |
+| Suíte completa | 172 PASS/0 FAIL/0 SKIP, inclusive 60 de interface, 40,25 s |
+| Gate local | exit 0, 41,97 s; tests/coverage/complexity PASS, cobertura 97,5364%, complexidade máxima 13, baselineAtualizada=false |
+
+A primeira execução completa teve 171 PASS/1 FAIL: o novo aviso sem dados repetia exatamente a orientação do Planejamento e tornava um seletor estrito ambíguo. Corrigido **o texto da nova tela**, sem alterar esse teste; a repetição completa acima é verde. O fechamento do Chromium ocorreu normalmente nesta execução.
+
+No Windows, Semgrep é SKIP por ausência da ferramenta e audit é N/A por ausência de dependências da aplicação. O Linux deve rodar Semgrep real e gate estrito. O [resumo local](../../docs/reports/001-us4-local.json) inclui SHA-256 dos quatro arquivos de produção medidos; a base da execução fica somente neste histórico; não atribui a medição a um commit futuro. Cinco avisos de complexidade 11–20, sem função >=21: CLI (12), arquivosDaUnidade (11), unidadeDetalhe (11), documentosDoDia (13) e renderProducao (11). Nenhuma baseline/configuração/workflow/ferramenta mudou.
+
+### Comportamento e limites comprovados
+
+- API: `quadro.colunas` conserva os oito nomes canônicos; `quadro.semanas` agrupa os IDs em colunas por `semanaId`; `p.quadro` contém coluna e pendências registradas, sem duplicar revisões integrais ou avisos globais.
+- Prioridade: publicação preenchida > liberação/prontidão > revisão em andamento > etapa do JSON. Retirar cada condição superior exercita a seguinte. Status não decide coluna; registro explícito inconsistente de publicação conserva Publicada com aviso. As listas de liberação/revisão do mapa versionado continuam vazias.
+- Outras conta somente distintos dos seus cartões NTV na semana, com vazio uma chave; null original é recuperado da célula validada antes da triagem, sem reintroduzir texto cru depois dela. Omitido continua vazio. Rótulo repetido não incrementa N; outra semana/marca/prioridade superior não entram no contador. Estender só o JSON TEMP muda classificação e contador, sem código.
+- Pendências de revisão usam decisões atuais conhecidas revisar/refazer/reprovado/rejeitado, mantendo motivo, versão e quem corrige separados do responsável da peça. Aprovação, decisão desconhecida ou histórico não inventam correção. Tratamento desconhecido continua a dívida de classificação da US3 registrada na Fase 8.
+- Ausência de mídia usa unidades da versão vigente e seus ponteiros; registro da versão vigente com URL vazia/recusada continua sendo registro, sem confundir link não permitido com mídia ausente. Cartão mostra primeiro resumo e +N, enquanto a API/gaveta conserva as demais pendências.
+- Semana com setas/tema, oito colunas, cartões com formato/data/título/status/responsável e pendência; sem arrastar/editar. Enter abre dia inteiro com primeira peça aberta; Esc retorna foco; peça sem data abre Sem data da semana. Trocar semana atualiza o contador e preserva todos os cartões.
+
+### Screenshots US4 — aplicação real, dados sintéticos
+
+Servidor real em loopback/porta efêmera, persistência e mapa JSON dentro de TEMP; Playwright existente. `capturaQuadro` tem 11 peças NTV em duas semanas e um registro de outra marca excluído. A primeira semana contém dez cartões: um nas sete primeiras colunas e três em Outras (rótulo repetido + vazio = dois valores). **Mapa de prontidão/revisão e etapas de Planejamento/Redação exclusivamente sintético** para demonstrar todas as colunas; não representa rótulos operacionais nem alteração do config versionado.
+
+| Captura | Dimensões reais | Verificação |
+| --- | --- | --- |
+| [Produção desktop](../../docs/design/screenshots/001-us4-producao-1440.png) | 1440 × 1200 | 8 colunas, 10 cartões, scrollWidth=1440, zero pageerror/requisição externa |
+| [Produção celular](../../docs/design/screenshots/001-us4-producao-390.png) | 390 × 2488, página completa | mesmas 8 colunas/10 cartões em lista vertical, scrollWidth=390, zero pageerror/requisição externa |
+
+Imagens conferidas visualmente: identidade Social Studio do protótipo, grade de quatro colunas no desktop e uma no celular, selo comum, tema/período e contagem de Outras. Usam somente registros fictícios, sem prévias/entregas reais. Gate Linux e review do novo PR dependem da publicação desta entrega; nenhuma evidência anterior é declarada aceite do novo head.
+
+### Aceite remoto inicial da US4 e revisão
+
+Código publicado: `cc35ff15589612a5aa47f5de149e302bb4a59515`, autor e committer Alexandre Melo com o noreply configurado. [PR #10](https://github.com/Browsher/crm-social/pull/10) aberto para a US4; sem autorização de merge nesta rodada. O push também preserva o merge da US3 e o commit local `fd4ce50` incluído no push anterior.
+
+[Quality-gate Linux 37224502513](https://github.com/Browsher/crm-social/actions/runs/37224502513/job/111501249215): **SUCCESS** sobre esse head. Tabela real do gate estrito: tests/coverage/complexity/**Semgrep PASS**, audit N/A por ausência de dependências, **exit code 0**, **baseline atualizada false**. O job instalou Semgrep CE **1.179.0** e o executou; não é SKIP local. Os cinco avisos de complexidade não foram ocultados.
+
+[Review 37224502480](https://github.com/Browsher/crm-social/actions/runs/37224502480/job/111501248992): **SUCCESS**, [comentário 5983077547](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983077547). Leu o diff completo de 28 arquivos, o reviewer, AGENTS, constituição e contrato. Não aponta Critical, segurança ou regressão. I-1 é pendência de evidência, suprida pelo job Linux acima e pela repetição local abaixo. generate-tests/publish-tests ficaram **SKIPPED**, sem rótulo gerar-testes; isso não é ausência do Semgrep.
+
+Para vincular a interface ao commit, executei novamente **tests/interface.test.cjs** com HEAD `cc35ff1`: **60 PASS / 0 FAIL / 0 SKIP**, **exit 0**, **34,55 s**, incluindo U07/U08 em 1440/390 e regressões de URL. O diff do código e desse teste contra `cc35ff1` estava vazio, e os quatro SHA-256 do resumo local coincidem com os arquivos medidos. A suíte completa e o gate local anteriores mediram esse mesmo código. Não se atribui o aceite local ao Linux: Playwright permanece SKIP no CI, dívida M8 da Fase 8. `.claude/rules/project-structure.md` está versionado no head publicado; a árvore local estava limpa ao iniciar esta repetição.
+
+m-5 textual foi corrigido: Produção consta da tabela web e do fluxo Mermaid da arquitetura; o documento de projeção volta a enumerar as funções anteriores com linhas atuais; a duplicação de "versionado" no contrato foi removida. Nenhum comportamento, mapa, teste, CI ou baseline mudou após `cc35ff1`. m-1/m-2/m-3/m-4/m-6 estão nas pendências da Fase 8, conforme a regra do autor. O PR continua aberto, com 30/41 tarefas concluídas; US5 e a revisão final não começaram.
+
+### Conferência do commit documental e segundo review
+
+Head `2fbae73f31d9c810d1b555d9e82b49ba950a55f1`: [gate Linux 37225035503](https://github.com/Browsher/crm-social/actions/runs/37225035503/job/111502833655) **SUCCESS**, tests/coverage/complexity/**Semgrep PASS**, audit N/A, saída **0**, **baseline atualizada false**. O diff `cc35ff1..2fbae73 -- src tests` é vazio; só quatro Markdown mudaram. A ressalva de evidência I-1 do [segundo review](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983143402) é respondida por este job do head correto e pela comparação de fontes, sem inferência a partir do Windows.
+
+[Review 37225035483](https://github.com/Browsher/crm-social/actions/runs/37225035483/job/111502833626) **SUCCESS**, sem Critical, segurança ou regressão. Os três Minor novos estão registrados na Fase 8, sem correção de comportamento nesta rodada. generate-tests/publish-tests SKIPPED por ausência do rótulo. PR #10 permanece **OPEN**; a condição CLEAN consultada não foi usada para tentar merge. O registro posterior desta evidência altera somente este documento, mantendo o código medido e as screenshots.
+
+### Aceite do registro de pendências
+
+Head `811a82f3e5d71bb70233baad5036bfea96a17033`: [quality-gate Linux 37225347484](https://github.com/Browsher/crm-social/actions/runs/37225347484/job/111503740817) **SUCCESS**, tests/coverage/complexity/**Semgrep PASS**, audit N/A, **exit 0**, **baseline atualizada false**. O diff de src/tests contra `cc35ff1` continua vazio. [Review 37225347444](https://github.com/Browsher/crm-social/actions/runs/37225347444/job/111503740793) **SUCCESS**, [comentário 5983186287](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983186287): nenhum Critical ou Important de código, segurança ou regressão. Sua pendência de evidência é suprida pelo job deste head; M8 permanece registrada.
+
+Minor m-1 e a decisão m-2 estão na Fase 8; m-3 textual troca a referência frágil à linha da normalização por registros em captura.cjs. A API, interface, testes e screenshots permanecem os de `cc35ff1`. generate-tests/publish-tests SKIPPED sem rótulo; PR #10 aberto, sem merge nem exclusão da branch. Nenhuma tarefa da US5 ou da Fase 8 foi marcada concluída.
+
+### Parada da US4 — head publicado e relatório local
+
+Head final publicado do [PR #10](https://github.com/Browsher/crm-social/pull/10): `14c9f8e8bd167f7c65f6d7aa7d4b674cfc4c1bf2`. [Quality-gate Linux 37225695657](https://github.com/Browsher/crm-social/actions/runs/37225695657/job/111504761910) **SUCCESS**: tests/coverage/complexity/**Semgrep PASS**, audit N/A, **exit 0**, **baseline atualizada false**. O diff `cc35ff1..14c9f8e -- src tests` é vazio; só documentação mudou após a implementação testada. Isso supre P-1 do comentário final, sem atribuir a medição a um head futuro.
+
+[Review 37225695662](https://github.com/Browsher/crm-social/actions/runs/37225695662/job/111504761822) **SUCCESS**; [comentário final 5983234638](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983234638) leu as duas screenshots e não aponta Critical, Important de código, segurança ou regressão. Seus três Minor estão nas pendências acima. generate-tests/publish-tests **SKIPPED**, pois não foi adicionado gerar-testes. PR **OPEN**, mergeStateStatus consultado **CLEAN**; não houve tentativa de merge.
+
+Esta anotação do comentário recebido após a publicação fica em commit **local de documentação**, para acompanhar a próxima rodada. O PR permanece no head `14c9f8e`, já verificado; não se declara CI para este registro posterior. Código, testes, configuração e screenshots são idênticos aos publicados. T027–T030 concluídas; total **30/41**, US5/Fase 8 pendentes. PR #9 integrado por merge commit noreply; main recebida na 001; a branch foi preservada e `fd4ce50` incluído no histórico enviado.
+
+## Ajuste autorizado do cartão da US4
+
+Base local `d8d79c1`, incluída no próximo push do PR #10. O autor definiu que a pendência de mídia é filtrada **somente no cartão**: aparece em Mídia, Revisão, Pronta, Publicada e Outras; fica oculta em Planejamento, Redação e Visual. Texto humano **Mídia ausente**. Revisão continua visível em qualquer coluna; +N conta apenas pendências apresentadas. A API/gaveta mantém a informação e os textos completos, sem alterar estado operacional.
+
+RED observado de interface: **0 PASS / 2 FAIL / 0 SKIP**, exit 1, **2,45 s**, por mídia exibida em Planejamento e +1 contando uma pendência oculta. GREEN: **2/0/0**, exit 0, **2,25 s**. Os testes exercitam as oito colunas, API real preservada e revisão/mídia juntas, com Playwright existente e fixtures em TEMP. Suíte completa **174 PASS / 0 FAIL / 0 SKIP**, incluindo **62 de interface**, **43,34 s**. Índices/prefixo de teste e comentário foram corrigidos sem alterar a projeção de mídia.
+
+Gate local **exit 0**, **44,48 s**: tests/coverage/complexity PASS, cinco avisos, Semgrep SKIP no Windows (ferramenta ausente), audit N/A (sem dependências de aplicação), **baseline atualizada false**. Gate Linux e novo review serão conferidos após publicar este ajuste. Nenhuma ferramenta/CI/configuração/baseline/constituição ou captura operacional mudou.
+
+Screenshots novas, servidor real e captura/mapa exclusivamente sintéticos em TEMP: 8 colunas, 10 cartões, scrollWidth igual à largura, zero pageerror ou requisição externa. Conferidas visualmente; preservam as capturas anteriores e a informação de revisão nas etapas iniciais.
+
+![Produção ajustada — 1440 × 1200](../../docs/design/screenshots/001-us4-ajuste-producao-1440.png)
+![Produção ajustada — 390 × 2456](../../docs/design/screenshots/001-us4-ajuste-producao-390.png)

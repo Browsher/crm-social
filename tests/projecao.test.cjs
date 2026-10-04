@@ -1,12 +1,203 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
 const {capturaValida,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
 const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
 const {projetarVisao}=carregarModulo('src/projecao.cjs',['projetarVisao']);
 const {capturaDetalhada,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
+const {capturaQuadro,mapaQuadroSintetico}=require('./fixtures.cjs');
+const {carregarMapaQuadro}=require('../src/quadro-config.cjs');
 const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
 function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
+const colunasQuadro=['Planejamento','Redação','Visual','Mídia','Revisão','Pronta','Publicada','Outras'];
+function mapaTemp(t,mapa=mapaQuadroValido()) {
+  const file=path.join(temporario(t),'quadro-etapas.json');fs.writeFileSync(file,JSON.stringify(mapa));
+  return carregarMapaQuadro(file);
+}
+
+test('P08 quadro sem captura conserva oito nomes e nenhuma semana fictícia', ()=>{
+  const view=projetarVisao({captura:null,historico:[],ultimaTentativa:null},NOW,mapaQuadroValido());
+  assert.deepEqual(view.quadro,{colunas:colunasQuadro.map(nome=>({nome})),semanas:[]});
+});
+
+test('P08 quadro da semana conserva cada cartão uma vez nas oito colunas do mapa', t=>{
+  const raw=capturaQuadro(),view=projetarVisao(estado(raw,t),NOW,mapaTemp(t,mapaQuadroSintetico()));
+  assert.deepEqual(view.quadro.colunas.map(c=>c.nome),colunasQuadro);
+  assert.deepEqual(view.quadro.semanas.map(s=>s.semanaId),['semana-01','semana-02']);
+  const colunas=view.quadro.semanas[0].colunas;
+  assert.deepEqual(colunas.map(c=>[c.nome,c.ids]),[
+    ['Planejamento',['peca-1']],['Redação',['peca-2']],['Visual',['peca-3']],['Mídia',['peca-4']],
+    ['Revisão',['peca-7']],['Pronta',['peca-8']],['Publicada',['peca-9']],['Outras',['peca-10','peca-11','peca-12']]
+  ]);
+  assert.equal(new Set(colunas.flatMap(c=>c.ids)).size,10);
+  assert.equal(view.producoes.find(p=>p.producao_id==='peca-7').quadro.coluna,'Revisão');
+  assert.ok(!colunas.flatMap(c=>c.ids).includes('peca-5'));
+  assert.equal(view.producoes.length,11);
+  assert.deepEqual(Object.keys(view).sort(),envelope);
+  assert.ok(!JSON.stringify(view.quadro).includes('liberada-sintetica'));
+});
+
+test('P08 prioridade desce publicação > liberação > revisão > etapa > Outras', t=>{
+  const raw=capturaValida(),mapa=mapaTemp(t,mapaQuadroSintetico());
+  mudarCelula(raw,'Produções',1,'status','rascunho');
+  mudarCelula(raw,'Produções',1,'estado_liberacao','liberada-sintetica');
+  mudarCelula(raw,'Produções',1,'estado_revisao','em-revisao-sintetica');
+  mudarCelula(raw,'Produções',1,'publicado_em','2026-10-01T12:00:00Z');
+  for(const [campo,valor,esperado] of [
+    ['status','rascunho','Publicada'],['publicado_em','','Pronta'],
+    ['estado_liberacao','','Revisão'],['estado_revisao','','Visual'],
+    ['etapa_producao','etapa-nao-mapeada-sintetica','Outras']
+  ]) {
+    mudarCelula(raw,'Produções',1,campo,valor);
+    const p=projetarVisao(estado(raw,t),NOW,mapa).producoes[0];
+    assert.equal(p.quadro.coluna,esperado);assert.equal(p.status,'rascunho');
+    assert.equal(p.responsavel_atual,'Equipe sintética');
+  }
+});
+
+test('P09 mapa atual mantém arte em Visual e as oito etapas de mídia sem prontidão inferida', t=>{
+  const mapa=mapaTemp(t);
+  assert.deepEqual(mapa.liberacaoPronta,[]);assert.deepEqual(mapa.revisaoEmAndamento,[]);
+  for(const [etapa,coluna] of [['arte_aprovada','Visual'],['prompts_imagem_prontos','Mídia'],
+    ['imagens_em_producao','Mídia'],['voz_pronta_para_gerar','Mídia'],['voz_em_producao','Mídia'],
+    ['clipes_prontos_para_gerar','Mídia'],['clipes_em_producao','Mídia'],['montagem_pronta','Mídia'],['montagem_em_producao','Mídia']]) {
+    const raw=capturaValida();mudarCelula(raw,'Produções',1,'etapa_producao',etapa);
+    mudarCelula(raw,'Produções',1,'estado_liberacao','bloqueado');mudarCelula(raw,'Produções',1,'estado_revisao','aprovada');
+    const p=projetarVisao(estado(raw,t),NOW,mapa).producoes[0];
+    assert.equal(p.quadro.coluna,coluna);assert.equal(p.etapa_producao,etapa);
+  }
+});
+
+test('P09 status, aprovação e arquivo final não substituem publicação explicitamente registrada', t=>{
+  for(const vazio of ['',null,'  ']) {
+    const raw=capturaValida();mudarCelula(raw,'Produções',1,'status','publicado');
+    mudarCelula(raw,'Produções',1,'estado_revisao','aprovada');mudarCelula(raw,'Produções',1,'estado_liberacao','aprovada');
+    mudarCelula(raw,'Produções',1,'url_video_final','https://docs.google.com/document/d/exemplo-sintetico');
+    mudarCelula(raw,'Produções',1,'id_drive_video_final','arquivo-final-sintetico');mudarCelula(raw,'Produções',1,'publicado_em',vazio);
+    const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t)),p=view.producoes[0];
+    assert.equal(p.quadro.coluna,'Visual');assert.equal(p.status,'publicado');
+    assert.ok(!p.detalhes.avisos.some(a=>a.campo==='publicado_em'));
+    assert.equal(raw.tables.Produções.values[1][raw.tables.Produções.values[0].indexOf('publicado_em')],vazio);
+  }
+});
+
+test('P09 publicação preenchida inconsistente mantém Publicada e aviso único localizado', t=>{
+  for(const [valor,invalido] of [['registro sintético',true],['2026-10-02T11:00:00',true],
+    ['2026-02-30T11:00:00Z',true],['2026-10-03T12:00:00Z',true],[42,true],[false,true],['2026-10-02T12:05:00Z',false]]) {
+    const raw=capturaValida();mudarCelula(raw,'Produções',1,'publicado_em',valor);
+    const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t)),p=view.producoes[0];
+    assert.equal(p.quadro.coluna,'Publicada');assert.equal(p.publicado_em,valor);
+    const globais=view.avisos.filter(a=>a.aba==='Produções' && a.linha===2 && a.campo==='publicado_em');
+    assert.equal(globais.length,invalido?1:0);assert.deepEqual(p.detalhes.avisos.filter(a=>a.campo==='publicado_em'),globais);
+    if(invalido) assert.match(globais[0].motivo,/Publicação registrada inconsistente/);
+  }
+});
+
+test('P10 Outras conta rótulos distintos por semana, vazio único e originais preservados', t=>{
+  const raw=capturaQuadro();
+  raw.metadataBefore.Produções.rowCount=40;raw.metadataAfter.Produções.rowCount=40;
+  raw.tables.Produções.range=raw.tables.Produções.range.replace(/20$/,'40');
+  mudarCelula(raw,'Produções',11,'etapa_producao',null);
+  for(const [id,etapa,extras] of [
+    ['vazio-string','',{}],['vazio-espacos',' \t ',{}],['vazio-omitido','',{}],
+    ['rotulo-diferente','segundo_valor',{}],['rotulo-espacos-emvolta',' etapa_nova_sintetica ',{}],
+    ['prioridade-publicacao','nao-contar-publicacao',{publicado_em:'2026-10-01T12:00:00Z'}],
+    ['prioridade-liberacao','nao-contar-liberacao',{estado_liberacao:'liberada-sintetica'}],
+    ['prioridade-revisao','nao-contar-revisao',{estado_revisao:'em-revisao-sintetica'}]
+  ]) {
+    adicionarRegistro(raw,'Produções',{producao_id:id,marca_id:'ntv',semana_id:'semana-01',slot:'imagem_a',versao:1,
+      data_prevista:'2026-10-03',etapa_producao:etapa,...extras});
+  }
+  const table=raw.tables.Produções,etapaIndex=table.values[0].indexOf('etapa_producao');
+  const omitido=table.values.findIndex(r=>r[0]==='vazio-omitido');table.values[omitido]=table.values[omitido].slice(0,etapaIndex);
+  mudarCelula(raw,'Produções',5,'etapa_producao','fora-da-marca');recalcularHashes(raw);
+  const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t,mapaQuadroSintetico()));
+  const outras=view.quadro.semanas[0].colunas.find(c=>c.nome==='Outras');
+  assert.equal(outras.quantidadeValoresNovos,4);assert.equal(outras.titulo,'Outras · 4 valores novos');
+  assert.deepEqual(outras.ids,['peca-10','peca-11','peca-12','rotulo-diferente','rotulo-espacos-emvolta','vazio-espacos','vazio-omitido','vazio-string']);
+  for(const [id,original] of [['peca-12',null],['vazio-string',''],['vazio-espacos',' \t '],['vazio-omitido',''],
+    ['rotulo-espacos-emvolta',' etapa_nova_sintetica ']]) {
+    assert.equal(view.producoes.find(p=>p.producao_id===id).etapa_producao,original,id);
+  }
+  assert.equal(view.quadro.semanas[1].colunas.find(c=>c.nome==='Outras').quantidadeValoresNovos,1);
+  assert.ok(!view.producoes.some(p=>p.producao_id==='peca-5'));
+  assert.equal(raw.tables.Produções.values[11][etapaIndex],null);
+});
+
+test('P10 novo rótulo só no JSON TEMP retira cartão de Outras e atualiza singular/zero', t=>{
+  const raw=capturaValida();mudarCelula(raw,'Produções',2,'etapa_producao','novo-rotulo-sintetico');
+  const state=estado(raw,t),mapa=mapaQuadroValido();
+  const before=projetarVisao(state,NOW,mapaTemp(t,mapa));
+  const outras=before.quadro.semanas[0].colunas.find(c=>c.nome==='Outras');
+  assert.equal(outras.titulo,'Outras · 1 valor novo');assert.equal(outras.quantidadeValoresNovos,1);assert.deepEqual(outras.ids,['peca-2']);
+  mapa.etapas.push({rotulo:'novo-rotulo-sintetico',coluna:'Redação'});
+  const after=projetarVisao(state,NOW,mapaTemp(t,mapa));
+  assert.equal(after.producoes[1].quadro.coluna,'Redação');
+  assert.deepEqual(after.quadro.semanas[0].colunas.find(c=>c.nome==='Outras'),{nome:'Outras',titulo:'Outras · 0 valores novos',ids:[],quantidadeValoresNovos:0});
+  assert.equal(mapaQuadroValido().etapas.length,9);assert.equal(state.captura.producoes[1].etapa_producao,'novo-rotulo-sintetico');
+});
+
+test('P10 semanas vazias e órfãs mantêm colunas e identidades sem somar outra semana', t=>{
+  const raw=capturaValida();
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-vazia',marca_id:'ntv',inicio_semana:'2026-10-05',tema:'Semana vazia sintética'});
+  mudarCelula(raw,'Produções',2,'semana_id','semana-ausente');mudarCelula(raw,'Produções',2,'etapa_producao','rotulo-orfa');
+  const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t));
+  assert.deepEqual(view.quadro.semanas.map(s=>s.semanaId),['semana-01','semana-vazia',null]);
+  const vazia=view.quadro.semanas[1];assert.deepEqual(vazia.colunas.map(c=>c.nome),colunasQuadro);
+  assert.ok(vazia.colunas.every(c=>c.ids.length===0 && c.quantidadeValoresNovos===0));
+  const orfa=view.quadro.semanas[2].colunas.find(c=>c.nome==='Outras');
+  assert.deepEqual(orfa.ids,['peca-2']);assert.equal(orfa.quantidadeValoresNovos,1);
+  assert.equal(view.quadro.semanas[0].colunas.find(c=>c.nome==='Outras').quantidadeValoresNovos,0);
+});
+
+test('P10 pendências são registros vigentes: revisão pede correção e mídia não é link indisponível', t=>{
+  const raw=capturaDetalhada();
+  adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-aprovacao-sintetica',producao_id:'peca-3',versao:2,decisao:'aprovado',estado_tratamento:'aberta'});
+  adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-vinculo-ambiguo',producao_id:'peca-3',versao:2,pagina_id:'pagina-inexistente',decisao:'revisar',estado_tratamento:'aberta'});
+  mudarCelula(raw,'Revisoes',1,'estado_tratamento','resolvida');
+  mudarCelula(raw,'Arquivos',2,'url','');
+  const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t)),carousel=view.producoes[2],reels=view.producoes[3];
+  const revisoes=carousel.quadro.pendencias.filter(p=>p.tipo==='revisao');
+  assert.deepEqual(revisoes.map(p=>p.revisaoId),['revisao-atual','revisao-incerta']);
+  assert.ok(revisoes.every(p=>p.texto==='Conferir texto de exemplo' && p.responsavelCorrecao==='Correção sintética' && p.versao===2));
+  assert.equal(carousel.responsavel_atual,'Equipe sintética');assert.equal(carousel.detalhes.responsavelRegistrado,'Equipe sintética');
+  const midias=carousel.quadro.pendencias.filter(p=>p.tipo==='midia');
+  assert.deepEqual(midias.map(p=>[p.unidade,p.unidadeId,p.texto]),[['pagina','pagina-01','Imagem ausente']]);
+  assert.deepEqual(reels.quadro.pendencias.filter(p=>p.tipo==='midia').map(p=>[p.unidadeId,p.texto]),[
+    ['cena-02','imagens ausentes'],['cena-01','imagens ausentes; vídeo ausente']]);
+  assert.deepEqual(view.producoes[0].quadro.pendencias,[]);
+  assert.deepEqual(view.producoes[1].quadro.pendencias,[{tipo:'midia',texto:'Mídia ausente: sem arquivo registrado nesta versão'}]);
+  assert.equal(new Set(revisoes.map(p=>p.revisaoId)).size,revisoes.length);
+  const avisos=view.avisos.map(a=>JSON.stringify(a));assert.equal(new Set(avisos).size,avisos.length);
+});
+
+test('P10 etapa original recuperada do envelope continua passando pela triagem', t=>{
+  for(const etapa of ['sk-ant-'+'s'.repeat(30),'C:\\pasta-privada-sintetica\\arquivo',
+    'https://usuario-sintetico:senha-sintetica@exemplo.invalid']) {
+    const raw=capturaValida();mudarCelula(raw,'Produções',1,'etapa_producao',etapa);
+    const view=projetarVisao(estado(raw,t),NOW,mapaTemp(t)),p=view.producoes[0];
+    assert.equal(p.etapa_producao,'[conteúdo suprimido]');assert.equal(p.quadro.coluna,'Outras');
+    assert.ok(p.detalhes.avisos.some(a=>a.campo==='etapa_producao' && a.motivo==='conteúdo sensível suprimido'));
+    assert.equal(raw.tables.Produções.values[1][raw.tables.Produções.values[0].indexOf('etapa_producao')],etapa);
+  }
+});
+
+test('P10 correção usa decisões literais conhecidas, sem inferir de aprovação ou pendência de capacidade', t=>{
+  for(const [decisao,esperado] of [['revisar',true],['refazer',true],['reprovado',true],['rejeitado',true],
+    ['aprovado',false],['aprovada',false],['pendente_material',false],['pendente_capacidade',false],['decisao-nova-sintetica',false]]) {
+    const raw=capturaValida();mudarCelula(raw,'Revisoes',1,'decisao',decisao);
+    const p=projetarVisao(estado(raw,t),NOW,mapaTemp(t)).producoes[0];
+    const pendencias=p.quadro.pendencias.filter(p=>p.tipo==='revisao');
+    assert.equal(pendencias.length,esperado?1:0,decisao);
+    assert.equal(p.detalhes.revisoes.vigentes[0].decisao,decisao);
+    if(esperado) {
+      assert.equal(pendencias[0].decisao,decisao);assert.equal(pendencias[0].revisaoId,'revisao-01');
+      assert.equal(pendencias[0].responsavelCorrecao,'Equipe sintética');
+    }
+  }
+});
 
 test('P05 dia inteiro, versões separadas, páginas/cenas em ordem e fontes internas', t=>{
   const raw=capturaDetalhada(),view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());

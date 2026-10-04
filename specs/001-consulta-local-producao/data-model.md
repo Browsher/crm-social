@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva identidades e relações: T001–T026/US1, US2 e US3 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
+Como um índice de fotografias, o modelo conserva identidades e relações: T001–T030/US1, US2, US3 e US4 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
@@ -163,6 +163,12 @@ liberação, previsão ou arquivo sem o campo preenchido não a substituem.
 Responsável principal é `responsavel_atual` como registrado, vazio A confirmar;
 correção é `responsavel_correcao` na revisão vigente, exibida separadamente. Não
 inferir responsável, aguarda-de, próxima ação, agente trabalhando ou elegibilidade.
+
+## Quadro implementado na API
+
+`quadro.colunas:[{nome}]` mantém a ordem contratual; `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` contém oito colunas e IDs ordinais por semana, inclusive semanaId null das peças sem vínculo inequívoco. Sem captura, semanas vazias com nomes canônicos mantidos. Cada produção acrescenta `quadro:{coluna,pendencias}`.
+
+Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. UI resume primeira/+N, API conserva todas. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
 
 ## Versões, revisão e materiais no detalhe
 

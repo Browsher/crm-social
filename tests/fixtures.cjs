@@ -102,6 +102,39 @@ function capturaDetalhada() {
   }
   return raw;
 }
+// Somente cenários sintéticos: não acrescenta rótulos ao mapa versionado.
+function mapaQuadroSintetico() {
+  const mapa=mapaQuadroValido();
+  mapa.liberacaoPronta=['liberada-sintetica'];mapa.revisaoEmAndamento=['em-revisao-sintetica'];
+  mapa.etapas.push({rotulo:'planejada-sintetica',coluna:'Planejamento'},{rotulo:'texto-sintetico',coluna:'Redação'});
+  return mapa;
+}
+function capturaQuadro() {
+  const raw=capturaDetalhada();
+  for(const [row,etapa] of [[1,'planejada-sintetica'],[2,'texto-sintetico'],[3,'arte_aprovada'],[4,'prompts_imagem_prontos']]) {
+    mudarCelula(raw,'Produções',row,'etapa_producao',etapa);
+  }
+  const novas=[
+    ['peca-7','Correção de texto sintética','arte_aprovada','em-revisao-sintetica','',''],
+    ['peca-8','Entrega pronta sintética','arte_aprovada','','liberada-sintetica',''],
+    ['peca-9','Publicação registrada sintética','arte_aprovada','','','2026-10-01T12:00:00Z'],
+    ['peca-10','Etapa nova sintética','etapa_nova_sintetica','','',''],
+    ['peca-11','Mesmo rótulo, outra peça','etapa_nova_sintetica','','',''],
+    ['peca-12','Sem data e sem etapa','','','','']
+  ];
+  for(const [id,titulo,etapa,estadoRevisao,estadoLiberacao,publicado] of novas) adicionarRegistro(raw,'Produções',{
+    producao_id:id,marca_id:'ntv',semana_id:'semana-01',slot:'imagem_a',versao:1,titulo,
+    etapa_producao:etapa,estado_revisao:estadoRevisao,estado_liberacao:estadoLiberacao,publicado_em:publicado,
+    data_prevista:id==='peca-12'?'':'2026-10-02',responsavel_atual:'Responsável sintético',status:'em_planejamento'
+  });
+  adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-quadro',producao_id:'peca-7',versao:1,
+    decisao:'revisar',motivo:'Ajustar texto de exemplo',responsavel_correcao:'Correção sintética',estado_tratamento:'aberta'});
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-02',marca_id:'ntv',inicio_semana:'2026-10-05',tema:'Próxima semana sintética'});
+  adicionarRegistro(raw,'Produções',{producao_id:'peca-13',marca_id:'ntv',semana_id:'semana-02',slot:'imagem_b',
+    versao:1,titulo:'Etapa nova da outra semana',etapa_producao:'outra_etapa_sintetica',data_prevista:'2026-10-05',
+    responsavel_atual:'Equipe sintética',status:'publicado'});
+  return raw;
+}
 function temporario(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(),'crm001-test-'));
   t.after(() => fs.rmSync(dir,{recursive:true,force:true}));
@@ -112,4 +145,4 @@ function carregarModulo(relative, exports) {
   if (fs.existsSync(filename)) return require(filename);
   return Object.fromEntries(exports.map(name => [name, () => { throw new Error(name + ': comportamento ainda não implementado'); }]));
 }
-module.exports = {campos,capturaValida,capturaDetalhada,adicionarRegistro,mapaQuadroValido,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};
+module.exports = {campos,capturaValida,capturaDetalhada,capturaQuadro,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};

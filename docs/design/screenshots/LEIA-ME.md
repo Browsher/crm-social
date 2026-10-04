@@ -2,7 +2,7 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
-Estado em 04/10/2026: evidência visual local de T001–T026/US1, US2 e US3. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
+Estado em 04/10/2026: evidência visual local de T001–T030/US1, US2, US3 e US4. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
 
 | Arquivo | O que mostra |
 | --- | --- |
@@ -21,7 +21,7 @@ Aplicação em execução, dados fictícios — lista semanal mobile da primeira
 
 ## Limites da evidência
 
-As imagens originais comprovam a aparência histórica do Planejamento da US1, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** dessas duas imagens era provisório e foi substituído na US2. US4/quadro, US5/abas completas e Histórico e o iniciador continuam pendentes. Produção exibe mensagem de próxima entrega; Planilha já mostra detalhes da captura e releitura local, sem as tabelas futuras.
+As imagens originais comprovam a aparência histórica do Planejamento da US1, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** dessas duas imagens era provisório e foi substituído na US2. US4/quadro implementada localmente, com PR/aceite corrente pendentes; US5/abas completas e Histórico e iniciador pendentes. Produção mostra quadro por semana; Planilha já mostra detalhes da captura e releitura local, sem as tabelas futuras.
 
 Não substituir essas imagens por screenshots com dados privados. [Telas decididas](../telas.md) e [spec canônica](../../../specs/001-consulta-local-producao/spec.md) mantêm os requisitos completos; resultados de testes ficam no registro de validação, não deduzidos da imagem.
 
@@ -111,3 +111,38 @@ Aplicação real em loopback, apenas fixture sintética e estado em TEMP, sem er
 de página, requisição externa ou corte horizontal. As imagens anteriores ficam
 preservadas; nenhuma captura comprova coleta Google, bytes de mídia ou integração
 operacional. Estado e evidências reais ficam na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+
+## US4 — quadro de Produção
+
+Aplicação executável por semana/tema, oito colunas, status informativo, responsável
+e correção separados e primeira pendência/+N. Captura e mapa exclusivamente
+sintéticos em TEMP exercitam todas as colunas; configuração versionada mantém
+nove etapas e liberação/revisão vazias. Outras distingue rótulos de cartões.
+
+| Desktop | Celular |
+| --- | --- |
+| [1440 × 1200](001-us4-producao-1440.png) | [390 × 2488](001-us4-producao-390.png) |
+
+Servidor loopback, sem dado operacional, erro de página, requisição externa ou
+corte horizontal. Não comprova coleta Google, bytes de mídia ou a 001 completa;
+PR/aceite corrente na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+
+## US4 — pendências do cartão por coluna
+
+As duas capturas novas de 04/10/2026 mostram o quadro com oito colunas e dez
+cartões, usando somente `capturaQuadro` e `mapaQuadroSintetico` em TEMP. **Mídia
+ausente** aparece nos cartões de Mídia, Revisão, Pronta, Publicada e Outras;
+Planejamento, Redação e Visual conservam as revisões sem mostrar ausência de
+mídia. O resumo e **+N** consideram somente as pendências visíveis no cartão;
+API e gaveta mantêm os detalhes. A regra está no [contrato](../../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md#quadro-prioridade-aprovada-e-configuração-versionada)
+e nas [telas](../telas.md#3-produção-001).
+
+| Desktop | Celular |
+| --- | --- |
+| [1440 × 1200](001-us4-ajuste-producao-1440.png) | [390 × 2456](001-us4-ajuste-producao-390.png) |
+
+Aplicação real em loopback, captura e mapa exclusivamente sintéticos; conferência
+sem corte horizontal, erro de página ou requisição externa. Os arquivos anteriores
+permanecem como evidência da apresentação anterior. As imagens não comprovam
+captura Google, bytes de mídia ou integração operacional; revisão/aceite corrente
+continuam pendentes na [validação](../../../specs/001-consulta-local-producao/validacao.md).

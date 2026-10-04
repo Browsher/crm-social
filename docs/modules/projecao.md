@@ -1,12 +1,14 @@
-# Projeção de Planejamento e detalhe do dia
+# Projeção de Planejamento, detalhe do dia e Produção
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Projeção e detalhes implementados até T024/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs), `redigirPedacoUrl` (linha 6), `redigirTexto` (17), `jsonValido` (29), `motivoUrl` (32), `selecionar` (37), `reciboPublico` (50), `selecionarNtv` (62), `planejar` (92), `agruparDias` (114), `aplicarFrescor` (123), `midiasCena` (188), `unidades` (199), `vinculoRevisao` (208), `revisoes` (217), `documentosSemana` (248), `avisosRelacionados` (279), `detalhar` (288) e `projetarVisao` (302).
+Projeção, detalhes e quadro implementados até T028/US4; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs).
+
+Funções conferidas na fonte: `redigirPedacoUrl` (linha 6), `redigirTexto` (17), `jsonValido` (29), `motivoUrl` (32), `selecionar` (37), `reciboPublico` (50), `selecionarNtv` (62), `planejar` (95), `agruparDias` (117), `aplicarFrescor` (126), `midiasCena` (191), `unidades` (202), `vinculoRevisao` (211), `revisoes` (220), `documentosSemana` (251), `avisosRelacionados` (282), `detalhar` (291), `colunaProducao` (305), `pendenciasRevisao` (311), `pendenciasMidia` (318), `colunaSemana` (330), `montarQuadro` (336) e `projetarVisao` (345).
 
 ## Interface, seleção e dados
 
-Export real: `projetarVisao(estadoLocal, nowIso, mapaQuadro)`, conforme a interface do plano. `nowIso` e `captura.completedAt` determinam frescor em `America/Sao_Paulo`; a data das linhas não decide o selo. O mapa é recebido do servidor, com classificação dos cartões reservada a US4.
+Export real: `projetarVisao(estadoLocal, nowIso, mapaQuadro)`, conforme a interface do plano. `nowIso` e `captura.completedAt` determinam frescor em `America/Sao_Paulo`; a data das linhas não decide o selo. O mapa validado recebido do servidor é aplicado na classificação da US4.
 
 Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro-config.md). Não há I/O, rota própria, variável de ambiente ou escrita na entrada.
 
@@ -16,9 +18,9 @@ Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro
 | `captura` | null sem captura; senão capturaId, completedAt, período e contagens NTV |
 | `estado` / `selo` | Quatro estados contratuais abaixo; destino planilha em todos eles |
 | `semanas` | Mínimos selecionados + período civil de sete dias, objetivo mensal indefinido e IDs ordinais |
-| `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null, formato por slot e detalhes de cada produção |
+| `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null, formato por slot, detalhes e `quadro:{coluna,pendencias}` |
 | `dias` | Grupos por data civil; sem data agrupado por semanaId, inclusive null |
-| `quadro` | Oito colunas fixas com IDs vazios; classificação futura |
+| `quadro` | `colunas:[{nome}]` e `semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]`; oito colunas por semana, inclusive semanaId null; IDs ordinais |
 | `planilha` | Lista vazia; seis tabelas futuras em US5 |
 | `historico` / `ultimaTentativa` | Recibos confirmados selecionados, recentes primeiro; tela ainda pendente |
 | `avisos` | Data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
@@ -84,6 +86,12 @@ Antes dos novos avisos de detalhe, `indexarAvisos` e `avisosRelacionados` associ
 
 Versão/índice preenchidos exigem inteiros positivos; início/duração preenchidos exigem números finitos não negativos. Valores inválidos são mantidos com aviso, nunca coercidos a zero. A linha dos avisos vem do ID na matriz original e acompanha o registro selecionado em WeakMap; linhas vazias e marcas filtradas não deslocam a localização física. A API não envia a matriz bruta nem os mapas internos.
 
+## Quadro por semana
+
+`colunaProducao` aplica publicação preenchida > liberação configurada > revisão configurada > etapa mapeada, com fallback Outras; status é informativo. `colunaSemana` conta rótulos distintos apenas dos cartões Outras daquela semana NTV; vazio/null/espaços usam uma chave somente no contador. Etapa null é recuperada da célula original antes da triagem e conservada na API. Repetição, outra semana/marca ou etapa vencida por prioridade superior não aumenta N; zero/singular/plural vêm da projeção. Configuração versionada mantém nove etapas e liberação/revisão vazias; `capturaQuadro`/`mapaQuadroSintetico` são fixtures TEMP para todas as colunas.
+
+`quadro.pendencias` reúne revisões vigentes de decisão literal `revisar`, `refazer`, `reprovado` ou `rejeitado`, com revisãoId/decisão/versão/responsável de correção, seguidas de mídia ausente na página/cena vigente com unidade/identidade. Aprovação/desconhecido/versão anterior não gera correção inferida. Sem unidades vigentes, ausência de arquivo registrado na versão atual gera pendência; registro com URL vazia/recusada não vira mídia ausente, sem comprovar bytes. API conserva todas; UI mostra primeira/+N. Tratamento desconhecido continua dívida da revisão final. Casos US4 de prioridade, contador e pendências são conferidos em [tests/projecao.test.cjs](../../tests/projecao.test.cjs), com resultados somente na [validação](../../specs/001-consulta-local-producao/validacao.md).
+
 ## Supressão, testes e dívidas
 
 A expressão `sensivel` (linha 5) procura formatos conhecidos de segredo/chave e caminhos pessoais indevidos; troca o texto reconhecido inteiro por **[conteúdo suprimido]** e acrescenta aviso de célula. É triagem conservadora, sem garantia de detectar todos os segredos. Nos campos dedicados `Arquivos.url` e `Produções.url_video_final`, após a redação de texto, `motivoUrl` analisa com `new URL` os valores ainda inalterados: usuário **ou** senha causa o marcador e motivo fixo **conteúdo sensível suprimido**; string não vazia recusada pelo construtor recebe **URL inválida suprimida**. O aviso tem `aba`, linha física e campo, sem valor ou exceção bruta. Esse guarda também cobre outros esquemas e URL malformada nesses dois campos. Vazio, inclusive somente espaços, é preservado sem aviso de URL inválida. Se a redação de texto já substituiu um pedaço HTTP(S) credenciado, o restante da frase é preservado também nesses campos. A allowlist da UI decide quais URLs válidas podem virar link, sem ecoar recusadas. O original permanece intacto na captura privada.
@@ -96,4 +104,4 @@ A validade de `origens_json` é calculada sobre o texto original antes da supres
 
 [tests/projecao.test.cjs](../../tests/projecao.test.cjs) cobre seleção NTV, isolamento da entrada, campos selecionados, supressão e preservação de URLs, datas civis, formatos, cobertura, órfãos e ordem. US2 verifica fim da captura, virada do dia em São Paulo, quatro estados e precedência da falha sem payload privado; US3 cobre responsáveis/revisões, ordenação e isolamento de versões, mídias ausentes/incompatíveis/empatadas, números/JSON inválidos, linha física dos avisos e resolução semanal sem duplicar avisos globais. Casos de usuário/senha sintéticos, inclusive URLs malformadas, verificam supressão, motivos fixos, vazios preservados e captura original intacta; [servidor](../../tests/servidor.test.cjs) e [interface](../../tests/interface.test.cjs) conferem ausência das credenciais no JSON real e no dia. Regressões em [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) conferem GET/no-op preservando falha/horário e nova captura encerrando a falha. Resultados em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-Uma pegadinha permanece explícita: `registros` em `src/captura.cjs:81` normaliza null explícito para string vazia na entidade; o envelope privado conserva o original. A linha física dos avisos já é preservada, inclusive após linhas vazias ou de outra marca. A classificação de Produção e as seis tabelas de Planilha continuam futuras; detalhe e recibo não comprovam integração operacional.
+Uma pegadinha permanece explícita: a função `registros` em `src/captura.cjs` normaliza null explícito para string vazia na entidade; o envelope privado conserva o original; etapa_producao null é recuperada antes da triagem na US4. A linha física dos avisos já é preservada, inclusive após linhas vazias ou de outra marca. Classificação de Produção implementada; seis tabelas de Planilha ainda futuras; detalhe e recibo não comprovam integração operacional.
