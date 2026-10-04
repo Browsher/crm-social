@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Social Studio · Planejamento</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="/" aria-label="Social Studio, início"><span class="brand-mark" aria-hidden="true">S</span>Social <strong>Studio</strong></a>
+    <div class="workspace"><span class="avatar">NTV</span><div><strong>NTV</strong><small>Conteúdo e produção</small></div><span class="check" aria-hidden="true">✓</span></div>
+    <p class="nav-label">Workspace</p>
+    <nav aria-label="Navegação principal">
+      <button type="button" class="nav-item active" data-tela="planejamento" aria-label="Planejamento">Planejamento</button>
+      <button type="button" class="nav-item" data-tela="producao" aria-label="Produção">Produção</button>
+      <button type="button" class="nav-item" data-tela="planilha" aria-label="Planilha">Planilha</button>
+    </nav>
+    <div class="sidebar-bottom"><strong>Consulta local</strong><p>Somente neste computador</p></div>
+  </aside>
+  <header class="topbar">
+    <button type="button" id="menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar">☰</button>
+    <p>Workspace <span aria-hidden="true">/</span> <strong id="caminho">Planejamento</strong></p>
+    <span class="computer">Neste computador <span class="presence" aria-hidden="true"></span></span>
+  </header>
+  <main>
+    <div class="page-heading"><div><h1 id="titulo">Planejamento</h1><p class="subtitle">Peças registradas, semana a semana.</p></div><button type="button" id="selo" class="badge cinza">Carregando</button></div>
+    <p id="erro" role="alert" hidden></p>
+    <section id="planejamento" aria-label="Planejamento" hidden>
+      <div id="objetivo-mes" class="month-brief"><span class="brief-icon" aria-hidden="true">◎</span><div><small>Objetivo do mês</small><p>Ainda não definido</p></div></div>
+      <div class="month-heading"><h2 id="mes"></h2><div class="month-nav"><button type="button" id="anterior" aria-label="Mês anterior">‹</button><button type="button" id="proximo" aria-label="Próximo mês">›</button></div></div>
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="Formato"><button type="button" data-formato="Todos" class="active">Todos</button><button type="button" data-formato="Imagem">Imagem</button><button type="button" data-formato="Carrossel">Carrossel</button><button type="button" data-formato="Reels">Reels</button></div>
+        <div class="views" role="group" aria-label="Visualização"><button type="button" data-modo="Calendário">Calendário</button><button type="button" data-modo="Lista">Lista</button></div>
+      </div>
+      <div id="sem-captura" class="empty" hidden><h3>Nenhuma captura disponível</h3><p>Peça a primeira leitura à Central.</p></div>
+      <div id="calendario" class="calendar"></div>
+      <div id="lista"></div>
+      <div class="calendar-footer"><span id="total"></span><button type="button" id="abrir-sem-data" class="text-button">0 sem data</button></div>
+      <section id="sem-data" aria-label="Peças sem data" hidden><div class="section-heading"><h2>Sem data</h2><button type="button" id="fechar-sem-data">Fechar lista</button></div><div id="lista-sem-data"></div></section>
+    </section>
+    <section id="producao" hidden><h2>Produção</h2><p class="empty">O quadro estará disponível na próxima entrega.</p></section>
+    <section id="planilha" hidden><h2>Planilha</h2><p class="empty">As abas e o Histórico estarão disponíveis na próxima entrega.</p></section>
+  </main>
+  <dialog id="dia"><div class="section-heading"><h2 id="dia-titulo"></h2><button type="button" id="fechar-dia" aria-label="Fechar dia">×</button></div><p id="dia-quantidade"></p><div id="dia-pecas"></div></dialog>
+</body>
+</html>
