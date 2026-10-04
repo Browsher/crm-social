@@ -1,6 +1,6 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa a primeira entrega executável da verificação final. **Estado em 04/10/2026:** T001–T018 implementadas; importador, servidor, Planejamento e sete suítes existem. Resultado local atual após correções do PR #6: 67 PASS, 0 FAIL, 0 SKIP; gate exit 0, cobertura 96,06%, complexidade PASS com aviso 12 no CLI, Semgrep SKIP no Windows e audit N/A. Fonte da evidência: [validacao.md](validacao.md). As 23 tarefas seguintes e captura operacional aguardam. Primeiro CI Linux do PR #6 passou; nova validação remota das correções ainda está pendente. Nenhuma leitura real Google. Branch vigente: `001-consulta-local-producao`, criada da `main`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa a entrega executável da verificação final. **Estado em 04/10/2026:** T001–T022 implementadas; importador, servidor, US1 Planejamento, US2/frescor e releitura e sete suítes existem. Resultado local US2: 75 PASS, 0 FAIL, 0 SKIP, incluindo 14 casos de interface; gate exit 0, cobertura 96,19%, complexidade PASS com aviso 12 no CLI, Semgrep SKIP no Windows e audit N/A. Fonte da evidência: [validacao.md](validacao.md). As 19 tarefas T023–T041 e captura operacional aguardam. Correções do PR #6 integradas em `19e222a`; 0.4.9 aceita no PR #7, merge `7e17e85`; novo aceite remoto da US2 está pendente. Nenhuma leitura real Google. Branch vigente: `001-consulta-local-producao`, criada da `main`.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). O mockup de [telas](../../docs/design/mockups/telas-v2.html) serve como referência visual; não valida backend ou persistência.
 
@@ -13,7 +13,7 @@ Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright exis
 | `CRM_NODE_PATH` | PowerShell seleciona o executável existente; a aplicação não lê esta variável |
 | `PATH` | Colocar o diretório do Node selecionado à frente para subprocessos do gate com `testCommand: ["node", "--test"]` |
 | `CRM_PLAYWRIGHT_MODULE` | `tests/interface.test.cjs` resolve o Playwright existente; sem ela tenta `playwright`; não versionar seu caminho |
-| `CI=true` | Nove testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
+| `CI=true` | 14 testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
 
 Não há variáveis Google, chave de serviço ou URL remota no runtime da 001. Configure as variáveis de ferramenta somente no ambiente local; nenhum caminho pessoal é necessário na documentação.
 
@@ -46,14 +46,14 @@ $crmTestFiles = @(
 & $crmNode --test
 ```
 
-No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação e US1 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
+No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação, US1 e US2 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
 
 Na conferência de 03/10, o PATH encontrava Node 24.14.0, mas o runtime 24.19.0 já
 existia na máquina. Defina `CRM_NODE_PATH` com o caminho desse executável somente no
 ambiente local, sem versionar caminho pessoal. O bloco também põe seu diretório à frente do PATH: selecionar apenas `$crmNode` não garante o mesmo runtime nos subprocessos do gate. CLI e gate usam o executável selecionado;
 o iniciador futuro o receberá por `-NodePath`.
 
-O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e HTTP são obrigatórios. Os nove casos atuais de interface declaram SKIP explícito com `CI=true` antes de carregar Playwright. O primeiro [CI Linux do PR #6](https://github.com/Browsher/crm-social/actions/runs/37182000254) terminou SUCCESS com Semgrep 1.179.0 PASS e [review publicado](https://github.com/Browsher/crm-social/pull/6#issuecomment-5977215935); isso precede as correções atuais. Nova validação remota/aceite estão pendentes no retrato pré-push desta rodada (04/10/2026); aplicabilidade dos nove SKIP permanece pendência M8 da revisão. Iniciador/Windows PowerShell e seus pulos de plataforma serão implementados em T035–T036. Aceite local atual exige sete suítes sem pulos; o completo exigirá oito. Não alterar workflows/configuração ou instalar dependências para contornar a fronteira. SKIP de ferramenta do gate continua regido pelo `--strict`, independente dos pulos de testes por plataforma.
+O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e HTTP são obrigatórios. Os 14 casos atuais de interface declaram SKIP explícito com `CI=true` antes de carregar Playwright. As correções do [PR #6](https://github.com/Browsher/crm-social/pull/6) tiveram CI/review verdes e foram integradas em `19e222a`; a 0.4.9 foi aceita no [PR #7](https://github.com/Browsher/crm-social/pull/7#issuecomment-5979972293), merge `7e17e85`, com [gate](https://github.com/Browsher/crm-social/actions/runs/37202478722/job/111436807063) e [review](https://github.com/Browsher/crm-social/actions/runs/37202478729/job/111436806960) SUCCESS. Novo aceite remoto da US2 permanece pendente. Aplicabilidade dos 14 SKIP e UI fora do LCOV permanecem pendência M8 da revisão. Iniciador/Windows PowerShell e seus pulos de plataforma serão implementados em T035–T036. Aceite local atual exige sete suítes sem pulos; o completo exigirá oito. Não alterar workflows/configuração ou instalar dependências para contornar a fronteira. SKIP de ferramenta do gate continua regido pelo `--strict`, independente dos pulos de testes por plataforma.
 
 Durante implementação, executar o arquivo pertinente **antes** do código e registrar RED pelo comportamento ausente; depois registrar GREEN. Suítes ignoradas no aceite local, zero testes ou gate anterior à criação do aplicativo não comprovam aceite. Resultados e contagens vêm da execução real, sem número antecipado.
 
@@ -89,17 +89,19 @@ Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída d
 | Planejamento | Calendário/lista/filtros; imagem A/B, carrossel e Reels sintéticos; duas peças no mesmo dia |
 | Clique em dia/cartão/lista | Abre grupo inteiro em diálogo básico; detalhes/acordeões ainda não existem |
 | Sem data | Contagem global; fixture de base pode ter zero, variante de interface tem uma |
-| Selo capturado | Captura local/captura_local_provisoria; quatro estados ainda não aceitos |
-| Produção/Planilha | Mensagens de próxima entrega |
+| Selo | Atualizado hoje, HH:MM / Dados de DD/MM / Atualização falhou / Sem dados; clique abre Planilha |
+| Planilha | Fonte, fim em São Paulo, cobertura semanal e avisos; tabelas/Histórico continuam futuros |
+| Atualizar dados | Relê GET /api/visao; conserva tela/falha/horário, sem Google; erro HTTP mantém visão anterior e botão permite repetir |
+| Produção | Mensagem de próxima entrega do quadro |
 | Interface mobile | Lista e menu recolhido em 390 px |
 
-Importar novamente os mesmos ID/serialização deve retornar `sem_alteracao`, sem criar recibo ou renovar instante. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. A tela de Histórico e o selo de falha ainda são tarefas futuras; seus recibos já existem na persistência. Com captura vigente, a API inclui aviso curto de última importação falha; a UI atual ainda não mostra esses avisos.
+Importar novamente os mesmos ID/serialização retorna `sem_alteracao`, sem criar recibo, renovar instante ou encerrar falha posterior. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. O selo vermelho e o aviso curto de preservação já aparecem com captura vigente; sem captura, eventual primeira falha conserva **Sem dados**. GET/releitura não grava nem encerra a falha; nova captura completa aceita a encerra. Erro HTTP, inclusive 503, conserva a visão carregada com mensagem local e botão habilitado para nova tentativa. A tela de Histórico permanece futura; os recibos já existem na persistência.
 
 A importação adquire `.importacao.lock` no diretório escolhido. Segunda instância falha claramente sem mudar o estado. A liberação tenta close/unlink separadamente e preserva resultado/erro com avisos transitórios em stderr, sem trocar o exit. Falha ao preparar/promover o ponteiro tenta remover só seu temporário, sem substituir o erro original. Interrupção pode deixar trava; nunca removê-la automaticamente: conferir proprietário/PID, processo e estado confirmado antes de recuperação manual, conforme o [módulo de persistência](../../docs/modules/snapshot.md).
 
 ## Cenários sintéticos obrigatórios
 
-Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T018 e suas regressões já têm evidência em `validacao.md`; selo de quatro estados, detalhes/acordeões, quadro, tabelas, iniciador e escala permanecem futuros. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
+Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T022 e suas regressões já têm evidência em `validacao.md`; detalhes/acordeões, quadro, tabelas/Histórico, iniciador e escala permanecem futuros. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
 
 | Caso | Ação | Resultado a conferir |
 | --- | --- | --- |
@@ -160,7 +162,7 @@ Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editori
 & './.specify/scripts/powershell/check-prerequisites.ps1' -Json -RequireSpec -RequireTasks -IncludeTasks
 ```
 
-Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T018 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
+Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T022 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
 
 ## Quality gate e sincronização final da implementação
 
@@ -172,4 +174,4 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 
 T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
-Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. Gate local e Planejamento estão verificados neste recorte; o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.
+Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. Gate local e US1/US2 estão verificados neste recorte; o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.

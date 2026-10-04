@@ -2,7 +2,7 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Estado em 04/10/2026: T018/US1 implementada, com ajustes de apresentação e regressões do PR #6; arquivos [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes principais em app.js: `node` (linha 5), `statusLegivel` (17), `abrirDia` (20), `calendario` (43), `pecaVisivel` (80), `lista` (86), `render` (99) e `navegar` (112).
+Estado em 04/10/2026: T018/US1 e T022/US2 implementadas e testadas localmente, com ajustes de apresentação e regressões do PR #6; arquivos [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes principais em app.js: `node` (linha 5), `statusLegivel` (17), `abrirDia` (20), `calendario` (43), `pecaVisivel` (80), `lista` (86), `render` (99), `navegar` (113), `detalhesCaptura` (135) e `reler` (148).
 
 ## Inicialização e navegação
 
@@ -16,15 +16,19 @@ O HTML importa somente `/styles.css` e `/app.js`; o JavaScript busca apenas `/ap
 | Sidebar desktop | Ocupa a altura da página inteira, inclusive além da área visível; no mobile permanece menu fixo/recolhido |
 | Até 720 px | Lista inicial, menu recolhido; seletor visual Calendário/Lista fica oculto |
 | Menu | Exatamente Planejamento, Produção e Planilha |
-| Produção / Planilha | Mensagens explícitas de próxima entrega |
+| Produção | Mensagem explícita de próxima entrega do quadro |
+| Planilha | Fonte, fim em São Paulo, cobertura semanal, motivos resumidos dos avisos e botão de releitura; seis tabelas/Histórico futuros |
 | Filtros | Todos, Imagem, Carrossel e Reels, com aria-pressed |
 | Mês anterior/próximo | Troca somente o mês apresentado |
-| Selo | Texto/cor da API; clique abre Planilha, ainda sem quatro estados |
-| Erro de consulta | Mensagem local e Consulta indisponível; controles continuam desabilitados |
+| Selo | Quatro textos/cores contratuais da API em todas as telas; clique abre Planilha |
+| Atualizar dados | GET /api/visao com cache no-store; somente o botão fica desabilitado durante a consulta |
+| Erro de consulta | Mensagem local; visão/selo já carregados são preservados e botão é liberado; sem visão anterior mostra Consulta indisponível |
 | Captura ausente | Peça a primeira leitura à Central, sem fallback fictício |
 | Objetivo mensal | Ainda não definido, sem botão Plano do mês |
 
-Botões existentes são desabilitados durante a carga. Após sucesso, handlers são instalados e a tela Planejamento é exibida. A carga atual faz uma única consulta; botão Atualizar dados será US2.
+Os handlers são instalados uma vez antes da primeira consulta, com Planejamento como tela inicial. `reler` consulta a API, atualiza `state.view` após uma resposta bem-sucedida e renderiza sem trocar a tela escolhida. O botão é liberado em `finally`, inclusive após 503, permitindo nova tentativa. Abrir ou reler não grava/importa captura nem consulta Google.
+
+Em Planilha, `detalhesCaptura` mostra **Captura pela Central**, fim da captura formatado em `America/Sao_Paulo` e período civil das semanas; sem esses dados usa **Sem captura disponível** e **Cobertura não disponível**. Motivos dos avisos são deduplicados e aplicados como texto em `role=status`. O aviso de última importação falha permanece junto aos dados da última captura válida. O selo segue ausência, falha ativa, hoje ou outro dia calculados na projeção; GET/no-op não renovam horário nem encerram a falha.
 
 ## Calendário, lista e Sem data
 
@@ -55,8 +59,8 @@ Textos de captura são aplicados por `createElement`/`textContent` e `replaceChi
 
 ## Verificação e limites
 
-[tests/interface.test.cjs](../../tests/interface.test.cjs) usa Playwright existente por `CRM_PLAYWRIGHT_MODULE`, servidor loopback e dados/configuração em TEMP. Bloqueia e registra qualquer requisição fora da origem local e erros do navegador. Nove casos atuais verificam menu, objetivo, calendário/lista/filtros, sem data, 390/1440, ausência real, remarcação, rótulos conhecidos/desconhecidos com API intacta, título do mês, semanas úteis e altura da sidebar.
+[tests/interface.test.cjs](../../tests/interface.test.cjs) usa Playwright existente por `CRM_PLAYWRIGHT_MODULE`, servidor loopback e dados/configuração em TEMP. Bloqueia e registra qualquer requisição fora da origem local e erros do navegador. Os 14 casos atuais verificam os nove cenários de US1 (menu, objetivo, calendário/lista/filtros, sem data, 390/1440, ausência real, remarcação, rótulos, título, semanas úteis e sidebar), os quatro estados do selo nas três telas e clique até Planilha, mais releitura/recuperação em 390 px. Conferem fonte/fim/cobertura, preservação de falha/horário/ponteiro, nova captura, 503 sem apagar visão e apenas GET local.
 
-Com `CI=true`, os nove casos declaram SKIP explícito antes de carregar Playwright; fora do CI, ferramenta ausente falha. O primeiro [gate Linux do PR #6](https://github.com/Browsher/crm-social/actions/runs/37182000254) passou, sem executar a interface. A aplicabilidade dos SKIP permanece pendência M8 da revisão; o novo resultado remoto após as correções está pendente no retrato pré-push desta rodada (04/10/2026). Evidência local executada e limites em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); [screenshots](../design/screenshots/LEIA-ME.md) são da aplicação com fixture fictícia.
+Com `CI=true`, os 14 casos declaram SKIP explícito antes de carregar Playwright; fora do CI, ferramenta ausente falha. As correções do [PR #6](https://github.com/Browsher/crm-social/pull/6) tiveram CI/review verdes e foram integradas em `19e222a`; novo aceite remoto da US2 está pendente. A aplicabilidade dos SKIP e a UI fora do LCOV permanecem pendência M8 da revisão. Evidência local executada e limites em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); [screenshots](../design/screenshots/LEIA-ME.md) são da aplicação com fixture fictícia.
 
-Pegadinhas: trocar o tamanho da janela depois de iniciar não recalcula o modo inicial; a escolha é feita por matchMedia no carregamento. Busca por ID usa a coleção em memória e sem paginação; cenário final de 500 peças ainda não foi executado. Aparência e nove testes de US1 não comprovam quatro estados, detalhes, quadro, tabelas ou integração operacional.
+Pegadinhas: trocar o tamanho da janela depois de iniciar não recalcula o modo inicial; a escolha é feita por matchMedia no carregamento. Busca por ID usa a coleção em memória e sem paginação; cenário final de 500 peças ainda não foi executado. Testes locais de US1/US2 não comprovam detalhes, quadro, tabelas ou integração operacional.

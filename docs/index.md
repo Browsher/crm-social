@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página indica onde encontrar decisões, código explicado e evidências sem confundir uma fotografia de demonstração com a operação. Estado em 04/10/2026: primeira entrega local da 001/T001–T018 implementada; 23 tarefas pendentes; primeiro CI Linux do PR #6 passou, nova validação remota das correções está pendente no retrato pré-push desta rodada (04/10/2026), e captura operacional aguarda.
+Como o índice de um álbum, esta página indica onde encontrar decisões, código explicado e evidências sem confundir uma fotografia de demonstração com a operação. Estado em 04/10/2026: T001–T022 implementadas/testadas localmente, cobrindo fundação, US1 e US2; 19 tarefas pendentes. PR #6 integrado; node-kit 0.4.9 aceito no PR #7. Suíte local 75 PASS, gate verde, quatro selos e releitura somente local. Aceite remoto da US2 e captura operacional aguardam; links atuais no registro de validação.
 
 ## Ordem de leitura
 
@@ -33,7 +33,7 @@ Como o índice de um álbum, esta página indica onde encontrar decisões, códi
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; classificação ainda futura |
 | [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos e bases futuras |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; quatro rotas fixas e Host/Origin |
-| [Web/Planejamento](modules/web.md) | src/web; calendário/lista/filtros e diálogo básico |
+| [Web/Planejamento](modules/web.md) | src/web; calendário/lista/filtros, diálogo básico, selo comum e detalhes/releitura em Planilha |
 
 ## Feature 001 canônica
 
@@ -44,7 +44,7 @@ Como o índice de um álbum, esta página indica onde encontrar decisões, códi
 | [research.md](../specs/001-consulta-local-producao/research.md) | Pesquisa histórica de 03/10 e justificativas; não é status atual da implementação |
 | [data-model.md](../specs/001-consulta-local-producao/data-model.md) | Modelo alvo completo, entidades e transições; estado parcial no início |
 | [Contrato captura/consulta](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) | Envelope e 66 mínimos, persistência e UI completas; pendências explícitas |
-| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T018 marcadas e T019–T041 pendentes; rastreabilidade |
+| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T022 marcadas e T023–T041 pendentes; rastreabilidade |
 | [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, sete suítes, demo TEMP e roteiro final futuro |
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
@@ -56,6 +56,10 @@ Como o índice de um álbum, esta página indica onde encontrar decisões, códi
 | [Telas decididas](design/telas.md) | Decisões do autor e nota de implementação parcial |
 | [Screenshots reais/LEIA-ME](design/screenshots/LEIA-ME.md) | Aplicação em execução somente com dados fictícios; origem/limites |
 | [Planejamento 1440](design/screenshots/001-planejamento-1440.png) / [390](design/screenshots/001-planejamento-390.png) | Capturas sintéticas desktop/mobile |
+| [Selo hoje 1440](design/screenshots/001-us2-hoje-1440.png) / [390](design/screenshots/001-us2-hoje-390.png) | Verde pelo fim da captura em São Paulo |
+| [Selo anterior 1440](design/screenshots/001-us2-anterior-1440.png) / [390](design/screenshots/001-us2-anterior-390.png) | Âmbar para outro dia civil |
+| [Selo falha 1440](design/screenshots/001-us2-falha-1440.png) / [390](design/screenshots/001-us2-falha-390.png) | Vermelho conserva as peças da captura válida |
+| [Sem dados 1440](design/screenshots/001-us2-sem-dados-1440.png) / [390](design/screenshots/001-us2-sem-dados-390.png) | Cinza sem captura, mesmo com tentativa falha |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |
 | [Desenho histórico](design/desenho.md) | Proposta de 02/10 com referência às decisões vigentes |
