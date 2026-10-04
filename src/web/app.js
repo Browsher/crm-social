@@ -349,6 +349,7 @@ function navegar(tela,producaoId=null) {
   for (const b of document.querySelectorAll('[data-tela]')) b.classList.toggle('active',b.dataset.tela===tela);
   const nome={planejamento:'Planejamento',producao:'Produção',planilha:'Planilha'}[tela];
   $('#titulo').textContent=nome;$('#caminho').textContent=nome;
+  $('.page-heading .subtitle').textContent=tela==='planilha'?'Dados capturados da planilha, por aba':'Peças registradas, semana a semana.';
   $('#sidebar').classList.remove('open');$('#menu').setAttribute('aria-expanded','false');
   if(tela==='planilha') {
     state.avisosProducaoId=producaoId;
@@ -397,9 +398,31 @@ function historicoPlanilha() {
   if(!records.length) return node('p','Nenhuma tentativa confirmada.','empty');
   const rotulos={completa:'Completa',falhou:'Falhou'};
   const table=tabelaLocal(['Concluída em · São Paulo','Resultado','Motivo resumido'],
-    records.map(r=>[horarioLocal(r.concluidaEm),rotulos[r.resultado] ?? r.resultado,r.motivoResumo]),'Histórico');
+    records.map(r=>[horarioLocal(r.concluidaEm),Object.hasOwn(rotulos,r.resultado)?rotulos[r.resultado]:'Resultado desconhecido',motivoHistorico(r.motivoResumo)]),'Histórico');
   [...table.querySelectorAll('tbody tr')].forEach((row,i)=>{row.dataset.resultado=records[i].resultado;});
   return table;
+}
+function motivoHistorico(motivo) {
+  if(!motivo) return '';
+  const aba=motivo.match(/^(Semanas|Produções|Páginas|Cenas|Arquivos|Revisoes) (.+): inválido$/);
+  if(aba) return 'Aba '+aba[1]+(aba[2]==='complete'?' incompleta':' inválida');
+  const rotulos={
+    'captura inválida: completedAt excede o relógio local em mais de 10 minutos':'Horário da captura mais de 10 minutos no futuro',
+    'captura desatualizada: completedAt igual ou anterior ao da vigente':'Captura desatualizada; a vigente foi preservada',
+    'arquivo local ausente ou ilegível':'Arquivo local ausente ou ilegível',
+    'JSON inválido no arquivo local':'Formato do arquivo local inválido'
+  };
+  return Object.hasOwn(rotulos,motivo)?rotulos[motivo]:'Captura não pôde ser importada';
+}
+function motivoAviso(aviso) {
+  if(!aviso.motivo.includes('Mídia ausente:')) return aviso.motivo;
+  const partes=[...new Set(aviso.motivo.split('; ').filter(m=>!m.startsWith('Mídia ausente:')))];
+  if(partes.length) {
+    const texto=partes.join(' e ').replace('imagens ausentes e vídeo ausente','imagens e vídeo ausentes');
+    return texto.charAt(0).toUpperCase()+texto.slice(1);
+  }
+  if(aviso.motivo.includes('nenhum arquivo da produção registrado')) return 'Nenhum arquivo da produção registrado';
+  return aviso.aba==='Páginas'?'Imagem ausente':'Nenhum arquivo registrado';
 }
 function renderAvisosPlanilha() {
   const p=state.view.producoes.find(p=>p.producao_id===state.avisosProducaoId);
@@ -411,7 +434,7 @@ function renderAvisosPlanilha() {
   $('#avisos-filtro').textContent=(p?(p.titulo || 'Peça sem título')+' · ':'Todas as peças · ')+plural(avisos.length,'aviso');
   $('#todos-avisos').hidden=!p;
   $('#avisos-tabela').replaceChildren(tabelaLocal(['Aba','Linha','Campo','Motivo'],
-    avisos.map(a=>[a.aba ?? '—',a.linha ?? '—',a.campo ?? '—',a.motivo]),'Avisos de dados'));
+    avisos.map(a=>[a.aba ?? '—',a.linha ?? '—',a.campo ?? '—',motivoAviso(a)]),'Avisos de dados'));
 }
 function escolherAba(nome) {
   state.abaPlanilha=nome;renderPlanilha();
@@ -458,9 +481,17 @@ function detalhesCaptura() {
   const periodo=captura?.periodo;
   $('#periodo-captura').textContent=periodo?.inicio && periodo?.fim?
     civil(periodo.inicio,{day:'2-digit',month:'2-digit',year:'numeric'})+' a '+civil(periodo.fim,{day:'2-digit',month:'2-digit',year:'numeric'}):'Cobertura não disponível';
-  const avisos=[...new Set(view.avisos.map(a=>a.motivo))];
-  $('#avisos-captura').replaceChildren(...avisos.map(motivo=>node('p',motivo)));
-  $('#avisos-captura').hidden=avisos.length===0;
+  const notice=$('#avisos-captura'),items=[];
+  if(view.ultimaTentativa?.resultado==='falhou') items.push(node('p',captura?
+    'Última importação falhou; captura anterior preservada':'Última importação falhou; nenhuma captura válida disponível'));
+  if(view.avisos.length) {
+    const link=node('a',plural(view.avisos.length,'aviso de dados','avisos de dados'));link.href='#avisos-dados';
+    link.addEventListener('click',event=>{
+      event.preventDefault();state.avisosProducaoId=null;state.abaPlanilha='Produções';renderPlanilha();
+      $('#avisos-dados').focus();$('#avisos-dados').scrollIntoView({block:'start'});
+    });items.push(link);
+  }
+  notice.replaceChildren(...items);notice.hidden=items.length===0;
   renderPlanilha();
 }
 async function reler() {

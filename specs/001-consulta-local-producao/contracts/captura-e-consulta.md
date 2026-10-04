@@ -474,14 +474,33 @@ ou escrita por trocar aba, filtrar avisos ou reler a captura.
 
 | Controle / estado | Comportamento implementado na US5 |
 | --- | --- |
+| Subtítulo | Dados capturados da planilha, por aba |
+| Origem e atualização | Fonte, fim e cobertura; somente a linha da falha ativa e o link N avisos de dados, com singular para um; motivos detalhados somente no painel |
 | Seis abas de dados | Ordem dos mínimos, contagem de linhas NTV, cabeçalhos literais e valores triados como texto |
-| Histórico final | Todas as tentativas confirmadas, recentes primeiro; horário em São Paulo, Completa/Falhou e motivo resumido; sem órfãos ou duplicação por no-op |
+| Histórico final | Todas as tentativas confirmadas, recentes primeiro; horário em São Paulo, Completa/Falhou e motivo em linguagem de tela; sem órfãos ou duplicação por no-op |
 | Teclado | Setas esquerda/direita alternam com retorno nas pontas; Home/End selecionam primeira/última; seleção e foco ficam na mesma aba |
 | Tabelas largas | Região própria de rolagem horizontal, acessível por teclado; página sem rolagem lateral em 390 px |
 | Releitura | Conserva aba selecionada se ela continua disponível; sem captura, somente Histórico fica disponível |
 | Captura ausente | Orientação para pedir captura completa à Central; Histórico vazio informa que não há tentativa confirmada |
 | Avisos de dados | Painel Aba/Linha/Campo/Motivo, filtrado pela peça quando vindo da gaveta; oculto em Histórico ou sem avisos |
 | Menu / selo / Todos os avisos | Restauram avisos gerais; o filtro da peça nunca reduz as linhas das seis tabelas |
+
+O contador de Origem usa todos os avisos da API e não segue o filtro da peça. Seu
+link restaura os gerais, seleciona Produções e dá foco/rolagem ao painel, inclusive
+ao sair de Histórico. Sem avisos, o link é omitido. Quando `ultimaTentativa.resultado`
+é `falhou`, Origem mostra **Última importação falhou; captura anterior preservada**
+se há captura; sem ela, **Última importação falhou; nenhuma captura válida
+disponível**. Esse último caso conserva o selo **Sem dados** e somente Histórico.
+
+Na célula Motivo, a interface consolida o texto de mídia de cada aviso: **Imagens
+e vídeo ausentes**, **Imagem final ausente**, **Nenhum arquivo da produção
+registrado** e **Imagem ausente** para páginas são exemplos. Aba/Linha/Campo,
+quantidade de avisos e motivos originais permanecem na API; isso não muda os
+três slots nem `avisoMidia` definidos acima. No Histórico, **Cenas complete:
+inválido** recebe o rótulo **Aba Cenas incompleta**; outras falhas conhecidas usam
+linguagem de tela e desconhecidas usam **Captura não pôde ser importada**. Motivo
+vazio permanece vazio. Recibos e `historico[].motivoResumo` conservam o original
+saneado; esses rótulos não mudam a validação, persistência ou contrato HTTP.
 
 O alcance de **URL recusada não é texto bruto** se refere aos campos dedicados
 `Arquivos.url` e `Produções.url_video_final` e aos links de arquivos na gaveta.

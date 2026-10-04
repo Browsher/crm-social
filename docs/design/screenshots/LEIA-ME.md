@@ -173,3 +173,16 @@ As capturas anteriores permanecem históricas. Estes arquivos não comprovam col
 Google, captura operacional, bytes de mídia, integração ou aceite completo da 001;
 T035–T041 continuam pendentes. As regras de apresentação ficam nas [telas](../telas.md#4-planilha-001)
 e no [contrato](../../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md#apresentação-de-planilha-e-alcance-das-urls).
+
+## Planilha com origem compacta e motivos legíveis
+
+Novas vistas sintéticas da apresentação, mantendo as anteriores como referência.
+Origem resume falha e quantidade; a lista completa aparece somente na tabela.
+
+| Vista | Desktop 1440 | Celular 390 |
+| --- | --- | --- |
+| Dados | [Abrir](001-us5-ajuste-dados-1440.png) | [Abrir](001-us5-ajuste-dados-390.png) |
+| Avisos da peça | [Abrir](001-us5-ajuste-avisos-1440.png) | [Abrir](001-us5-ajuste-avisos-390.png) |
+| Histórico | [Abrir](001-us5-ajuste-historico-1440.png) | [Abrir](001-us5-ajuste-historico-390.png) |
+
+Evidências e limites permanecem na [validação](../../../specs/001-consulta-local-producao/validacao.md).

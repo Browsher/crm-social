@@ -26,9 +26,12 @@ async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixtu
   depois(dataDir);
   const server=criarServidor({dataDir,quadroConfigPath,port:0});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
-  t.after(()=>new Promise(resolve=>server.close(resolve)));
-  const browser=await chromium.launch();
-  t.after(()=>browser.close());
+  let browser;
+  t.after(async()=>{
+    try {if(browser) await browser.close();}
+    finally {await new Promise(resolve=>server.close(resolve));}
+  });
+  browser=await chromium.launch();
   const page=await browser.newPage({viewport:{width,height:1050}});
   page.setDefaultTimeout(3000);
   await page.clock.setFixedTime(new Date('2026-10-04T12:00:00Z'));
@@ -812,7 +815,8 @@ for(const width of [1440,390]) {
     assert.match(await page.locator('#avisos-filtro').textContent(),/Carrossel sintético/);
     assert.deepEqual(await page.locator('#avisos-dados thead th').allTextContents(),['Aba','Linha','Campo','Motivo']);
     assert.deepEqual(await page.locator('#avisos-dados tbody tr').evaluateAll(ns=>ns.map(n=>[...n.cells].map(c=>c.textContent))),
-      p.detalhes.avisos.map(a=>[a.aba ?? '—',String(a.linha ?? '—'),a.campo ?? '—',a.motivo]));
+      p.detalhes.avisos.map(a=>[a.aba ?? '—',String(a.linha ?? '—'),a.campo ?? '—',
+        a.motivo==='Mídia ausente: nenhum arquivo registrado neste ponteiro'?'Imagem ausente':a.motivo]));
     assert.equal(await page.locator('#avisos-dados').evaluate(n=>n.getBoundingClientRect().top<innerHeight),true);
     assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico-us5|senha-sintetica-us5/);
     assert.doesNotMatch(await page.locator('#planilha').textContent(),/usuario-sintetico-us5|senha-sintetica-us5/);
@@ -831,7 +835,9 @@ for(const width of [1440,390]) {
     await page.locator('#abas-planilha [data-aba="Histórico"]').click();
     assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['falhou','completa']);
     assert.match(await page.locator('#dados-planilha').textContent(),/Falhou.*Completa/s);
-    assert.ok((await page.locator('#dados-planilha').textContent()).includes(view.historico[0].motivoResumo));
+    assert.equal(view.historico[0].motivoResumo,'Cenas complete: inválido');
+    assert.match(await page.locator('#dados-planilha').textContent(),/Aba Cenas incompleta/);
+    assert.doesNotMatch(await page.locator('#dados-planilha').textContent(),/complete:|completedAt|readAt/);
     assert.match(await page.locator('#dados-planilha').textContent(),/04\/10\/2026.*09:00/);
     const pointer=path.join(dataDir,'atual.json'),before=fs.readFileSync(pointer,'utf8'),seen=[];
     page.on('request',req=>seen.push({url:new URL(req.url()).pathname,method:req.method()}));
@@ -864,8 +870,10 @@ test('U10 primeira importação falha sem inventar captura; motivo aparece no Hi
   assert.equal(await page.locator('#planilha-vazia').isVisible(),true);
   assert.deepEqual(await page.locator('#abas-planilha [role="tab"]').allTextContents(),['Histórico · 1']);
   assert.match(await page.locator('#dados-planilha').textContent(),/Falhou/);
-  assert.ok((await page.locator('#dados-planilha').textContent()).includes(view.historico[0].motivoResumo));
+  assert.equal(view.historico[0].motivoResumo,'Cenas complete: inválido');
+  assert.match(await page.locator('#dados-planilha').textContent(),/Aba Cenas incompleta/);
   assert.equal(await page.locator('#selo').textContent(),'Sem dados');
+  assert.equal(await page.locator('#avisos-captura p').textContent(),'Última importação falhou; nenhuma captura válida disponível');
 });
 test('U10 releitura de uma nova captura atualiza tabela e Histórico sem consultar Google', {skip},async t=>{
   let dataDir;
@@ -913,4 +921,43 @@ test('U10 URL dedicada recusada é link não permitido; texto livre e API preser
     assert.match(await page.locator('#dados-planilha').textContent(),/link não permitido/);
   }
   assert.ok((await page.locator('#dados-planilha').textContent()).includes('Saiba mais em https://exemplo.invalid e siga @perfil'));
+});
+
+test('U10 origem mostra só falha ativa e contador que leva à única lista de avisos', {skip},async t=>{
+  const page=await abrir(t,390,true,()=>{},dir=>{
+    const invalid=capturaValida();invalid.tables.Cenas.complete=false;promoverCaptura(invalid,dir);
+  },capturaPlanilha,mapaQuadroValido(),false);
+  const view=await consultarPlanilha(page),notice=page.locator('#avisos-captura');
+  assert.deepEqual(await notice.locator('p').allTextContents(),['Última importação falhou; captura anterior preservada']);
+  const link=notice.getByRole('link',{name:view.avisos.length+' avisos de dados',exact:true});
+  assert.equal(await link.count(),1);
+  await page.locator('#abas-planilha [data-aba="Histórico"]').click();await link.click();
+  assert.equal(await page.locator('#avisos-dados').isVisible(),true);
+  assert.equal(await page.locator('#avisos-dados').evaluate(n=>n===document.activeElement),true);
+  assert.equal(await page.locator('#avisos-dados tbody tr').count(),view.avisos.length);
+  assert.equal(await page.locator('#avisos-captura').getByText('Nenhum arquivo da produção registrado',{exact:true}).count(),0);
+});
+
+test('U10 motivo de mídia é consolidado uma vez por aviso, sem repetir ausência', {skip},async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-inicio-sintetico',producao_id:'peca-4',cena_id:'cena-02',versao:1});
+    celulaPorId(raw,'Cenas','cena-02','arquivo_imagem_inicio_id','arquivo-inicio-sintetico');
+  },()=>{},capturaPlanilha,mapaQuadroValido(),false);
+  const view=await consultarPlanilha(page);
+  const motivos=await page.locator('#avisos-dados tbody tr td:last-child').allTextContents();
+  assert.ok(motivos.includes('Imagens e vídeo ausentes'));
+  assert.ok(motivos.includes('Imagem final ausente'));
+  assert.ok(motivos.includes('Nenhum arquivo da produção registrado'));
+  assert.ok(motivos.includes('Imagem ausente'));
+  assert.equal(motivos.length,view.avisos.length);
+  assert.ok(motivos.every(m=>!m.includes('Mídia ausente:') && !m.includes('neste ponteiro')));
+});
+
+test('U10 Planilha tem subtítulo próprio, inclusive ao navegar de volta', {skip},async t=>{
+  const page=await abrir(t,1440);await consultarPlanilha(page);
+  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Dados capturados da planilha, por aba');
+  await page.locator('[data-tela="planejamento"]').click();
+  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Peças registradas, semana a semana.');
+  await page.locator('[data-tela="planilha"]').click();
+  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Dados capturados da planilha, por aba');
 });

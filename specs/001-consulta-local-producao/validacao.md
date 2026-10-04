@@ -931,3 +931,42 @@ generate-tests/publish-tests **SKIPPED**, sem rótulo gerar-testes. [PR #11](htt
 Ferramenta temporária removida por operação nativa, após verificar o caminho dentro de TEMP: **Pasta Semgrep existe: False**. Instalação, cache, configurações e logs próprios da ferramenta foram apagados; sem instalação global, Docker ou mudança do PATH. Evidências sanitizadas permanecem neste registro e no resumo local.
 
 Este recibo do comentário recebido depois do push fica em commit **local de documentação**, para acompanhar a próxima rodada. O PR permanece no head `86d2fb4`, já verificado; não se declara CI para o registro posterior. Nada foi integrado da US5, e nenhum código, teste ou screenshot mudou após esse head publicado.
+
+### Ajustes de apresentação da US5 — PR #11
+
+RED observado: seis falhas nas expectativas de Histórico legível, origem sem lista,
+motivo consolidado e subtítulo próprio. GREEN e regressões: **197 PASS / 0 FAIL /
+0 SKIP**, **79 testes de interface**, **59,12 s**, Node 24.19.0. Gate local **exit 0**,
+**62,17 s**, cobertura **97,63%**, complexidade máxima **13**, cinco avisos;
+Semgrep **SKIP** no Windows, audit **N/A**, baseline inalterada. O
+[resumo sanitizado](../../docs/reports/001-us5-ajuste-local.json) guarda os hashes.
+
+Origem exibe somente falha ativa e contador com link para a tabela única. O link
+restaura os avisos gerais e sai de Histórico para localizar a tabela. Motivos de
+mídia são consolidados na apresentação; API e recibos conservam os textos originais.
+O Histórico traduz `Cenas complete: inválido` para **Aba Cenas incompleta**, sem
+reescrever evidência armazenada. A Planilha tem subtítulo próprio.
+
+| Cena sintética | 1440 | 390 |
+| --- | --- | --- |
+| Aba Produções e origem compacta | [Desktop](../../docs/design/screenshots/001-us5-ajuste-dados-1440.png) | [Celular](../../docs/design/screenshots/001-us5-ajuste-dados-390.png) |
+| Avisos filtrados da peça | [Desktop](../../docs/design/screenshots/001-us5-ajuste-avisos-1440.png) | [Celular](../../docs/design/screenshots/001-us5-ajuste-avisos-390.png) |
+| Histórico legível | [Desktop](../../docs/design/screenshots/001-us5-ajuste-historico-1440.png) | [Celular](../../docs/design/screenshots/001-us5-ajuste-historico-390.png) |
+
+Seis screenshots conferidos: zero pageerror/requisição externa/rolagem lateral da
+página; tabelas têm rolagem própria. Fixture sintética e falha intencional, sem
+leitura operacional. Commit local `725cb55` acompanha o próximo push. Aceite Linux,
+review e merge autorizado serão registrados após conferir o head novo.
+
+Regressão adicional: primeira importação falha mostrou RED pela ausência da linha
+em Origem; GREEN completo **197/0/0**, **97,95 s**. Durante a repetição do gate,
+o cleanup da fixture aguardou conexão do navegador depois de fechar a escuta.
+Foi liberado somente o navegador com PID/parent e perfil TEMP confirmados. Essa
+execução destravada (389,44 s) **não é usada como aceite**. Cleanup agora fecha o
+navegador antes do servidor, em try/finally; gate repetido sem intervenção abaixo.
+
+Repetição final sem intervenção: **gate exit 0, 49,23 s**, **197 testes PASS**,
+cobertura **97,63%**, complexidade máxima **13** e **seis avisos 11–13**. Semgrep
+SKIP Windows, audit N/A, baseline atualizada false. Este resultado e os hashes
+finais substituem a tentativa interrompida para o aceite deste código; a suíte
+completa anterior preserva seu resultado observado de 197/0/0 e 79 de interface.
