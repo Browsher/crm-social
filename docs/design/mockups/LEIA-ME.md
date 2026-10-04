@@ -24,3 +24,9 @@ Nenhum dado real deve substituir esses exemplos no Git. A futura consulta real p
 [gaveta-v2.html](gaveta-v2.html) é a referência aprovada para a [seção 2 das telas](../telas.md#2-gaveta-do-dia-001). Como uma ficha dobrável, mostra a primeira peça aberta e as demais resumidas, faixa de dados, revisão em uma linha, unidades compactas e documentos semanais únicos. Texto registrado, versões anteriores e Histórico abrem por clique.
 
 A cópia foi conferida antes de entrar no repositório: peças, textos, responsabilidades, revisões e avisos são sintéticos; links usam apenas `#`. Sem dados reais, credenciais, URLs privadas, caminhos pessoais, mídia operacional ou fontes remotas. A fonte foi somente lida. Este HTML demonstra apresentação, sem API, persistência ou coleta; comportamento e campos efetivamente implementados estão no [módulo web](../../modules/web.md), com evidências na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+
+A [spec canônica](../../../specs/001-consulta-local-producao/spec.md) e o [contrato](../../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) prevalecem sobre números e rótulos ilustrativos do HTML:
+
+- A faixa **Publicação não comprovada** do mockup é omitida no aplicativo quando publicado_em está vazio; ausência não comprova publicação.
+- **Versão 1 · 1 revisão** e outras contagens do exemplo não autorizam inferir revisão vigente nem quantidade de unidades de uma versão anterior. O aplicativo usa grupos/versões registrados, conta unidades vigentes e distingue revisão aberta, a confirmar e ausência.
+- Valores de estado, etapa, decisão e responsabilidade ilustrados não definem enums ou aliases da planilha; desconhecidos conservam o original. Slots de imagem inicial/final/vídeo e os avisos humanos seguem o contrato, sem fabricar disponibilidade a partir de um link do desenho.

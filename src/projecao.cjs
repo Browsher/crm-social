@@ -147,32 +147,52 @@ function ordenarUnidades(a,b,key) {
   const ordem=v=>inteiroPositivo(v)?v:Infinity;
   return ordem(a.versao)-ordem(b.versao) || ordem(a.indice)-ordem(b.indice) || ordinal(a[key],b[key]);
 }
+function faltasMidiaCena(arquivos) {
+  const faltas=[];
+  if(!arquivos[0] && !arquivos[1]) faltas.push('imagens ausentes');
+  else if(!arquivos[0]) faltas.push('imagem inicial ausente');
+  else if(!arquivos[1]) faltas.push('imagem final ausente');
+  if(!arquivos[2]) faltas.push('vídeo ausente');
+  return faltas.length?faltas.join('; '):null;
+}
+function midiasCena(record,esperado,ctx) {
+  const pointers=['arquivo_imagem_inicio_id','arquivo_imagem_final_id','arquivo_video_id'];
+  const mediaCtx={...ctx,avisos:[],locais:[]};
+  const arquivos=pointers.map(campo=>arquivoLigado(record,campo,esperado,mediaCtx));
+  const avisoMidia=faltasMidiaCena(arquivos);
+  if(avisoMidia) {
+    const motivos=[...new Set(mediaCtx.locais.map(a=>a.motivo))].join('; ');
+    avisoRegistro(record,mediaCtx.locais[0].campo,avisoMidia+'; '+motivos,ctx);
+  }
+  return {arquivos,avisoMidia};
+}
 function unidades(producao,records,tipo,ctx) {
   const pagina=tipo==='paginas',key=pagina?'pagina_id':'cena_id';
-  const pointers=pagina?['arquivo_imagem_id']:['arquivo_imagem_inicio_id','arquivo_imagem_final_id','arquivo_video_id'];
   return records.filter(r=>r.producao_id===producao.producao_id).map(r=>{
     validarNumeros(r,['versao','indice'],pagina?[]:['inicio_segundos','duracao_segundos'],ctx);
     const esperado={producao_id:producao.producao_id,versao:r.versao,[key]:r[key]};
     return {...r,vigente:inteiroPositivo(r.versao) && r.versao===producao.versao,
-      ...(pagina?{designNovo:'A confirmar'}:{}),arquivos:pointers.map(campo=>arquivoLigado(r,campo,esperado,ctx))};
+      ...(pagina?{designNovo:'A confirmar',arquivos:[arquivoLigado(r,'arquivo_imagem_id',esperado,ctx)]}:midiasCena(r,esperado,ctx))};
   }).sort((a,b)=>ordenarUnidades(a,b,key));
 }
 function vinculoRevisao(r,p,ctx) {
   const tipos=[['pagina_id',ctx.paginas],['cena_id',ctx.cenas],['arquivo_id',ctx.arquivos]];
-  return tipos.every(([campo,mapa])=>{
-    if(!preenchido(r[campo])) return true;
+  for(const [campo,mapa] of tipos) {
+    if(!preenchido(r[campo])) continue;
     const target=mapa.get(r[campo]);
-    return target?.producao_id===p.producao_id && inteiroPositivo(target.versao) && target.versao===r.versao;
-  });
+    if(!(target?.producao_id===p.producao_id && inteiroPositivo(target.versao) && target.versao===r.versao)) return campo;
+  }
+  return null;
 }
 function revisoes(producao,records,ctx) {
   const groups={vigentes:[],resolvidas:[],anteriores:[],ambiguas:[]};
   for(const r of records.filter(r=>r.producao_id===producao.producao_id).sort((a,b)=>ordinal(a.revisao_id,b.revisao_id))) {
     validarNumeros(r,['versao'],[],ctx);
+    const campo=!inteiroPositivo(r.versao) || !inteiroPositivo(producao.versao)?'versao':vinculoRevisao(r,producao,ctx);
     let grupo;
     if(['resolvido','resolvida'].includes(r.estado_tratamento)) grupo='resolvidas';
-    else if(!inteiroPositivo(r.versao) || !inteiroPositivo(producao.versao) || !vinculoRevisao(r,producao,ctx)) {
-      grupo='ambiguas';avisoRegistro(r,'versao','Revisão sem vínculo inequívoco; impacto atual a confirmar',ctx);
+    else if(campo) {
+      grupo='ambiguas';avisoRegistro(r,campo,'Revisão sem vínculo inequívoco; impacto atual a confirmar',ctx);
     } else if(r.versao!==producao.versao) grupo='anteriores';
     else {
       grupo='vigentes';

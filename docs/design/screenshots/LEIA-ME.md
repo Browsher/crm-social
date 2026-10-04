@@ -58,7 +58,7 @@ cheia, rolagem interna e Esc/foco. Arquivos são registros com links por clique;
 nenhuma mídia foi carregada e as URLs apontam exemplos fictícios. Evidências de
 execução e revisão ficam apenas na [validação](../../../specs/001-consulta-local-producao/validacao.md).
 
-## Gaveta compacta — apresentação corrente
+## Gaveta compacta — primeira apresentação
 
 Quatro imagens novas em janelas 1440/390 × 1050, aplicação real em loopback,
 captura exclusivamente sintética em TEMP. A primeira peça fica aberta, o Reels
@@ -76,3 +76,22 @@ imagens anteriores são históricas; estes arquivos não as sobrescrevem. Nenhum
 imagem comprova captura Google, bytes de mídia, aprovação ou publicação remota.
 [Desenho compactado](../mockups/gaveta-v2.html), [telas](../telas.md#2-gaveta-do-dia-001)
 e [evidências](../../../specs/001-consulta-local-producao/validacao.md) registram os limites.
+
+## Gaveta compacta — apresentação final
+
+As duas imagens novas mostram carrossel e Reels sintéticos abertos no mesmo dia.
+O segundo acordeão foi expandido por clique para conferir páginas e cenas; abrir
+a gaveta continua deixando somente a primeira peça aberta. Texto registrado,
+versões anteriores e Histórico permanecem recolhidos. A revisão tem título
+legível e correção/tratamento; a cena distingue imagens/vídeo ausentes em um texto
+humano, enquanto os escopos e avisos técnicos completos continuam na API.
+
+| Desktop | Celular | Conteúdo |
+| --- | --- | --- |
+| [1440 × 1440](001-us3-final-varias-pecas-1440.png) | [390 × 1600](001-us3-final-varias-pecas-390.png) | Carrossel com páginas e Reels com cenas, dois acordeões abertos por clique |
+
+Aplicação real em loopback, captura exclusivamente sintética e estado em TEMP;
+conferência sem erro de página, requisição externa ou corte horizontal. Os arquivos
+anteriores permanecem como evidência da apresentação anterior. Nenhuma imagem
+comprova coleta Google, mídia conferida, aprovação ou publicação. Estado, revisão
+e evidências de execução ficam somente na [validação](../../../specs/001-consulta-local-producao/validacao.md).

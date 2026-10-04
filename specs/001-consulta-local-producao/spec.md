@@ -89,7 +89,9 @@ com Escape, conferindo as versões e o foco restaurado.
 1. **Given** um dia com várias peças, **When** aciono qualquer cartão ou o dia,
    **Then** a gaveta informa dia da semana, data e quantidade; contém uma seção por peça
    em acordeão, com somente a primeira aberta, inclusive peças escondidas pelo resumo "+N no dia";
-   demais mostram uma linha com páginas/cenas vigentes, revisão e quantidade de avisos.
+   demais mostram uma linha com páginas/cenas vigentes, revisão e quantidade de avisos,
+   com plural correto. Revisão aberta exige vigente; só ambígua/anterior não resolvida
+   diz revisão a confirmar; nenhuma ou somente resolvidas diz sem revisão.
 2. **Given** a gaveta aberta, **When** consulto uma peça,
    **Then** vejo estado/formato e faixa de etapa, com quem está, prevista e versão,
    somente com campos preenchidos. Etapa conhecida tem rótulo legível; desconhecida
@@ -97,12 +99,17 @@ com Escape, conferindo as versões e o foco restaurado.
    registrada; sem `publicado_em`, omito a linha, sem comprovar publicação. Registro
    inconsistente permanece com aviso de qualidade, sem conferência remota.
 3. **Given** revisão vigente com pedido de correção, **When** consulto o detalhe,
-   **Then** vejo decisão, motivo, versão/unidade e `responsavel_correcao` separado de
-   `responsavel_atual`, na primeira revisão em uma linha; outras vigentes ficam em
-   **+N**, e resolvidas/outras versões dentro de **Histórico**, recolhido por clique.
+   **Then** vejo título de decisão/versão/motivo (Revisar · versão 2 — motivo),
+   correção/tratamento abaixo (Corrige: pessoa · tratamento), separado de responsavel_atual;
+   IDs de revisão/unidade continuam na API, fora da linha visual. Outras vigentes ficam
+   em **+1 revisão aberta** ou **+N revisões abertas**; resolvidas/outras versões dentro
+   de **Histórico**, recolhido por clique.
 4. **Given** carrossel ou Reels, **When** consulto as unidades,
    **Then** vejo páginas/cenas compactas ordenadas por índice dentro da versão,
    com número, texto e link ou mídia ausente, no máximo um aviso de ausência por linha.
+   Cena distingue imagens ausentes/inicial/final e/ou vídeo ausente, sem perder
+   os três slots na API; aviso técnico de mídia é agregado por cena, mantendo
+   validações de índice/tempo/versão independentes.
    Página mostra versão e design novo "A confirmar" sem fonte inequívoca; versões
    anteriores e Texto registrado começam recolhidos e abrem por clique, com API completa.
 5. **Given** arquivo relacionado, ausente ou vínculo quebrado, **When** consulto,
@@ -119,7 +126,8 @@ com Escape, conferindo as versões e o foco restaurado.
    **Then** Plano/Redação/Visual aparecem uma vez por semana representada no fim da
    gaveta, com **—** para ausência, inclusive peça sem semana identificada.
 8. **Given** avisos localizados, **When** abro a peça,
-   **Then** vejo somente **N avisos de dados nesta peça · ver na Planilha**, cujo link
+   **Then** vejo somente a quantidade de **aviso(s) de dados nesta peça** e link **ver
+   na Planilha**, com plural correto e sem separador pendurado; o link
    abre Planilha; aba/linha/campo permanecem na API, fora da gaveta, com tabelas
    detalhadas futuras na US5. Aviso semanal não se repete no conjunto global por peça.
 
@@ -206,6 +214,10 @@ preservando dados privados apenas neste computador.
   sem fingir que o recibo de falha foi gravado.
 - Arquivo inexistente, empate de versão, origem incompatível ou revisão de vigência incerta
   gera aviso localizado; não seleciona documento nem reprova versão nova arbitrariamente.
+- Em revisão não resolvida, vínculo falho aponta ao primeiro pagina_id/cena_id/arquivo_id
+  incompatível, não a versao genericamente; versao é usado quando a versão é inválida.
+  Cena conserva imagem inicial/final/vídeo por slot, com aviso de mídia agregado e
+  causas distintas sem absorver validações independentes de índice/tempo/versão.
 - `arte_aprovada` confirmado na leitura atual fica em Visual se não houver prioridade
   superior. `bloqueado` não é prontidão; `aprovada`/`sem_rejeicao_documental` não são
   revisão em andamento. Não inventar rótulos atuais para preencher colunas.

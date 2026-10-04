@@ -1,27 +1,27 @@
 {
   "observadoEm": "2026-10-04",
   "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
-  "escopo": "US1-US3; correção PR9/compacta, somente fixtures sintéticas",
+  "escopo": "US1-US3; revisão final PR9; somente fixtures sintéticas",
   "local": {
     "exitCode": 0,
     "tests": {
-      "pass": 108,
+      "pass": 124,
       "fail": 0,
       "skip": 0,
-      "interface": 31
+      "interface": 40
     },
     "results": [
       {
         "name": "tests",
         "state": "PASS",
         "reason": "",
-        "count": 108
+        "count": 124
       },
       {
         "name": "coverage",
         "state": "PASS",
         "reason": "",
-        "percent": 97.05488621151271,
+        "percent": 97.13168187744459,
         "drop": 0
       },
       {
@@ -49,17 +49,24 @@
       },
       {
         "file": "src/web/app.js",
-        "line": 145,
+        "line": 72,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 83,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 149,
         "value": 13
       }
     ],
     "baselineAtualizada": false
   },
   "linux": {
-    "estado": "SUCCESS observado no log Linux desta revisão; execução, head e links na procedência",
-    "exitCode": 0,
-    "semgrepVersion": "1.179.0",
-    "results": {"tests": "PASS", "coverage": "PASS", "complexity": "PASS", "semgrep": "PASS", "audit": "N/A"},
-    "limite": "Estados conferidos no log Linux; métricas numéricas são locais. Interface tem SKIP explícito no CI e 31 PASS locais."
+    "estado": "Aguardando execução deste head; execução anterior é histórica na procedência",
+    "limite": "Estados Linux não inferidos do Windows; interface tem SKIP no CI e aceite local explícito."
   }
 }

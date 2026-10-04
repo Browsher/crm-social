@@ -163,8 +163,8 @@ inferir responsável, aguarda-de, próxima ação, agente trabalhando ou elegibi
   Resolução explícita precede a classificação por versão; revisão sem versão/vínculo
   inequívoco é ambígua, outra versão válida é anterior e a versão atual é vigente.
   Tratamento desconhecido conserva a revisão vigente com aviso, sem fabricar encerramento.
-  IDs originais de página/cena/arquivo preenchidos são exibidos no detalhe, sem
-  descrição ou vínculo inventado. A API conserva avisos com aba/linha física/campo
+  IDs originais de revisão/página/cena/arquivo e campos de escopo permanecem na API,
+  sem IDs/rótulos técnicos na linha visual nem vínculo inventado. A API conserva avisos com aba/linha física/campo
   e motivo; a gaveta apresenta só quantidade e link para Planilha.
 - Arquivo é registro, não bytes conferidos/validado/agendamento. Nome de apresentação
   vem de tipo/papel, fallback Arquivo registrado; não promete nome original ausente nos mínimos.
@@ -173,13 +173,19 @@ inferir responsável, aguarda-de, próxima ação, agente trabalhando ou elegibi
   URL recusada nunca aparece como texto bruto na tela. Nenhum download ou busca remota por renderização.
 
 A gaveta compacta não elimina dados: faixa de quatro campos preenchidos, publicação
-em uma linha quando registrada, revisão vigente inicial e adicionais em +N. Texto
+em uma linha quando registrada, revisão vigente com decisão/versão/motivo e
+correção/tratamento abaixo; adicionais em +N revisão aberta/revisões abertas. Texto
 registrado, versões anteriores e Histórico ficam recolhidos por clique; páginas/cenas
 em linhas compactas têm no máximo um aviso de ausência por linha. Campo vazio na
 faixa é omitido, preservando o original/fallback de responsável na API e a regra
 separada do cartão futuro de Produção. Etapa conhecida usa rótulo legível só na UI;
 desconhecida mantém o original. Detalhes técnicos dos avisos continuam na projeção,
 com tabelas detalhadas de Planilha futuras na US5.
+
+Resumo da peça diferencia **revisão aberta** (há vigente), **revisão a confirmar**
+(sem vigente, há ambígua ou anterior não resolvida) e **sem revisão** (nenhuma ou
+somente resolvidas). Página/cena/aviso têm singular/plural corretos; a quantidade
+considera somente unidades vigentes, sem inferir pela versão ilustrativa do mockup.
 
 `documentosSemana` sempre contém Plano/Redação/Visual, com arquivo null na ausência,
 inclusive peça sem semana identificada. A UI agrupa esses documentos uma vez por
@@ -193,6 +199,16 @@ incompatível produzem aviso, sem substituta. Empates por papel/versão/página/
 origens JSON inválidas mantêm os registros, sem selecionar vigente automático.
 Avisos públicos trazem aba, linha física e campo quando disponíveis; o vínculo de
 origem é mantido internamente por ID/WeakMap, sem enviar matriz bruta ou mapas privados.
+
+Cena mantém `arquivos` com três posições imagem inicial/imagem final/vídeo, ligadas
+ou null, e `avisoMidia` null quando todas ligadas. Ausências geram texto fixo:
+**imagens ausentes**, **imagem inicial ausente** ou **imagem final ausente**, mais
+**vídeo ausente** quando aplicável, unidos por ponto e vírgula. Um único aviso
+técnico de mídia por cena reúne causas distintas no primeiro ponteiro falho;
+índice, tempo e versão inválidos conservam avisos independentes. Na revisão não
+resolvida, o aviso aponta ao primeiro pagina_id/cena_id/arquivo_id falho; versao
+é usado quando a versão da revisão/produção é inválida. Escopos completos permanecem
+na API, sem exposição técnica na linha visual.
 
 ## Estado local e transições
 

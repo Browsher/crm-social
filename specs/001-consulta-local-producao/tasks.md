@@ -60,6 +60,8 @@ Um dono por arquivo: Validação (`src/captura.cjs`/`tests/dados.test.cjs`), Per
 
 As correções da US3 também têm regressões de projeção/HTTP para userinfo em Arquivos.url e Produções.url_video_final (new URL, marcador e aviso sem valor), incluindo URL malformada não vazia suprimida com motivo fixo e vazios preservados sem aviso de URL inválida; três papéis documentais em peças órfãs e aviso semanal global único com localização em cada peça. Evidências RED/GREEN e limites ficam na [validação](validacao.md); T027–T041 permanecem pendentes.
 
+O acabamento de T023–T026 distingue revisão vigente/impacto a confirmar/ausência no resumo, linha visual sem IDs técnicos e +N com plural. Cenas conservam três slots e ausência humana específica, um aviso técnico agregado no primeiro ponteiro falho sem absorver índice/tempo/versão inválidos. Revisões localizam o primeiro vínculo falho. Caracterizações de unidade/semana/versão incompatíveis preservam o contrato, sem criar tarefas futuras ou avançar US4. Novas imagens com os dois acordeões abertos por clique estão no [índice visual](../../docs/design/screenshots/LEIA-ME.md).
+
 ## Fase 6 — US4: Produção por etapa (P2)
 
 **Teste independente:** nenhum cartão some; publicação > liberação > revisão > etapa, arte_aprovada em Visual, oito etapas em Mídia e Outras com originais/contador distinto. Rótulo novo entra por configuração, sem editar código.

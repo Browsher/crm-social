@@ -247,6 +247,9 @@ capacidade, elegibilidade ou monitoramento.
 Título com dia da semana/data e subtítulo com quantidade. Uma seção por peça em
 acordeão, somente a primeira aberta, sem filtrar o dia inteiro; demais peças mostram
 resumo de uma linha com páginas/cenas vigentes, revisão e quantidade de avisos.
+O resumo diz **revisão aberta** quando existe vigente; sem vigente, **revisão a
+confirmar** quando existe ambígua ou anterior não resolvida; **sem revisão** quando
+não existe ou há somente resolvidas. Quantidades têm singular/plural corretos.
 Sem data usa título da seção da semana, sem inventar dia. Teclado controla acordeões;
 Escape fecha e restaura foco ao acionador. Em 390 px gaveta de tela inteira;
 desktop com 520 px de largura, sem corte horizontal. A apresentação segue o
@@ -260,9 +263,12 @@ etapas conhecidas do mapa recebem rótulos legíveis somente na apresentação;
 desconhecida preserva o original. Publicação aparece em uma linha apenas quando
 `publicado_em` está preenchido; omissão não comprova publicação.
 
-Primeira revisão vigente mostra decisão, motivo, versão e quem corrige em uma linha,
-com tratamento e IDs de pagina_id/cena_id/arquivo_id preenchidos, sem inventar escopo
-ausente. Outras vigentes ficam em **+N** recolhido. `resolvido`/`resolvida`, outras
+Primeira revisão vigente mostra título legível como **Revisar · versão 2 — motivo**;
+abaixo, **Corrige: pessoa · tratamento**, somente com dados preenchidos. Decisão
+desconhecida conserva o valor original. IDs de revisão/pagina_id/cena_id/arquivo_id
+e demais campos continuam na API, sem IDs/rótulos técnicos na linha visual nem
+escopo inventado. Outras vigentes ficam em **+1 revisão aberta** ou **+N revisões
+abertas**, recolhido. `resolvido`/`resolvida`, outras
 versões e vínculos ambíguos ficam no **Histórico**, inicialmente recolhido, sem virar
 correção vigente. Estado desconhecido não é resolução; revisão antiga aberta não
 se aplica automaticamente à versão nova; sem vínculo, impacto a confirmar.
@@ -295,6 +301,7 @@ de uma versão com unidades de outra.
 | `responsavelRegistrado` | responsavel_atual preservado; vazio = A confirmar |
 | `publicacaoRegistrada` | booleano derivado somente de publicado_em preenchido; não é consulta remota |
 | `paginas` / `cenas` | mínimos preservados, `vigente` só com versão inteira positiva igual à da peça, `arquivos` ligados ou null; páginas também têm `designNovo:'A confirmar'` |
+| Cena `arquivos` / `avisoMidia` | Três slots fixos na ordem imagem inicial/imagem final/vídeo, cada um arquivo ligado ou null; avisoMidia null quando todos ligados, senão string humana fixa das ausências |
 | `revisoes` | `{vigentes,resolvidas,anteriores,ambiguas}`; mínimos selecionados, sem fabricar correção atual |
 | `arquivos` | registros da produção, com `nomeApresentacao` por tipo/papel e fallback Arquivo registrado; todas as versões continuam identificadas |
 | `documentosSemana` | `[{papel,arquivo}]` para Plano, Redação e Visual, ligados pelo ponteiro interno da semana; ausência = null |
@@ -306,6 +313,27 @@ semanal exige a mesma semana. Referência quebrada ou incompatível dá null e a
 sem selecionar outra mídia. Arquivos empatados por papel/versão/unidade geram aviso
 e permanecem como registros separados; `origens_json` é texto preservado, validado
 somente quanto à sintaxe JSON, sem executar ou inferir equivalência das origens.
+
+Na cena, ausência de mídia não elimina nem reordena os três slots. `avisoMidia`
+segue a regra abaixo, sem valor de célula, URL, ID ou localização técnica:
+
+| Imagens não ligadas | Texto humano |
+| --- | --- |
+| Inicial e final | imagens ausentes |
+| Somente inicial | imagem inicial ausente |
+| Somente final | imagem final ausente |
+| Nenhuma | sem texto de ausência de imagens |
+
+Vídeo não ligado acrescenta **vídeo ausente**; quando também faltam imagens, as
+causas são unidas por ponto e vírgula. Todos ligados: `avisoMidia=null`. A interface
+mostra no máximo um texto de ausência por linha de cena, sem confundir arquivo
+registrado com bytes comprovados. Se os registros estão ligados mas os links são
+recusados/ausentes, pode mostrar **Link indisponível**, sem exibir a URL bruta.
+
+Ausência, referência quebrada ou escopo/versão incompatível geram um único aviso
+técnico agregado de mídia por cena, com causas distintas reunidas e origem no
+primeiro ponteiro falho, na ordem inicial/final/vídeo. Validações de índice, tempo
+e versão inválidos continuam independentes, sem serem absorvidas pela agregação.
 
 Os três papéis de `documentosSemana` existem também sem semana identificada, com
 arquivo null. Na apresentação aparecem uma vez por semana representada no dia,
@@ -319,6 +347,12 @@ em anteriores; vínculo inválido em ambiguas. Resolvido/resolvida fica separado
 como histórico, mesmo quando avalia a versão atual. Estado desconhecido não prova
 resolução e produz aviso. `responsavel_correcao` não substitui o responsável da peça.
 
+Aviso de vínculo de revisão não resolvida aponta ao primeiro campo falho na ordem
+`pagina_id`, `cena_id`, `arquivo_id`, conservando os demais escopos na API. `versao`
+é usado quando a versão da revisão ou produção não é válida, não como rótulo
+genérico de qualquer referência quebrada. Resolução explícita continua precedendo
+a vigência; não inferir revisão atual por ordem visual ou contagem do mockup.
+
 Versões/índices preenchidos inválidos e tempos preenchidos não finitos/negativos
 geram aviso preservando o original; vazio continua desconhecido, nunca zero.
 As unidades são agrupadas por versão, ordenadas numericamente por índice e, no
@@ -331,8 +365,9 @@ vazias ou registros de outra marca. O mapa de origem permanece privado em WeakMa
 sem novo campo no envelope HTTP. Aviso global (por exemplo, última importação falhou)
 tem somente motivo: não inventar aba/linha/campo para ele. A API conserva aba,
 linha física, campo e motivo localizados, sem descartar o vínculo da unidade. A gaveta
-nunca mostra esses detalhes técnicos: só **N avisos de dados nesta peça · ver na
-Planilha**, com link que fecha a gaveta e abre Planilha. As tabelas detalhadas dos
+nunca mostra esses detalhes técnicos: quantidade de **aviso(s) de dados nesta peça**
+e link **ver na Planilha**, com plural correto e sem separador pendurado. O link
+fecha a gaveta e abre Planilha. As tabelas detalhadas dos
 avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
 
 ## Projeção HTTP LOCAL de campos selecionados

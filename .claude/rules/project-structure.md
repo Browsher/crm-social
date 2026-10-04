@@ -23,6 +23,8 @@ T001–T026/US1, US2 e US3 implementadas; estado, evidências e pendências na [
 - Rotas fixas: /, /app.js, /styles.css, /api/visao; GET/HEAD e Host/Origin locais.
 - src/web/ entrega Planejamento, selo, releitura e gaveta em acordeões; quadro/tabelas futuros.
 - Gaveta compacta: primeira aberta, dados preenchidos, versões/texto/Histórico recolhidos; Esc devolve foco.
+- Resumo distingue revisão vigente/a confirmar/ausência; IDs técnicos da revisão só na API.
+- Cena: três slots inicial/final/vídeo; aviso de mídia agregado, validações numéricas independentes.
 - Documentos semanais uma vez no fim do dia; três papéis com — na ausência, inclusive órfãos.
 - Avisos técnicos na API; gaveta só quantidade/link Planilha; tabelas detalhadas ainda futuras.
 - Arquivos são registros; link por clique só HTTPS Drive/Docs sem credenciais; sem prévia remota.

@@ -2,7 +2,7 @@
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Projeção e detalhes implementados até T024/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs), `motivoUrl` (linha 6), `selecionar` (11), `selecionarNtv` (33), `planejar` (62), `agruparDias` (84), `aplicarFrescor` (93), `unidades` (150), `revisoes` (168), `documentosSemana` (200), `avisarPublicacao` (211), `detalhar` (220) e `projetarVisao` (233).
+Projeção e detalhes implementados até T024/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs), `motivoUrl` (linha 6), `selecionar` (11), `selecionarNtv` (33), `planejar` (62), `agruparDias` (84), `aplicarFrescor` (93), `faltasMidiaCena` (150), `midiasCena` (158), `unidades` (169), `vinculoRevisao` (178), `revisoes` (187), `documentosSemana` (220), `avisarPublicacao` (231), `detalhar` (240) e `projetarVisao` (253).
 
 ## Interface, seleção e dados
 
@@ -62,6 +62,7 @@ Como páginas numeradas de um álbum, unidades de versões diferentes permanecem
 | `responsavelRegistrado` | `responsavel_atual` como registrado; vazio usa A confirmar |
 | `publicacaoRegistrada` | `publicado_em` preenchido; original preservado, com aviso para formato/fuso inválidos ou instante posterior à captura, sem conferência remota |
 | `paginas` / `cenas` | Todas as unidades da produção, ordenadas por versão positiva, índice positivo e ID ordinal; inválidos preservados com aviso e depois dos válidos |
+| Cena `arquivos` / `avisoMidia` | Três slots na ordem imagem inicial/imagem final/vídeo, cada um arquivo ligado ou null; avisoMidia null se todos ligados, senão texto humano fixo das ausências |
 | Unidade `vigente` | Versão inteira positiva igual à versão registrada da produção; UI mostra essa versão primeiro e as demais recolhidas, com impacto a confirmar |
 | `designNovo` | A confirmar nas páginas; versão/template/arquivo não prova classificação de design |
 | `revisoes` | Grupos vigentes, resolvidas, anteriores e ambíguas, sem substituir responsável da peça por responsável da correção |
@@ -71,9 +72,11 @@ Como páginas numeradas de um álbum, unidades de versões diferentes permanecem
 
 Revisões `resolvido`/`resolvida` vão ao histórico mesmo quando de outra versão. Nas demais, versão inválida ou ponteiro de página/cena/arquivo sem produção e versão compatíveis vai ao grupo ambíguas; versão válida diferente da produção vai a anteriores. Só revisão com vínculo e versão atual é vigente. Tratamento desconhecido não é encerramento: permanece vigente com aviso. Decisão, motivo, versão e `responsavel_correcao` conservam seus valores e aparecem separados de `responsavel_atual`; não se infere aguardando-de ou próxima ação.
 
-Os IDs de página/cena/arquivo de cada revisão também permanecem na API e na gaveta, para explicar o escopo avaliado sem inferir a unidade por posição. `avisarPublicacao` verifica o valor preenchido contra formato ISO com fuso explícito, data civil válida, instante reconhecido e `captura.completedAt`; inconsistência acrescenta aviso em Produções/linha física/`publicado_em`, mantendo o registro e o original.
+Os IDs de página/cena/arquivo e demais campos de cada revisão permanecem na API; a linha visual da gaveta omite IDs e rótulos técnicos, sem inventar o escopo. Em revisão não resolvida com vínculo inválido, `vinculoRevisao` localiza o primeiro campo falho na ordem pagina_id/cena_id/arquivo_id; `versao` é usado quando a versão da revisão ou da produção não é válida, não como rótulo genérico de vínculo. `avisarPublicacao` verifica o valor preenchido contra formato ISO com fuso explícito, data civil válida, instante reconhecido e `captura.completedAt`; inconsistência acrescenta aviso em Produções/linha física/`publicado_em`, mantendo o registro e o original.
 
 Cada ponteiro de mídia de página/cena procura o arquivo por ID, exigindo a mesma produção e versão positiva; se o arquivo registra página/cena, também exige a unidade esperada. Ponteiro vazio, ID ausente ou escopo incompatível produz ausência/aviso e não escolhe substituto. Os demais arquivos continuam aparecendo como registros, incluindo empates por papel/versão/página/cena: empate e origens JSON inválidas são avisos, sem escolha automática de vigente. Referência e registro não comprovam bytes, aprovação ou publicação.
+
+`midiasCena` resolve os três ponteiros sem reduzir a lista de slots. `faltasMidiaCena` identifica **imagens ausentes** quando faltam as duas, **imagem inicial ausente** ou **imagem final ausente** quando falta somente uma; **vídeo ausente** é combinado com ponto e vírgula quando necessário. O texto de `avisoMidia` tem apenas essas causas humanas fixas, nunca o valor de uma célula. A ausência, referência quebrada ou vínculo incompatível gera um único aviso técnico agregado de mídia por cena, localizado no primeiro ponteiro falho e com causas distintas reunidas. Avisos de índice, tempo e versão inválidos continuam independentes; não são absorvidos por essa agregação. Quando os três arquivos estão ligados, avisoMidia é null, sem comprovar bytes ou URL clicável.
 
 `documentosSemana` usa um Map por consulta e semanaId para não resolver os mesmos três ponteiros a cada peça. Os documentos continuam em `detalhes` de cada produção; aviso de vínculo semanal entra uma vez no conjunto global e é copiado aos avisos locais de todas as peças afetadas. O cache não atravessa consultas nem muda a captura; a UI reúne os documentos uma vez no fim do dia e usa **—** para arquivo null.
 

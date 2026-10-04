@@ -64,6 +64,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Gaveta com várias peças 1440](design/screenshots/001-us3-varias-pecas-1440.png) / [390](design/screenshots/001-us3-varias-pecas-390.png) | Carrossel com páginas e Reels com cenas, separados por versão |
 | [Gaveta compacta com uma peça 1440](design/screenshots/001-us3-compacta-uma-peca-1440.png) / [390](design/screenshots/001-us3-compacta-uma-peca-390.png) | Aplicação com apresentação compacta e documentos semanais únicos |
 | [Gaveta compacta com várias peças 1440](design/screenshots/001-us3-compacta-varias-pecas-1440.png) / [390](design/screenshots/001-us3-compacta-varias-pecas-390.png) | Carrossel e Reels sintéticos na apresentação compacta |
+| [Gaveta final com várias peças 1440](design/screenshots/001-us3-final-varias-pecas-1440.png) / [390](design/screenshots/001-us3-final-varias-pecas-390.png) | Carrossel e Reels abertos por clique, revisão legível e avisos específicos de mídia |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Mockup da gaveta v2](design/mockups/gaveta-v2.html) | Referência compacta aprovada para a seção 2 das telas, somente dados sintéticos |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |

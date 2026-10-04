@@ -88,6 +88,8 @@ Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída d
 | Menu e objetivo | Planejamento, Produção, Planilha; Ainda não definido |
 | Planejamento | Calendário/lista/filtros; imagem A/B, carrossel e Reels sintéticos; duas peças no mesmo dia |
 | Clique em dia/cartão/lista | Abre grupo inteiro na gaveta compacta, primeira peça aberta, demais resumidas; revisões/versões/arquivos separados, dados preenchidos e documentos únicos; avisos técnicos na API, quantidade/link Planilha no dia; Esc devolve foco |
+| Resumo/revisão | Aberta somente com vigente; a confirmar com ambígua/anterior não resolvida sem vigente; sem revisão quando nenhuma/somente resolvidas. Linha visual legível sem IDs técnicos; +N com revisão aberta/revisões abertas |
+| Cena/mídia | Três slots inicial/final/vídeo na API; texto humano distingue imagens ausentes/inicial/final e/ou vídeo ausente, um aviso visual por linha; validações de índice/tempo/versão permanecem independentes |
 | Sem data | Contagem global; link oculto quando zero, variante de interface tem uma |
 | Selo | Atualizado hoje, HH:MM / Dados de DD/MM / Atualização falhou / Sem dados; clique abre Planilha |
 | Planilha | Fonte, fim em São Paulo, cobertura semanal e avisos; tabelas/Histórico continuam futuros |
@@ -119,7 +121,7 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T026 e suas
 | Selo falha | Captura válida e tentativa posterior falha; reler e reimportar mesmos ID/bytes | “Atualização falhou”, vermelho, última válida preservada; GET/no-op não limpam falha nem renovam hora |
 | Selo vazio | Sem captura, inclusive primeira tentativa falha | “Sem dados”, cinza; falha aparece no Histórico; nova captura completa aceita encerra falha |
 | Gaveta | Clique em cartão/dia/lista/quadro, inclusive segunda peça e filtro ativo | Dia inteiro, título/quantidade, primeiro acordeão aberto; todas as peças do dia, não só a clicada |
-| Relações/revisões | Reels sem vídeo, páginas/cenas com versões e ordem, revisão antiga/resolvida, órfão/empate | Arquivo como registro, mídia ausente e avisos; responsável principal/correção separados; não inferir próxima ação ou design novo |
+| Relações/revisões | Reels sem imagem inicial/final/vídeo, versões/ordem, revisão antiga/resolvida/ambígua, unidade/semana/versão incompatíveis | Três slots e ausência específica de mídia, aviso agregado por cena sem ocultar números inválidos; revisão localiza primeiro vínculo falho e resumo não afirma ausência quando há impacto a confirmar; API conserva IDs técnicos |
 | Configuração | Carregar JSON válido em TEMP; coluna inexistente, rótulo repetido, JSON/arquivo inválido; acrescentar rótulo sintético só no JSON | Erro claro ao carregar impede iniciar; mapa novo entra sem mudar código. O arquivo versionado inicial conserva nove etapas e duas listas vazias |
 | Quadro/prioridade | Combinar publicação, rótulos sintéticos de liberação/revisão e etapa, retirando prioridades superiores | Publicação > liberação > revisão > etapa; sem prioridade superior, arte_aprovada em Visual e oito etapas em Mídia, inclusive montagem_pronta; status visível não decide coluna |
 | Outras | Rótulo desconhecido repetido, segundo rótulo, vazio, outras semanas/marcas e cartão vencido por prioridade superior | N conta distintos só dos cartões Outras da semana NTV; vazio conta uma vez, repetidos não somam e excluídos não entram. Título Outras · N valores novos, original visível, singular para um e zero sem cartões |

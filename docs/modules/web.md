@@ -2,7 +2,7 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura e gaveta implementados até T026/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `fatosPeca` (38), `urlAutorizada` (51), `secaoUnidades` (96), `secaoRevisoes` (112), `documentosDoDia` (145), `avisosPeca` (165), `acordeaoPeca` (172), `cartao` (189), `calendario` (204), `lista` (247), `render` (260), `controles` (283) e `detalhesCaptura` (298).
+Planejamento, frescor/releitura e gaveta implementados até T026/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `plural` (33), `fatosPeca` (39), `urlAutorizada` (52), `secaoUnidades` (98), `secaoRevisoes` (114), `revisaoLinha` (127), `documentosDoDia` (149), `resumoPeca` (164), `avisosPeca` (171), `acordeaoPeca` (178), `cartao` (195), `calendario` (210), `lista` (253), `render` (266), `controles` (289) e `detalhesCaptura` (304).
 
 ## Inicialização e navegação
 
@@ -61,18 +61,22 @@ O diálogo nativo recebe título de data/sem data, quantidade e **todas** as pe�
 | Identificação | Faixa de Etapa, Com quem está, Prevista e Versão; somente campos preenchidos, sem placeholders de ausência |
 | Publicação | Uma linha quando publicado_em está preenchido; não existe faixa vazia nem confirmação remota |
 | Texto registrado | Details fechado por padrão: legenda, corpo/função das páginas, texto na tela das cenas e Arquivos · registros; tudo por textContent |
-| Revisão vigente | Primeira em uma linha com valores preenchidos de decisão, versão, motivo, quem corrige, tratamento e IDs de Página/Cena/Arquivo; adicionais num details +N |
+| Revisão vigente | Título legível de decisão/versão/motivo, abaixo Corrige: responsável e tratamento; sem IDs/rótulos técnicos, adicionais em +N revisão aberta/revisões abertas |
 | Páginas / Cenas | Versão vigente primeiro; outras versões em details recolhidos, com impacto atual a confirmar; índice em ordem dentro da versão |
 | Página | Linha compacta com número, título ou corpo, Design novo: A confirmar e link permitido ou mídia ausente |
-| Cena | Linha compacta com número, texto, início/duração registrados e link permitido ou mídia ausente |
+| Cena | Linha compacta com número, texto, início/duração e links permitidos; um texto humano agregado distingue imagens ausentes/inicial/final e/ou vídeo ausente |
 | Arquivos · registros | Dentro de Texto registrado: nome de apresentação, versão e registro, sem miniatura; URL recusada usa Link indisponível |
 | Histórico | Details fechado por padrão; revisões resolvidas, de outras versões e com vínculo a confirmar em grupos próprios, sem virar revisão vigente |
-| Avisos da peça | Somente N avisos de dados nesta peça · ver na Planilha; aba/linha/campo permanecem na API, sem texto técnico na gaveta |
+| Avisos da peça | Quantidade de aviso(s) de dados nesta peça e link ver na Planilha, com plural correto e sem separador pendurado; aba/linha/campo permanecem na API |
 | Documentos da semana | Uma seção no fim do dia; cada semana representada tem Plano/Redação/Visual uma vez, com — para ausentes, inclusive sem semana identificada |
 
 O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. O link dos avisos fecha a gaveta, abre Planilha e conserva um destino de foco no selo; a página atual apresenta motivos resumidos, com tabelas detalhadas reservadas à US5.
 
-Publicação preenchida permanece como registro explícito e conserva o valor original. Quando formato/fuso são inválidos ou o instante excede o fim da captura, a projeção acrescenta um aviso localizado em `publicado_em`; a gaveta conserva o registro e resume a quantidade de avisos, sem verificar publicação remotamente. Campo vazio omite a linha, sem comprovar publicação. IDs vazios de escopo de revisão também são omitidos da linha; ID registrado não recebe descrição inventada. A API ainda conserva `detalhes.responsavelRegistrado='A confirmar'` quando vazio, mas a faixa usa `responsavel_atual` e omite esse campo vazio.
+Publicação preenchida permanece como registro explícito e conserva o valor original. Quando formato/fuso são inválidos ou o instante excede o fim da captura, a projeção acrescenta um aviso localizado em `publicado_em`; a gaveta conserva o registro e resume a quantidade de avisos, sem verificar publicação remotamente. Campo vazio omite a linha, sem comprovar publicação. IDs de escopo/revisão e seus valores completos continuam na API, sem rótulos técnicos na linha visual. A API ainda conserva `detalhes.responsavelRegistrado='A confirmar'` quando vazio, mas a faixa usa `responsavel_atual` e omite esse campo vazio.
+
+`resumoPeca` conta somente páginas/cenas vigentes e diferencia revisão: **revisão aberta** quando existe vigente; sem vigente, **revisão a confirmar** quando existe ambígua ou anterior não resolvida; **sem revisão** quando não existe ou há somente resolvidas. Contagens usam singular/plural em página, cena e aviso. `revisaoLinha` apresenta, por exemplo, **Revisar · versão 2 — motivo**, com **Corrige: pessoa · tratamento** abaixo; decisão desconhecida conserva o original. Acordeões adicionais usam **+1 revisão aberta** ou **+N revisões abertas**, sem inferir atividade de agente.
+
+`arquivosDaUnidade` usa `avisoMidia` da cena para mostrar no máximo um aviso humano por linha: imagens ausentes, imagem inicial/final ausente e/ou vídeo ausente. Se os três arquivos estão ligados mas algum link é recusado/ausente, informa **Link indisponível**; isso não transforma registro em bytes comprovados. Página conserva aviso genérico de mídia ausente. Avisos técnicos agregados da cena e demais validações continuam na API, não no texto da gaveta.
 
 `etapaLegivel` usa nove rótulos de apresentação: arte_aprovada → Arte aprovada; prompts_imagem_prontos → Prompts de imagem prontos; imagens_em_producao → Imagens em produção; voz_pronta_para_gerar → Voz pronta para gerar; voz_em_producao → Voz em produção; clipes_prontos_para_gerar → Clipes prontos para gerar; clipes_em_producao → Clipes em produção; montagem_pronta → Montagem pronta; montagem_em_producao → Montagem em produção. Desconhecido conserva exatamente o texto; não decide coluna nem altera o original da API. `cartao(p)` sempre cria botão que abre o dia, sem parâmetro de modo inativo.
 

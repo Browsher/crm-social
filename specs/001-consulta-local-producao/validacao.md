@@ -553,3 +553,54 @@ desempenho. Informou modificação local do project-structure no checkout efême
 e avaliou o diff do PR; a cópia local do projeto foi verificada limpa após os
 commits, com 43 linhas. A evidência visual foi conferida pelo coordenador.
 Nenhum desses Minor foi convertido em nova implementação nesta rodada.
+
+## Revisão final da US3 — PR #9
+
+04/10/2026. O comentário [5981622657](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981622657)
+no head `75bdc51` trouxe **1 Important (I-1)** e cinco Minor novos; esta rodada
+aplica a decisão do autor, mantendo T001–T026 concluídas e US4 ainda pendente.
+
+| Item | Correção e evidência local |
+| --- | --- |
+| I-1 | Resumo fechado distingue vigente, vínculo/versão a confirmar e ausência/só resolvidas. Teste de interface observado RED: casos ambíguo e versão anterior exibiam sem revisão; GREEN cobre os cinco cenários |
+| Apresentação | Revisão em duas linhas, sem rótulos Decisão/Versão/Motivo nem IDs técnicos; JSON conserva IDs e vínculos. +N com singular/plural; aviso de dados sem separador solto |
+| m-d | Helper de plural para página/cena/aviso/revisão; teste com uma unidade/um aviso e adicionais singular/plural |
+| m-a | Cenas conservam três slots; avisoMidia qualifica imagem inicial/final/ambas e vídeo ausentes. Um aviso de mídia por cena agrega causas e aponta primeiro ponteiro falho; números/tempos são avisos independentes. RED antes, GREEN na projeção e interface |
+| m-b | Testes de arquivo da unidade errada (mesma produção/versão), documento de outra semana e versão inválida em Revisoes/Arquivos. São caracterizações: já passaram antes; não foi fabricado RED |
+| m-c | Aviso de revisão ambígua aponta primeiro pagina_id/cena_id/arquivo_id inválido; versao quando versão é inválida. RED observado antes de corrigir |
+| m-e | LEIA-ME dos mockups registra prevalência da spec/contrato nas divergências ilustrativas |
+
+Comandos com Node 24.19.0 existente, PATH local selecionado, Playwright existente
+por CRM_PLAYWRIGHT_MODULE e CI removido do ambiente; somente fixtures sintéticas
+e estado em TEMP, sem acesso a dados privados:
+
+```powershell
+node --test tests/interface.test.cjs
+node --test tests/projecao.test.cjs
+node --test
+node tools/quality-gate.mjs
+```
+
+Interface **40 PASS / 0 FAIL / 0 SKIP**, 23,39 s; projeção **34/0/0**.
+Suíte completa **124 PASS / 0 FAIL / 0 SKIP**, 23,69 s.
+Gate local **exit 0**, 25,52 s: tests/coverage/complexity PASS; cobertura
+**97,1317%**, complexidade máxima **13** (`documentosDoDia`, app.js:149).
+Avisos 11 em arquivosDaUnidade/unidadeDetalhe e 12 no CLI são dívidas de
+refatoração; nenhum valor >=21. Semgrep **SKIP** no Windows por ausência da
+ferramenta; audit **N/A** por ausência de dependências de aplicação.
+Baseline não atualizada; ferramentas, CI e constituição intactos.
+O [resumo sanitizado](../../docs/reports/001-us3-gate-resumo.json) guarda métricas;
+aceite Linux e merge ainda dependem do novo review, sem inferência pelo Windows.
+
+Screenshots da aplicação real, com carrossel e reels sintéticos. Primeira peça abre
+automaticamente; segunda foi aberta por um clique para conferir ambos. Texto,
+Histórico e versões anteriores continuam recolhidos. Sem corte horizontal, erro
+de página ou requisição externa; desktop 1440×1440 e celular 390×1600:
+
+![Gaveta final desktop](../../docs/design/screenshots/001-us3-final-varias-pecas-1440.png)
+![Gaveta final celular](../../docs/design/screenshots/001-us3-final-varias-pecas-390.png)
+
+Continuam pendentes as dívidas fora deste recorte: detalhes da Planilha na US5,
+validações adicionais de arquivos apenas semanais, precisão de avisos de empate/
+ausência sem vínculo, índices/desempenho em T037, CLI fora do LCOV e UI com SKIP
+explícito no CI (M8). Não se declara aceite completo da feature ou captura real.

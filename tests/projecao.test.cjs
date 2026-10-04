@@ -92,6 +92,117 @@ test('P07 ponteiro quebrado, escopo/versão incompatível e revisão órfã não
   assert.ok(!d.revisoes.vigentes.some(r=>r.revisao_id==='revisao-orfa'));
 });
 
+test('P-final m-a cenas qualificam mídia faltante em um único aviso por unidade', t=>{
+  const casos=[
+    [0,'imagens ausentes; vídeo ausente'],[1,'imagem final ausente; vídeo ausente'],
+    [2,'imagem inicial ausente; vídeo ausente'],[3,'vídeo ausente'],
+    [4,'imagens ausentes'],[5,'imagem final ausente'],[6,'imagem inicial ausente'],[7,null]
+  ];
+  for(const [mask,esperado] of casos) {
+    const raw=capturaDetalhada();
+    for(const [bit,campo,id] of [[1,'arquivo_imagem_inicio_id','imagem-inicio-sintetica'],
+      [2,'arquivo_imagem_final_id','imagem-final-sintetica'],[4,'arquivo_video_id','video-sintetico']]) {
+      adicionarRegistro(raw,'Arquivos',{arquivo_id:id,producao_id:'peca-4',cena_id:'cena-02',versao:1,tipo:'mídia sintética'});
+      mudarCelula(raw,'Cenas',2,campo,(mask & bit)?id:'');
+    }
+    const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[3].detalhes;
+    const cena=d.cenas.find(c=>c.cena_id==='cena-02');
+    assert.equal(cena.avisoMidia,esperado,'combinação '+mask);
+    assert.equal(cena.arquivos.length,3);
+    assert.deepEqual(cena.arquivos.map(a=>a?.arquivo_id ?? null),[
+      mask & 1?'imagem-inicio-sintetica':null,mask & 2?'imagem-final-sintetica':null,mask & 4?'video-sintetico':null]);
+    const avisos=d.avisos.filter(a=>a.aba==='Cenas' && a.linha===3 && a.campo.startsWith('arquivo_'));
+    assert.equal(avisos.length,esperado===null?0:1,'combinação '+mask);
+    if(esperado!==null) assert.ok(avisos[0].motivo.includes(esperado));
+  }
+});
+
+test('P-final m-a agregação conserva primeiro ponteiro e causas de referência/escopo', t=>{
+  const raw=capturaDetalhada();
+  mudarCelula(raw,'Cenas',2,'arquivo_imagem_inicio_id','arquivo-ausente-sintetico');
+  mudarCelula(raw,'Cenas',2,'arquivo_imagem_final_id','arquivo-clipe');
+  mudarCelula(raw,'Arquivos',3,'cena_id','cena-01');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),d=view.producoes[3].detalhes;
+  const cena=d.cenas.find(c=>c.cena_id==='cena-02');
+  assert.deepEqual(cena.arquivos,[null,null,null]);
+  assert.equal(cena.arquivo_imagem_inicio_id,'arquivo-ausente-sintetico');
+  assert.equal(cena.arquivo_video_id,'arquivo-clipe');
+  assert.equal(cena.avisoMidia,'imagens ausentes; vídeo ausente');
+  const avisos=d.avisos.filter(a=>a.aba==='Cenas' && a.linha===3 && a.campo.startsWith('arquivo_'));
+  assert.equal(avisos.length,1);
+  assert.equal(avisos[0].campo,'arquivo_imagem_inicio_id');
+  assert.match(avisos[0].motivo,/Referência quebrada/);
+  assert.match(avisos[0].motivo,/Escopo ou versão incompatível/);
+  assert.equal(view.avisos.filter(a=>a.aba==='Cenas' && a.linha===3 && a.campo.startsWith('arquivo_')).length,1);
+});
+
+test('P-final m-a aviso agregado de mídia não absorve índice ou tempo inválido', t=>{
+  const raw=capturaDetalhada();
+  mudarCelula(raw,'Cenas',2,'indice',-1);mudarCelula(raw,'Cenas',2,'inicio_segundos',-1);
+  const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[3].detalhes;
+  const avisos=d.avisos.filter(a=>a.aba==='Cenas' && a.linha===3);
+  assert.deepEqual(avisos.map(a=>a.campo),['indice','inicio_segundos','arquivo_imagem_inicio_id']);
+  assert.match(avisos[0].motivo,/Inteiro positivo inválido/);
+  assert.match(avisos[1].motivo,/Tempo inválido/);
+  assert.equal(d.cenas.find(c=>c.cena_id==='cena-02').avisoMidia,'imagens ausentes');
+});
+
+test('P-final m-b mesma produção/versão não permite arquivo ligado a outra página ou cena', t=>{
+  const raw=capturaDetalhada();
+  mudarCelula(raw,'Arquivos',2,'pagina_id','pagina-01');
+  mudarCelula(raw,'Arquivos',3,'cena_id','cena-01');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const carousel=view.producoes[2].detalhes,reels=view.producoes[3].detalhes;
+  assert.equal(carousel.paginas.find(p=>p.pagina_id==='pagina-02').arquivos[0],null);
+  assert.equal(reels.cenas.find(c=>c.cena_id==='cena-02').arquivos[2],null);
+  assert.ok(carousel.avisos.some(a=>a.aba==='Páginas' && a.linha===3 && a.campo==='arquivo_imagem_id' && /Escopo/.test(a.motivo)));
+  assert.ok(reels.avisos.some(a=>a.aba==='Cenas' && a.linha===3 && /Escopo/.test(a.motivo)));
+  assert.equal(carousel.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').pagina_id,'pagina-01');
+  assert.equal(reels.arquivos.find(a=>a.arquivo_id==='arquivo-clipe').cena_id,'cena-01');
+});
+
+test('P-final m-b ponteiro semanal recusa arquivo de outra semana sem escolher substituto', t=>{
+  const raw=capturaDetalhada();
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-02',marca_id:'ntv',inicio_semana:'2026-10-05',tema:'Segunda semana sintética'});
+  mudarCelula(raw,'Arquivos',4,'semana_id','semana-02');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  for(const p of view.producoes) assert.equal(p.detalhes.documentosSemana[0].arquivo,null);
+  const avisos=view.avisos.filter(a=>a.aba==='Semanas' && a.campo==='plano_json_arquivo_id');
+  assert.equal(avisos.length,1);assert.equal(avisos[0].linha,2);assert.match(avisos[0].motivo,/Escopo/);
+});
+
+test('P-final m-b versões inválidas em revisões/arquivos conservam original com aviso', t=>{
+  for(const valor of [-1,0,'2',1.5]) {
+    const raw=capturaDetalhada();
+    mudarCelula(raw,'Arquivos',2,'versao',valor);mudarCelula(raw,'Revisoes',2,'versao',valor);
+    const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[2].detalhes;
+    assert.equal(d.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').versao,valor);
+    assert.equal(d.revisoes.ambiguas.find(r=>r.revisao_id==='revisao-atual').versao,valor);
+    assert.equal(d.paginas.find(p=>p.pagina_id==='pagina-02').arquivos[0],null);
+    for(const [aba,linha] of [['Arquivos',3],['Revisoes',3]]) {
+      assert.ok(d.avisos.some(a=>a.aba===aba && a.linha===linha && a.campo==='versao' && /Inteiro positivo inválido/.test(a.motivo)));
+    }
+  }
+});
+
+test('P-final m-c revisão ambígua aponta o primeiro vínculo que falhou, não uma versão válida', t=>{
+  for(const [pagina,cena,arquivo,versao,campo] of [
+    ['pagina-inexistente','cena-inexistente','arquivo-inexistente',2,'pagina_id'],
+    ['pagina-02','cena-02','arquivo-inexistente',2,'cena_id'],
+    ['pagina-02','','arquivo-clipe',2,'arquivo_id'],
+    ['pagina-02','','arquivo-pagina','2','versao']
+  ]) {
+    const raw=capturaDetalhada();
+    adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-vinculo-sintetico',producao_id:'peca-3',pagina_id:pagina,
+      cena_id:cena,arquivo_id:arquivo,versao,estado_tratamento:'aberta'});
+    const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[2].detalhes;
+    assert.ok(d.revisoes.ambiguas.some(r=>r.revisao_id==='revisao-vinculo-sintetico'));
+    const aviso=d.avisos.find(a=>a.aba==='Revisoes' && a.linha===7 && /sem vínculo inequívoco/.test(a.motivo));
+    assert.equal(aviso.campo,campo);
+    assert.doesNotMatch(aviso.motivo,/inexistente|arquivo-clipe/);
+  }
+});
+
 test('P07 empate/origens incompatíveis e JSON inválido são avisos, não escolha de mídia', t=>{
   const raw=capturaDetalhada();
   adicionarRegistro(raw,'Arquivos',{arquivo_id:'editor-a',producao_id:'peca-4',papel:'editor',versao:1,origens_json:'{"origem":"a-sintética"}'});

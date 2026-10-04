@@ -30,6 +30,7 @@ function abrirDia(data,ids,semanaId=null) {
 }
 function valor(value) {return value===null || value===undefined || (typeof value==='string' && value.trim()==='')?'Não informado':String(value);}
 const preenchido=value=>value!==null && value!==undefined && String(value).trim()!=='';
+function plural(n,um,muitos=um+'s') {return n+' '+(n===1?um:muitos);}
 const rotulosEtapa={arte_aprovada:'Arte aprovada',prompts_imagem_prontos:'Prompts de imagem prontos',
   imagens_em_producao:'Imagens em produção',voz_pronta_para_gerar:'Voz pronta para gerar',voz_em_producao:'Voz em produção',
   clipes_prontos_para_gerar:'Clipes prontos para gerar',clipes_em_producao:'Clipes em produção',
@@ -68,14 +69,15 @@ function arquivoRegistro(a) {
   else if(a.url) box.append(node('p','Link indisponível.','record-text'));
   return box;
 }
-function arquivosDaUnidade(records) {
+function arquivosDaUnidade(records,avisoMidia) {
   const list=node('span',undefined,'unit-files'),ids=new Set();let ausente=records.length===0;
   for(const a of records) {
     const link=linkArquivo(a,a?.nomeApresentacao || 'Mídia');
     if(!link) ausente=true;
     else if(!ids.has(a.arquivo_id)) {ids.add(a.arquivo_id);list.append(link);}
   }
-  if(ausente) list.append(node('span','Mídia ausente','notice'));
+  const aviso=avisoMidia===undefined?(ausente?'Mídia ausente':null):(avisoMidia || (ausente?'Link indisponível':null));
+  if(aviso) list.append(node('span',aviso,'notice'));
   return list;
 }
 function unidadeDetalhe(u,tipo) {
@@ -91,7 +93,7 @@ function unidadeDetalhe(u,tipo) {
       'Início: '+valor(u.inicio_segundos)+' s · duração: '+valor(u.duracao_segundos)+' s'));
   }
   box.append(text);
-  box.append(arquivosDaUnidade(u.arquivos));return box;
+  box.append(arquivosDaUnidade(u.arquivos,pagina?undefined:u.avisoMidia));return box;
 }
 function secaoUnidades(records,tipo) {
   const section=secaoDetalhe(tipo==='paginas'?'Páginas':'Cenas');section.dataset.unidades=tipo;
@@ -116,16 +118,18 @@ function secaoRevisoes(records,grupo) {
   if(grupo==='vigentes') {
     if(records[0]) section.append(revisaoLinha(records[0],grupo));
     if(records.length>1) {
-      const more=recolhido('+'+(records.length-1));more.append(...records.slice(1).map(r=>revisaoLinha(r,grupo)));section.append(more);
+      const more=recolhido('+'+plural(records.length-1,'revisão aberta','revisões abertas'));
+      more.append(...records.slice(1).map(r=>revisaoLinha(r,grupo)));section.append(more);
     }
   } else section.append(...records.map(r=>revisaoLinha(r,grupo)));
   return section;
 }
 function revisaoLinha(r,grupo) {
   const review=node('article',undefined,'review-record');
-  const partes=[['Decisão',r.decisao],['Versão',r.versao],['Motivo',r.motivo],['Quem corrige',r.responsavel_correcao],
-    ['Tratamento',r.estado_tratamento],['Página',r.pagina_id],['Cena',r.cena_id],['Arquivo',r.arquivo_id]];
-  review.append(node('span',partes.filter(([,v])=>preenchido(v)).map(([nome,v])=>nome+': '+v).join(' · ')),node('small',r.revisao_id));
+  const titulo=[r.decisao==='revisar'?'Revisar':r.decisao,preenchido(r.versao)?'versão '+r.versao:null].filter(preenchido).join(' · ');
+  review.append(node('span',titulo+(preenchido(r.motivo)?' — '+r.motivo:'')));
+  const correcao=[preenchido(r.responsavel_correcao)?'Corrige: '+r.responsavel_correcao:null,r.estado_tratamento].filter(preenchido);
+  if(correcao.length) review.append(node('small',correcao.join(' · ')));
   if(grupo==='anteriores' || grupo==='ambiguas') review.append(node('small','Impacto atual a confirmar.'));
   return review;
 }
@@ -159,12 +163,14 @@ function documentosDoDia(pecas) {
 }
 function resumoPeca(d) {
   const unidades=['paginas','cenas'].map(tipo=>[tipo,d[tipo].filter(u=>u.vigente).length]).filter(([,n])=>n>0)
-    .map(([tipo,n])=>n+' '+(tipo==='paginas'?'páginas':'cenas'));
-  return [...unidades,d.revisoes.vigentes.length?'revisão aberta':'sem revisão',d.avisos.length+' avisos'].join(' · ');
+    .map(([tipo,n])=>plural(n,tipo==='paginas'?'página':'cena'));
+  const revisao=d.revisoes.vigentes.length?'revisão aberta':
+    (d.revisoes.ambiguas.length || d.revisoes.anteriores.length?'revisão a confirmar':'sem revisão');
+  return [...unidades,revisao,plural(d.avisos.length,'aviso')].join(' · ');
 }
 function avisosPeca(avisos) {
   const box=node('div',undefined,'data-notice');
-  box.append(node('span',avisos.length+' avisos de dados nesta peça · '));
+  box.append(node('span',plural(avisos.length,'aviso')+' de dados nesta peça'));
   const link=node('a','ver na Planilha');link.href='#planilha';
   link.addEventListener('click',e=>{e.preventDefault();focoDia=$('#selo');$('#dia').close();navegar('planilha');});
   box.append(link);return box;
