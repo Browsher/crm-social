@@ -649,6 +649,12 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #10, review 5983509175, m-1 | Resumo novo do ajuste em docs/reports/001-us4-ajuste-local.json, com hashes das fontes web e 174/62 testes. Resumo anterior continua histórico, com identificação no índice |
 | PR #10, review 5983509175, m-2 | Lista de colunas de apresentação repetida no browser. Considerar indicador derivado sem duplicação na revisão final, conservando a regra do cartão e as oito colunas canônicas |
 | PR #10, review 5983509175, m-3/m-4 | Corrigidos na US5: referências normativas a pendenciaQuadro usam o nome da função, e semanaId está declarada no estado inicial. Ajustes triviais de documentação/clareza, sem mudar a regra do cartão |
+| PR #11, review 5983965195, m-1 | Conferir chave própria ao traduzir resultado do Histórico; o recibo confirmado já valida o resultado e a saída usa textContent. Ajuste defensivo sem criar estados de captura |
+| PR #11, review 5983965195, m-2 | Evitar duas paradas consecutivas de Tab no painel e na região de rolagem, preservando foco no estado vazio; cobrir navegação por teclado na revisão final |
+| PR #11, review 5983965195, m-3 | Cobrir releitura com avisos filtrados e remoção da peça da captura nova; a documentação descreve o comportamento atual, mas esses dois casos ainda não têm assert dedicado |
+| PR #11, review 5983965195, m-4 | Corrigida a linha Entrada de tasks.md: US4 integrada, US5 implementada localmente e aceite corrente pendente |
+| PR #11, review 5983965195, m-5 | Consolidar foco do link da gaveta e do evento close assíncrono para evitar um segundo ajuste cosmético de rolagem |
+| PR #11, review 5983965195, m-6 | Incluir troca de abas e recomposição do painel de avisos na medição sintética de escala T037 |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -888,3 +894,23 @@ Código registrado em `768ba90` (T031/T032) e `7c563c9` (T033/T034 e screenshots
 A regra `.claude/rules/project-structure.md` tem **50 linhas** nesta entrega, dentro do limite de 60. Conferência documental: links relativos existentes, cercas balanceadas e nenhum caminho pessoal real nos arquivos alterados. As contagens de linhas das seções anteriores pertencem às entregas históricas que elas descrevem.
 
 T031–T034 concluídas; total **34/41**, sete tarefas da Fase 8 pendentes. Aceite Linux/review do novo PR será registrado somente depois de observado. A US5 não será integrada nesta rodada.
+
+### Primeiro head remoto da US5 e diagnóstico do Semgrep
+
+[PR #11](https://github.com/Browsher/crm-social/pull/11), head `a9cb8ef9d8730a8d80d460f4e8291d126897666f`. [Review 37231201986](https://github.com/Browsher/crm-social/actions/runs/37231201986/job/111521015076) **SUCCESS**, [comentário 5983965195](https://github.com/Browsher/crm-social/pull/11#issuecomment-5983965195): sem Critical ou Important; seis Minor registrados na seção da Fase 8. O texto desatualizado da linha Entrada de tasks.md foi corrigido. generate-tests/publish-tests SKIPPED sem rótulo.
+
+[Gate Linux 37231201975](https://github.com/Browsher/crm-social/actions/runs/37231201975/job/111521014579) **FAILURE**, exit 1: tests/coverage/complexity PASS, Semgrep FAIL com motivo **achado de seguranca media ou superior**, audit N/A, baseline atualizada false. O job não conserva o JSON detalhado em artefato; não se declara aceite Linux a partir do gate Windows.
+
+O autor autorizou instalar Semgrep CE 1.179.0 somente numa subpasta de TEMP, usando o Ubuntu já existente, sem Docker, instalação global ou mudança do PATH. A reprodução mantém configurações, logs, cache e instalação na pasta temporária; nenhuma dependência da aplicação, regra, exclusão ou workflow é alterada para obter verde. A pasta da ferramenta será apagada depois da conferência final.
+
+### Reprodução RED e correção do falso positivo da fixture
+
+Semgrep CE **1.179.0**, mesmos packs `p/javascript`, `p/security-audit` e `p/secrets`, métricas/version check desligados. Foram analisados os **nove arquivos do escopo**, inclusive tests/fixtures.cjs e o verificador histórico do protótipo. RED: um WARNING, regra `javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag`, tests/fixtures.cjs:148 no head inicial; zero erros de análise. O CLI scan retorna 0 sem --error, mas esse WARNING é medium para o gate e explica seu exit 1.
+
+A [regra oficial](https://github.com/semgrep/semgrep-rules/blob/develop/javascript/lang/security/audit/unknown-value-with-script-tag.yaml) é de auditoria com confiança LOW: associa uma variável retornada por função a uma chamada posterior contendo um literal script. Aqui raw é a captura sintética e mudarCelula só preenche a matriz de teste; a interface usa textContent. É falso positivo desse payload, sem entrada externa ou execução de HTML.
+
+A fixture agora serializa o objeto de origens por `JSON.stringify` antes de preencher a célula. O literal script continua presente e todos os asserts P11/H05/U09 permanecem intactos. Comparação antes/depois da capturaPlanilha serializada: **bytes idênticos**, SHA-256 `fed514c2f64c23c9694abf73e1baec7028e9926a8b0880b3b9a9cec613a11c45`, inclusive hashes da captura. Não houve nosemgrep, exclusão, mudança de limite, regra ou configuração para silenciar o achado.
+
+GREEN Semgrep: **zero achados, zero erros, nove paths.scanned**, 27,61 s de scan. Suíte completa repetida **194 PASS / 0 FAIL / 0 SKIP**, **76 de interface**, exit 0, **65,06 s**. Gate local repetido **exit 0**, **58,92 s**, cobertura **97,63%**, complexidade máxima **13**, cinco avisos, Semgrep SKIP no processo Windows, audit N/A, **baseline atualizada false**. A reprodução separada no Ubuntu não é apresentada como execução do scanner pelo processo Windows nem como aceite remoto.
+
+Screenshots permanecem válidos: aplicação e captura sintética têm os mesmos bytes. O resumo local foi atualizado com a medição posterior e o hash da fixture. Doc-sync final conferiu que o módulo web já descreve o payload como dado sem execução; não exigiu nova edição de arquitetura ou contrato. Aceite do novo head Linux/review permanece a conferir, sem merge da US5.

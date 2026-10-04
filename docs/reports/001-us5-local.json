@@ -10,7 +10,7 @@
       "skip": 0,
       "interface": 76
     },
-    "suiteSeconds": 47.84,
+    "suiteSeconds": 65.06,
     "results": [
       {
         "name": "tests",
@@ -22,7 +22,7 @@
         "name": "coverage",
         "state": "PASS",
         "reason": "",
-        "percent": 97.62162162162163,
+        "percent": 97.6267529665588,
         "drop": 0
       },
       {
@@ -70,10 +70,18 @@
       }
     ],
     "baselineAtualizada": false,
-    "gateSeconds": 49.23
+    "gateSeconds": 58.92
+  },
+  "semgrepLocalLinux": {
+    "version": "1.179.0",
+    "state": "PASS",
+    "findings": 0,
+    "errors": 0,
+    "scanned": 9,
+    "limite": "Reprodução autorizada com ferramenta só em TEMP; o check remoto deve ser conferido separadamente na procedência."
   },
   "linux": {
-    "estado": "Pendente de publicação e conferência do job do novo PR; evidência posterior somente na procedência",
+    "estado": "Conferir na procedência o job do head publicado; a reprodução local não substitui o check remoto",
     "limite": "Semgrep Windows SKIP não comprova aceite Linux. Interface tem SKIP explícito no CI, fora do LCOV."
   },
   "medicao": {
@@ -83,7 +91,8 @@
       "src/servidor.cjs": "ee4dc6c897265e96a9a7f3542f7599ef65fdcd54a0bb3b884e9ea8236b2a2456",
       "src/web/app.js": "82d9b8b85b48fb486f4af8dd14e519e181b7b014331d7233fabf484c2fd2d7e9",
       "src/web/index.html": "b7871601db1c8e024ca0441f29223a1f1b76fb1933a0e07f366086806623fa99",
-      "src/web/styles.css": "0865d15dee9733ca56e207d5e93357b16978670e14966f0f69a122b38b86d19b"
+      "src/web/styles.css": "0865d15dee9733ca56e207d5e93357b16978670e14966f0f69a122b38b86d19b",
+      "tests/fixtures.cjs": "67b0c6b22b5f825caf951b16191334a8895bdbd908252924b451ed2f1b33113f"
     }
   }
 }

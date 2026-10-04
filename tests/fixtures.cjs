@@ -137,6 +137,8 @@ function capturaQuadro() {
 }
 function capturaPlanilha() {
   const raw=capturaDetalhada();
+  // Payload sintético para conferir texto literal; JSON é serializado antes de preencher a captura.
+  const origensJson=JSON.stringify({arquivo_id:'origem-sintetica',texto:'<script>conteúdo como dado</script>'});
   mudarCelula(raw,'Semanas',1,'objetivo',0);
   mudarCelula(raw,'Produções',2,'etapa_producao',null);
   mudarCelula(raw,'Produções',2,'legenda',null);
@@ -145,7 +147,7 @@ function capturaPlanilha() {
   mudarCelula(raw,'Cenas',1,'texto_tela','   ');
   mudarCelula(raw,'Arquivos',1,'id_drive','drive-ficticio-local');
   mudarCelula(raw,'Arquivos',1,'sha256','a'.repeat(64));
-  mudarCelula(raw,'Arquivos',1,'origens_json','{"arquivo_id":"origem-sintetica","texto":"<script>conteúdo como dado</script>"}');
+  mudarCelula(raw,'Arquivos',1,'origens_json',origensJson);
   adicionarRegistro(raw,'Semanas',{semana_id:'semana-02',marca_id:'ntv',inicio_semana:'2026-10-05',tema:'Segunda semana sintética'});
   adicionarRegistro(raw,'Semanas',{semana_id:'semana-outra',marca_id:'outra-marca-sintetica',inicio_semana:'2026-10-12',tema:'Não pertence à consulta'});
   adicionarRegistro(raw,'Produções',{producao_id:'peca-6',marca_id:'ntv',semana_id:'semana-02',slot:'imagem_a',versao:1,titulo:'Nova peça sintética',data_prevista:'2026-10-05'});
