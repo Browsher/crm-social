@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const http=require('node:http');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,mapaQuadroValido,temporario,carregarModulo}=require('./fixtures.cjs');
+const {capturaValida,mapaQuadroValido,temporario,carregarModulo,mudarCelula}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=carregarModulo('src/servidor.cjs',['criarServidor']);
 async function ambiente(t,captura=true) {
@@ -41,6 +41,18 @@ test('H01 ausência estruturada não vira dados de demonstração', async t => {
   const {port}=await ambiente(t,false);
   const body=JSON.parse((await request(port,'/api/visao')).body);
   assert.equal(body.estado,'sem_captura');assert.deepEqual(body.producoes,[]);
+});
+
+test('H-review I1 JSON de /api/visao não entrega credenciais em URLs registradas', async t=>{
+  const {port,dataDir}=await ambiente(t,false),raw=capturaValida();
+  const url='https://usuario-sintetico:senha-sintetica@drive.google.com/x';
+  mudarCelula(raw,'Arquivos',1,'url',url);mudarCelula(raw,'Produções',1,'url_video_final',url);
+  promoverCaptura(raw,dataDir);
+  const response=await request(port,'/api/visao');
+  assert.equal(response.status,200);assert.doesNotMatch(response.body,/usuario-sintetico|senha-sintetica/);
+  const body=JSON.parse(response.body);
+  assert.equal(body.producoes[0].url_video_final,'[conteúdo suprimido]');
+  assert.equal(body.producoes[0].detalhes.arquivos[0].url,'[conteúdo suprimido]');
 });
 test('H02 três estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos', async t => {
   const {port}=await ambiente(t);

@@ -24,6 +24,21 @@ test('P05 dia inteiro, versões separadas, páginas/cenas em ordem e fontes inte
   assert.ok(!JSON.stringify(view).includes('sentinela-nao-publicar'));
 });
 
+test('P-review I1 URL com usuário/senha é suprimida sem expor valor em avisos', t=>{
+  for(const url of ['https://usuario-sintetico:senha-sintetica@docs.google.com/x','https://usuario-sintetico@drive.google.com/x',
+    'https://:senha-sintetica@drive.google.com/x','ftp://usuario%2Dsintetico:senha%2Dsintetica@example.invalid/x']) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Arquivos',2,'url',url);mudarCelula(raw,'Produções',3,'url_video_final',url);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    const serialized=JSON.stringify(view);
+    assert.doesNotMatch(serialized,/usuario(?:-|%2D)sintetico|senha(?:-|%2D)sintetica/);
+    assert.equal(view.producoes[2].url_video_final,'[conteúdo suprimido]');
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').url,'[conteúdo suprimido]');
+    assert.ok(view.avisos.some(a=>a.aba==='Arquivos' && a.linha===3 && a.campo==='url' && a.motivo==='conteúdo sensível suprimido'));
+    assert.ok(view.avisos.some(a=>a.aba==='Produções' && a.linha===4 && a.campo==='url_video_final'));
+    assert.equal(raw.tables.Arquivos.values[2][raw.tables.Arquivos.values[0].indexOf('url')],url);
+  }
+});
+
 test('P06 responsável registrado não vira correção; resolvidas/antigas ficam separadas', t=>{
   const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'responsavel_atual','');
   const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),d=view.producoes[2].detalhes;
@@ -98,7 +113,19 @@ test('P05 Sem data separa semanas e conserva documentos ausentes como registro a
   mudarCelula(raw,'Produções',4,'semana_id','semana-inexistente');
   const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
   assert.deepEqual(view.dias.filter(d=>d.data===null).map(d=>[d.semanaId,d.ids]),[['semana-01',['peca-3']],[null,['peca-4']]]);
-  assert.equal(view.producoes[3].detalhes.documentosSemana.length,0);
+  assert.deepEqual(view.producoes[3].detalhes.documentosSemana,[{papel:'Plano',arquivo:null},{papel:'Redação',arquivo:null},{papel:'Visual',arquivo:null}]);
+});
+
+test('P-review m1 documentos/avisos da mesma semana não se multiplicam pelas peças', t=>{
+  const raw=capturaDetalhada();mudarCelula(raw,'Semanas',1,'plano_json_arquivo_id','documento-ausente');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const globais=view.avisos.filter(a=>a.aba==='Semanas' && a.campo==='plano_json_arquivo_id');
+  assert.equal(globais.length,1);
+  for(const p of view.producoes) {
+    assert.deepEqual(p.detalhes.documentosSemana.map(d=>d.papel),['Plano','Redação','Visual']);
+    assert.equal(p.detalhes.documentosSemana[0].arquivo,null);
+    assert.deepEqual(p.detalhes.avisos.filter(a=>a.aba==='Semanas'),globais);
+  }
 });
 
 test('P07 avisos preservam linha física depois de vazia e outra marca', t=>{

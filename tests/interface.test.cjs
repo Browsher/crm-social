@@ -52,7 +52,7 @@ test('U05 filtro e clique na segunda peça abrem o dia inteiro em acordeões com
   assert.deepEqual(await pecas.evaluateAll(nodes=>nodes.map(n=>n.open)),[true,false]);
   assert.match(await page.locator('#dia-titulo').textContent(),/sexta-feira.*02.*outubro/);
   assert.equal(await page.locator('#dia-quantidade').textContent(),'2 peças registradas');
-  await pecas.nth(1).locator('summary').focus();await page.keyboard.press('Enter');
+  await pecas.nth(1).locator(':scope > summary').focus();await page.keyboard.press('Enter');
   assert.equal(await pecas.nth(1).evaluate(n=>n.open),true);
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#dia').isVisible(),false);
@@ -61,8 +61,15 @@ test('U05 filtro e clique na segunda peça abrem o dia inteiro em acordeões com
 
 test('U05 dia/lista e dia vazio: no máximo dois acionamentos, sem recortar a gaveta', {skip}, async t=>{
   const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
+  await page.evaluate(()=>{window.acionamentos=0;document.addEventListener('click',()=>window.acionamentos++,true);});
   await page.getByRole('button',{name:'2 de outubro',exact:true}).click();
   assert.equal(await page.locator('#dia .peca-acordeao').count(),2);
+  assert.equal(await page.evaluate(()=>window.acionamentos),1);
+  assert.ok(await page.locator('#dia').evaluate(n=>n.scrollWidth<=n.clientWidth));
+  assert.ok(await page.locator('.drawer-body').evaluate(n=>n.scrollWidth<=n.clientWidth));
+  await page.locator('#dia [data-peca="peca-4"]>summary').click();
+  assert.equal(await page.evaluate(()=>window.acionamentos),2);
+  assert.equal(await page.locator('#dia [data-peca="peca-4"]').evaluate(n=>n.open),true);
   await page.getByRole('button',{name:'Fechar dia',exact:true}).click();
   await page.getByRole('button',{name:'Lista',exact:true}).click();
   await page.locator('#lista [data-producao-id="peca-4"]').click();
@@ -88,7 +95,7 @@ test('U06 versões/páginas/cenas e revisão vigente não se misturam ao histór
   assert.equal(await carousel.locator('[data-revisoes="resolvidas"]').getAttribute('class'),'detail-section history');
   assert.match(await carousel.textContent(),/Com quem está.*Equipe sintética/s);
   assert.match(await current.textContent(),/Quem corrige.*Correção sintética/s);
-  assert.match(await carousel.textContent(),/Publicação.*Não comprovada/s);
+  assert.equal(await carousel.locator('.publication').count(),0);
   const reels=page.locator('#dia [data-peca="peca-4"]');await reels.locator('summary').first().click();
   assert.deepEqual(await reels.locator('[data-cena]').evaluateAll(ns=>ns.map(n=>n.dataset.cena)),['cena-02','cena-01']);
   assert.match(await reels.textContent(),/Mídia ausente/);
@@ -106,14 +113,22 @@ test('U06 review: revisões mostram escopo de página, cena e arquivo sem inferi
   assert.match(await reels.locator('[data-revisoes="vigentes"]').textContent(),/Cena.*cena-02.*Arquivo.*arquivo-clipe/s);
 });
 
-test('U06 review: avisos iguais identificam as linhas/unidades distintas', {skip}, async t=>{
+test('U06 review: API conserva avisos localizados; gaveta só mostra contagem e link Planilha', {skip}, async t=>{
   const page=await abrir(t,1440,true,raw=>{
     mudarCelula(raw,'Páginas',1,'indice',-1);mudarCelula(raw,'Páginas',2,'indice',-1);
   },()=>{},capturaDetalhada);
   await page.locator('#calendario [data-producao-id="peca-3"]').click();
-  const avisos=await page.locator('#dia [data-peca="peca-3"] .notice').allTextContents();
-  assert.ok(avisos.some(a=>/Páginas.*linha 2.*indice.*Inteiro positivo inválido/s.test(a)));
-  assert.ok(avisos.some(a=>/Páginas.*linha 3.*indice.*Inteiro positivo inválido/s.test(a)));
+  const response=await page.request.get(new URL('/api/visao',page.url()).href),view=await response.json();
+  const avisos=view.producoes.find(p=>p.producao_id==='peca-3').detalhes.avisos;
+  assert.ok(avisos.some(a=>a.aba==='Páginas' && a.linha===2 && a.campo==='indice'));
+  assert.ok(avisos.some(a=>a.aba==='Páginas' && a.linha===3 && a.campo==='indice'));
+  const carousel=page.locator('#dia [data-peca="peca-3"]');
+  assert.doesNotMatch(await carousel.textContent(),/linha [23]|Inteiro positivo inválido|arquivo_imagem_id/);
+  assert.equal(await carousel.locator('.data-notice').count(),1);
+  assert.match(await carousel.locator('.data-notice').textContent(),new RegExp('^'+avisos.length+' avisos de dados nesta peça'));
+  await carousel.getByRole('link',{name:'ver na Planilha'}).click();
+  assert.equal(await page.locator('#dia').isVisible(),false);
+  assert.equal(await page.locator('#planilha').isVisible(),true);
 });
 
 test('U06 celular em tela cheia abre dia com várias peças; Esc retorna à lista', {skip}, async t=>{
@@ -145,16 +160,29 @@ test('U06 conteúdo HTML é texto; somente HTTPS Drive/Docs sem credenciais vira
   await page.locator('#calendario [data-producao-id="peca-3"]').click();
   assert.equal(await page.locator('#dia img').count(),0);
   assert.ok((await page.locator('#dia').textContent()).includes(text));
-  const links=page.locator('#dia a');
+  const links=page.locator('#dia a[target="_blank"]');
   const hrefs=await links.evaluateAll(ns=>ns.map(n=>n.href));
-  assert.ok(hrefs.length>=2);
+  assert.deepEqual([...new Set(hrefs)].sort(),['https://docs.google.com/document/d/exemplo-sintetico','https://docs.google.com/document/d/segundo-sintetico','https://drive.google.com/file/d/exemplo-sintetico']);
   for(const href of hrefs) {
     const url=new URL(href);assert.equal(url.protocol,'https:');
     assert.ok(['drive.google.com','docs.google.com'].includes(url.host));
     assert.equal(url.username+url.password,'');
   }
   for(const link of await links.all()) assert.equal(await link.getAttribute('rel'),'noopener noreferrer');
-  assert.ok((await page.locator('#dia').textContent()).includes('URL inválida sintética'));
+  assert.ok(!(await page.locator('#dia').textContent()).includes('URL inválida sintética'));
+});
+
+test('U-review I1 gaveta não ecoa URL recusada nem parte de credencial sintética', {skip}, async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Arquivos',2,'url','https://usuario-sintetico:senha-sintetica@docs.google.com/x');
+    mudarCelula(raw,'Produções',3,'url_video_final','https://usuario-sintetico:senha-sintetica@docs.google.com/x');
+    adicionarRegistro(raw,'Arquivos',{arquivo_id:'url-recusada',producao_id:'peca-3',versao:2,url:'https://servidor-sintetico.invalid/registro-recusado'});
+  },()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  const body=await page.locator('#dia').textContent();
+  assert.doesNotMatch(body,/usuario-sintetico|senha-sintetica|servidor-sintetico\.invalid|registro-recusado/);
+  const response=await page.request.get(new URL('/api/visao',page.url()).href);
+  assert.doesNotMatch(await response.text(),/usuario-sintetico|senha-sintetica/);
 });
 const estadosSelo=[
   {nome:'hoje',texto:'Atualizado hoje, 08:05',cor:'verde',fim:'2026-10-04T11:05:00Z',captura:true},
@@ -162,6 +190,71 @@ const estadosSelo=[
   {nome:'falha',texto:'Atualização falhou',cor:'vermelho',fim:'2026-10-04T11:05:00Z',captura:true},
   {nome:'ausente',texto:'Sem dados',cor:'cinza',captura:false}
 ];
+test('U-review compacta: resumo fechado, quatro dados, publicação e etapa legível sem mudar API', {skip}, async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Produções',3,'publicado_em','2026-10-02T12:04:00Z');
+    mudarCelula(raw,'Produções',4,'etapa_producao','Etapa_nova_original');
+    mudarCelula(raw,'Produções',4,'responsavel_atual','');
+  },()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  const carousel=page.locator('#dia [data-peca="peca-3"]'),reels=page.locator('#dia [data-peca="peca-4"]');
+  assert.equal(await carousel.locator('.piece-facts').count(),1);
+  assert.equal(await carousel.locator('.piece-facts>div').count(),4);
+  assert.match(await carousel.locator('.piece-facts').textContent(),/Prompts de imagem prontos/);
+  assert.match(await carousel.locator('.publication').textContent(),/2026-10-02T12:04:00Z/);
+  assert.match(await reels.locator('summary .piece-hint').textContent(),/2 cenas.*revisão.*\d+ avisos/);
+  assert.equal(await reels.locator('.piece-body').isVisible(),false);
+  await reels.locator('summary').first().click();
+  assert.match(await reels.locator('.piece-facts').textContent(),/Etapa_nova_original/);
+  assert.doesNotMatch(await reels.locator('.piece-facts').textContent(),/Com quem está|A confirmar/);
+  const response=await page.request.get(new URL('/api/visao',page.url()).href),view=await response.json();
+  assert.equal(view.producoes.find(p=>p.producao_id==='peca-3').etapa_producao,'prompts_imagem_prontos');
+});
+
+test('U-review compacta: texto, histórico e versões anteriores recolhidos, revisão adicional +N', {skip}, async t=>{
+  const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  const carousel=page.locator('#dia [data-peca="peca-3"]');
+  const extra=carousel.locator('[data-revisoes="vigentes"] details');
+  assert.equal(await extra.locator('summary').textContent(),'+1');
+  assert.equal(await extra.evaluate(n=>n.open),false);
+  const text=carousel.locator('details[data-textos]'),history=carousel.locator('details[data-historico]');
+  for(const fold of [text,history,carousel.locator('[data-unidades="paginas"] details[data-versao="1"]')]) {
+    assert.equal(await fold.evaluate(n=>n.open),false);
+    await fold.locator('summary').first().click();assert.equal(await fold.evaluate(n=>n.open),true);
+  }
+  assert.match(await history.textContent(),/revisao-resolvida.*revisao-antiga/s);
+  assert.match(await text.textContent(),/Texto de exemplo sem dado operacional/);
+});
+
+test('U-review compacta: páginas/cenas têm um aviso por linha e documentos só no fim do dia', {skip}, async t=>{
+  const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  assert.equal(await page.locator('#dia [data-documentos-dia]').count(),1);
+  assert.equal(await page.locator('#dia .peca-acordeao [data-documentos-dia]').count(),0);
+  assert.equal(await page.locator('#dia-pecas>*').last().getAttribute('data-documentos-dia'),'');
+  const docs=page.locator('#dia [data-documentos-dia]');
+  assert.deepEqual(await docs.locator('[data-papel]').evaluateAll(ns=>ns.map(n=>[n.dataset.papel,n.textContent])),
+    [['Plano','Plano: documento · plano'],['Redação','Redação: —'],['Visual','Visual: —']]);
+  await page.locator('#dia [data-peca="peca-4"]>summary').click();
+  const rows=page.locator('#dia [data-cena]');assert.equal(await rows.count(),2);
+  for(const row of await rows.all()) {
+    assert.equal(await row.locator('.notice').count(),1);
+    assert.match(await row.textContent(),/Mídia ausente/);
+  }
+  assert.equal(await page.locator('#dia [data-pagina="pagina-02"] .notice').count(),0);
+  assert.match(await page.locator('#dia [data-pagina="pagina-02"]').textContent(),/Página 1.*Abertura sintética/);
+});
+
+test('U-review m-B semana não identificada conserva três documentos ausentes com travessão', {skip}, async t=>{
+  const page=await abrir(t,390,true,raw=>mudarCelula(raw,'Produções',3,'semana_id','semana-ausente'),()=>{},capturaDetalhada);
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
+  const grupos=page.locator('#dia [data-documentos-dia] [data-semana]');
+  assert.equal(await grupos.count(),2); // Dia também inclui o Reels da semana identificada.
+  const orphan=grupos.filter({hasText:'Semana não identificada'});
+  assert.deepEqual(await orphan.locator('[data-papel]').allTextContents(),['Plano: —','Redação: —','Visual: —']);
+});
+
 test('U-review m1 primeira carga falha com erro visível e filtros continuam seguros', {skip}, async t=>{
   const page=await abrir(t,1440,false,()=>{},dir=>{
     fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'atual.json'),'{');

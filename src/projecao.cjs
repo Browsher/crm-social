@@ -3,10 +3,14 @@ const {COLUNAS}=require('./quadro-config.cjs');
 const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 // Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
 const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
+function urlComCredencial(value) {
+  try {const url=new URL(value);return Boolean(url.username || url.password);}
+  catch {return false;}
+}
 function selecionar(record,fields,nome,linha,avisos) {
   return Object.fromEntries(fields.map(field=>{
     const value=record[field] ?? '';
-    if (typeof value==='string' && sensivel.test(value)) {
+    if (typeof value==='string' && (sensivel.test(value) || (['url','url_video_final'].includes(field) && urlComCredencial(value)))) {
       avisos.push({aba:nome,linha,campo:field,motivo:'conteúdo sensível suprimido'});
       return [field,'[conteúdo suprimido]'];
     }
@@ -191,11 +195,15 @@ function arquivosRegistrados(producao,records,ctx) {
   return files.map(arquivoApresentado).sort((a,b)=>ordinal(a.arquivo_id,b.arquivo_id));
 }
 function documentosSemana(p,ntv,ctx) {
+  const cache=ctx.documentos.get(p.semanaId);
+  if(cache) {ctx.locais.push(...cache.avisos);return cache.records;}
   const s=ntv.semanas.find(s=>s.semana_id===p.semanaId);
-  if(!s) return [];
-  return [['Plano','plano_json_arquivo_id'],['Redação','redacao_json_arquivo_id'],['Visual','visual_json_arquivo_id']].map(([papel,campo])=>({
-    papel,arquivo:preenchido(s[campo])?arquivoLigado(s,campo,{semana_id:s.semana_id},ctx):null
+  const inicio=ctx.locais.length;
+  const records=[['Plano','plano_json_arquivo_id'],['Redação','redacao_json_arquivo_id'],['Visual','visual_json_arquivo_id']].map(([papel,campo])=>({
+    papel,arquivo:s && preenchido(s[campo])?arquivoLigado(s,campo,{semana_id:s.semana_id},ctx):null
   }));
+  ctx.documentos.set(p.semanaId,{records,avisos:ctx.locais.slice(inicio)});
+  return records;
 }
 function avisarPublicacao(p,completedAt,ctx) {
   const value=p.publicado_em;
@@ -207,7 +215,7 @@ function avisarPublicacao(p,completedAt,ctx) {
   }
 }
 function detalhar(result,ntv,origens) {
-  const ctxBase={origens,avisos:result.avisos,arquivos:new Map(ntv.arquivos.map(a=>[a.arquivo_id,a])),
+  const ctxBase={origens,avisos:result.avisos,documentos:new Map(),arquivos:new Map(ntv.arquivos.map(a=>[a.arquivo_id,a])),
     paginas:new Map(ntv.paginas.map(p=>[p.pagina_id,p])),cenas:new Map(ntv.cenas.map(c=>[c.cena_id,c]))};
   for(const p of result.producoes) {
     const ctx={...ctxBase,locais:[]};
