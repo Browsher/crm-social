@@ -17,11 +17,120 @@ const rotulosStatus={em_planejamento:'Em planejamento',pronto:'Pronto',publicado
 function statusLegivel(value) {
   return Object.hasOwn(rotulosStatus,value)?rotulosStatus[value]:(value || 'Estado não informado');
 }
-function abrirDia(data,ids) {
-  $('#dia-titulo').textContent=data?civil(data,{weekday:'long',day:'2-digit',month:'long'}):'Sem data';
+let focoDia=null;
+function abrirDia(data,ids,semanaId=null) {
+  focoDia=document.activeElement;
+  const semana=state.view.semanas.find(s=>s.semana_id===semanaId);
+  $('#dia-titulo').textContent=data?civil(data,{weekday:'long',day:'2-digit',month:'long'}):'Sem data · '+(semana?.tema || 'Semana não identificada');
   $('#dia-quantidade').textContent=ids.length+(ids.length===1?' peça registrada':' peças registradas');
-  $('#dia-pecas').replaceChildren(...idsParaPecas(ids).map(p=>cartao(p,false)));
+  const pecas=idsParaPecas(ids).map((p,i)=>acordeaoPeca(p,i===0));
+  $('#dia-pecas').replaceChildren(...(pecas.length?pecas:[node('p','Nenhuma peça registrada neste dia.','empty')]));
   $('#dia').showModal();
+}
+function valor(value) {return value===null || value===undefined || (typeof value==='string' && value.trim()==='')?'Não informado':String(value);}
+function meta(campos) {
+  const dl=node('dl',undefined,'detail-meta');
+  for(const [nome,value] of campos) {
+    const pair=node('div');pair.append(node('dt',nome),node('dd',valor(value)));dl.append(pair);
+  }
+  return dl;
+}
+function secaoDetalhe(titulo) {
+  const section=node('section',undefined,'detail-section');section.append(node('h3',titulo));return section;
+}
+function urlAutorizada(value) {
+  if(typeof value!=='string') return null;
+  try {
+    const u=new URL(value);
+    return u.protocol==='https:' && ['drive.google.com','docs.google.com'].includes(u.host) && !u.username && !u.password?u.href:null;
+  } catch {return null;}
+}
+function arquivoRegistro(a) {
+  const box=node('article',undefined,'file-record');
+  box.append(node('strong',a.nomeApresentacao),node('small','Versão '+valor(a.versao)+' · registro'));
+  const href=urlAutorizada(a.url);
+  if(href) {
+    const link=node('a','Abrir registro no Drive/Docs');link.href=href;link.target='_blank';link.rel='noopener noreferrer';box.append(link);
+  } else if(a.url) box.append(node('p',String(a.url),'record-text'));
+  return box;
+}
+function arquivosDaUnidade(records) {
+  const list=node('div',undefined,'unit-files'),ids=new Set();
+  for(const a of records) {
+    if(!a) list.append(node('p','Mídia ausente ou referência a confirmar.','notice'));
+    else if(!ids.has(a.arquivo_id)) {ids.add(a.arquivo_id);list.append(arquivoRegistro(a));}
+  }
+  return list;
+}
+function unidadeDetalhe(u,tipo) {
+  const pagina=tipo==='paginas',box=node('article',undefined,'unit-record');
+  box.dataset[pagina?'pagina':'cena']=u[pagina?'pagina_id':'cena_id'];
+  box.append(node('h4',(pagina?'Página ':'Cena ')+valor(u.indice)),node('small','Versão '+valor(u.versao)));
+  if(pagina) {
+    box.append(node('p',valor(u.titulo)),node('p',valor(u.corpo)),node('p','Design novo: '+u.designNovo,'record-text'));
+    if(u.funcao) box.append(node('p','Função: '+valor(u.funcao),'record-text'));
+  } else box.append(node('p',valor(u.texto)),node('p','Texto na tela: '+valor(u.texto_tela)),
+    meta([['Início (segundos)',u.inicio_segundos],['Duração (segundos)',u.duracao_segundos]]));
+  box.append(arquivosDaUnidade(u.arquivos));return box;
+}
+function secaoUnidades(records,tipo) {
+  const section=secaoDetalhe(tipo==='paginas'?'Páginas':'Cenas');section.dataset.unidades=tipo;
+  const groups=new Map();
+  for(const u of records) {
+    const key=JSON.stringify(u.versao);
+    if(!groups.has(key)) groups.set(key,[]);groups.get(key).push(u);
+  }
+  const ordenados=[...groups.values()].sort((a,b)=>Number(b[0].vigente)-Number(a[0].vigente));
+  for(const group of ordenados) {
+    const first=group[0],box=node(first.vigente?'section':'details',undefined,'version-group'+(first.vigente?'':' history'));
+    box.dataset.versao=String(first.versao);
+    box.append(node(first.vigente?'h4':'summary','Versão '+valor(first.versao)+(first.vigente?' · vigente':' · impacto atual a confirmar')));
+    box.append(...group.map(u=>unidadeDetalhe(u,tipo)));section.append(box);
+  }
+  return section;
+}
+function secaoRevisoes(records,grupo) {
+  const nomes={vigentes:'Revisão vigente',resolvidas:'Revisões resolvidas · histórico',anteriores:'Revisões de outras versões',ambiguas:'Revisões com vínculo a confirmar'};
+  const section=secaoDetalhe(nomes[grupo]);section.dataset.revisoes=grupo;
+  if(grupo!=='vigentes') section.classList.add('history');
+  if(!records.length) section.append(node('p','Nenhum registro.','record-text'));
+  for(const r of records) {
+    const review=node('article',undefined,'review-record');
+    review.append(node('small',r.revisao_id),meta([['Decisão',r.decisao],['Motivo',r.motivo],['Versão avaliada',r.versao],
+      ['Quem corrige',r.responsavel_correcao],['Tratamento',r.estado_tratamento]]));
+    if(grupo==='anteriores' || grupo==='ambiguas') review.append(node('p','Impacto atual a confirmar.','record-text'));
+    section.append(review);
+  }
+  return section;
+}
+function documentosDetalhe(records) {
+  const section=secaoDetalhe('Documentos da semana');
+  for(const r of records) {
+    section.append(node('h4',r.papel));
+    section.append(r.arquivo?arquivoRegistro(r.arquivo):node('p','Documento não registrado ou referência a confirmar.','record-text'));
+  }
+  return section;
+}
+function acordeaoPeca(p,aberto) {
+  const el=node('details',undefined,'peca-acordeao'),summary=node('summary'),d=p.detalhes;
+  el.dataset.peca=p.producao_id;el.open=aberto;
+  summary.append(node('span',p.formato,'format-label'),node('strong',p.titulo || 'Título não informado'),node('span',statusLegivel(p.status),'status'));
+  const body=node('div',undefined,'piece-body');
+  body.append(meta([['Etapa registrada',p.etapa_producao],['Com quem está',d.responsavelRegistrado],['Data prevista',p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'2-digit',year:'numeric'}):'Sem data'],
+    ['Versão registrada',p.versao],['Publicação',d.publicacaoRegistrada?valor(p.publicado_em)+' · registro explícito':'Não comprovada']]));
+  const textos=secaoDetalhe('Textos registrados');textos.append(node('p',valor(p.legenda)));body.append(textos);
+  body.append(secaoRevisoes(d.revisoes.vigentes,'vigentes'));
+  for(const tipo of ['paginas','cenas']) if(d[tipo].length) body.append(secaoUnidades(d[tipo],tipo));
+  const files=secaoDetalhe('Arquivos · registros');files.append(...d.arquivos.map(arquivoRegistro));
+  if(!d.arquivos.length) files.append(node('p','Mídia ausente: nenhum arquivo da produção registrado.','notice'));
+  body.append(files);
+  for(const grupo of ['resolvidas','anteriores','ambiguas']) if(d.revisoes[grupo].length) body.append(secaoRevisoes(d.revisoes[grupo],grupo));
+  if(d.documentosSemana.length) body.append(documentosDetalhe(d.documentosSemana));
+  if(d.avisos.length) {
+    const section=secaoDetalhe('Avisos registrados');section.classList.add('notice');
+    for(const a of d.avisos) section.append(node('p',a.motivo));body.append(section);
+  }
+  el.append(summary,body);return el;
 }
 function cartao(p,interactive=true) {
   const el=node(interactive?'button':'article',undefined,'post '+p.formato.toLowerCase());
@@ -29,7 +138,7 @@ function cartao(p,interactive=true) {
     el.type='button'; el.dataset.producaoId=p.producao_id;
     el.addEventListener('click',()=>{
       const group=state.view.dias.find(d=>d.data===p.dataCivil && (d.data!==null || d.semanaId===p.semanaId));
-      abrirDia(group.data,group.ids);
+      abrirDia(group.data,group.ids,group.semanaId);
     });
   }
   el.append(node('small',p.formato),node('strong',p.titulo || 'Título não informado'),node('span',statusLegivel(p.status),'status'));
@@ -73,7 +182,7 @@ function row(p) {
     node('strong',p.titulo || 'Título não informado'),node('small',p.formato,'row-format'),node('small',statusLegivel(p.status),'row-status'));
   el.addEventListener('click',()=>{
     const group=state.view.dias.find(d=>d.data===p.dataCivil && (d.data!==null || d.semanaId===p.semanaId));
-    abrirDia(group.data,group.ids);
+    abrirDia(group.data,group.ids,group.semanaId);
   });
   return el;
 }
@@ -129,6 +238,7 @@ function controles() {
   $('#abrir-sem-data').addEventListener('click',()=>{$('#sem-data').hidden=false;$('#sem-data').scrollIntoView({block:'start'});});
   $('#fechar-sem-data').addEventListener('click',()=>{$('#sem-data').hidden=true;$('#abrir-sem-data').focus();});
   $('#fechar-dia').addEventListener('click',()=>$('#dia').close());
+  $('#dia').addEventListener('close',()=>{if(focoDia?.isConnected) focoDia.focus();});
   $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');$('#menu').setAttribute('aria-expanded',String(open));});
   $('#selo').addEventListener('click',()=>navegar('planilha'));
   $('#atualizar').addEventListener('click',reler);
