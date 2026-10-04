@@ -2,23 +2,23 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,capturaDetalhada,adicionarRegistro,mapaQuadroValido,temporario,recalcularHashes,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
+const {capturaValida,capturaDetalhada,capturaQuadro,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,temporario,recalcularHashes,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const CI=process.env.CI==='true';
 const skip=CI?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
-async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixture=capturaValida) {
+async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixture=capturaValida,mapa=mapaQuadroValido(),incluirSemData=true) {
   t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE || 'playwright');
   const root=temporario(t), dataDir=path.join(root,'dados'), quadroConfigPath=path.join(root,'quadro.json');
-  fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroValido()));
+  fs.writeFileSync(quadroConfigPath,JSON.stringify(mapa));
   if (captura) {
     const raw=fixture(), table=raw.tables.Produções;
     const row=table.values[1].slice();
     row[table.values[0].indexOf('producao_id')]='peca-6';
     row[table.values[0].indexOf('titulo')]='Sem data sintética';
     row[table.values[0].indexOf('data_prevista')]='';
-    table.values.push(row);
+    if(incluirSemData)table.values.push(row);
     editar(raw);
     promoverCaptura(recalcularHashes(raw),dataDir);
   }
@@ -628,4 +628,75 @@ test('U-review fundo lateral cobre a página longa e a página menor que a janel
   await page.setViewportSize({width:1440,height:1600});
   const curta=await coberta();
   assert.ok(Math.ceil(curta.sidebar)>=curta.pagina,JSON.stringify(curta));
+});
+test('U07 US4 quadro conserva colunas, cartões e registros em desktop/celular', {skip}, async t=>{
+  for(const width of [1440,390]) await t.test(width+'px',async t=>{
+    const page=await abrir(t,width,true,()=>{},()=>{},capturaQuadro,mapaQuadroSintetico(),false);
+    if(width===390)await page.locator('#menu').click();
+    await page.getByRole('button',{name:'Produção',exact:true}).click();
+    const cols=page.locator('#quadro .quadro-coluna');
+    assert.deepEqual(await cols.evaluateAll(nodes=>nodes.map(n=>n.dataset.coluna)),
+      ['Planejamento','Redação','Visual','Mídia','Revisão','Pronta','Publicada','Outras']);
+    assert.equal(await page.locator('#semana-tema').textContent(),'Conexões do cotidiano');
+    assert.match(await page.locator('#quadro-total').textContent(),/10 peças/);
+    const cards=page.locator('#quadro .quadro-card');
+    assert.deepEqual((await cards.evaluateAll(nodes=>nodes.map(n=>n.dataset.producaoId))).sort(),
+      ['peca-1','peca-10','peca-11','peca-12','peca-2','peca-3','peca-4','peca-7','peca-8','peca-9']);
+    assert.equal(await page.locator('#quadro [draggable="true"], #quadro input, #quadro select, #quadro textarea, #quadro [contenteditable="true"]').count(),0);
+    const review=page.locator('#quadro [data-coluna="Revisão"] [data-producao-id="peca-7"]');
+    assert.match(await review.textContent(),/Responsável sintético/);
+    assert.match(await review.textContent(),/Ajustar texto de exemplo/);
+    assert.match(await review.textContent(),/Corrige: Correção sintética/);
+    assert.match(await review.textContent(),/Em planejamento/);
+    assert.match(await page.locator('#quadro [data-producao-id="peca-3"]').textContent(),/Carrossel.*02\/10/s);
+    assert.match(await page.locator('#quadro [data-producao-id="peca-4"]').textContent(),/[Mm]ídia ausente|imagens ausentes/);
+    assert.equal(await page.locator('#quadro [data-coluna="Publicada"] .quadro-card').count(),1);
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    assert.ok(await cards.evaluateAll(nodes=>nodes.every(n=>n.scrollWidth<=n.clientWidth)));
+    assert.equal(await page.locator('#selo').textContent(),'Dados de 02/10');
+  });
+});
+
+test('U08 US4 Outras conta valores por semana e cartão abre dia inteiro por teclado', {skip}, async t=>{
+  for(const width of [1440,390])await t.test(width+'px',async t=>{
+    const page=await abrir(t,width,true,()=>{},()=>{},capturaQuadro,mapaQuadroSintetico(),false);
+    if(width===390)await page.locator('#menu').click();
+    await page.getByRole('button',{name:'Produção',exact:true}).click();
+    const outras=page.locator('#quadro [data-coluna="Outras"]');
+    assert.equal(await outras.locator('h3').textContent(),'Outras · 2 valores novos');
+    for(const id of ['peca-10','peca-11'])assert.match(await outras.locator('[data-producao-id="'+id+'"]').textContent(),/etapa_nova_sintetica/);
+    assert.match(await outras.locator('[data-producao-id="peca-12"]').textContent(),/Não informada/);
+    const trigger=page.locator('#quadro [data-producao-id="peca-3"]');
+    await trigger.focus();await page.keyboard.press('Enter');
+    assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(nodes=>nodes.map(n=>n.dataset.peca)),
+      ['peca-10','peca-11','peca-3','peca-4','peca-7','peca-8','peca-9']);
+    assert.equal(await page.locator('#dia .peca-acordeao[open]').count(),1);
+    await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(n=>document.activeElement===n),true);
+    await outras.locator('[data-producao-id="peca-12"]').click();
+    assert.match(await page.locator('#dia-titulo').textContent(),/Sem data/);
+    assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(nodes=>nodes.map(n=>n.dataset.peca)),['peca-12']);
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#semana-anterior').isDisabled(),true);
+    await page.locator('#semana-proxima').click();
+    assert.equal(await page.locator('#semana-tema').textContent(),'Próxima semana sintética');
+    assert.equal(await outras.locator('h3').textContent(),'Outras · 1 valor novo');
+    assert.equal(await page.locator('#quadro .quadro-card').count(),1);
+    assert.match(await outras.textContent(),/outra_etapa_sintetica.*Publicado/s);
+    assert.equal(await page.locator('#quadro [data-coluna="Publicada"] .quadro-card').count(),0);
+    assert.equal(await page.locator('#quadro .coluna-vazia').count(),7);
+    assert.equal(await page.locator('#semana-proxima').isDisabled(),true);
+    await page.locator('#semana-anterior').click();
+    assert.equal(await outras.locator('h3').textContent(),'Outras · 2 valores novos');
+    assert.equal(await page.locator('#quadro .quadro-card').count(),10);
+  });
+});
+
+test('U07 US4 sem captura não inventa semana, cartão ou atividade', {skip},async t=>{
+  const page=await abrir(t,390,false);
+  await page.locator('#menu').click();await page.getByRole('button',{name:'Produção',exact:true}).click();
+  assert.match(await page.locator('#quadro-vazio').textContent(),/primeira leitura à Central/);
+  assert.equal(await page.locator('#quadro .quadro-card').count(),0);
+  assert.equal(await page.locator('#semana-anterior').isDisabled(),true);
+  assert.equal(await page.locator('#semana-proxima').isDisabled(),true);
+  assert.equal(await page.locator('#selo').textContent(),'Sem dados');
 });

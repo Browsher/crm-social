@@ -2,7 +2,7 @@
 
 Data: 03/10/2026. Decidido com o autor sobre o [mockup v2](mockups/telas-v2.html), construído sobre o [protótipo aprovado](prototype/index.html). Visual, componentes e identidade (Social Studio) seguem o protótipo.
 
-Como uma agenda que começa pelas páginas do mês, a entrega atual implementa T001–T026/US1, US2 e US3; revisão corrente e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Os requisitos abaixo continuam sendo a meta completa: quadro e seis tabelas/Histórico ainda são futuros; a captura operacional permanece pendente.
+Como uma agenda que começa pelas páginas do mês, a entrega atual implementa T001–T030/US1, US2, US3 e US4; revisão corrente e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Os requisitos abaixo continuam sendo a meta completa: quadro por semana implementado localmente, com PR/aceite corrente pendentes; seis tabelas/Histórico ainda são futuros; a captura operacional permanece pendente.
 
 ## Princípios
 

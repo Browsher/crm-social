@@ -6,9 +6,9 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Feature Directory**: `specs/001-consulta-local-producao`
 
-**Created**: 2026-10-02 | **Updated**: 2026-10-04 (US3/gaveta do dia e regra temporal aprovadas)
+**Created**: 2026-10-02 | **Updated**: 2026-10-04 (US4/quadro implementado localmente)
 
-**Status**: Fundação, US1, US2 e US3 implementadas; demais histórias e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
+**Status**: Fundação, US1, US2, US3 e US4 implementadas; PR da US4, US5/entrega completa e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em

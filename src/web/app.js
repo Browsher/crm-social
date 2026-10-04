@@ -239,11 +239,69 @@ function row(p) {
   el.type='button';el.dataset.producaoId=p.producao_id;
   el.append(node('small',p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'short'}):'Sem data'),
     node('strong',p.titulo || 'Título não informado'),node('small',p.formato,'row-format'),node('small',statusLegivel(p.status),'row-status'));
-  el.addEventListener('click',()=>{
-    const group=state.view.dias.find(d=>d.data===p.dataCivil && (d.data!==null || d.semanaId===p.semanaId));
-    abrirDia(group.data,group.ids,group.semanaId);
-  });
+  el.addEventListener('click',()=>abrirDiaDaPeca(p));
   return el;
+}
+function abrirDiaDaPeca(p) {
+  const group=state.view.dias.find(d=>d.data===p.dataCivil && (d.data!==null || d.semanaId===p.semanaId));
+  abrirDia(group.data,group.ids,group.semanaId);
+}
+function semanasQuadro() {
+  return state.view.semanas.slice().sort((a,b)=>(a.periodo.inicio ?? 'z').localeCompare(b.periodo.inicio ?? 'z') ||
+    String(a.semana_id).localeCompare(String(b.semana_id)));
+}
+function semanaDoQuadro(weeks) {
+  let week=weeks.find(s=>s.semana_id===state.semanaId);
+  if(week)return week;
+  const hoje=new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  week=weeks.find(s=>s.periodo.inicio && s.periodo.inicio<=hoje && s.periodo.fim>=hoje) ??
+    weeks.filter(s=>s.periodo.inicio).at(-1) ?? weeks[0];
+  state.semanaId=week?.semana_id;return week;
+}
+function pendenciaQuadro(p) {
+  const records=p.quadro.pendencias;
+  if(!records.length)return null;
+  const first=records[0],box=node('span',undefined,'board-pending');
+  box.append(node('span',first.tipo==='revisao'?'Revisão: '+first.texto:first.texto));
+  if(first.tipo==='revisao' && preenchido(first.responsavelCorrecao))box.append(node('small','Corrige: '+first.responsavelCorrecao));
+  if(records.length>1)box.append(node('small','+'+plural(records.length-1,'pendência')));
+  return box;
+}
+function cartaoQuadro(p) {
+  const card=node('button',undefined,'quadro-card '+p.formato.toLowerCase());
+  card.type='button';card.dataset.producaoId=p.producao_id;
+  const meta=node('span',undefined,'board-card-meta');
+  meta.append(node('small',p.formato),node('small',p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'2-digit'}):'Sem data'));
+  card.append(meta,node('strong',p.titulo || 'Título não informado'));
+  if(p.quadro.coluna==='Outras')card.append(node('span',preenchido(p.etapa_producao)?String(p.etapa_producao):'Não informada','board-stage'));
+  card.append(node('small',statusLegivel(p.status),'board-status'),node('small','Com quem está: '+p.detalhes.responsavelRegistrado,'board-owner'));
+  const pending=pendenciaQuadro(p);if(pending)card.append(pending);
+  card.addEventListener('click',()=>abrirDiaDaPeca(p));return card;
+}
+function colunaQuadro(coluna) {
+  const box=node('section',undefined,'quadro-coluna');box.dataset.coluna=coluna.nome;
+  const heading=node('header');heading.append(node('h3',coluna.titulo),node('span',String(coluna.ids.length),'column-count'));
+  const cards=node('div',undefined,'board-cards');
+  cards.append(...(coluna.ids.length?idsParaPecas(coluna.ids).map(cartaoQuadro):[node('p','Sem peças','coluna-vazia')]));
+  box.append(heading,cards);return box;
+}
+function renderProducao() {
+  const weeks=semanasQuadro(),week=semanaDoQuadro(weeks),index=weeks.indexOf(week);
+  $('#semana-anterior').disabled=index<=0;$('#semana-proxima').disabled=index<0 || index===weeks.length-1;
+  const empty=!state.view.captura || !week;
+  $('#quadro-vazio').hidden=!empty;
+  $('#quadro-vazio').textContent=state.view.captura?'Nenhuma semana registrada nesta captura.':'Produção sem dados. Peça a primeira leitura à Central.';
+  $('#semana-tema').textContent=week?.tema || (empty?'Sem dados':'Tema não informado');
+  $('#semana-periodo').textContent=week?.periodo.inicio?
+    civil(week.periodo.inicio,{day:'2-digit',month:'2-digit'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'2-digit'}):'';
+  $('#quadro-total').textContent=week?plural(week.ids.length,'peça')+' nesta semana':'';
+  const group=state.view.quadro.semanas.find(s=>s.semanaId===week?.semana_id);
+  $('#quadro').replaceChildren(...(empty?[]:group.colunas.map(colunaQuadro)));
+}
+function trocarSemana(delta) {
+  if(!state.view)return;
+  const weeks=semanasQuadro(),index=weeks.findIndex(s=>s.semana_id===state.semanaId),next=weeks[index+delta];
+  if(next){state.semanaId=next.semana_id;renderProducao();}
 }
 function pecaVisivel(p,week) {
   if (!p.dataCivil || p.dataCivil.startsWith(state.mes)) return true;
@@ -278,7 +336,7 @@ function render() {
   $('#total').textContent=state.view.producoes.length+' peças registradas';
   for (const b of document.querySelectorAll('[data-formato]')) { const active=b.dataset.formato===state.formato;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active)); }
   for (const b of document.querySelectorAll('[data-modo]')) { const active=b.dataset.modo===state.modo;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active)); }
-  calendario();lista();lista(true);
+  calendario();lista();lista(true);renderProducao();
 }
 function navegar(tela) {
   for (const id of ['planejamento','producao','planilha']) $('#'+id).hidden=id!==tela;
@@ -301,6 +359,8 @@ function controles() {
   $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');$('#menu').setAttribute('aria-expanded',String(open));});
   $('#selo').addEventListener('click',()=>navegar('planilha'));
   $('#atualizar').addEventListener('click',reler);
+  $('#semana-anterior').addEventListener('click',()=>trocarSemana(-1));
+  $('#semana-proxima').addEventListener('click',()=>trocarSemana(1));
 }
 function detalhesCaptura() {
   const view=state.view,captura=view.captura;

@@ -607,6 +607,15 @@ explícito no CI (M8). Não se declara aceite completo da feature ou captura rea
 
 ## Pendências para a revisão final (Fase 8)
 
+Do [review de 74e60a1](https://github.com/Browsher/crm-social/pull/9#issuecomment-5982689184), sem bloqueio de código:
+
+- **m-1:** campo dedicado de URL com dois pedaços pode conservar texto redigido e formar link estranho; não vaza userinfo. Rever a política específica de campos de URL com teste antes de qualquer ajuste.
+- **m-2:** delimitadores adicionais/variantes de barra no texto livre estão fora da regra de pedaços HTTP(S) aprovada pelo autor; extensão opcional, mantendo as quatro regressões como guarda.
+- **m-3:** avisos de ausência/empate usam `versao`/`origens_json` em vez da coluna causadora; avaliar junto às tabelas de avisos da US5.
+- **m-4:** resumos históricos de gate não têm SHA medido e nome ambíguo; consolidar procedência/ordem na revisão final. Medições anteriores permanecem históricas, sem substituir o aceite remoto corrente.
+
+O comentário reiterou os estados de revisão desconhecidos, as localizações desatualizadas das dívidas na arquitetura e a indentação do teste HTTP, já registrados abaixo. Não representam regressão desta correção; ficam para a Fase 8.
+
 Decisão do autor na última rodada da US3: Critical, segurança e regressão bloqueiam;
 Important/Minor novos fora dessas categorias são corrigidos se triviais ou registrados
 aqui para a Fase 8. O review continua sendo comentário, separado do quality-gate.
@@ -717,3 +726,49 @@ do usuário foi encerrado. Repetição autônoma com diagnóstico apenas em TEMP
 máximo **13**, Semgrep SKIP no Windows e audit N/A; baseline não atualizada.
 [Resumo sanitizado](../../docs/reports/001-us3-regressao-local.json).
 Aceite Linux e novo review dependem do push desta correção.
+
+### Aceite remoto da correção e merge da US3
+
+Head corrigido: `74e60a117df3d538401e00070cd3678f87f15acf`, incluindo o commit `fd4ce50`.
+[Gate Linux 37221300623](https://github.com/Browsher/crm-social/actions/runs/37221300623/job/111492027672): SUCCESS, tests/coverage/complexity e Semgrep real PASS, saída 0, baseline inalterada. Interface continua sendo aceite Windows local, não uma prova do Linux.
+[Review 37221300608](https://github.com/Browsher/crm-social/actions/runs/37221300608/job/111492027614): SUCCESS; [comentário](https://github.com/Browsher/crm-social/pull/9#issuecomment-5982689184) confirma os quatro exemplos legítimos preservados e não aponta Critical nem Important novo de código. A pendência P-1 de evidência foi suprida pelo gate acima. Minor novos e reiterados estão na seção da Fase 8.
+
+[Merge do PR #9](https://github.com/Browsher/crm-social/commit/b24b25ed64d614925b638c804c62e6bc81ae2960): `b24b25ed64d614925b638c804c62e6bc81ae2960`, pais `869f0bd` e `74e60a1`, nessa ordem. Autor noreply do autor; committer noreply do GitHub. A branch 001 foi preservada e recebeu main por fast-forward. T027–T030 começam a partir desse merge, sem avançar US5 nem coletar captura real.
+
+
+## US4 — Produção por etapa (T027–T030)
+
+Base integrada: `b24b25e` (merge da US3 acima). As quatro tarefas foram executadas em ordem e marcadas concluídas; total 30/41, com 11 pendentes (US5 e Fase 8). Não houve captura operacional nem instalação de dependência.
+
+| Etapa | Evidência observada |
+| --- | --- |
+| T027 RED | 12 P08–P10 novos falharam no quadro ausente, exit 1; recorte 0 PASS/12 FAIL/0 SKIP. Projeção completa antiga: 48 PASS/12 FAIL, total 60 |
+| T028 GREEN | Projeção completa 60 PASS/0 FAIL/0 SKIP, exit 0, 4,91 s |
+| T029 RED | U07–U08: sete testes/subtestes falharam pela ausência de colunas/controles na tela ainda placeholder; 0 PASS/7 FAIL/0 SKIP, exit 1, 12,50 s |
+| T030 GREEN | U07–U08 completos 7 PASS/0 FAIL/0 SKIP, exit 0, 3,59 s |
+| Suíte completa | 172 PASS/0 FAIL/0 SKIP, inclusive 60 de interface, 40,25 s |
+| Gate local | exit 0, 41,97 s; tests/coverage/complexity PASS, cobertura 97,5364%, complexidade máxima 13, baselineAtualizada=false |
+
+A primeira execução completa teve 171 PASS/1 FAIL: o novo aviso sem dados repetia exatamente a orientação do Planejamento e tornava um seletor estrito ambíguo. Corrigido **o texto da nova tela**, sem alterar esse teste; a repetição completa acima é verde. O fechamento do Chromium ocorreu normalmente nesta execução.
+
+No Windows, Semgrep é SKIP por ausência da ferramenta e audit é N/A por ausência de dependências da aplicação. O Linux deve rodar Semgrep real e gate estrito. O [resumo local](../../docs/reports/001-us4-local.json) inclui SHA-256 dos quatro arquivos de produção medidos; a base da execução fica somente neste histórico; não atribui a medição a um commit futuro. Cinco avisos de complexidade 11–20, sem função >=21: CLI (12), arquivosDaUnidade (11), unidadeDetalhe (11), documentosDoDia (13) e renderProducao (11). Nenhuma baseline/configuração/workflow/ferramenta mudou.
+
+### Comportamento e limites comprovados
+
+- API: `quadro.colunas` conserva os oito nomes canônicos; `quadro.semanas` agrupa os IDs em colunas por `semanaId`; `p.quadro` contém coluna e pendências registradas, sem duplicar revisões integrais ou avisos globais.
+- Prioridade: publicação preenchida > liberação/prontidão > revisão em andamento > etapa do JSON. Retirar cada condição superior exercita a seguinte. Status não decide coluna; registro explícito inconsistente de publicação conserva Publicada com aviso. As listas de liberação/revisão do mapa versionado continuam vazias.
+- Outras conta somente distintos dos seus cartões NTV na semana, com vazio uma chave; null original é recuperado da célula validada antes da triagem, sem reintroduzir texto cru depois dela. Omitido continua vazio. Rótulo repetido não incrementa N; outra semana/marca/prioridade superior não entram no contador. Estender só o JSON TEMP muda classificação e contador, sem código.
+- Pendências de revisão usam decisões atuais conhecidas revisar/refazer/reprovado/rejeitado, mantendo motivo, versão e quem corrige separados do responsável da peça. Aprovação, decisão desconhecida ou histórico não inventam correção. Tratamento desconhecido continua a dívida de classificação da US3 registrada na Fase 8.
+- Ausência de mídia usa unidades da versão vigente e seus ponteiros; registro da versão vigente com URL vazia/recusada continua sendo registro, sem confundir link não permitido com mídia ausente. Cartão mostra primeiro resumo e +N, enquanto a API/gaveta conserva as demais pendências.
+- Semana com setas/tema, oito colunas, cartões com formato/data/título/status/responsável e pendência; sem arrastar/editar. Enter abre dia inteiro com primeira peça aberta; Esc retorna foco; peça sem data abre Sem data da semana. Trocar semana atualiza o contador e preserva todos os cartões.
+
+### Screenshots US4 — aplicação real, dados sintéticos
+
+Servidor real em loopback/porta efêmera, persistência e mapa JSON dentro de TEMP; Playwright existente. `capturaQuadro` tem 11 peças NTV em duas semanas e um registro de outra marca excluído. A primeira semana contém dez cartões: um nas sete primeiras colunas e três em Outras (rótulo repetido + vazio = dois valores). **Mapa de prontidão/revisão e etapas de Planejamento/Redação exclusivamente sintético** para demonstrar todas as colunas; não representa rótulos operacionais nem alteração do config versionado.
+
+| Captura | Dimensões reais | Verificação |
+| --- | --- | --- |
+| [Produção desktop](../../docs/design/screenshots/001-us4-producao-1440.png) | 1440 × 1200 | 8 colunas, 10 cartões, scrollWidth=1440, zero pageerror/requisição externa |
+| [Produção celular](../../docs/design/screenshots/001-us4-producao-390.png) | 390 × 2488, página completa | mesmas 8 colunas/10 cartões em lista vertical, scrollWidth=390, zero pageerror/requisição externa |
+
+Imagens conferidas visualmente: identidade Social Studio do protótipo, grade de quatro colunas no desktop e uma no celular, selo comum, tema/período e contagem de Outras. Usam somente registros fictícios, sem prévias/entregas reais. Gate Linux e review do novo PR dependem da publicação desta entrega; nenhuma evidência anterior é declarada aceite do novo head.

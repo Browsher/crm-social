@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-T001–T026/US1, US2 e US3 implementadas; estado, evidências e pendências na [validação](../../specs/001-consulta-local-producao/validacao.md).
+T001–T030/US1, US2, US3 e US4 implementadas; estado, evidências e pendências na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local não versionado; remoto usa branch/specs da 001.
@@ -18,10 +18,10 @@ T001–T026/US1, US2 e US3 implementadas; estado, evidências e pendências na [
 - GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
 - src/projecao.cjs seleciona NTV/datas/formatos, frescor e detalhes por versão/relação; quadro-config valida mapa.
-- config/quadro-etapas.json é versionado; mapa não é dado de linha nem entregue por HTTP.
+- config/quadro-etapas.json é aplicado na projeção; nove etapas e liberação/revisão vazias.
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas fixas: /, /app.js, /styles.css, /api/visao; GET/HEAD e Host/Origin locais.
-- src/web/ entrega Planejamento, selo, releitura e gaveta em acordeões; quadro/tabelas futuros.
+- src/web/ entrega Planejamento, selo/releitura, gaveta e Produção por semana; tabelas futuras.
 - Gaveta compacta: primeira aberta, dados preenchidos, versões/texto/Histórico recolhidos; Esc devolve foco.
 - Resumo distingue revisão vigente/a confirmar/ausência; IDs técnicos da revisão só na API.
 - Cena: três slots inicial/final/vídeo; aviso de mídia agregado, validações numéricas independentes.
@@ -44,5 +44,6 @@ T001–T026/US1, US2 e US3 implementadas; estado, evidências e pendências na [
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
 - Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
 - CI=true pula os testes de UI, fora do LCOV (M8); aceite local exige zero pulos.
-- Quadro/tabelas/Histórico/iniciador/escala continuam tarefas futuras.
+- US4 local: prioridade/Outras por semana e primeira pendência/+N; PR pendente.
+- Tabelas/Histórico/iniciador/escala continuam tarefas futuras.
 - Não alterar constituição, ferramentas/gate, agentes oficiais ou operação n8n.

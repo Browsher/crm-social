@@ -1,8 +1,8 @@
-# Interface de Planejamento e gaveta do dia
+# Interface de Planejamento, gaveta do dia e Produção
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura e gaveta implementados até T026/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `plural` (33), `fatosPeca` (39), `urlAutorizada` (52), `arquivosDaUnidade` (72), `secaoUnidades` (99), `secaoRevisoes` (115), `revisaoLinha` (128), `textosRegistrados` (140), `documentosDoDia` (150), `resumoPeca` (165), `avisosPeca` (172), `acordeaoPeca` (179), `cartao` (196), `calendario` (211), `lista` (254), `render` (267), `controles` (290) e `detalhesCaptura` (305).
+Planejamento, frescor/releitura, gaveta e Produção implementados até T030/US4; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `plural` (33), `fatosPeca` (39), `urlAutorizada` (52), `arquivosDaUnidade` (72), `secaoUnidades` (99), `secaoRevisoes` (115), `revisaoLinha` (128), `textosRegistrados` (140), `documentosDoDia` (150), `resumoPeca` (165), `avisosPeca` (172), `acordeaoPeca` (179), `cartao` (196), `calendario` (211), `abrirDiaDaPeca` (245), `semanasQuadro` (249), `semanaDoQuadro` (253), `pendenciaQuadro` (261), `cartaoQuadro` (270), `colunaQuadro` (281), `renderProducao` (288), `trocarSemana` (301), `lista` (312), `render` (325), `controles` (348) e `detalhesCaptura` (365).
 
 ## Inicialização e navegação
 
@@ -16,7 +16,7 @@ O HTML importa somente `/styles.css` e `/app.js`; o JavaScript busca apenas `/ap
 | Sidebar desktop | Ocupa a altura da página inteira, inclusive além da área visível; no mobile permanece menu fixo/recolhido |
 | Até 720 px | Lista inicial, menu recolhido; seletor visual Calendário/Lista fica oculto |
 | Menu | Exatamente Planejamento, Produção e Planilha |
-| Produção | Mensagem explícita de próxima entrega do quadro |
+| Produção | Quadro por semana/tema, setas, oito colunas/vazias, pendências e Outras com título/contador da API |
 | Planilha | Fonte, fim em São Paulo, cobertura semanal, motivos resumidos dos avisos e botão de releitura; seis tabelas/Histórico futuros |
 | Filtros | Todos, Imagem, Carrossel e Reels, com aria-pressed |
 | Mês anterior/próximo | Troca somente o mês apresentado |
@@ -50,6 +50,14 @@ Tema aparece no início da semana. Para múltiplas peças, apresenta o primeiro 
 A lista agrupa pelo tema/período da semana de origem. `pecaVisivel` considera a data civil da peça no mês escolhido; conserva também peças dentro do período de uma semana que cruza aquele mês. Peça remarcada para outro mês aparece no novo mês sem mudar sua semana registrada. Sem data permanece acessível independentemente do mês; filtro de formato continua valendo na lista comum.
 
 **N sem data** conta globalmente a captura NTV e abre lista dedicada por semana, sem filtro de mês/formato; o link fica oculto quando N é zero. O total **peças registradas** também é global, não a quantidade visível naquele filtro.
+
+## Produção por semana
+
+`semanasQuadro` ordena por início civil/identidade, sem período ao final. A seleção conserva escolha; na primeira carga prefere semana de hoje em São Paulo, senão última datada ou primeira disponível. Setas ficam desabilitadas nos limites; tema/período/total são da semana escolhida, sem filtro de mês/formato do Planejamento. O browser usa colunas/título/IDs/contador da API, sem recalcular mapas. Vazia mostra **Sem peças**; sem captura pede primeira leitura à Central.
+
+Cartão apresenta formato, data/**Sem data**, título, status informativo e **Com quem está** registrado (vazio **A confirmar**); Outras conserva etapa original (vazio **Não informada**). Primeira pendência mostra motivo humano e **Corrige** separado quando registrado, com **+N pendências** para as demais completas na API. Registro de arquivo na versão atual com URL vazia/recusada não vira mídia ausente.
+
+Grid preserva oito colunas em ordem: quatro em 1440 px, duas até 1100 px e uma até 720 px. Cartões são botões com foco/teclado; clique abre o dia inteiro ou Sem data da semana, sem arrastar/editar. [tests/interface.test.cjs](../../tests/interface.test.cjs) cobre semana/tema, vazias, Outras/contador, responsáveis/pendências, teclado e clique em 390/1440; resultados somente na validação.
 
 ## Gaveta do dia, texto e acessibilidade
 
@@ -92,7 +100,7 @@ As regressões também cobrem primeira carga falhando com filtros seguros, botã
 
 Com `CI=true`, os casos de interface declaram SKIP antes de carregar Playwright; fora do CI, ferramenta ausente falha. A aplicabilidade dos pulos e a UI fora do LCOV permanecem pendência M8. Estado e evidências somente na [validação](../../specs/001-consulta-local-producao/validacao.md); as [screenshots](../design/screenshots/LEIA-ME.md) usam apenas fixtures fictícias.
 
-Pegadinhas: trocar o tamanho da janela depois de iniciar não recalcula o modo inicial; a escolha é feita por matchMedia no carregamento. Busca por ID usa a coleção em memória e sem paginação; cenário final de 500 peças ainda não foi executado. Testes locais de US1/US2/US3 não comprovam quadro, tabelas ou integração operacional.
+Pegadinhas: trocar o tamanho da janela depois de iniciar não recalcula o modo inicial; a escolha é feita por matchMedia no carregamento. Busca por ID usa a coleção em memória e sem paginação; cenário final de 500 peças ainda não foi executado. Testes locais de US1/US2/US3/US4 não comprovam tabelas/Histórico, escala final ou integração operacional.
 
 ## Pegadinha de uso prolongado
 

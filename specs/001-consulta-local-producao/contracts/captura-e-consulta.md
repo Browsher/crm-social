@@ -1,6 +1,6 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1, US2 e US3 implementadas; quadro, tabelas/Histórico e iniciador continuam pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1, US2, US3 e US4 implementadas; quadro por semana implementado; PR da US4, tabelas/Histórico e iniciador pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
 Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura
@@ -183,7 +183,7 @@ silenciosamente à regra da etapa. Status, aprovação ou arquivo sem `publicado
 preenchido não colocam a peça em Publicada. Esse critério substitui a exigência
 anterior de timestamp válido/coerente para classificar a coluna.
 
-O servidor lê `config/quadro-etapas.json` na inicialização. Arquivo a criar na
+O servidor lê `config/quadro-etapas.json` na inicialização. Arquivo versionado na
 implementação, versionado e separado da captura privada. Conteúdo inicial aprovado:
 
 ```json
@@ -390,9 +390,9 @@ avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
 - `semanas`/`producoes`: identidades internas e campos mínimos necessários aos resumos
   e detalhes definidos acima, com unidades/revisões/arquivos vinculados e avisos;
   não recebem extras arbitrários. `dias`: grupos por data ou Sem data/semana e IDs de peças.
-  `quadro`: colunas fixas, semana e IDs agrupados pela classificação documentada;
-  coluna Outras inclui `quantidadeValoresNovos` e `titulo` derivados dos seus cartões,
-  mantendo nome canônico Outras. Não servir o arquivo de configuração bruto.
+  `quadro.colunas:[{nome}]` mantém a ordem contratual; `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` contém oito colunas e IDs ordinais por semana, inclusive semanaId null das peças sem vínculo inequívoco. Sem captura, semanas vazias com nomes canônicos mantidos. Cada produção acrescenta `quadro:{coluna,pendencias}`.
+  Coluna Outras deriva título/contador só dos seus cartões daquela semana;
+  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. UI resume primeira/+N, API conserva todas. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
 - `planilha`: seis abas na ordem dos mínimos, cada uma `{nome, cabecalhos,
   quantidadeLinhas, linhas}`. `cabecalhos` é a lista literal mínima; `linhas` conserva
   os valores mínimos e sua identidade, exclui linhas vazias e registros de outra marca.

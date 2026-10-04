@@ -36,7 +36,7 @@ function motivoUrl(value) {
 }
 function selecionar(record,fields,nome,linha,avisos) {
   return Object.fromEntries(fields.map(field=>{
-    const value=record[field] ?? '';
+    const value=field==='etapa_producao' && record[field]===null?null:record[field] ?? '';
     const redigido=typeof value==='string'?redigirTexto(value):value;
     const motivo=redigido!==value?'conteúdo sensível suprimido':
       (typeof value==='string' && ['url','url_video_final'].includes(field)?motivoUrl(value):null);
@@ -57,7 +57,7 @@ function base(estadoLocal) {
   const historico=estadoLocal.historico.map(reciboPublico).reverse();
   return {schemaVersion:1,estado:'sem_captura',selo:{texto:'Sem dados',cor:'cinza',destino:'planilha'},fonte:'Captura pela Central',
     captura:null,ultimaTentativa:reciboPublico(estadoLocal.ultimaTentativa),semanas:[],producoes:[],dias:[],
-    quadro:{colunas:COLUNAS.map(nome=>({nome,ids:[]}))},planilha:[],historico,avisos:[]};
+    quadro:{colunas:COLUNAS.map(nome=>({nome})),semanas:[]},planilha:[],historico,avisos:[]};
 }
 function selecionarNtv(captura,avisos,origens,validadeJson) {
   const semanas=captura.semanas.filter(r=>r.marca_id==='ntv');
@@ -70,7 +70,10 @@ function selecionarNtv(captura,avisos,origens,validadeJson) {
     const fisicas=new Map(table.values.slice(1).map((row,index)=>[row[keyIndex],index+2]));
     return [chaves[i],linhas[i].map(r=>{
       const origem={aba:nome,linha:fisicas.get(r[fields[0]])};
-      const selected=selecionar(r,fields,nome,origem.linha,avisos);
+      // Só a etapa precisa conservar null original; a triagem acontece depois
+      // da recuperação da célula, antes de qualquer campo entrar na projeção.
+      const entrada=nome==='Produções'?{...r,etapa_producao:table.values[origem.linha-1][table.values[0].indexOf('etapa_producao')]}:r;
+      const selected=selecionar(entrada,fields,nome,origem.linha,avisos);
       origens.set(selected,origem);
       if(Object.hasOwn(selected,'origens_json')) validadeJson.set(selected,jsonValido(r.origens_json));
       return selected;
@@ -299,6 +302,46 @@ function detalhar(result,ntv,origens,validadeJson) {
     avisarPublicacao(p,result.captura.completedAt,ctx);
   }
 }
+function colunaProducao(p,mapa) {
+  if(preenchido(p.publicado_em)) return 'Publicada';
+  if(mapa.liberacao.has(p.estado_liberacao)) return 'Pronta';
+  if(mapa.revisao.has(p.estado_revisao)) return 'Revisão';
+  return mapa.etapas.get(p.etapa_producao) ?? 'Outras';
+}
+function pendenciasRevisao(p) {
+  const correcoes=new Set(['revisar','refazer','reprovado','rejeitado']);
+  return p.detalhes.revisoes.vigentes.filter(r=>correcoes.has(r.decisao)).map(r=>({
+    tipo:'revisao',texto:preenchido(r.motivo)?r.motivo:'Correção solicitada',revisaoId:r.revisao_id,
+    decisao:r.decisao,versao:r.versao,responsavelCorrecao:r.responsavel_correcao
+  }));
+}
+function pendenciasMidia(p) {
+  const paginas=p.detalhes.paginas.filter(u=>u.vigente),cenas=p.detalhes.cenas.filter(u=>u.vigente);
+  const pendencias=[
+    ...paginas.filter(u=>!u.arquivos[0]).map(u=>({tipo:'midia',texto:'Imagem ausente',unidade:'pagina',unidadeId:u.pagina_id})),
+    ...cenas.filter(u=>u.avisoMidia).map(u=>({tipo:'midia',texto:u.avisoMidia,unidade:'cena',unidadeId:u.cena_id}))
+  ];
+  const arquivoVigente=p.detalhes.arquivos.some(a=>inteiroPositivo(a.versao) && a.versao===p.versao);
+  if(paginas.length===0 && cenas.length===0 && !arquivoVigente) {
+    pendencias.push({tipo:'midia',texto:'Mídia ausente: sem arquivo registrado nesta versão'});
+  }
+  return pendencias;
+}
+function colunaSemana(nome,producoes) {
+  const cards=producoes.filter(p=>p.quadro.coluna===nome),ids=cards.map(p=>p.producao_id).sort(ordinal);
+  const quantidadeValoresNovos=nome==='Outras'?new Set(cards.map(p=>preenchido(p.etapa_producao)?p.etapa_producao:null)).size:0;
+  const titulo=nome==='Outras'?`Outras · ${quantidadeValoresNovos} ${quantidadeValoresNovos===1?'valor novo':'valores novos'}`:nome;
+  return {nome,titulo,ids,quantidadeValoresNovos};
+}
+function montarQuadro(result,mapaQuadro) {
+  const mapa={liberacao:new Set(mapaQuadro.liberacaoPronta),revisao:new Set(mapaQuadro.revisaoEmAndamento),
+    etapas:new Map(mapaQuadro.etapas.map(e=>[e.rotulo,e.coluna]))};
+  for(const p of result.producoes) {
+    p.quadro={coluna:colunaProducao(p,mapa),pendencias:[...pendenciasRevisao(p),...pendenciasMidia(p)]};
+  }
+  result.quadro.semanas=result.semanas.map(s=>({semanaId:s.semana_id,
+    colunas:COLUNAS.map(nome=>colunaSemana(nome,result.producoes.filter(p=>p.semanaId===s.semana_id)))}));
+}
 function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   const result=base(estadoLocal), captura=estadoLocal.captura;
   if (!captura) return result;
@@ -309,6 +352,7 @@ function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
     periodo:{inicio:null,fim:null},contagens:Object.fromEntries(chaves.map(k=>[k,ntv[k].length]))};
   planejar(result,origens);
   detalhar(result,ntv,origens,validadeJson);
+  montarQuadro(result,mapaQuadro);
   aplicarFrescor(result,estadoLocal,nowIso);
   return result;
 }

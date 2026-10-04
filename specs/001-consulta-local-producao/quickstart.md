@@ -1,6 +1,6 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T026/US1, US2 e US3 implementadas, com revisão corrente e evidências na [validação](validacao.md). T027–T041 e captura operacional permanecem pendentes; sem leitura real Google. Branch `001-consulta-local-producao`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T030/US1, US2, US3 e US4 implementadas, com revisão corrente e evidências na [validação](validacao.md). T031–T041 e captura operacional permanecem pendentes; sem leitura real Google. Branch `001-consulta-local-producao`.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). Os mockups de [telas](../../docs/design/mockups/telas-v2.html) e [gaveta compacta](../../docs/design/mockups/gaveta-v2.html) servem como referência visual; não validam backend ou persistência.
 
@@ -46,7 +46,7 @@ $crmTestFiles = @(
 & $crmNode --test
 ```
 
-No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação, US1, US2 e US3 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
+No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação, US1, US2, US3 e US4 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
 
 Na conferência de 03/10, o PATH encontrava Node 24.14.0, mas o runtime 24.19.0 já
 existia na máquina. Defina `CRM_NODE_PATH` com o caminho desse executável somente no
@@ -95,7 +95,7 @@ Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída d
 | Selo | Atualizado hoje, HH:MM / Dados de DD/MM / Atualização falhou / Sem dados; clique abre Planilha |
 | Planilha | Fonte, fim em São Paulo, cobertura semanal e avisos; tabelas/Histórico continuam futuros |
 | Atualizar dados | Relê GET /api/visao; conserva tela/falha/horário, sem Google; erro HTTP mantém visão anterior e botão permite repetir |
-| Produção | Mensagem de próxima entrega do quadro |
+| Produção | Quadro por semana/tema, oito colunas/vazias, status informativo, responsável/correção separados, primeira pendência/+N e clique até dia inteiro/Sem data |
 | Interface mobile | Lista e menu recolhido em 390 px |
 
 Importar novamente os mesmos ID/serialização retorna `sem_alteracao`, sem criar recibo, renovar instante ou encerrar falha posterior. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. O selo vermelho e o aviso curto de preservação já aparecem com captura vigente; sem captura, eventual primeira falha conserva **Sem dados**. GET/releitura não grava nem encerra a falha; nova captura completa aceita a encerra. Erro HTTP, inclusive 503, conserva a visão carregada com mensagem local e botão habilitado para nova tentativa. A tela de Histórico permanece futura; os recibos já existem na persistência.
@@ -106,7 +106,7 @@ A importação adquire `.importacao.lock` no diretório escolhido. Segunda inst�
 
 ## Cenários sintéticos obrigatórios
 
-Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T026 e suas regressões já têm evidência em `validacao.md`; quadro, tabelas/Histórico, iniciador e escala permanecem futuros. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
+Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T030 e suas regressões já têm evidência em `validacao.md`; tabelas/Histórico, iniciador e escala permanecem futuros; PR/aceite corrente da US4 na validação. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
 
 | Caso | Ação | Resultado a conferir |
 | --- | --- | --- |
@@ -168,7 +168,7 @@ Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editori
 & './.specify/scripts/powershell/check-prerequisites.ps1' -Json -RequireSpec -RequireTasks -IncludeTasks
 ```
 
-Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T026 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
+Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T030 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
 
 ## Quality gate e sincronização final da implementação
 
@@ -180,4 +180,4 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 
 T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
-Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. As evidências das três histórias implementadas estão na [validação](validacao.md); o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.
+Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. As evidências das quatro histórias implementadas estão na [validação](validacao.md); o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.

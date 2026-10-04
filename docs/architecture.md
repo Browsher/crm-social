@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-T001–T026 estão implementadas (fundação, US1, US2 e US3); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; captura operacional e leitura Google permanecem pendentes.
+T001–T030 estão implementadas (fundação, US1, US2, US3 e US4); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; captura operacional e leitura Google permanecem pendentes.
 
 ## Módulos e imports reais
 
@@ -31,7 +31,7 @@ flowchart LR
 | captura | Seis abas/66 mínimos, identidades, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
-| quadro-config | Validador genérico; JSON versionado atual tem nove etapas e duas listas vazias; distribuição dos cartões ainda futura | [Configuração](modules/quadro-config.md) |
+| quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
 | projecao | Seleção NTV e campos permitidos, supressão de URLs com credenciais, semanas/dias/formatos, frescor e detalhes por versão/relação | [Projeção](modules/projecao.md) |
 | servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | web | Planejamento/calendário/lista/filtros, gaveta compacta com acordeões por peça, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
@@ -86,7 +86,7 @@ Mesmo ID e serialização já aceitos devolvem `sem_alteracao`, sem novo recibo/
 
 A validação temporal ocorre sob trava, depois de estrutura/conflito/no-op e antes de gravar a candidata: fim até 10 minutos no futuro é permitido, inclusive o limite; excedente é inválida, e ID novo com fim igual ou anterior ao vigente é desatualizada. Ambas confirmam motivo fixo no recibo e mantêm a vigente. GET/releitura/reinício validam estrutura sem reaplicar essa política relativa à importação.
 
-A liberação tenta close e unlink separadamente. Avisos transitórios de liberação acompanham o resultado/erro original, sem alterar o recibo confirmado; o CLI os imprime em stderr e preserva o exit do resultado. A projeção `(estadoLocal, nowIso, mapaQuadro)` usa `nowIso` e `captura.completedAt` para frescor em São Paulo. A classificação dos cartões pelo mapa permanece em US4.
+A liberação tenta close e unlink separadamente. Avisos transitórios de liberação acompanham o resultado/erro original, sem alterar o recibo confirmado; o CLI os imprime em stderr e preserva o exit do resultado. A projeção `(estadoLocal, nowIso, mapaQuadro)` usa `nowIso` e `captura.completedAt` para frescor em São Paulo. US4 aplica mapa validado: publicação > liberação > revisão > etapa, status informativo e fallback Outras por semana.
 
 ## Fluxo HTTP e fronteiras
 
@@ -133,7 +133,7 @@ Planilha mostra fonte, fim da captura, cobertura semanal e motivos resumidos dis
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
-A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra somente quantidade e link para Planilha, onde as tabelas detalhadas serão entregues na US5. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. Classificação/quadro são US4/T027–T030; seis tabelas/Histórico são US5/T031–T034. Produção mantém a mensagem de próxima entrega; iniciador, escala e aceite completo continuam posteriores, com 15 tarefas T027–T041 pendentes.
+A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra somente quantidade e link para Planilha, onde as tabelas detalhadas serão entregues na US5. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. Seis tabelas/Histórico são US5/T031–T034; iniciador, escala e aceite completo continuam posteriores, com 11 tarefas T031–T041 pendentes. PR da US4 e captura operacional permanecem pendentes na validação.
 
 ## Ferramentas de qualidade, evidência e dívidas
 
@@ -152,8 +152,8 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
-| null vira célula vazia na entidade | src/captura.cjs:81; envelope original preservado, mas projeção perde essa distinção |
-| Classificação pelo mapa pendente | src/projecao.cjs:253; mapa recebido, distribuição dos cartões reservada a US4 |
+| null vira célula vazia na entidade | src/captura.cjs:81; envelope preservado; projeção recupera null de etapa_producao antes da triagem para US4; demais campos conservam a normalização |
+| Mapa restrito aos rótulos aprovados | config/quadro-etapas.json; nove etapas e liberação/revisão vazias; testes/demonstrações usam mapa sintético em TEMP |
 | I/O síncrono e validação por consulta | src/snapshot.cjs:20 e src/servidor.cjs:25; escala final ainda não exercitada em T037 |
 | Trava sobrevivente à interrupção | src/snapshot.cjs:72; exige reconciliação manual; aviso de liberação preserva resultado/erro |
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
