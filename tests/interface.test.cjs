@@ -2,12 +2,13 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,mapaQuadroValido,temporario,recalcularHashes,mudarCelula}=require('./fixtures.cjs');
+const {capturaValida,mapaQuadroValido,temporario,recalcularHashes,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const CI=process.env.CI==='true';
 const skip=CI?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
-async function abrir(t,width=1440,captura=true,editar=()=>{}) {
+async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{}) {
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE || 'playwright');
   const root=temporario(t), dataDir=path.join(root,'dados'), quadroConfigPath=path.join(root,'quadro.json');
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroValido()));
@@ -21,6 +22,7 @@ async function abrir(t,width=1440,captura=true,editar=()=>{}) {
     editar(raw);
     promoverCaptura(recalcularHashes(raw),dataDir);
   }
+  depois(dataDir);
   const server=criarServidor({dataDir,quadroConfigPath,port:0});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   t.after(()=>new Promise(resolve=>server.close(resolve)));
@@ -39,6 +41,81 @@ async function abrir(t,width=1440,captura=true,editar=()=>{}) {
   await page.goto(origin);
   return page;
 }
+const estadosSelo=[
+  {nome:'hoje',texto:'Atualizado hoje, 08:05',cor:'verde',fim:'2026-10-04T11:05:00Z',captura:true},
+  {nome:'anterior',texto:'Dados de 02/10',cor:'âmbar',fim:'2026-10-02T12:05:00Z',captura:true},
+  {nome:'falha',texto:'Atualização falhou',cor:'vermelho',fim:'2026-10-04T11:05:00Z',captura:true},
+  {nome:'ausente',texto:'Sem dados',cor:'cinza',captura:false}
+];
+for(const scenario of estadosSelo) {
+  test('U03 selo '+scenario.nome+' aparece nas três telas e abre detalhes locais', {skip}, async t=>{
+    const page=await abrir(t,1440,scenario.captura,raw=>{
+      redefinirHorario(raw,scenario.fim.replace('05:00Z','00:00Z'),scenario.fim);
+    },dir=>{
+      if(scenario.nome==='falha' || !scenario.captura) {
+        const invalid=capturaValida();invalid.tables.Cenas.complete=false;promoverCaptura(invalid,dir);
+      }
+    });
+    await page.locator('#planejamento').waitFor({state:'visible'});
+    for(const tela of ['planejamento','producao','planilha']) {
+      await page.locator('[data-tela="'+tela+'"]').click();
+      assert.equal(await page.locator('#selo').textContent(),scenario.texto);
+      assert.ok((await page.locator('#selo').getAttribute('class')).split(' ').includes(scenario.cor));
+      assert.equal(await page.locator('#selo').isVisible(),true);
+      await page.locator('#selo').click();
+      assert.equal(await page.locator('#planilha').isVisible(),true);
+    }
+    assert.equal(await page.locator('#fonte-captura').textContent(),'Captura pela Central');
+    assert.equal(await page.getByRole('button',{name:'Atualizar dados',exact:true}).isVisible(),true);
+    assert.match(await page.locator('#releitura-aviso').textContent(),/Reler captura local; não consulta o Google/);
+    if(scenario.captura) {
+      assert.match(await page.locator('#fim-captura').textContent(),scenario.nome==='anterior'?/02\/10\/2026.*09:05/:/04\/10\/2026.*08:05/);
+      assert.equal(await page.locator('#periodo-captura').textContent(),'28/09/2026 a 04/10/2026');
+    } else {
+      assert.equal(await page.locator('#fim-captura').textContent(),'Sem captura disponível');
+      assert.equal(await page.locator('#periodo-captura').textContent(),'Cobertura não disponível');
+    }
+    if(scenario.nome==='falha') {
+      assert.match(await page.locator('#avisos-captura').textContent(),/Última importação falhou; captura anterior preservada/);
+      assert.equal(await page.locator('#avisos-captura').getAttribute('role'),'status');
+    }
+  });
+}
+test('U04 celular relê só API local, conserva falha/horário e recupera erro sem apagar dados', {skip}, async t=>{
+  let dataDir;
+  const page=await abrir(t,390,true,raw=>redefinirHorario(raw,'2026-10-04T11:00:00Z','2026-10-04T11:05:00Z'),dir=>{
+    dataDir=dir;const invalid=capturaValida();invalid.tables.Cenas.complete=false;promoverCaptura(invalid,dir);
+  });
+  await page.locator('#planejamento').waitFor({state:'visible'});
+  await page.locator('#selo').click();
+  const seen=[];page.on('request',req=>seen.push({url:new URL(req.url()).pathname,method:req.method()}));
+  const pointer=path.join(dataDir,'atual.json'),before=fs.readFileSync(pointer,'utf8');
+  const button=page.getByRole('button',{name:'Atualizar dados',exact:true});
+  let response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
+  await button.click();await response;
+  await button.waitFor({state:'visible'});
+  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.match(await page.locator('#fim-captura').textContent(),/04\/10\/2026.*08:05/);
+  assert.equal(fs.readFileSync(pointer,'utf8'),before);
+  assert.equal(await page.locator('#planilha').isVisible(),true);
+  const newer=capturaValida();newer.capturaId='captura-releitura';
+  redefinirHorario(newer,'2026-10-04T11:20:00Z','2026-10-04T11:30:00Z');promoverCaptura(newer,dataDir);
+  response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
+  await button.click();await response;
+  await page.getByRole('button',{name:'Atualizado hoje, 08:30',exact:true}).waitFor();
+  assert.match(await page.locator('#fim-captura').textContent(),/08:30/);
+  assert.ok(!(await page.locator('#avisos-captura').textContent()).includes('Última importação falhou'));
+  const saved=fs.readFileSync(pointer,'utf8');fs.writeFileSync(pointer,'{');
+  response=page.waitForResponse(r=>r.url().endsWith('/api/visao') && r.status()===503);
+  await button.click();await response;
+  await page.locator('#erro').waitFor({state:'visible'});
+  assert.equal(await page.locator('#selo').textContent(),'Atualizado hoje, 08:30');
+  assert.equal(await page.locator('#planilha').isVisible(),true);
+  assert.equal(await button.isEnabled(),true);
+  fs.writeFileSync(pointer,saved);
+  assert.deepEqual(seen,[{url:'/api/visao',method:'GET'},{url:'/api/visao',method:'GET'},{url:'/api/visao',method:'GET'}]);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+});
 test('U01 menu exato, objetivo mensal indefinido e dia múltiplo', {skip}, async t => {
   const page=await abrir(t);
   await page.locator('#planejamento').waitFor({state:'visible'});
