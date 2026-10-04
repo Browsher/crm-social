@@ -64,6 +64,14 @@ Como o índice de um álbum, esta página indica onde encontrar decisões, códi
 | [Estrategista mensal proposto](design/prototype/estrategista-mensal-proposto.md) | Perfil futuro da 003, sem instalação |
 | [Recibo da preparação](PREPARACAO-2026-10-02.md) | Estado histórico, sem transformar planejamento em integração |
 
+## Evidências sanitizadas do PR #6
+
+Capturadas no head ab3b036, com fixtures fictícias e armazenamento temporário; interpretação e limites em [validação](../specs/001-consulta-local-producao/validacao.md).
+
+- [node:test completo, 67 PASS e nove casos de UI](reports/001-pr6-node-test.txt).
+- [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
+- [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
+
 ## Referências de desenvolvimento preservadas
 
 | Documento / catálogo | Papel |
@@ -79,6 +87,6 @@ Como o índice de um álbum, esta página indica onde encontrar decisões, códi
 | [Git feature](../.specify/extensions/git/commands/speckit.git.feature.md) / [validate](../.specify/extensions/git/commands/speckit.git.validate.md) / [commit](../.specify/extensions/git/commands/speckit.git.commit.md) | Referências oficiais; documentação não concede autorização de Git |
 | [Templates do Spec Kit](../.specify/templates/) | Fontes oficiais de scaffold, sem alteração |
 
-Este índice cobre os Markdown autorais de docs/specs, governança/regra curta e referências locais pertinentes. Templates e catálogos de skills são ferramentas preservadas, não uma segunda especificação. Dados privados de data/, dependências e relatórios gerados ficam fora do índice.
+Este índice cobre os Markdown autorais de docs/specs, governança/regra curta e referências locais pertinentes, mais as três evidências sanitizadas acima. Templates e catálogos de skills são ferramentas preservadas, não uma segunda especificação. Dados privados de data/, dependências e demais relatórios temporários ficam fora do índice.
 
 Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; tabelas de campos/rotas/env; Mermaid de imports/persistência; PT-BR com acentos e caminhos relativos. Atualizar na mesma tarefa, separando planejado, implementado, testado e integrado.

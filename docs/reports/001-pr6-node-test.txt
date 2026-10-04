@@ -1,0 +1,430 @@
+TAP version 13
+# Subtest: D01 captura válida normaliza nomes e conserva extras só no privado
+ok 1 - D01 captura válida normaliza nomes e conserva extras só no privado
+  ---
+  duration_ms: 11.1317
+  type: 'test'
+  ...
+# Subtest: D01 cabeçalhos reordenados e aba só com cabeçalho são válidos
+ok 2 - D01 cabeçalhos reordenados e aba só com cabeçalho são válidos
+  ---
+  duration_ms: 3.3312
+  type: 'test'
+  ...
+# Subtest: D02 mínimo ausente identifica aba/campo sem despejar células
+ok 3 - D02 mínimo ausente identifica aba/campo sem despejar células
+  ---
+  duration_ms: 1.8849
+  type: 'test'
+  ...
+# Subtest: D02 qualquer cabeçalho não vazio duplicado invalida
+ok 4 - D02 qualquer cabeçalho não vazio duplicado invalida
+  ---
+  duration_ms: 1.0773
+  type: 'test'
+  ...
+# Subtest: D03 ID ausente/duplicado ou de tipo errado invalida; vazias são ignoradas
+ok 5 - D03 ID ausente/duplicado ou de tipo errado invalida; vazias são ignoradas
+  ---
+  duration_ms: 3.3738
+  type: 'test'
+  ...
+# Subtest: D04 aba ausente, extra ou complete false impede promoção
+ok 6 - D04 aba ausente, extra ou complete false impede promoção
+  ---
+  duration_ms: 1.8507
+  type: 'test'
+  ...
+# Subtest: D04 range/metadados divergentes e retângulo além das dimensões invalidam
+ok 7 - D04 range/metadados divergentes e retângulo além das dimensões invalidam
+  ---
+  duration_ms: 5.0363
+  type: 'test'
+  ...
+# Subtest: D04 escalar JSON inválido e matriz malformada são rejeitados
+ok 8 - D04 escalar JSON inválido e matriz malformada são rejeitados
+  ---
+  duration_ms: 3.6581
+  type: 'test'
+  ...
+# Subtest: D05 hashes discordantes, adulterados ou malformados invalidam
+ok 9 - D05 hashes discordantes, adulterados ou malformados invalidam
+  ---
+  duration_ms: 2.6957
+  type: 'test'
+  ...
+# Subtest: D05 vazios finais têm normalização canônica idêntica
+ok 10 - D05 vazios finais têm normalização canônica idêntica
+  ---
+  duration_ms: 1.2595
+  type: 'test'
+  ...
+# Subtest: D05 identidade, schema, marca/fonte e tempos são estritos
+ok 11 - D05 identidade, schema, marca/fonte e tempos são estritos
+  ---
+  duration_ms: 3.7225
+  type: 'test'
+  ...
+# Subtest: D01 etapa desconhecida é válida e conservada
+ok 12 - D01 etapa desconhecida é válida e conservada
+  ---
+  duration_ms: 1.6976
+  type: 'test'
+  ...
+# Subtest: C01 argumento ausente e URL são recusados antes de qualquer I/O
+ok 13 - C01 argumento ausente e URL são recusados antes de qualquer I/O
+  ---
+  duration_ms: 943.6978
+  type: 'test'
+  ...
+# Subtest: C02 arquivo ausente e JSON inválido não despejam células ou caminho
+ok 14 - C02 arquivo ausente e JSON inválido não despejam células ou caminho
+  ---
+  duration_ms: 490.8947
+  type: 'test'
+  ...
+# Subtest: C03 CLI real promove, repete sem duplicar e rejeita parcial/conflito
+ok 15 - C03 CLI real promove, repete sem duplicar e rejeita parcial/conflito
+  ---
+  duration_ms: 754.3107
+  type: 'test'
+  ...
+# Subtest: C04 arquivo ausente confirma falha sem inventar captura nem expor caminho
+ok 16 - C04 arquivo ausente confirma falha sem inventar captura nem expor caminho
+  ---
+  duration_ms: 192.492
+  type: 'test'
+  ...
+# Subtest: C04 JSON quebrado confirma falha e preserva bytes e horário da última válida
+ok 17 - C04 JSON quebrado confirma falha e preserva bytes e horário da última válida
+  ---
+  duration_ms: 320.9909
+  type: 'test'
+  ...
+# Subtest: C04 armazenamento indisponível informa que a falha de entrada não foi registrada
+ok 18 - C04 armazenamento indisponível informa que a falha de entrada não foi registrada
+  ---
+  duration_ms: 126.3121
+  type: 'test'
+  ...
+# Subtest: C05 duas instâncias reais não perdem recibos nem fazem rollback da captura
+ok 19 - C05 duas instâncias reais não perdem recibos nem fazem rollback da captura
+  ---
+  duration_ms: 694.614
+  type: 'test'
+  ...
+# Subtest: U01 menu exato, objetivo mensal indefinido e dia múltiplo
+ok 20 - U01 menu exato, objetivo mensal indefinido e dia múltiplo
+  ---
+  duration_ms: 1897.1532
+  type: 'test'
+  ...
+# Subtest: U01 lista/filtros conservam identidades e sem data não depende do mês
+ok 21 - U01 lista/filtros conservam identidades e sem data não depende do mês
+  ---
+  duration_ms: 1025.8812
+  type: 'test'
+  ...
+# Subtest: U02 celular começa em lista/menu recolhido e não tem corte horizontal
+ok 22 - U02 celular começa em lista/menu recolhido e não tem corte horizontal
+  ---
+  duration_ms: 706.9276
+  type: 'test'
+  ...
+# Subtest: U02 desktop sem corte e ausência real sem fallback de demonstração
+ok 23 - U02 desktop sem corte e ausência real sem fallback de demonstração
+  ---
+  duration_ms: 497.9749
+  type: 'test'
+  ...
+# Subtest: U01 peça remarcada fora do período semanal aparece no mês civil em ambas as vistas
+ok 24 - U01 peça remarcada fora do período semanal aparece no mês civil em ambas as vistas
+  ---
+  duration_ms: 710.6183
+  type: 'test'
+  ...
+# Subtest: U-review rótulos conhecidos são legíveis; desconhecido e API preservam o original
+ok 25 - U-review rótulos conhecidos são legíveis; desconhecido e API preservam o original
+  ---
+  duration_ms: 560.607
+  type: 'test'
+  ...
+# Subtest: U-review mês tem inicial maiúscula e preposição minúscula na apresentação
+ok 26 - U-review mês tem inicial maiúscula e preposição minúscula na apresentação
+  ---
+  duration_ms: 590.2166
+  type: 'test'
+  ...
+# Subtest: U-review calendário elimina semanas inteiras fora do mês, inclusive fevereiro de quatro semanas
+ok 27 - U-review calendário elimina semanas inteiras fora do mês, inclusive fevereiro de quatro semanas
+  ---
+  duration_ms: 675.1537
+  type: 'test'
+  ...
+# Subtest: U-review fundo lateral cobre a página longa e a página menor que a janela
+ok 28 - U-review fundo lateral cobre a página longa e a página menor que a janela
+  ---
+  duration_ms: 508.3585
+  type: 'test'
+  ...
+# Subtest: P-review I1 captura local usa estado provisório, sem afirmar frescor da US2
+ok 29 - P-review I1 captura local usa estado provisório, sem afirmar frescor da US2
+  ---
+  duration_ms: 76.8931
+  type: 'test'
+  ...
+# Subtest: P-review I1 falha posterior avisa sem apagar captura; nova completa encerra aviso
+ok 30 - P-review I1 falha posterior avisa sem apagar captura; nova completa encerra aviso
+  ---
+  duration_ms: 296.8935
+  type: 'test'
+  ...
+# Subtest: P-base conserva NTV uma vez, exclui outra marca sem filtro de elegibilidade
+ok 31 - P-base conserva NTV uma vez, exclui outra marca sem filtro de elegibilidade
+  ---
+  duration_ms: 51.9147
+  type: 'test'
+  ...
+# Subtest: P-base envelope público não expõe metadados, hashes, extras ou mapa bruto
+ok 32 - P-base envelope público não expõe metadados, hashes, extras ou mapa bruto
+  ---
+  duration_ms: 53.1308
+  type: 'test'
+  ...
+# Subtest: P-base sem captura não cria demonstração e conserva Histórico permitido
+ok 33 - P-base sem captura não cria demonstração e conserva Histórico permitido
+  ---
+  duration_ms: 37.6784
+  type: 'test'
+  ...
+# Subtest: P-base saída é independente do estado privado, sem alterar entrada
+ok 34 - P-base saída é independente do estado privado, sem alterar entrada
+  ---
+  duration_ms: 64.063
+  type: 'test'
+  ...
+# Subtest: P-base célula mínima com token/caminho indevido é suprimida com aviso
+ok 35 - P-base célula mínima com token/caminho indevido é suprimida com aviso
+  ---
+  duration_ms: 61.3204
+  type: 'test'
+  ...
+# Subtest: P-base URL legítima permanece texto e não é confundida com drive Windows
+ok 36 - P-base URL legítima permanece texto e não é confundida com drive Windows
+  ---
+  duration_ms: 137.1392
+  type: 'test'
+  ...
+# Subtest: P01 preserva quatro peças históricas e calendário civil entre meses
+ok 37 - P01 preserva quatro peças históricas e calendário civil entre meses
+  ---
+  duration_ms: 50.3583
+  type: 'test'
+  ...
+# Subtest: P02 formatos vêm do slot, sem mudar tipo original; desconhecido permanece Outro
+ok 38 - P02 formatos vêm do slot, sem mudar tipo original; desconhecido permanece Outro
+  ---
+  duration_ms: 46.6354
+  type: 'test'
+  ...
+# Subtest: P02 datas inválidas/seriais/vazias ficam Sem data, independentemente do mês
+ok 39 - P02 datas inválidas/seriais/vazias ficam Sem data, independentemente do mês
+  ---
+  duration_ms: 46.9845
+  type: 'test'
+  ...
+# Subtest: P03 peça órfã continua em Semana não identificada, sem período inventado
+ok 40 - P03 peça órfã continua em Semana não identificada, sem período inventado
+  ---
+  duration_ms: 40.0744
+  type: 'test'
+  ...
+# Subtest: P03 ordem por ID é ordinal e não segue a ordem física das linhas
+ok 41 - P03 ordem por ID é ordinal e não segue a ordem física das linhas
+  ---
+  duration_ms: 40.1162
+  type: 'test'
+  ...
+# Subtest: P03 início semanal inválido deixa cobertura null e objetivo mensal indefinido
+ok 42 - P03 início semanal inválido deixa cobertura null e objetivo mensal indefinido
+  ---
+  duration_ms: 40.8347
+  type: 'test'
+  ...
+# Subtest: Q01 JSON versionado tem exatamente nove etapas e prioridades vazias
+ok 43 - Q01 JSON versionado tem exatamente nove etapas e prioridades vazias
+  ---
+  duration_ms: 5.9183
+  type: 'test'
+  ...
+# Subtest: Q02 coluna inexistente ou reservada é erro claro
+ok 44 - Q02 coluna inexistente ou reservada é erro claro
+  ---
+  duration_ms: 1.5709
+  type: 'test'
+  ...
+# Subtest: Q02 rótulo repetido informa campo e os dois índices
+ok 45 - Q02 rótulo repetido informa campo e os dois índices
+  ---
+  duration_ms: 0.9295
+  type: 'test'
+  ...
+# Subtest: Q02 rótulo vazio e schema/tipos inválidos são rejeitados
+ok 46 - Q02 rótulo vazio e schema/tipos inválidos são rejeitados
+  ---
+  duration_ms: 1.1904
+  type: 'test'
+  ...
+# Subtest: Q03 arquivo ausente/JSON malformado impede carregar, sem fallback
+ok 47 - Q03 arquivo ausente/JSON malformado impede carregar, sem fallback
+  ---
+  duration_ms: 10.6912
+  type: 'test'
+  ...
+# Subtest: Q03 acrescentar rótulo só no JSON muda carregamento sem editar código
+ok 48 - Q03 acrescentar rótulo só no JSON muda carregamento sem editar código
+  ---
+  duration_ms: 22.526
+  type: 'test'
+  ...
+# Subtest: Q02 mesmo rótulo em campos diferentes tem identidades diferentes
+ok 49 - Q02 mesmo rótulo em campos diferentes tem identidades diferentes
+  ---
+  duration_ms: 0.5979
+  type: 'test'
+  ...
+# Subtest: H01 consulta real seleciona campos e não escreve no estado
+ok 50 - H01 consulta real seleciona campos e não escreve no estado
+  ---
+  duration_ms: 149.538
+  type: 'test'
+  ...
+# Subtest: H01 ausência estruturada não vira dados de demonstração
+ok 51 - H01 ausência estruturada não vira dados de demonstração
+  ---
+  duration_ms: 36.6973
+  type: 'test'
+  ...
+# Subtest: H02 três estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos
+ok 52 - H02 três estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos
+  ---
+  duration_ms: 206.1943
+  type: 'test'
+  ...
+# Subtest: H03 métodos de escrita são 405, sem endpoint de importação
+ok 53 - H03 métodos de escrita são 405, sem endpoint de importação
+  ---
+  duration_ms: 69.7804
+  type: 'test'
+  ...
+# Subtest: H03 privados e traversal literal/codificado são 404
+ok 54 - H03 privados e traversal literal/codificado são 404
+  ---
+  duration_ms: 76.5895
+  type: 'test'
+  ...
+# Subtest: H04 Host e Origin externos são recusados, sem CORS externo
+ok 55 - H04 Host e Origin externos são recusados, sem CORS externo
+  ---
+  duration_ms: 90.2043
+  type: 'test'
+  ...
+# Subtest: H04 mapa inválido impede criar servidor; query nunca seleciona configuração
+ok 56 - H04 mapa inválido impede criar servidor; query nunca seleciona configuração
+  ---
+  duration_ms: 83.6427
+  type: 'test'
+  ...
+# Subtest: S01 ausência é estruturada e leitura não escreve
+ok 57 - S01 ausência é estruturada e leitura não escreve
+  ---
+  duration_ms: 11.8283
+  type: 'test'
+  ...
+# Subtest: S02 promove captura/recibo antes de confirmar; mesmos bytes não duplicam
+ok 58 - S02 promove captura/recibo antes de confirmar; mesmos bytes não duplicam
+  ---
+  duration_ms: 115.0413
+  type: 'test'
+  ...
+# Subtest: S02 repetição antiga não volta a captura vigente nem encerra falha posterior
+ok 59 - S02 repetição antiga não volta a captura vigente nem encerra falha posterior
+  ---
+  duration_ms: 237.3965
+  type: 'test'
+  ...
+# Subtest: S03 parcial e conflito conservam bytes e captura anterior
+ok 60 - S03 parcial e conflito conservam bytes e captura anterior
+  ---
+  duration_ms: 109.4472
+  type: 'test'
+  ...
+# Subtest: S03 falha anterior à primeira captura mantém null e recibo confirmado
+ok 61 - S03 falha anterior à primeira captura mantém null e recibo confirmado
+  ---
+  duration_ms: 49.5845
+  type: 'test'
+  ...
+# Subtest: S04 interrupção antes do estado deixa recibo órfão e retry promove de verdade
+ok 62 - S04 interrupção antes do estado deixa recibo órfão e retry promove de verdade
+  ---
+  duration_ms: 159.6383
+  type: 'test'
+  ...
+# Subtest: S04 uma falha de promoção recuperável confirma falha, sem promover nova captura
+ok 63 - S04 uma falha de promoção recuperável confirma falha, sem promover nova captura
+  ---
+  duration_ms: 90.9238
+  type: 'test'
+  ...
+# Subtest: S04 armazenamento indisponível dá erro explícito sem fabricar durabilidade
+ok 64 - S04 armazenamento indisponível dá erro explícito sem fabricar durabilidade
+  ---
+  duration_ms: 8.0233
+  type: 'test'
+  ...
+# Subtest: S-review M1 close falha, mas unlink é tentado e o recibo completo é preservado
+ok 65 - S-review M1 close falha, mas unlink é tentado e o recibo completo é preservado
+  ---
+  duration_ms: 51.9006
+  type: 'test'
+  ...
+# Subtest: S-review M1 unlink falha sem transformar o recibo de validação em erro da trava
+ok 66 - S-review M1 unlink falha sem transformar o recibo de validação em erro da trava
+  ---
+  duration_ms: 49.0098
+  type: 'test'
+  ...
+# Subtest: S-review M1 erros de close/unlink não substituem o erro original da operação
+ok 67 - S-review M1 erros de close/unlink não substituem o erro original da operação
+  ---
+  duration_ms: 14.4871
+  type: 'test'
+  ...
+1..67
+# tests 67
+# suites 0
+# pass 67
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7514.9005
+# start of coverage report
+# ----------------------------------------------------------------------
+# file                  | line % | branch % | funcs % | uncovered lines
+# ----------------------------------------------------------------------
+# scripts               |        |          |         |
+#  importar-captura.cjs | 100.00 |    60.00 |  100.00 |
+# src                   |        |          |         |
+#  captura.cjs          | 100.00 |    96.83 |  100.00 |
+#  projecao.cjs         | 100.00 |    95.95 |  100.00 |
+#  quadro-config.cjs    | 100.00 |   100.00 |  100.00 |
+#  servidor.cjs         |  66.07 |    80.95 |   66.67 | 36-54
+#  snapshot.cjs         |  98.41 |    84.93 |  100.00 | 28-29
+# tests                 |        |          |         |
+#  fixtures.cjs         |  98.86 |    97.06 |   94.44 | 86
+# ----------------------------------------------------------------------
+# all files             |  96.06 |    91.75 |   97.25 |
+# ----------------------------------------------------------------------
+# end of coverage report
