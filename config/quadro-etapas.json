@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "liberacaoPronta": [],
+  "revisaoEmAndamento": [],
+  "etapas": [
+    {"rotulo": "arte_aprovada", "coluna": "Visual"},
+    {"rotulo": "prompts_imagem_prontos", "coluna": "Mídia"},
+    {"rotulo": "imagens_em_producao", "coluna": "Mídia"},
+    {"rotulo": "voz_pronta_para_gerar", "coluna": "Mídia"},
+    {"rotulo": "voz_em_producao", "coluna": "Mídia"},
+    {"rotulo": "clipes_prontos_para_gerar", "coluna": "Mídia"},
+    {"rotulo": "clipes_em_producao", "coluna": "Mídia"},
+    {"rotulo": "montagem_pronta", "coluna": "Mídia"},
+    {"rotulo": "montagem_em_producao", "coluna": "Mídia"}
+  ]
+}
