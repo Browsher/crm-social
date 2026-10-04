@@ -1,6 +1,6 @@
 const fs=require('node:fs');
 const path=require('node:path');
-const {promoverCaptura}=require('../src/snapshot.cjs');
+const {promoverCaptura,registrarFalhaEntrada}=require('../src/snapshot.cjs');
 
 function argumentos(argv) {
   if (![1,3].includes(argv.length) || !argv[0] || argv[0].startsWith('--')) throw new Error('argumentos: informe um caminho local');
@@ -11,13 +11,19 @@ function argumentos(argv) {
 }
 function lerEntrada(input) {
   let bytes;
-  try { bytes=fs.readFileSync(input,'utf8'); } catch { throw new Error('arquivo local ausente ou ilegível'); }
-  try { return JSON.parse(bytes); } catch { throw new Error('JSON inválido no arquivo local'); }
+  try { bytes=fs.readFileSync(input,'utf8'); } catch { throw Object.assign(new Error('arquivo local ausente ou ilegível'),{code:'ENTRADA_ARQUIVO'}); }
+  try { return JSON.parse(bytes); } catch { throw Object.assign(new Error('JSON inválido no arquivo local'),{code:'ENTRADA_JSON'}); }
+}
+function importarArquivo(input,dataDir) {
+  let raw;
+  try { raw=lerEntrada(input); }
+  catch (e) { return registrarFalhaEntrada(dataDir,e.code); }
+  return promoverCaptura(raw,dataDir);
 }
 function main(argv) {
   try {
     const {input,dataDir}=argumentos(argv);
-    const result=promoverCaptura(lerEntrada(input),dataDir);
+    const result=importarArquivo(input,dataDir);
     if (result.resultado==='falhou') {
       process.stderr.write('Importação falhou: '+result.motivoResumo+'\n');
       return 1;

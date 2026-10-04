@@ -64,7 +64,36 @@ function motivoSeguro(error) {
   if (error.code) return 'persistência: falha na gravação';
   return error.message;
 }
-function promoverCaptura(raw,dataDir) {
+function exclusiva(dataDir,operation) {
+  const lock=path.join(dataDir,'.importacao.lock');
+  let fd;
+  try { fs.mkdirSync(dataDir,{recursive:true}); }
+  catch { throw new Error('persistência: falha não pôde ser registrada'); }
+  try { fd=fs.openSync(lock,'wx'); }
+  catch (e) {
+    throw new Error(e.code==='EEXIST'?'persistência: importação em andamento; confira a instância antes de tentar novamente':'persistência: falha não pôde ser registrada');
+  }
+  try {
+    try { fs.writeFileSync(fd,JSON.stringify({pid:process.pid,iniciadaEm:new Date().toISOString()}),'utf8'); fs.fsyncSync(fd); }
+    catch { throw new Error('persistência: falha não pôde ser registrada'); }
+    return operation();
+  } finally {
+    try { fs.closeSync(fd); fs.unlinkSync(lock); }
+    catch { throw new Error('persistência: falha ao liberar a trava; confira o estado local'); }
+  }
+}
+function registrarFalhaEntrada(dataDir,codigo) {
+  const motivos={ENTRADA_ARQUIVO:'arquivo local ausente ou ilegível',ENTRADA_JSON:'JSON inválido no arquivo local'};
+  if (!Object.hasOwn(motivos,codigo)) throw new Error('persistência: tipo de falha de entrada desconhecido');
+  return exclusiva(dataDir,()=>{
+    try {
+      prepararDiretorios(dataDir);
+      const before=lerEstado(dataDir);
+      return confirmar(dataDir,before.estado,recibo(null,'falhou',motivos[codigo]),before.estado.capturaId);
+    } catch { throw new Error('persistência: falha não pôde ser registrada'); }
+  });
+}
+function promoverComTrava(raw,dataDir) {
   let before;
   try { prepararDiretorios(dataDir); before=lerEstado(dataDir); }
   catch { throw new Error('persistência: falha não pôde ser registrada'); }
@@ -81,4 +110,5 @@ function promoverCaptura(raw,dataDir) {
     catch { throw new Error('persistência: falha não pôde ser registrada'); }
   }
 }
-module.exports={promoverCaptura,lerEstado};
+function promoverCaptura(raw,dataDir) { return exclusiva(dataDir,()=>promoverComTrava(raw,dataDir)); }
+module.exports={promoverCaptura,lerEstado,registrarFalhaEntrada};

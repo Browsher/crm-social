@@ -2,12 +2,12 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,mapaQuadroValido,temporario,recalcularHashes}=require('./fixtures.cjs');
+const {capturaValida,mapaQuadroValido,temporario,recalcularHashes,mudarCelula}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const CI=process.env.CI==='true';
 const skip=CI?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
-async function abrir(t,width=1440,captura=true) {
+async function abrir(t,width=1440,captura=true,editar=()=>{}) {
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE || 'playwright');
   const root=temporario(t), dataDir=path.join(root,'dados'), quadroConfigPath=path.join(root,'quadro.json');
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroValido()));
@@ -18,6 +18,7 @@ async function abrir(t,width=1440,captura=true) {
     row[table.values[0].indexOf('titulo')]='Sem data sintética';
     row[table.values[0].indexOf('data_prevista')]='';
     table.values.push(row);
+    editar(raw);
     promoverCaptura(recalcularHashes(raw),dataDir);
   }
   const server=criarServidor({dataDir,quadroConfigPath,port:0});
@@ -81,4 +82,17 @@ test('U02 desktop sem corte e ausência real sem fallback de demonstração', {s
   assert.equal(await page.locator('[data-producao-id]').count(),0);
   assert.equal(await page.getByRole('button',{name:'Sem dados',exact:true}).count(),1);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+});
+test('U01 peça remarcada fora do período semanal aparece no mês civil em ambas as vistas', {skip}, async t => {
+  const page=await abrir(t,1440,true,raw=>mudarCelula(raw,'Produções',3,'data_prevista','2026-11-10'));
+  assert.equal(await page.locator('#calendario [data-producao-id="peca-3"]').count(),0);
+  await page.getByRole('button',{name:'Lista',exact:true}).click();
+  assert.equal(await page.locator('#lista [data-producao-id="peca-3"]').count(),0);
+  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  await page.getByRole('button',{name:'Calendário',exact:true}).click();
+  assert.equal(await page.locator('#calendario [data-producao-id="peca-3"]').count(),1);
+  await page.getByRole('button',{name:'Lista',exact:true}).click();
+  assert.equal(await page.locator('#lista [data-producao-id="peca-3"]').count(),1);
+  assert.match(await page.locator('#lista').textContent(),/Conexões do cotidiano/);
+  assert.equal(await page.getByRole('button',{name:'1 sem data',exact:true}).count(),1);
 });

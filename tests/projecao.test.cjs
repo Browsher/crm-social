@@ -56,6 +56,20 @@ test('P-base célula mínima com token/caminho indevido é suprimida com aviso',
   assert.ok(view.avisos.some(a=>a.campo==='legenda'));
   assert.ok(view.avisos.some(a=>a.campo==='tema'));
 });
+test('P-base URL legítima permanece texto e não é confundida com drive Windows', t => {
+  const urls=['https://docs.google.com/document/d/exemplo-sintetico','https://drive.google.com/file/d/exemplo-sintetico','http://exemplo.invalid/referencia'];
+  for (const url of urls) {
+    const raw=capturaValida();
+    mudarCelula(raw,'Produções',1,'titulo','Referência '+url);
+    mudarCelula(raw,'Produções',1,'url_video_final',url);
+    mudarCelula(raw,'Produções',1,'legenda',JSON.stringify({url}));
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.equal(view.producoes[0].titulo,'Referência '+url);
+    assert.equal(view.producoes[0].url_video_final,url);
+    assert.equal(view.producoes[0].legenda,JSON.stringify({url}));
+    assert.ok(!view.avisos.some(a=>a.motivo==='conteúdo sensível suprimido'));
+  }
+});
 test('P01 preserva quatro peças históricas e calendário civil entre meses', t => {
   const view=projetarVisao(estado(capturaValida(),t),NOW,mapaQuadroValido());
   assert.equal(view.producoes.length,4);

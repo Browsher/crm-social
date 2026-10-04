@@ -70,15 +70,16 @@ function row(p) {
   });
   return el;
 }
-function semanaVisivel(week) {
-  if (!week.periodo.inicio) return true;
-  return week.periodo.inicio.slice(0,7)<=state.mes && week.periodo.fim.slice(0,7)>=state.mes;
+function pecaVisivel(p,week) {
+  if (!p.dataCivil || p.dataCivil.startsWith(state.mes)) return true;
+  if (!week.periodo.inicio) return false;
+  const cruzaMes=week.periodo.inicio.slice(0,7)<=state.mes && week.periodo.fim.slice(0,7)>=state.mes;
+  return cruzaMes && p.dataCivil>=week.periodo.inicio && p.dataCivil<=week.periodo.fim;
 }
 function lista(semData=false) {
   const groups=[];
   for (const week of state.view.semanas) {
-    if (!semData && !semanaVisivel(week)) continue;
-    const pecas=idsParaPecas(week.ids).filter(p=>semData?p.dataCivil===null:aceito(p));
+    const pecas=idsParaPecas(week.ids).filter(p=>semData?p.dataCivil===null:aceito(p) && pecaVisivel(p,week));
     if (!pecas.length) continue;
     const group=node('section',undefined,'agenda-week'), header=node('header');
     header.append(node('h3',week.tema || 'Tema não informado'),node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):'Período não identificado'));

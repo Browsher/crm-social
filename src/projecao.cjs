@@ -2,7 +2,7 @@ const {CAMPOS}=require('./captura.cjs');
 const {COLUNAS}=require('./quadro-config.cjs');
 const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 // Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
-const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|[A-Za-z]:[\\/]|\/(?:home|Users)\//;
+const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
 function selecionar(record,fields,nome,index,avisos) {
   return Object.fromEntries(fields.map(field=>{
     const value=record[field] ?? '';
