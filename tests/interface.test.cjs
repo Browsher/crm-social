@@ -196,6 +196,32 @@ const estadosSelo=[
   {nome:'ausente',texto:'Sem dados',cor:'cinza',captura:false}
 ];
 
+test('U-regressao gaveta mantém o texto ao redor da credencial sem recebê-la', {skip}, async t=>{
+  const url='https://pessoa-ficticia:senha-ficticia@docs.google.com/x';
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Produções',3,'legenda','Leia ('+url+'). Depois siga @perfil.');
+    mudarCelula(raw,'Arquivos',2,'origens_json',JSON.stringify({texto:'Veja '+url+' antes de revisar',contato:'equipe@example.invalid'}));
+  },()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  const texto=page.locator('#dia [data-peca="peca-3"] details[data-textos]');
+  await texto.locator('summary').click();
+  assert.equal(await texto.locator(':scope > p').first().textContent(),'Leia ([conteúdo suprimido]). Depois siga @perfil.');
+  assert.doesNotMatch(await page.locator('#dia').textContent(),/pessoa-ficticia|senha-ficticia/);
+  const response=await page.request.get(new URL('/api/visao',page.url()).href);
+  const body=await response.text();assert.doesNotMatch(body,/pessoa-ficticia|senha-ficticia/);
+  const view=JSON.parse(body),arquivo=view.producoes.find(p=>p.producao_id==='peca-3').detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina');
+  assert.equal(arquivo.origens_json,JSON.stringify({texto:'Veja [conteúdo suprimido] antes de revisar',contato:'equipe@example.invalid'}));
+});
+
+test('U-regressao legenda com domínio puro e @perfil permanece inteira na gaveta', {skip}, async t=>{
+  const literal='Saiba mais em https://exemplo.invalid e siga @perfil';
+  const page=await abrir(t,390,true,raw=>mudarCelula(raw,'Produções',3,'legenda',literal),()=>{},capturaDetalhada);
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
+  const texto=page.locator('#dia [data-peca="peca-3"] details[data-textos]');
+  await texto.locator('summary').click();
+  assert.equal(await texto.locator(':scope > p').first().textContent(),literal);
+});
+
 test('U-ultima I1 avisos da própria linha entram na contagem e no link da gaveta', {skip}, async t=>{
   for(const [aba,row,campo,value] of [
     ['Produções',3,'data_prevista',''],['Produções',3,'semana_id','semana-ausente'],

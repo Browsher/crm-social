@@ -225,9 +225,14 @@ preservando dados privados apenas neste computador.
   conserva Publicada com aviso do registro, sem comprovar publicação remota.
 - Configuração ausente/inválida não inicia o servidor com fallback silencioso.
 - Texto livre, JSON e URL são dados; nenhum deles executa HTML, instrução ou ação operacional.
-- Userinfo embutido em qualquer texto mínimo selecionado ou recibo público também
-  é suprimido usando new URL; JSON decodificado é percorrido como dados, sem ampliar
-  campos HTTP. Validade original de origens_json permanece privada e não é confundida
+- Por decisão do autor, texto livre mínimo e recibo público conservam frase e espaços:
+  somente pedaço HTTP(S) separado por espaços em branco que `new URL` identifica
+  com usuário/senha vira **[conteúdo suprimido]**, mantendo pontuação de contorno.
+  Não há promessa de detectar outros esquemas, URL relativa, espaços em userinfo
+  ou forma fora desse pedaço. Segredo/caminho conhecido continua suprimindo o texto
+  reconhecido inteiro. JSON válido é dado, sem ampliar campos HTTP: só tokens de
+  string alterados são reserializados, preservando os demais bytes, números, ordem,
+  espaços e escapes legítimos. Validade original de origens_json permanece privada e não é confundida
   com o marcador de supressão. Avisos relacionados já globais entram no contador
   da peça afetada, sem duplicar o conjunto global. Arquivo ligado sem link seguro
   mostra link não permitido; Texto registrado usa Página/Cena número e versão,
@@ -238,12 +243,14 @@ preservando dados privados apenas neste computador.
 - Dados de outra marca não aparecem como produção ou exemplos NTV.
 - Coluna mínima não autoriza expor tokens, credenciais ou caminhos locais embutidos em célula;
   conteúdo sensível indevido recebe aviso e supressão localizada, preservado na captura privada.
-- URL com usuário ou senha em Arquivos.url/Produções.url_video_final vira
+- Nos campos dedicados, URL com usuário ou senha em Arquivos.url/Produções.url_video_final vira
   **[conteúdo suprimido]** pela análise de `new URL`, sem valor no aviso;
   JSON HTTP e gaveta não contêm as partes da credencial, inclusive quando codificadas.
-- Parsing de URL não vazia que falha não devolve valor bruto: marcador e motivo
+- Nos campos de URL dedicados, parsing de URL não vazia que falha não devolve valor bruto: marcador e motivo
   **URL inválida suprimida** preservam apenas o original privado; vazio/somente
   espaços não causa supressão nem aviso de URL inválida.
+- Quando a redação de texto já substituiu um pedaço HTTP(S) credenciado em um
+  campo de URL dedicado, o restante da frase também é preservado, sem a credencial.
 
 ## Requirements
 

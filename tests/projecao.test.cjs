@@ -93,18 +93,13 @@ test('P-round2 I1 avisos selecionados de unidades/arquivos/revisões/documentos 
   assert.equal(suprimidos.length,6);
 });
 
-test('P-round2 m4 userinfo em texto livre é suprimido em todas as tabelas sem ecoar a URL', t=>{
+test('P-round2 m4 pedaço HTTP(S) com userinfo é redigido nas tabelas preservando o texto', t=>{
   const campos=[['Semanas',1,'objetivo'],['Produções',3,'titulo'],['Páginas',2,'corpo'],
     ['Cenas',2,'texto_tela'],['Arquivos',2,'papel'],['Revisoes',2,'motivo']];
   const urls=['https://usuario-sintetico:senha-sintetica@docs.google.com/x',
     'https://usuario-sintetico@docs.google.com','https://:senha-sintetica@docs.google.com',
     'HTTPS://usuario-sintetico:senha-sintetica@docs.google.com',
-    'https:usuario-sintetico:senha-sintetica@docs.google.com',
-    'https://usuario%2Dsintetico:senha%2Dsintetica@docs.google.com/x',
-    'ftp://usuario-sintetico:senha-sintetica@example.invalid/x',
-    '//usuario-sintetico:senha-sintetica@docs.google.com/x',
-    'https:\n//usuario-sintetico:senha-sintetica@docs.google.com',
-    'https://usuario sintetico:senha sintetica@docs.google.com'];
+    'https://usuario%2Dsintetico:senha%2Dsintetica@docs.google.com/x'];
   for(const url of urls) {
     const raw=capturaDetalhada(),texto='Referência: "'+url+'" — texto sintético';
     for(const [aba,row,campo] of campos) mudarCelula(raw,aba,row,campo,texto);
@@ -114,36 +109,41 @@ test('P-round2 m4 userinfo em texto livre é suprimido em todas as tabelas sem e
       assert.equal(raw.tables[aba].values[row][raw.tables[aba].values[0].indexOf(campo)],texto);
       assert.equal(view.avisos.filter(a=>a.aba===aba && a.linha===row+1 && a.campo===campo && a.motivo==='conteúdo sensível suprimido').length,1);
     }
-    assert.equal(view.semanas[0].objetivo,'[conteúdo suprimido]');
-    assert.equal(view.producoes[2].titulo,'[conteúdo suprimido]');
-    assert.equal(view.producoes[2].detalhes.paginas.find(p=>p.pagina_id==='pagina-02').corpo,'[conteúdo suprimido]');
-    assert.equal(view.producoes[3].detalhes.cenas.find(c=>c.cena_id==='cena-02').texto_tela,'[conteúdo suprimido]');
-    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').papel,'[conteúdo suprimido]');
-    assert.equal(view.producoes[2].detalhes.revisoes.vigentes.find(r=>r.revisao_id==='revisao-atual').motivo,'[conteúdo suprimido]');
+    const esperado='Referência: "[conteúdo suprimido]" — texto sintético';
+    assert.equal(view.semanas[0].objetivo,esperado);
+    assert.equal(view.producoes[2].titulo,esperado);
+    assert.equal(view.producoes[2].detalhes.paginas.find(p=>p.pagina_id==='pagina-02').corpo,esperado);
+    assert.equal(view.producoes[3].detalhes.cenas.find(c=>c.cena_id==='cena-02').texto_tela,esperado);
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').papel,esperado);
+    assert.equal(view.producoes[2].detalhes.revisoes.vigentes.find(r=>r.revisao_id==='revisao-atual').motivo,esperado);
   }
 });
 
 test('P-round2 m4 JSON válido com URL escapada é dado, mas não expõe userinfo', t=>{
   const url='https://usuario-sintetico:senha-sintetica@docs.google.com/x';
-  const textos=[JSON.stringify({url}),JSON.stringify({url}).replaceAll('/', '\\/'),
-    JSON.stringify({url}).replaceAll('usuario','\\u0075suario'),JSON.stringify({origem:JSON.stringify([url])}),
-    JSON.stringify({[url]:'valor sintético'}),JSON.stringify(url)];
-  for(const texto of textos) {
+  const textos=[[JSON.stringify({url}),JSON.stringify({url:'[conteúdo suprimido]'})],
+    [JSON.stringify({url}).replaceAll('/', '\\/'),JSON.stringify({url:'[conteúdo suprimido]'})],
+    [JSON.stringify({url}).replaceAll('usuario','\\u0075suario'),JSON.stringify({url:'[conteúdo suprimido]'})],
+    [JSON.stringify({origem:JSON.stringify([url])}),JSON.stringify({origem:JSON.stringify(['[conteúdo suprimido]'])})],
+    [JSON.stringify({[url]:'valor sintético'}),JSON.stringify({'[conteúdo suprimido]':'valor sintético'})],
+    [JSON.stringify(url),JSON.stringify('[conteúdo suprimido]')]];
+  for(const [texto,esperado] of textos) {
     const raw=capturaDetalhada();mudarCelula(raw,'Arquivos',2,'origens_json',texto);
     const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
     assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico|senha-sintetica|u0075suario/);
-    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,'[conteúdo suprimido]');
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,esperado);
     assert.ok(view.avisos.some(a=>a.aba==='Arquivos' && a.linha===3 && a.campo==='origens_json' && a.motivo==='conteúdo sensível suprimido'));
     assert.ok(!view.avisos.some(a=>a.aba==='Arquivos' && a.linha===3 && a.campo==='origens_json' && /JSON de origens inválido/.test(a.motivo)));
     assert.equal(raw.tables.Arquivos.values[2][raw.tables.Arquivos.values[0].indexOf('origens_json')],texto);
   }
 });
 
-test('P-round2 m4 JSON originalmente inválido conserva aviso mesmo após supressão', t=>{
-  for(const texto of ['{"url":"https://usuario-sintetico:senha-sintetica@docs.google.com/x','[conteúdo suprimido]']) {
+test('P-round2 m4 JSON originalmente inválido conserva aviso mesmo após redação do pedaço', t=>{
+  for(const [texto,esperado] of [['{ "url": "https://usuario-sintetico:senha-sintetica@docs.google.com/x','{ "url": "[conteúdo suprimido]'],
+    ['[conteúdo suprimido]','[conteúdo suprimido]']]) {
     const raw=capturaDetalhada();mudarCelula(raw,'Arquivos',2,'origens_json',texto);
     const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
-    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,'[conteúdo suprimido]');
+    assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,esperado);
     assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico|senha-sintetica/);
     assert.equal(view.avisos.filter(a=>a.aba==='Arquivos' && a.linha===3 && a.campo==='origens_json' && /JSON de origens inválido/.test(a.motivo)).length,1);
   }
@@ -154,8 +154,8 @@ test('P-round2 m4 recibos públicos usam a mesma triagem sem alterar o estado pr
     motivoResumo:'Falhou a leitura de https://usuario-sintetico:senha-sintetica@docs.google.com/x'}],ultimaTentativa:null};
   state.ultimaTentativa=state.historico[0];
   const view=projetarVisao(state,NOW,mapaQuadroValido());
-  assert.equal(view.historico[0].motivoResumo,'[conteúdo suprimido]');
-  assert.equal(view.ultimaTentativa.motivoResumo,'[conteúdo suprimido]');
+  assert.equal(view.historico[0].motivoResumo,'Falhou a leitura de [conteúdo suprimido]');
+  assert.equal(view.ultimaTentativa.motivoResumo,'Falhou a leitura de [conteúdo suprimido]');
   assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico|senha-sintetica/);
   assert.match(state.ultimaTentativa.motivoResumo,/usuario-sintetico/);
 });
@@ -171,6 +171,67 @@ test('P-round2 m4 texto normal, e-mail e URL sem userinfo permanecem literais', 
     assert.equal(view.producoes[2].legenda,texto);
     assert.equal(view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json,JSON.stringify({origem:texto}));
     assert.ok(!view.avisos.some(a=>a.motivo==='conteúdo sensível suprimido'));
+  }
+});
+
+for(const [nome,texto] of [
+  ['URL seguida de perfil','Saiba mais em https://exemplo.invalid e siga @perfil'],
+  ['URL pontuada seguida de e-mail','Visite https://site.invalid. Dúvidas: contato@site.invalid'],
+  ['barra solta seguida de perfil','Texto // siga @perfil'],
+  ['JSON com URL e contato',JSON.stringify({url:'https://exemplo.invalid',contato:'contato@site.invalid'})]
+]) {
+  test('P-round3 regressão: preserva '+nome, t=>{
+    const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'legenda',texto);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.equal(view.producoes[2].legenda,texto);
+    assert.ok(!view.avisos.some(a=>a.aba==='Produções' && a.linha===4 && a.campo==='legenda'));
+    assert.equal(raw.tables.Produções.values[3][raw.tables.Produções.values[0].indexOf('legenda')],texto);
+  });
+}
+
+test('P-round3 peça nova com URL credenciada conserva frase, whitespace e pontuação', t=>{
+  const raw=capturaDetalhada();
+  const texto='Leia\t(https://pessoa-ficticia:senha-ficticia@exemplo.invalid).\r\nDepois  siga @perfil.';
+  adicionarRegistro(raw,'Produções',{producao_id:'peca-credencial-sintetica',marca_id:'ntv',semana_id:'semana-01',
+    slot:'imagem_a',data_prevista:'2026-10-03',versao:1,titulo:'Nova peça sintética',legenda:texto});
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const p=view.producoes.find(p=>p.producao_id==='peca-credencial-sintetica');
+  assert.equal(p.legenda,'Leia\t([conteúdo suprimido]).\r\nDepois  siga @perfil.');
+  assert.doesNotMatch(JSON.stringify(view),/pessoa-ficticia|senha-ficticia/);
+  const avisos=view.avisos.filter(a=>a.aba==='Produções' && a.campo==='legenda');
+  assert.equal(avisos.length,1);assert.equal(avisos[0].linha,7);assert.equal(avisos[0].motivo,'conteúdo sensível suprimido');
+  assert.deepEqual(p.detalhes.avisos.filter(a=>a.campo==='legenda'),avisos);
+  assert.equal(raw.tables.Produções.values[6][raw.tables.Produções.values[0].indexOf('legenda')],texto);
+});
+
+test('P-round3 pontuação ao redor do pedaço e URLs/e-mails legítimos não são concatenados', t=>{
+  for(const [texto,esperado] of [
+    ['Veja "https://pessoa-ficticia:senha-ficticia@exemplo.invalid", @perfil.','Veja "[conteúdo suprimido]", @perfil.'],
+    ['Veja https://pessoa-ficticia:senha-ficticia@exemplo.invalid!? contato@site.invalid','Veja [conteúdo suprimido]!? contato@site.invalid'],
+    ['https://exemplo.invalid; depois https://pessoa-ficticia:senha-ficticia@exemplo.invalid: fim','https://exemplo.invalid; depois [conteúdo suprimido]: fim'],
+    ['Antes “(https://pessoa-ficticia:senha-ficticia@exemplo.invalid)” depois','Antes “([conteúdo suprimido])” depois']
+  ]) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'legenda',texto);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    assert.equal(view.producoes[2].legenda,esperado);
+    assert.doesNotMatch(JSON.stringify(view),/pessoa-ficticia|senha-ficticia/);
+    assert.equal(view.avisos.filter(a=>a.aba==='Produções' && a.campo==='legenda').length,1);
+  }
+});
+
+test('P-round3 JSON preserva bytes sem redação e conserva outros valores quando redigido', t=>{
+  for(const [texto,esperado] of [
+    [' { "url" : "https:\\/\\/exemplo.invalid", "contato":"contato@site.invalid", "numero":1e2 } ',
+      ' { "url" : "https:\\/\\/exemplo.invalid", "contato":"contato@site.invalid", "numero":1e2 } '],
+    [' { "url" : "https:\\/\\/pessoa-ficticia:senha-ficticia@exemplo.invalid", "contato":"contato@site.invalid", "numero":1e2 } ',
+      ' { "url" : "[conteúdo suprimido]", "contato":"contato@site.invalid", "numero":1e2 } ']
+  ]) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Arquivos',2,'origens_json',texto);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+    const output=view.producoes[2].detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').origens_json;
+    assert.equal(output,esperado);assert.equal(JSON.parse(output).contato,'contato@site.invalid');
+    assert.equal(JSON.parse(output).numero,100);
+    assert.doesNotMatch(JSON.stringify(view),/pessoa-ficticia|senha-ficticia/);
   }
 });
 

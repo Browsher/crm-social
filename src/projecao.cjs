@@ -3,40 +3,28 @@ const {COLUNAS}=require('./quadro-config.cjs');
 const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 // Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
 const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
-function candidatoComCredencial(candidato) {
+function redigirPedacoUrl(pedaco) {
+  const inicio=pedaco.match(/^[('"“”‘’«»`]+/)?.[0] ?? '';
+  const miolo=pedaco.slice(inicio.length),fim=miolo.match(/[.,;:!?()'"“”‘’«»`]+$/)?.[0] ?? '';
+  const candidato=miolo.slice(0,miolo.length-fim.length);
+  if(!/^https?:\/\//i.test(candidato)) return pedaco;
+  // Pontuação só delimita o pedaço; o parser URL decide se há userinfo.
   try {
-    const url=candidato.startsWith('//')?new URL(candidato,'https://example.invalid'):new URL(candidato);
-    return Boolean(url.username || url.password);
-  }
-  catch {return false;}
+    const url=new URL(candidato);
+    return url.username || url.password?inicio+'[conteúdo suprimido]'+fim:pedaco;
+  } catch {return pedaco;}
 }
-function urlNoTextoSensivel(texto) {
-  // Regex delimita candidatos; somente o parser URL decide se há userinfo.
-  const normalizado=texto.replace(/[\t\r\n]/g,'');
-  for(const inicio of normalizado.matchAll(/[a-z][a-z\d+.-]*:|(?<![\w/.:])\/\//gi)) {
-    const candidato=normalizado.slice(inicio.index);
-    if(candidatoComCredencial(candidato)) return true;
-    for(const fim of candidato.matchAll(/[\s<>"'`\[\]})]/g)) {
-      if(candidatoComCredencial(candidato.slice(0,fim.index))) return true;
-    }
+function redigirTexto(texto) {
+  if(sensivel.test(texto)) return '[conteúdo suprimido]';
+  if(jsonValido(texto)) {
+    // JSON é dado. Somente strings redigidas são reserializadas, inclusive chaves
+    // e JSON aninhado em strings; todos os demais bytes permanecem intactos.
+    return texto.replace(/"(?:\\.|[^"\\])*"/g,token=>{
+      const value=JSON.parse(token),redigido=redigirTexto(value);
+      return redigido===value?token:JSON.stringify(redigido);
+    });
   }
-  return false;
-}
-function textoSensivel(valor) {
-  const pendentes=[valor];
-  while(pendentes.length) {
-    const item=pendentes.pop();
-    if(typeof item==='string') {
-      if(sensivel.test(item) || urlNoTextoSensivel(item)) return true;
-      if(/^\s*[\[{"]/.test(item)) {
-        try {pendentes.push(JSON.parse(item));} catch { /* Texto não JSON permanece dado literal. */ }
-      }
-    } else if(item && typeof item==='object') {
-      // JSON é percorrido como dados, incluindo chaves; nunca executado.
-      for(const [chave,value] of Object.entries(item)) pendentes.push(chave,value);
-    }
-  }
-  return false;
+  return texto.split(/(\s+)/).map(redigirPedacoUrl).join('');
 }
 function jsonValido(value) {
   try {JSON.parse(value);return true;} catch {return false;}
@@ -49,11 +37,12 @@ function motivoUrl(value) {
 function selecionar(record,fields,nome,linha,avisos) {
   return Object.fromEntries(fields.map(field=>{
     const value=record[field] ?? '';
-    const motivo=typeof value==='string' && ((['url','url_video_final'].includes(field)?motivoUrl(value):null) ||
-      (textoSensivel(value)?'conteúdo sensível suprimido':null));
+    const redigido=typeof value==='string'?redigirTexto(value):value;
+    const motivo=redigido!==value?'conteúdo sensível suprimido':
+      (typeof value==='string' && ['url','url_video_final'].includes(field)?motivoUrl(value):null);
     if (motivo) {
       avisos.push({aba:nome,linha,campo:field,motivo});
-      return [field,'[conteúdo suprimido]'];
+      return [field,redigido!==value?redigido:'[conteúdo suprimido]'];
     }
     return [field,value];
   }));
@@ -61,7 +50,7 @@ function selecionar(record,fields,nome,linha,avisos) {
 function reciboPublico(receipt) {
   if (!receipt) return null;
   return Object.fromEntries(['tentativaId','concluidaEm','resultado','motivoResumo'].map(campo=>[
-    campo,typeof receipt[campo]==='string' && textoSensivel(receipt[campo])?'[conteúdo suprimido]':receipt[campo]
+    campo,typeof receipt[campo]==='string'?redigirTexto(receipt[campo]):receipt[campo]
   ]));
 }
 function base(estadoLocal) {

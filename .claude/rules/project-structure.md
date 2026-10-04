@@ -28,8 +28,9 @@ T001–T026/US1, US2 e US3 implementadas; estado, evidências e pendências na [
 - Documentos semanais uma vez no fim do dia; três papéis com — na ausência, inclusive órfãos.
 - Avisos técnicos na API; gaveta só quantidade/link Planilha; tabelas detalhadas ainda futuras.
 - Arquivos são registros; link por clique só HTTPS Drive/Docs sem credenciais; sem prévia remota.
-- URL com usuário/senha ou malformada não vazia é suprimida (new URL); recusada não vira texto bruto.
-- Userinfo em texto mínimo/recibo e JSON decodificado também é triado; original/validade privados.
+- Campos de URL dedicados têm guarda new URL para userinfo/malformada; recusada não vira texto bruto.
+- Texto livre/recibo redige só pedaço HTTP(S) com userinfo; preserva frase/espaços; demais formas fora do escopo.
+- JSON é dado: só strings alteradas são reserializadas, demais bytes intactos; original/validade privados.
 - Avisos globais relacionados entram no contador da peça; ligado sem link seguro é link não permitido.
 - Avisos conservam linha física por ID/WeakMap; valor sensível não acompanha motivo público.
 - tools/quality-gate.mjs é o entrypoint do gate; seus módulos são gate-*.mjs.

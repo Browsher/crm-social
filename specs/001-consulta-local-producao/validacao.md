@@ -680,3 +680,40 @@ Não houve tentativa de merge, nova correção ou implementação da US4 após c
 o bloqueio. O PR #9 continua aberto; T027–T030 continuam desmarcadas. A definição
 dos limites de candidatos em texto livre precisa resolver esse falso positivo
 preservando a proteção de credenciais, inclusive as URLs e JSON já testados.
+
+### Correção da regressão — decisão do autor
+
+Em 04/10/2026, o autor definiu os limites da triagem de **texto livre**: pedaços
+separados por espaços em branco, com início HTTP(S), ignorando aspas/parênteses
+externos e pontuação final comum apenas durante a análise por `new URL`.
+Somente o pedaço com usuário/senha é substituído pelo marcador; o restante,
+whitespace e pontuação são preservados. E-mail, @menção e os quatro exemplos da
+tabela anterior permanecem exatamente como foram registrados.
+
+JSON válido é percorrido como dados: somente tokens de string alterados são
+reserializados; demais bytes, inclusive ordem, espaços e notação de números,
+permanecem intactos. Não há execução nem expansão dos campos HTTP. A defesa
+anterior de campos URL dedicados continua recusando userinfo/valor malformado;
+uma frase com pedaço redigido conserva seu restante. Triagem de formatos conhecidos
+de segredo/caminho pessoal permanece integral. Texto livre não promete reconhecer
+outros esquemas, URL relativa, userinfo com espaços ou formas fora do delimitador
+aprovado: os testes antigos dessa ampliação foram ajustados somente ao requisito
+substituído, preservando defesa dedicada, conteúdo HTML e formatos sensíveis.
+
+Base local antes da alteração: `fd4ce502356051aedad87ea4ff280e8a3503d2c0`,
+que registra a parada anterior e será incluído no push. RED de projeção
+**37 PASS / 11 FAIL / 0 SKIP**, incluindo os quatro exemplos; RED HTTP/interface
+**0 PASS / 4 FAIL / 0 SKIP**, por supressão integral indevida. GREEN da projeção
+**48/0/0**; suíte completa **153/0/0**, incluindo **53 testes de interface**,
+em 34,03 s. O HTTP e #dia não recebem pessoa/senha sintéticas e mantêm o texto
+ao redor do marcador. Nenhuma dependência, dado real, gate, CI ou baseline alterada.
+
+O primeiro gate terminou exit 0 após 361,72 s, com demora no encerramento do
+Chromium: o navegador exclusivo daquela execução foi encerrado, liberando o runner
+sem falhas de assert. Houve tentativa protegida de encerrar o runner depois disso,
+mas o processo já havia saído e a conferência recusou a operação. Nenhum navegador
+do usuário foi encerrado. Repetição autônoma com diagnóstico apenas em TEMP:
+**exit 0 em 32,84 s**, tests/coverage/complexity PASS, cobertura **97,3039%**,
+máximo **13**, Semgrep SKIP no Windows e audit N/A; baseline não atualizada.
+[Resumo sanitizado](../../docs/reports/001-us3-regressao-local.json).
+Aceite Linux e novo review dependem do push desta correção.

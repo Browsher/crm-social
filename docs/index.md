@@ -93,6 +93,8 @@ As evidências têm origem, estado e limites registrados somente na [validação
 
 [Resumo sanitizado da última verificação local](reports/001-us3-ultima-local.json); origem, execução e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
+[Resumo sanitizado das regressões de texto e JSON](reports/001-us3-regressao-local.json); origem, execução e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+
 ## Referências de desenvolvimento preservadas
 
 | Documento / catálogo | Papel |

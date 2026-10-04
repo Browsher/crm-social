@@ -79,11 +79,23 @@ test('H-ultima m4 HTTP suprime userinfo em texto livre e JSON de origens', async
   assert.equal(response.status,200);
   assert.doesNotMatch(response.body,/pessoa-ficticia|senha-ficticia/);
   const view=JSON.parse(response.body),p=view.producoes[0];
-  assert.equal(p.legenda,'[conteúdo suprimido]');
-  assert.equal(p.detalhes.revisoes.vigentes[0].motivo,'[conteúdo suprimido]');
-  assert.equal(p.detalhes.arquivos[0].origens_json,'[conteúdo suprimido]');
+  assert.equal(p.legenda,'Leia [conteúdo suprimido] antes de revisar');
+  assert.equal(p.detalhes.revisoes.vigentes[0].motivo,'Conferir [conteúdo suprimido]');
+  assert.equal(p.detalhes.arquivos[0].origens_json,JSON.stringify({url:'[conteúdo suprimido]'}));
   assert.ok(p.detalhes.avisos.some(a=>a.campo==='legenda'));
   assert.ok(p.detalhes.avisos.some(a=>a.campo==='origens_json'));
+});
+
+test('H-regressao quatro textos legítimos permanecem exatos no JSON público', async t=>{
+  for(const texto of ['Saiba mais em https://exemplo.invalid e siga @perfil',
+    'Visite https://site.invalid. Dúvidas: contato@site.invalid','Texto // siga @perfil',
+    JSON.stringify({url:'https://exemplo.invalid',contato:'contato@site.invalid'})]) {
+    const {port,dataDir}=await ambiente(t,false),raw=capturaValida();
+    mudarCelula(raw,'Produções',1,'legenda',texto);promoverCaptura(raw,dataDir);
+    const response=await request(port,'/api/visao');assert.equal(response.status,200);
+    const view=JSON.parse(response.body);assert.equal(view.producoes[0].legenda,texto);
+    assert.ok(!view.avisos.some(a=>a.campo==='legenda'));
+  }
 });
 test('H03 métodos de escrita são 405, sem endpoint de importação', async t => {
   const {port}=await ambiente(t);

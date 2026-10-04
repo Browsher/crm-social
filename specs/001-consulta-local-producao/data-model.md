@@ -72,7 +72,8 @@ Todos os 66 campos mínimos e valores fazem parte da **Planilha local** como reg
 inclusive IDs, hashes e origens JSON. Isso não autoriza servir captura/envelope bruto,
 extras arbitrários, tokens, credenciais ou paths; célula mínima com segredo/caminho
 indevido recebe supressão localizada e aviso, original somente na captura privada.
-Em `Arquivos.url` e `Produções.url_video_final`, `new URL` detecta usuário ou senha:
+Nos campos dedicados `Arquivos.url` e `Produções.url_video_final`, após a redação
+de texto, `new URL` detecta usuário ou senha nos valores ainda inalterados:
 o campo projetado vira **[conteúdo suprimido]**, com origem e motivo fixo sem o valor.
 O JSON HTTP não transporta a credencial; URL recusada pela UI também não é ecoada
 como texto bruto. Não confundir essa seleção segura com alteração da captura privada.
@@ -82,11 +83,20 @@ retorna ao HTTP. Vazio/somente espaços permanece sem aviso de URL inválida.
 Fixtures e mockups compartilháveis são sintéticos. HTTP e interface renderizam
 textos/JSON como dados, sem instruções, HTML executável ou navegação arbitrária.
 
-Userinfo embutido em qualquer texto mínimo selecionado e nos quatro campos do
-recibo público passa pela triagem com `new URL`, inclusive URL com // e conteúdo
-JSON decodificado. Chaves, valores e strings são dados percorridos, nunca código
-ou expansão de campos HTTP. Conteúdo reconhecido vira marcador, sem devolver a
-credencial; célula tem aviso fixo localizado, original e recibos privados intactos.
+Por decisão do autor, em texto livre mínimo e nos quatro campos do recibo público,
+a redação divide o texto preservando espaços em branco: só pedaço iniciado em
+HTTP(S), com aspas/parênteses de contorno e pontuação final desconsiderados, é
+analisado por `new URL`. Somente o pedaço com usuário/senha vira marcador, mantendo
+o restante da frase, espaços e pontuação, também se já redigido em campo de URL.
+URL legítima seguida de `@`/e-mail e `//` solto permanecem exatos. Não promete
+detectar outros esquemas, URL relativa, espaços em userinfo ou forma fora desse
+pedaço; os campos de URL dedicados mantêm seu guarda. Segredo/caminho conhecido
+continua suprimindo o texto reconhecido inteiro. Célula alterada tem aviso fixo
+localizado; original e recibos privados permanecem intactos.
+
+JSON válido é dado, nunca código ou expansão de campos HTTP. Strings decodificadas
+são redigidas; somente tokens alterados são reserializados, incluindo chaves.
+Demais bytes, números, ordem, espaços e escapes legítimos não alterados permanecem.
 A validade original de origens_json fica como booleano em WeakMap privado, antes
 da supressão: o marcador não cria falso aviso de JSON inválido quando o original
 era válido, e JSON originalmente inválido continua identificado.

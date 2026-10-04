@@ -406,7 +406,8 @@ avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
   credenciais/tokens ou caminhos de filesystem. Se célula mínima contém segredo/caminho
   local indevido, suprimir esse conteúdo com aviso localizado; conservar original só na
   captura privada. JSON de origem é texto, não instrução nem objeto que expande a whitelist.
-- `Arquivos.url` e `Produções.url_video_final` são analisadas com `new URL`:
+- Nos campos dedicados `Arquivos.url` e `Produções.url_video_final`, após a redação
+  de texto, os valores ainda inalterados são analisados com `new URL`:
   usuário ou senha preenchidos causam **[conteúdo suprimido]** no campo selecionado,
   com aviso de aba/linha física/campo e motivo fixo **conteúdo sensível suprimido**,
   sem expor o valor. A detecção de userinfo não usa regex. Original permanece privado;
@@ -415,14 +416,23 @@ avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
   motivo fixo **URL inválida suprimida**, sem valor nem exceção bruta: parsing falho
   não permite devolver userinfo malformado. Vazio/somente espaços é preservado,
   sem aviso de URL inválida.
-- A triagem de userinfo se aplica também a URLs embutidas em **qualquer texto
-  mínimo selecionado** e nos quatro campos do recibo público, não apenas nas duas
-  colunas de URL. Candidatos são delimitados no texto; somente `new URL` decide
-  usuário/senha, inclusive URL relativa a protocolo com `//`. JSON parseável é
-  percorrido como dados, incluindo chaves/valores e strings decodificadas, sem
-  executar código nem expandir a whitelist HTTP. Conteúdo reconhecido recebe
-  **[conteúdo suprimido]**; aviso de célula tem origem e motivo fixo sem o valor.
-  A captura e os recibos privados permanecem intactos.
+- Por decisão do autor, **texto livre mínimo selecionado** e os quatro campos do
+  recibo público são divididos em pedaços por espaços em branco, preservando os
+  separadores. Somente pedaço iniciado em HTTP(S) é candidato; aspas/parênteses de
+  contorno e pontuação final `. , ; : ! ?` não participam da análise de `new URL`.
+  Só o parser decide usuário/senha. Apenas o pedaço credenciado vira
+  **[conteúdo suprimido]**: restante da frase, espaços e pontuação ficam intactos,
+  inclusive se a redação já ocorreu em um campo de URL dedicado. URL legítima
+  seguida de `@`/e-mail e `//` solto são preservados exatamente.
+  **Limite:** em texto livre não há promessa de detectar outros esquemas, URL
+  relativa, espaços em userinfo ou forma fora desse pedaço HTTP(S). O guarda dos
+  campos dedicados permanece; segredo/caminho conhecido continua substituindo
+  o texto reconhecido inteiro. Aviso de célula conserva origem e motivo fixo sem
+  o valor. A captura e os recibos privados permanecem intactos.
+- JSON válido é analisado como dado, incluindo strings decodificadas de chaves,
+  valores e JSON aninhado em string, sem executar código nem expandir a whitelist
+  HTTP. Somente tokens de string alterados são reserializados; os demais bytes,
+  números, ordem, espaços e escapes legítimos não alterados permanecem intactos.
 - Validade de `origens_json` é calculada sobre o original antes da supressão e
   guardada somente como booleano em WeakMap privado. JSON originalmente válido
   suprimido não recebe falso aviso de JSON inválido por causa do marcador;
