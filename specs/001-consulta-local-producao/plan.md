@@ -1,5 +1,7 @@
 # Consulta local da produção — Implementation Plan
 
+Como um álbum montado por partes, o plano define o leitor completo e a sequência de entrega. A primeira parte já existe; o restante abaixo continua sendo a solução planejada para concluir a 001.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: use `superpowers:subagent-driven-development` na execução desta feature, ou `superpowers:executing-plans` se ela for executada sequencialmente. Este documento é o plano canônico; não criar uma segunda cópia em `docs/superpowers/plans/`.
 
 **Goal:** consultar a produção NTV nas telas Planejamento, Produção e Planilha, preservando os registros, suas relações e a data da captura.
@@ -10,7 +12,7 @@
 
 **Spec:** [spec.md](spec.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas aprovadas](../../docs/design/telas.md).
 
-**Data:** 03/10/2026. **Estado:** planejamento documental atualizado; aplicativo e testes funcionais ainda não implementados.
+**Data:** 04/10/2026. **Estado:** T001–T018 implementadas e testadas localmente (fundação e US1); 23 tarefas futuras pendentes. `src/`, importador, mapa versionado e sete suítes já existem. `Iniciar CRM.ps1`/sua suíte não existem. Os diagramas e contratos completos deste plano continuam sendo a meta: quatro estados/releitura, detalhes/acordeões, classificação do quadro e Planilha ainda serão completados. Interfaces efetivamente implementadas estão na [arquitetura](../../docs/architecture.md); evidência em [validacao.md](validacao.md). PR/Linux e captura operacional aguardam; nenhuma leitura real Google.
 
 **Branch:** `001-consulta-local-producao`, criada da `main` no repositório `crm-social` e conferida nesta tarefa. Não executar novamente a criação da feature para atualizar estes documentos.
 

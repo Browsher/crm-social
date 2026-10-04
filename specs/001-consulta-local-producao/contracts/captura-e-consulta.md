@@ -1,7 +1,7 @@
 # Contrato de captura e consulta v1
 
-03/10/2026. Feature 001 especificada, ainda não implementada. Coletor: Central com
-conector autenticado. Consumidor: CRM neste computador, sem credenciais Google.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Estado em 04/10/2026: envelope/validação, persistência, CLI, mapa validado, API restrita e US1 implementados (T001–T018). O contrato abaixo define a 001 completa; quatro estados do selo, detalhes/acordeões, quadro e Planilha/Histórico continuam pendentes. A API atual usa **Captura local** e bases vazias de quadro/Planilha, sem frescor aceito. Evidência em [validação](../validacao.md); captura operacional e Linux/PR aguardam. Coletor previsto: Central com
+conector autenticado. Consumidor implementado: CRM neste computador, sem credenciais Google; nenhuma leitura real Google foi realizada.
 Requisitos em [spec.md](../spec.md); decisão de interface em
 [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 

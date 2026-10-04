@@ -1,12 +1,21 @@
 # Roteiro de verificação da feature 001
 
-**Estado em 03/10/2026:** procedimento planejado para executar após implementação. Aplicativo, importador, iniciador e suítes funcionais abaixo ainda não foram criados. Esta entrega atualiza documentação, sem capturas reais ou execução do CRM. Branch vigente: `001-consulta-local-producao`, criada da `main`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa a primeira entrega executável da verificação final. **Estado em 04/10/2026:** T001–T018 implementadas; importador, servidor, Planejamento e sete suítes existem. Resultado local após revisão/regressões: 58 PASS, 0 FAIL, 0 SKIP; gate exit 0, cobertura 95,91%, complexidade PASS com aviso 12 no CLI, Semgrep SKIP no Windows e audit N/A. Fonte da evidência: [validacao.md](validacao.md). As 23 tarefas seguintes, captura operacional e Linux/PR aguardam. Nenhuma leitura real Google. Branch vigente: `001-consulta-local-producao`, criada da `main`.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). O mockup de [telas](../../docs/design/mockups/telas-v2.html) serve como referência visual; não valida backend ou persistência.
 
-## Ambiente da implementação futura
+## Ambiente e testes da entrega atual
 
-Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright existentes. Antes de código, atender ao pré-requisito `.claude/rules/project-structure.md` conforme AGENTS. Ferramentas do gate permanecem isoladas em `tools/`, sem dependências novas de aplicação ou alteração na configuração vigente.
+Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright existentes. A [regra de estrutura](../../.claude/rules/project-structure.md) já foi preparada e sincronizada com o código. Ferramentas do gate permanecem isoladas em `tools/`, sem dependências novas de aplicação ou alteração na configuração vigente.
+
+| Variável | Consumidor / efeito |
+| --- | --- |
+| `CRM_NODE_PATH` | PowerShell seleciona o executável existente; a aplicação não lê esta variável |
+| `PATH` | Colocar o diretório do Node selecionado à frente para subprocessos do gate com `testCommand: ["node", "--test"]` |
+| `CRM_PLAYWRIGHT_MODULE` | `tests/interface.test.cjs` resolve o Playwright existente; sem ela tenta `playwright`; não versionar seu caminho |
+| `CI=true` | Cinco testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
+
+Não há variáveis Google, chave de serviço ou URL remota no runtime da 001. Configure as variáveis de ferramenta somente no ambiente local; nenhum caminho pessoal é necessário na documentação.
 
 Todos os testes usam `node:test` e `node:assert/strict`, arquivos/diretórios temporários reais e porta efêmera em `127.0.0.1`. Não usar `data/` operacional, `producao/runtime/`, trava da fila ou autenticação remota para testes. A interface é testada com Playwright no computador, dentro de `tests/interface.test.cjs`, descoberto pelo runner padrão.
 
@@ -17,8 +26,9 @@ if (-not $crmNode) {
 }
 $crmNodeVersion = & $crmNode --version
 if ($LASTEXITCODE -ne 0 -or $crmNodeVersion -ne 'v24.19.0') {
-  throw 'Selecione o Node 24.19.0 existente em CRM_NODE_PATH e repita; nao instale outra copia.'
+  throw 'Selecione o Node 24.19.0 existente em CRM_NODE_PATH e repita; não instale outra cópia.'
 }
+$env:PATH = (Split-Path -Parent $crmNode) + [System.IO.Path]::PathSeparator + $env:PATH
 if ($env:CI -eq 'true') {
   throw 'Aceite local exige CI diferente de true, para executar a interface.'
 }
@@ -31,31 +41,65 @@ $crmTestFiles = @(
   'tests/projecao.test.cjs'
   'tests/servidor.test.cjs'
   'tests/interface.test.cjs'
-  'tests/iniciador.test.cjs'
 )
 & $crmNode --test @crmTestFiles
 & $crmNode --test
 ```
 
-Esperado após implementação: versão 24.19.0, oito suítes descobertas e todas as cinco camadas verdes — validação pura, I/O temporário real, serviços/projeções, HTTP real em porta efêmera e interface local. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner exigido pelo gate.
+No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação e US1 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
 
 Na conferência de 03/10, o PATH encontrava Node 24.14.0, mas o runtime 24.19.0 já
 existia na máquina. Defina `CRM_NODE_PATH` com o caminho desse executável somente no
-ambiente local, sem versionar caminho pessoal. CLI e gate usam o mesmo executável;
-o iniciador o recebe por `-NodePath`.
+ambiente local, sem versionar caminho pessoal. O bloco também põe seu diretório à frente do PATH: selecionar apenas `$crmNode` não garante o mesmo runtime nos subprocessos do gate. CLI e gate usam o executável selecionado;
+o iniciador futuro o receberá por `-NodePath`.
 
-O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e
-HTTP rodam obrigatoriamente. Interface registra SKIP explícito com `CI=true` antes
-de carregar Playwright; iniciador registra SKIP fora de `win32` antes de chamar
-PowerShell. Esses pulos de aplicabilidade são visíveis no TAP, sem substituir o
-aceite Windows. No computador, Playwright/Windows PowerShell ausentes são falhas;
-as oito suítes precisam executar sem casos pulados. Não alterar workflows/configuração
-ou instalar dependências para contornar essa fronteira. SKIP de ferramenta do gate
-continua regido pelo `--strict`, independentemente dos pulos de testes por plataforma.
+O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e HTTP são obrigatórios. Os cinco casos atuais de interface declaram SKIP explícito com `CI=true` antes de carregar Playwright. Esta branch ainda não tem resultado Linux; o PR deverá comprovar o gate estrito, incluindo Semgrep. Iniciador/Windows PowerShell e seus pulos de plataforma serão implementados em T035–T036. Aceite local atual exige sete suítes sem pulos; o completo exigirá oito. Não alterar workflows/configuração ou instalar dependências para contornar a fronteira. SKIP de ferramenta do gate continua regido pelo `--strict`, independente dos pulos de testes por plataforma.
 
 Durante implementação, executar o arquivo pertinente **antes** do código e registrar RED pelo comportamento ausente; depois registrar GREEN. Suítes ignoradas no aceite local, zero testes ou gate anterior à criação do aplicativo não comprovam aceite. Resultados e contagens vêm da execução real, sem número antecipado.
 
+## Abrir a aplicação atual sem dados operacionais
+
+Com `$crmNode` já selecionado pelo bloco anterior, iniciar o estado vazio em um diretório TEMP novo:
+
+```powershell
+$crmDemoRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('crm-social-demo-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $crmDemoRoot -ErrorAction Stop | Out-Null
+$crmDataDir = Join-Path $crmDemoRoot 'dados'
+& $crmNode src/servidor.cjs --data-dir $crmDataDir --port 4318
+```
+
+Abrir `http://127.0.0.1:4318`: deve aparecer **Nenhuma captura disponível** e **Sem dados**, sem peças demonstrativas. O processo permanece nesse terminal; Ctrl+C encerra somente essa instância. Se a porta estiver ocupada, identificar a instância ou escolher outra porta; não encerrar processo alheio. `localhost` é recusado pelo controle de Host.
+
+Depois de encerrar a instância, é possível demonstrar a captura **sintética** existente em `tests/fixtures.cjs`, mantendo os mesmos diretórios TEMP:
+
+```powershell
+$crmCapturePath = Join-Path $crmDemoRoot 'entrada-sintetica.json'
+& $crmNode -e "const fs=require('node:fs'); const f=require('./tests/fixtures.cjs'); fs.writeFileSync(process.argv[1],JSON.stringify(f.capturaValida()),'utf8');" $crmCapturePath
+if ($LASTEXITCODE -ne 0) { throw 'Não foi possível preparar a fixture sintética.' }
+& $crmNode scripts/importar-captura.cjs $crmCapturePath --data-dir $crmDataDir
+if ($LASTEXITCODE -ne 0) { throw 'Confira o motivo resumido da importação antes de iniciar.' }
+& $crmNode src/servidor.cjs --data-dir $crmDataDir --port 4318
+```
+
+Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída da consulta. A fixture dos testes de interface/screenshots acrescenta uma quinta peça NTV sem data. Dados e diretórios da demonstração são isolados; não copiar estes exemplos para `data/` operacional nem promover uma fixture a coleta da Central.
+
+| Conferência atual | Resultado esperado |
+| --- | --- |
+| Menu e objetivo | Planejamento, Produção, Planilha; Ainda não definido |
+| Planejamento | Calendário/lista/filtros; imagem A/B, carrossel e Reels sintéticos; duas peças no mesmo dia |
+| Clique em dia/cartão/lista | Abre grupo inteiro em diálogo básico; detalhes/acordeões ainda não existem |
+| Sem data | Contagem global; fixture de base pode ter zero, variante de interface tem uma |
+| Selo capturado | Captura local; quatro estados ainda não aceitos |
+| Produção/Planilha | Mensagens de próxima entrega |
+| Interface mobile | Lista e menu recolhido em 390 px |
+
+Importar novamente os mesmos ID/serialização deve retornar `sem_alteracao`, sem criar recibo ou renovar instante. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. A tela de Histórico e o selo de falha ainda são tarefas futuras; seus recibos já existem na persistência.
+
+A importação adquire `.importacao.lock` no diretório escolhido. Segunda instância falha claramente sem mudar o estado. Interrupção pode deixar trava; nunca removê-la automaticamente: conferir proprietário/PID, processo e estado confirmado antes de recuperação manual, conforme o [módulo de persistência](../../docs/modules/snapshot.md).
+
 ## Cenários sintéticos obrigatórios
+
+Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T018 e suas regressões já têm evidência em `validacao.md`; selo de quatro estados, detalhes/acordeões, quadro, tabelas, iniciador e escala permanecem futuros. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
 
 | Caso | Ação | Resultado a conferir |
 | --- | --- | --- |
@@ -116,7 +160,7 @@ Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editori
 & './.specify/scripts/powershell/check-prerequisites.ps1' -Json -RequireSpec -RequireTasks -IncludeTasks
 ```
 
-Esse comando confirma documentos encontrados e feature ativa. Não cria o aplicativo nem comprova testes funcionais, integração, coleta ou backend. Esta revisão mantém todas as tarefas desmarcadas.
+Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T018 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
 
 ## Quality gate e sincronização final da implementação
 
@@ -128,4 +172,4 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 
 T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
-Não tratar comandos planejados como executados nem aprovação do mockup como cinco camadas verdes. Aceite da 001 exige evidência do aplicativo funcional; o planejamento atual não antecipa esse resultado.
+Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. Gate local e Planejamento estão verificados neste recorte; o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.

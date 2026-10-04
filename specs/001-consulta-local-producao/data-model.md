@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-03/10/2026 — modelo planejado da feature 001, aplicativo não implementado.
+Como um índice de fotografias, o modelo conserva a identidade dos registros e define como reuni-los na consulta. Estado em 04/10/2026: validação, persistência e projeção de Planejamento implementadas em T001–T018. O restante deste modelo é o alvo da 001 completa, sem aceite antecipado: quatro estados do selo, detalhes/relações, quadro e tabelas de Planilha permanecem pendentes. A projeção atual usa **Captura local** e mantém `quadro`/`planilha` como bases vazias. Consultar [arquitetura real](../../docs/architecture.md) e [validação](validacao.md); nenhuma captura operacional ou leitura Google foi validada.
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos
 e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
