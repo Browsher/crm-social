@@ -2,18 +2,18 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,mapaQuadroValido,temporario,recalcularHashes,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
+const {capturaValida,capturaDetalhada,adicionarRegistro,mapaQuadroValido,temporario,recalcularHashes,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const CI=process.env.CI==='true';
 const skip=CI?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
-async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{}) {
+async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixture=capturaValida) {
   t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE || 'playwright');
   const root=temporario(t), dataDir=path.join(root,'dados'), quadroConfigPath=path.join(root,'quadro.json');
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroValido()));
   if (captura) {
-    const raw=capturaValida(), table=raw.tables.Produções;
+    const raw=fixture(), table=raw.tables.Produções;
     const row=table.values[1].slice();
     row[table.values[0].indexOf('producao_id')]='peca-6';
     row[table.values[0].indexOf('titulo')]='Sem data sintética';
@@ -41,6 +41,99 @@ async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{}) {
   await page.goto(origin);
   return page;
 }
+test('U05 filtro e clique na segunda peça abrem o dia inteiro em acordeões com Esc/foco', {skip}, async t=>{
+  const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
+  await page.getByRole('button',{name:'Reels',exact:true}).click();
+  const trigger=page.locator('#calendario [data-producao-id="peca-4"]');
+  await trigger.click();
+  const pecas=page.locator('#dia .peca-acordeao');
+  assert.equal(await pecas.count(),2);
+  assert.deepEqual(await pecas.evaluateAll(nodes=>nodes.map(n=>n.dataset.peca)),['peca-3','peca-4']);
+  assert.deepEqual(await pecas.evaluateAll(nodes=>nodes.map(n=>n.open)),[true,false]);
+  assert.match(await page.locator('#dia-titulo').textContent(),/sexta-feira.*02.*outubro/);
+  assert.equal(await page.locator('#dia-quantidade').textContent(),'2 peças registradas');
+  await pecas.nth(1).locator('summary').focus();await page.keyboard.press('Enter');
+  assert.equal(await pecas.nth(1).evaluate(n=>n.open),true);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#dia').isVisible(),false);
+  assert.equal(await trigger.evaluate(n=>document.activeElement===n),true);
+});
+
+test('U05 dia/lista e dia vazio: no máximo dois acionamentos, sem recortar a gaveta', {skip}, async t=>{
+  const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
+  await page.getByRole('button',{name:'2 de outubro',exact:true}).click();
+  assert.equal(await page.locator('#dia .peca-acordeao').count(),2);
+  await page.getByRole('button',{name:'Fechar dia',exact:true}).click();
+  await page.getByRole('button',{name:'Lista',exact:true}).click();
+  await page.locator('#lista [data-producao-id="peca-4"]').click();
+  assert.equal(await page.locator('#dia .peca-acordeao').count(),2);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button',{name:'Calendário',exact:true}).click();
+  await page.getByRole('button',{name:'3 de outubro',exact:true}).click();
+  assert.equal(await page.locator('#dia .peca-acordeao').count(),0);
+  assert.match(await page.locator('#dia-pecas').textContent(),/Nenhuma peça registrada/);
+});
+
+test('U06 versões/páginas/cenas e revisão vigente não se misturam ao histórico', {skip}, async t=>{
+  const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  const carousel=page.locator('#dia [data-peca="peca-3"]');
+  assert.deepEqual(await carousel.locator('[data-unidades="paginas"] [data-versao="2"] [data-pagina]').evaluateAll(ns=>ns.map(n=>n.dataset.pagina)),['pagina-02','pagina-01']);
+  assert.match(await carousel.textContent(),/Design novo: A confirmar/);
+  const current=carousel.locator('[data-revisoes="vigentes"]');
+  assert.match(await current.textContent(),/revisao-atual/);
+  assert.ok(!(await current.textContent()).includes('revisao-resolvida'));
+  assert.ok(!(await current.textContent()).includes('revisao-antiga'));
+  assert.match(await carousel.locator('[data-revisoes="resolvidas"]').textContent(),/revisao-resolvida/);
+  assert.equal(await carousel.locator('[data-revisoes="resolvidas"]').getAttribute('class'),'detail-section history');
+  assert.match(await carousel.textContent(),/Com quem está.*Equipe sintética/s);
+  assert.match(await current.textContent(),/Quem corrige.*Correção sintética/s);
+  assert.match(await carousel.textContent(),/Publicação.*Não comprovada/s);
+  const reels=page.locator('#dia [data-peca="peca-4"]');await reels.locator('summary').first().click();
+  assert.deepEqual(await reels.locator('[data-cena]').evaluateAll(ns=>ns.map(n=>n.dataset.cena)),['cena-02','cena-01']);
+  assert.match(await reels.textContent(),/Mídia ausente/);
+});
+
+test('U06 celular em tela cheia abre dia com várias peças; Esc retorna à lista', {skip}, async t=>{
+  const page=await abrir(t,390,true,()=>{},()=>{},capturaDetalhada);
+  const trigger=page.locator('#lista [data-producao-id="peca-3"]');await trigger.click();
+  assert.equal(await page.locator('#dia .peca-acordeao').count(),2);
+  const box=await page.locator('#dia').boundingBox();
+  assert.deepEqual(box,{x:0,y:0,width:390,height:1050});
+  assert.ok(await page.locator('#dia').evaluate(n=>n.scrollWidth<=n.clientWidth));
+  await page.keyboard.press('Escape');
+  assert.equal(await trigger.evaluate(n=>document.activeElement===n),true);
+});
+
+test('U06 Sem data abre somente o grupo da semana, em ordem ordinal', {skip}, async t=>{
+  const page=await abrir(t,390,true,raw=>mudarCelula(raw,'Produções',3,'data_prevista',''),()=>{},capturaDetalhada);
+  await page.locator('#lista [data-producao-id="peca-6"]').click();
+  assert.match(await page.locator('#dia-titulo').textContent(),/Sem data.*Conexões do cotidiano/);
+  assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(ns=>ns.map(n=>n.dataset.peca)),['peca-3','peca-6']);
+});
+
+test('U06 conteúdo HTML é texto; somente HTTPS Drive/Docs sem credenciais vira link', {skip}, async t=>{
+  const text='<img src="https://example.invalid/x" onerror="throw 1">';
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Produções',3,'titulo',text);mudarCelula(raw,'Páginas',2,'corpo',text);
+    for(const [i,url] of ['http://drive.google.com/x','https://drive.google.com.evil.invalid/x','https://usuario:senha@docs.google.com/x','javascript:alert(1)','https://drive.google.com:444/x','URL inválida sintética','https://docs.google.com/document/d/segundo-sintetico'].entries()) {
+      adicionarRegistro(raw,'Arquivos',{arquivo_id:'url-'+i,producao_id:'peca-3',versao:2,url});
+    }
+  },()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  assert.equal(await page.locator('#dia img').count(),0);
+  assert.ok((await page.locator('#dia').textContent()).includes(text));
+  const links=page.locator('#dia a');
+  const hrefs=await links.evaluateAll(ns=>ns.map(n=>n.href));
+  assert.ok(hrefs.length>=2);
+  for(const href of hrefs) {
+    const url=new URL(href);assert.equal(url.protocol,'https:');
+    assert.ok(['drive.google.com','docs.google.com'].includes(url.host));
+    assert.equal(url.username+url.password,'');
+  }
+  for(const link of await links.all()) assert.equal(await link.getAttribute('rel'),'noopener noreferrer');
+  assert.ok((await page.locator('#dia').textContent()).includes('URL inválida sintética'));
+});
 const estadosSelo=[
   {nome:'hoje',texto:'Atualizado hoje, 08:05',cor:'verde',fim:'2026-10-04T11:05:00Z',captura:true},
   {nome:'anterior',texto:'Dados de 02/10',cor:'âmbar',fim:'2026-10-02T12:05:00Z',captura:true},
