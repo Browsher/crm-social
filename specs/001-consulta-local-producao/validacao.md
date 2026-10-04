@@ -620,6 +620,10 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #9, m-6 | A seção histórica Revisão final da US3 não informa o SHA exato do código medido; seu resumo Linux estava pendente naquele momento. Reconciliar rastreabilidade dos recibos na Fase 8 sem reescrever medições históricas como novas |
 | PR #6, M8 | CLI fora do LCOV e Playwright com SKIP explícito no CI; interface precisa de aceite local. Preservar distinção entre as cinco camadas |
 | Revisões anteriores da US3 | Validações adicionais dos arquivos apenas semanais, precisão de aviso de empate/ausência sem vínculo e índices/escala pertencem às tarefas finais; tabelas detalhadas de avisos pertencem à US5 |
+| PR #9, review 5982320198, m-1 | Custo da triagem de texto por requisição; avaliar atalho seguro para texto sem @ e índices/escala em T037, incluindo JSON decodificado. Não confundir otimização com relaxamento de supressão |
+| PR #9, review 5982320198, m-2 | Referência da classificação pendente em architecture.md aponta projecao.cjs:253, enquanto projetarVisao passou a :313; reconciliar com a implementação do quadro. A parte da dívida de complexidade já está no m-5 anterior |
+| PR #9, review 5982320198, m-3 | Reitera tratamento de revisão desconhecido chamado aberto; mesma pendência m-2 anterior, sem novo comportamento nesta rodada |
+| PR #9, review 5982320198, m-4 | Indentação do loop HTTP e consolidação dos imports de fixtures; estilo sem efeito funcional. Adiado porque a regressão I-1 interrompeu a rodada antes de novas alterações de código |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -648,3 +652,31 @@ continuam fechados. Aceite Linux e decisão de merge serão registrados após o 
 
 ![Gaveta — última rodada, desktop](../../docs/design/screenshots/001-us3-ultima-varias-pecas-1440.png)
 ![Gaveta — última rodada, celular](../../docs/design/screenshots/001-us3-ultima-varias-pecas-390.png)
+
+### Aceite remoto e parada por regressão
+
+Código publicado e verificado: `bdf20815b097049dfba01c467d15c25f3c18f361`,
+autor/committer Alexandre Melo com noreply. O [quality-gate Linux](https://github.com/Browsher/crm-social/actions/runs/37218435501/job/111483652027)
+concluiu SUCCESS, com tests/coverage/complexity/Semgrep PASS, audit N/A,
+exit 0 e baseline não atualizada. O [review](https://github.com/Browsher/crm-social/actions/runs/37218435489/job/111483652087)
+concluiu SUCCESS e publicou o [comentário 5982320198](https://github.com/Browsher/crm-social/pull/9#issuecomment-5982320198),
+com um Important e quatro Minor, sem Critical. generate-tests/publish-tests ficaram
+SKIPPED, sem rótulo gerar-testes; isso não é SKIP do Semgrep.
+
+**I-1 do novo review é regressão confirmada e bloqueia o merge.** A triagem tenta
+interpretar texto depois dos delimitadores como uma URL inteira: um @ legítimo
+posterior ao domínio vira userinfo para o parser. Reprodutor somente leitura,
+sem persistência ou dados reais, comparou `244d9e7` com `bdf2081` usando a mesma
+captura sintética em memória e confirmou os quatro casos:
+
+| Texto legítimo sintético | 244d9e7 | bdf2081 |
+| --- | --- | --- |
+| Saiba mais em https://exemplo.invalid e siga @perfil | Preservado | [conteúdo suprimido] |
+| Visite https://site.invalid. Dúvidas: contato@site.invalid | Preservado | [conteúdo suprimido] |
+| Texto // siga @perfil | Preservado | [conteúdo suprimido] |
+| JSON com url https://exemplo.invalid e contato contato@site.invalid | Preservado | [conteúdo suprimido] |
+
+Não houve tentativa de merge, nova correção ou implementação da US4 após confirmar
+o bloqueio. O PR #9 continua aberto; T027–T030 continuam desmarcadas. A definição
+dos limites de candidatos em texto livre precisa resolver esse falso positivo
+preservando a proteção de credenciais, inclusive as URLs e JSON já testados.
