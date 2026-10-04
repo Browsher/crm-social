@@ -4,7 +4,7 @@ CRM de conteúdo para uso somente neste computador. NTV é a primeira marca. O d
 
 **Estado em 03/10/2026:** estrutura oficial GitHub Spec Kit 1.0.13 inicializada, constituição escrita e primeira feature especificada e planejada, com as telas decididas pelo autor. O aplicativo funcional ainda não foi implementado. Esta revisão documental não altera agentes editoriais, agendamentos ou workflows da operação.
 
-CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge; geração de testes pelo rótulo `gerar-testes`.
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). O gate permanece vermelho até a 001 trazer testes reais; a geração de testes pelo rótulo `gerar-testes` ainda não foi exercitada.
 
 ## Onde começar
 
