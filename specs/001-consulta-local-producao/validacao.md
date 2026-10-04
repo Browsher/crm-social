@@ -655,6 +655,11 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #11, review 5983965195, m-4 | Corrigida a linha Entrada de tasks.md: US4 integrada, US5 implementada localmente e aceite corrente pendente |
 | PR #11, review 5983965195, m-5 | Consolidar foco do link da gaveta e do evento close assíncrono para evitar um segundo ajuste cosmético de rolagem |
 | PR #11, review 5983965195, m-6 | Incluir troca de abas e recomposição do painel de avisos na medição sintética de escala T037 |
+| PR #11, review 5984151670, m-1 | Corrigida a leitura histórica das medições: primeiro resumo tinha cinco hashes; atual tem seis, incluindo fixture. A afirmação de fontes inalteradas aplica-se somente até a9cb8ef; a refatoração posterior e a nova medição são explícitas |
+| PR #11, review 5984151670, m-2 | Completar os asserts de restauração de avisos gerais via menu e selo, junto aos casos de releitura/peça removida já registrados no m-3 anterior |
+| PR #11, review 5984151670, m-3 | Separar erro HTTP de erro de renderização e preservar uma visão consistente caso chegue resposta com forma inesperada; testar a fronteira de erro na Fase 8, sem alterar a rota/contrato válido desta entrega |
+| PR #11, review 5984151670, m-4 | Consolidar a associação posicional entre CAMPOS e chaves numa lista reutilizada; P11 já protege a ordem atual, mas a manutenção futura deve evitar duplicação |
+| PR #11, review 5984151670, m-5 | Reitera lookup de rótulo e duas paradas de Tab; permanecem rastreados como m-1/m-2 do primeiro review, sem nova correção nesta rodada |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -887,9 +892,9 @@ Seis screenshots produzidos pelo servidor HTTP real em porta efêmera com captur
 ![Planilha — Histórico 1440](../../docs/design/screenshots/001-us5-historico-1440.png)
 ![Planilha — Histórico 390](../../docs/design/screenshots/001-us5-historico-390.png)
 
-Gate local final **exit 0**, **49,23 s**: tests/coverage/complexity PASS, cobertura **97,62%**, complexidade máxima **13**, cinco avisos (11–13), Semgrep SKIP no Windows por ferramenta ausente, audit N/A por ausência de dependências da aplicação, **baseline atualizada false**. [Resumo sanitizado da US5](../../docs/reports/001-us5-local.json) registra cinco hashes das fontes medidas; a configuração, as ferramentas e o CI permanecem intactos. O gate foi executado depois da correção e da suíte completa, antes da sincronização documental final.
+Gate local do primeiro head **exit 0**, **49,23 s**: tests/coverage/complexity PASS, cobertura **97,62%**, complexidade máxima **13**, cinco avisos (11–13), Semgrep SKIP no Windows por ferramenta ausente, audit N/A por ausência de dependências da aplicação, **baseline atualizada false**. O resumo daquele estágio registrava cinco hashes das fontes medidas; o [resumo sanitizado atual](../../docs/reports/001-us5-local.json) foi atualizado após a refatoração da fixture e registra seis. Configuração, ferramentas e CI permanecem intactos. Essa execução precedeu a sincronização documental do primeiro head; a medição posterior está na seção do diagnóstico.
 
-Código registrado em `768ba90` (T031/T032) e `7c563c9` (T033/T034 e screenshots), com autor/committer noreply. Depois da medição, src/tests permanecem sem alterações; a etapa posterior modifica somente documentação e resumos sanitizados. Não se atribui o futuro aceite Linux a essas execuções Windows.
+Código registrado em `768ba90` (T031/T032) e `7c563c9` (T033/T034 e screenshots), com autor/committer noreply. Entre essa medição e a publicação de `a9cb8ef`, src/tests ficaram inalterados; a sincronização desse estágio modificou somente documentação e resumos sanitizados. A mudança posterior em tests/fixtures.cjs e suas novas execuções estão registradas abaixo. Não se atribui aceite Linux a essas execuções Windows.
 
 A regra `.claude/rules/project-structure.md` tem **50 linhas** nesta entrega, dentro do limite de 60. Conferência documental: links relativos existentes, cercas balanceadas e nenhum caminho pessoal real nos arquivos alterados. As contagens de linhas das seções anteriores pertencem às entregas históricas que elas descrevem.
 
@@ -914,3 +919,15 @@ A fixture agora serializa o objeto de origens por `JSON.stringify` antes de pree
 GREEN Semgrep: **zero achados, zero erros, nove paths.scanned**, 27,61 s de scan. Suíte completa repetida **194 PASS / 0 FAIL / 0 SKIP**, **76 de interface**, exit 0, **65,06 s**. Gate local repetido **exit 0**, **58,92 s**, cobertura **97,63%**, complexidade máxima **13**, cinco avisos, Semgrep SKIP no processo Windows, audit N/A, **baseline atualizada false**. A reprodução separada no Ubuntu não é apresentada como execução do scanner pelo processo Windows nem como aceite remoto.
 
 Screenshots permanecem válidos: aplicação e captura sintética têm os mesmos bytes. O resumo local foi atualizado com a medição posterior e o hash da fixture. Doc-sync final conferiu que o módulo web já descreve o payload como dado sem execução; não exigiu nova edição de arquitetura ou contrato. Aceite do novo head Linux/review permanece a conferir, sem merge da US5.
+
+### Aceite remoto da US5 — parada sem merge
+
+Head publicado e conferido `86d2fb4f79a3d655214990ad913727dec5a6f156`. [Quality-gate Linux 37232628807](https://github.com/Browsher/crm-social/actions/runs/37232628807/job/111525364067) **SUCCESS**: tests/coverage/complexity/**Semgrep PASS**, audit N/A, **exit 0**, **baseline atualizada false**. O log confirma a instalação de **Semgrep CE 1.179.0** e a execução da checagem; não houve SKIP da ferramenta no Linux. Interface conserva seu SKIP explícito de CI/M8, com os **194/0/0 e 76 casos de interface locais** registrados na repetição posterior da fixture.
+
+[Review 37232628888](https://github.com/Browsher/crm-social/actions/runs/37232628888/job/111525364506) **SUCCESS**, [novo comentário 5984151670](https://github.com/Browsher/crm-social/pull/11#issuecomment-5984151670). Não há Critical ou achado de segurança/regressão. I-1 é uma pendência de evidência: o reviewer não consulta Actions, e a prova é o job do mesmo head ligado acima. Os cinco Minor estão rastreados na Fase 8; m-1 documental foi corrigido distinguindo a medição histórica da atual, sem reescrever resultados. Nenhum código da aplicação mudou depois de 7c563c9; somente a fixture byte a byte equivalente foi refatorada e verificada novamente.
+
+generate-tests/publish-tests **SKIPPED**, sem rótulo gerar-testes. [PR #11](https://github.com/Browsher/crm-social/pull/11) **OPEN**, mergeStateStatus consultado CLEAN; esse estado não foi usado para tentar merge. T031–T034 concluídas, **34/41**, sete tarefas da Fase 8 e captura operacional pendentes. A branch 001 continua preservada.
+
+Ferramenta temporária removida por operação nativa, após verificar o caminho dentro de TEMP: **Pasta Semgrep existe: False**. Instalação, cache, configurações e logs próprios da ferramenta foram apagados; sem instalação global, Docker ou mudança do PATH. Evidências sanitizadas permanecem neste registro e no resumo local.
+
+Este recibo do comentário recebido depois do push fica em commit **local de documentação**, para acompanhar a próxima rodada. O PR permanece no head `86d2fb4`, já verificado; não se declara CI para o registro posterior. Nada foi integrado da US5, e nenhum código, teste ou screenshot mudou após esse head publicado.
