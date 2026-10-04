@@ -41,7 +41,20 @@
       <section id="sem-data" aria-label="Peças sem data" hidden><div class="section-heading"><h2>Sem data</h2><button type="button" id="fechar-sem-data">Fechar lista</button></div><div id="lista-sem-data"></div></section>
     </section>
     <section id="producao" hidden><h2>Produção</h2><p class="empty">O quadro estará disponível na próxima entrega.</p></section>
-    <section id="planilha" hidden><h2>Planilha</h2><p class="empty">As abas e o Histórico estarão disponíveis na próxima entrega.</p></section>
+    <section id="planilha" hidden>
+      <section class="capture-info" aria-label="Origem e atualização">
+        <h2>Origem e atualização</h2>
+        <dl>
+          <div><dt>Fonte</dt><dd id="fonte-captura">Aguardando leitura local</dd></div>
+          <div><dt>Fim da captura · São Paulo</dt><dd id="fim-captura">Aguardando leitura local</dd></div>
+          <div><dt>Cobertura das semanas</dt><dd id="periodo-captura">Aguardando leitura local</dd></div>
+        </dl>
+        <div id="avisos-captura" class="capture-notice" role="status" hidden></div>
+        <button type="button" id="atualizar" class="refresh-button">Atualizar dados</button>
+        <p id="releitura-aviso">Reler captura local; não consulta o Google</p>
+      </section>
+      <p class="empty">As abas e o Histórico estarão disponíveis em uma próxima entrega.</p>
+    </section>
   </main>
   <dialog id="dia"><div class="section-heading"><h2 id="dia-titulo"></h2><button type="button" id="fechar-dia" aria-label="Fechar dia">×</button></div><p id="dia-quantidade"></p><div id="dia-pecas"></div></dialog>
 </body>
