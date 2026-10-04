@@ -2,6 +2,10 @@
 
 Data: 02/10/2026. **Estado: estrutura do Spec Kit inicializada; features ainda não implementadas.** A integração Codex/PowerShell e a [constituição 1.0.0](.specify/memory/constitution.md) estão presentes. Isso não instala perfis editoriais nem comprova integração com a operação.
 
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review **0.4.4** foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). A **0.4.5** foi aceita no [PR #3](https://github.com/Browsher/crm-social/pull/3#issuecomment-5975683038), commit `afd8238` (merge `72efb98`), [execução 37170294491](https://github.com/Browsher/crm-social/actions/runs/37170294491). A **0.4.7 aguarda o aceite deste PR**.
+
+Os cenários de retenção por possível segredo e de falha foram testados somente localmente; isso não comprova esses caminhos no Actions. Existe limite de arquivos por PR na lista retornada pelo gh: se `files` vier menor que `changedFiles`, o review recusa a lista incompleta; o teto numérico ainda não foi documentado. O gate fica vermelho até a 001 trazer testes reais; a geração de testes pelo rótulo `gerar-testes` ainda não foi exercitada.
+
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. O [desenho de referência](docs/design/desenho.md) e o protótipo descrevem a intenção, sem representar funcionalidades entregues.
 
 As cinco features abaixo serão construídas em sequência. Somente a 001 recebe especificação detalhada agora; 002–005 são recortes de backlog, sujeitos ao detalhamento quando chegar sua vez. Os critérios abaixo são condições de aceite futuro, não resultados já verificados.

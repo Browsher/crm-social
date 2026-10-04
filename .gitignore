@@ -15,4 +15,5 @@ quality-gate-report.json
 coverage/
 .quality-gate-run/
 .quality-gate/*.tmp
+.review-context/
 # meu-setup:end

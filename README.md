@@ -2,7 +2,11 @@
 
 CRM de conteúdo para uso somente neste computador. NTV é a primeira marca. O desenho aprovado é a base visual; Sheets e Drive continuam sendo as fontes operacionais.
 
-**Estado em 02/10/2026:** estrutura oficial GitHub Spec Kit 1.0.13 inicializada, constituição escrita e primeira feature especificada e planejada. O aplicativo funcional ainda não foi implementado. Nenhum agente editorial, agendamento ou workflow foi alterado nesta preparação.
+**Estado em 02/10/2026:** estrutura oficial GitHub Spec Kit 1.0.13 inicializada, constituição escrita e primeira feature especificada e planejada. O aplicativo funcional ainda não foi implementado. Nenhum agente editorial, agendamento ou workflow n8n foi alterado nesta preparação.
+
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review **0.4.4** foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). A **0.4.5** foi aceita no [PR #3](https://github.com/Browsher/crm-social/pull/3#issuecomment-5975683038), commit `afd8238` (merge `72efb98`), [execução 37170294491](https://github.com/Browsher/crm-social/actions/runs/37170294491). A **0.4.7 aguarda o aceite deste PR**.
+
+Os cenários de retenção por possível segredo e de falha foram testados somente localmente; isso não comprova esses caminhos no Actions. Existe limite de arquivos por PR na lista retornada pelo gh: se `files` vier menor que `changedFiles`, o review recusa a lista incompleta; o teto numérico ainda não foi documentado. O gate fica vermelho até a 001 trazer testes reais; a geração de testes pelo rótulo `gerar-testes` ainda não foi exercitada.
 
 ## Onde começar
 
