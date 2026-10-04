@@ -56,3 +56,57 @@ test('P-base célula mínima com token/caminho indevido é suprimida com aviso',
   assert.ok(view.avisos.some(a=>a.campo==='legenda'));
   assert.ok(view.avisos.some(a=>a.campo==='tema'));
 });
+test('P01 preserva quatro peças históricas e calendário civil entre meses', t => {
+  const view=projetarVisao(estado(capturaValida(),t),NOW,mapaQuadroValido());
+  assert.equal(view.producoes.length,4);
+  assert.deepEqual(view.dias.map(d=>d.data),['2026-09-30','2026-10-01','2026-10-02']);
+  assert.deepEqual(view.dias.find(d=>d.data==='2026-10-02').ids,['peca-3','peca-4']);
+  assert.deepEqual(view.semanas[0].periodo,{inicio:'2026-09-28',fim:'2026-10-04'});
+  assert.deepEqual(view.captura.periodo,{inicio:'2026-09-28',fim:'2026-10-04'});
+  assert.deepEqual(view.semanas[0].ids,['peca-1','peca-2','peca-3','peca-4']);
+});
+test('P02 formatos vêm do slot, sem mudar tipo original; desconhecido permanece Outro', t => {
+  const raw=capturaValida(); mudarCelula(raw,'Produções',4,'slot','novo-slot-sintético');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.producoes.map(p=>p.formato),['Imagem','Imagem','Carrossel','Outro']);
+  assert.equal(view.producoes[1].tipo_producao,'tipo-original-imagem_b');
+});
+test('P02 datas inválidas/seriais/vazias ficam Sem data, independentemente do mês', t => {
+  const raw=capturaValida();
+  for (const [i,value] of [[1,'2026-02-30'],[2,46700],[3,''],[4,'2026-10-02T00:00:00Z']]) mudarCelula(raw,'Produções',i,'data_prevista',value);
+  const state=estado(raw,t);
+  for (const now of [NOW,'2026-11-15T14:00:00Z']) {
+    const view=projetarVisao(state,now,mapaQuadroValido());
+    assert.equal(view.producoes.filter(p=>p.dataCivil===null).length,4);
+    assert.equal(view.dias.length,1);
+    assert.equal(view.dias[0].data,null);
+    assert.deepEqual(view.dias[0].ids,['peca-1','peca-2','peca-3','peca-4']);
+    assert.ok(view.avisos.some(a=>a.campo==='data_prevista'));
+  }
+});
+test('P03 peça órfã continua em Semana não identificada, sem período inventado', t => {
+  const raw=capturaValida(); mudarCelula(raw,'Produções',2,'semana_id','semana-inexistente');
+  mudarCelula(raw,'Produções',2,'data_prevista','');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const orphan=view.semanas.find(s=>s.semana_id===null);
+  assert.equal(orphan.tema,'Semana não identificada');
+  assert.deepEqual(orphan.ids,['peca-2']);
+  assert.deepEqual(orphan.periodo,{inicio:null,fim:null});
+  assert.equal(view.producoes.length,4);
+});
+test('P03 ordem por ID é ordinal e não segue a ordem física das linhas', t => {
+  const raw=capturaValida();
+  mudarCelula(raw,'Produções',3,'producao_id','z-peca');
+  mudarCelula(raw,'Produções',4,'producao_id','A-peca');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.dias.find(d=>d.data==='2026-10-02').ids,['A-peca','z-peca']);
+});
+test('P03 início semanal inválido deixa cobertura null e objetivo mensal indefinido', t => {
+  const raw=capturaValida(); mudarCelula(raw,'Semanas',1,'inicio_semana','data-inválida');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.captura.periodo,{inicio:null,fim:null});
+  assert.deepEqual(view.semanas[0].periodo,{inicio:null,fim:null});
+  assert.equal(view.semanas[0].objetivoMensal,'Ainda não definido');
+  assert.equal(view.semanas[0].objetivo,'Objetivo semanal sintético');
+  assert.ok(view.avisos.some(a=>a.campo==='inicio_semana'));
+});
