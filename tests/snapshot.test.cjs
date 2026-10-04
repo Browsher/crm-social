@@ -75,6 +75,7 @@ test('S04 interrupção antes do estado deixa recibo órfão e retry promove de 
   assert.throws(() => promoverCaptura(next,dir),/persistência.*não.*registrada/);
   fs.renameSync.mock.restore();
   const orphans=fs.readdirSync(path.join(dir,'tentativas'));
+  assert.deepEqual(fs.readdirSync(dir).filter(f=>/^atual-.*\.tmp$/.test(f)),[]);
   const old=lerEstado(dir,clock);
   assert.equal(old.captura.envelope.capturaId,raw.capturaId);
   assert.equal(old.historico.length,1);
@@ -99,6 +100,7 @@ test('S04 uma falha de promoção recuperável confirma falha, sem promover nova
   assert.equal(promoverCaptura(raw,dir).resultado,'falhou');
   fs.renameSync.mock.restore();
   const state=lerEstado(dir,clock);
+  assert.deepEqual(fs.readdirSync(dir).filter(f=>/^atual-.*\.tmp$/.test(f)),[]);
   assert.equal(state.captura.envelope.capturaId,old.capturaId);
   assert.equal(state.ultimaTentativa.resultado,'falhou');
   assert.equal(state.historico.length,2);
@@ -108,4 +110,54 @@ test('S04 armazenamento indisponível dá erro explícito sem fabricar durabilid
   fs.writeFileSync(blocked,'obstáculo sintético');
   assert.throws(() => promoverCaptura(capturaValida(),blocked),/persistência.*não.*registrada/);
   assert.equal(fs.readFileSync(blocked,'utf8'),'obstáculo sintético');
+});
+
+function falharLiberacao(t,dir,{close=false,unlink=false}) {
+  const open=fs.openSync, fechar=fs.closeSync, remover=fs.unlinkSync;
+  const lock=path.join(dir,'.importacao.lock');
+  let lockFd;
+  t.mock.method(fs,'openSync',(file,...args)=>{
+    const fd=open(file,...args);
+    if (file===lock) lockFd=fd;
+    return fd;
+  });
+  t.mock.method(fs,'closeSync',fd=>{
+    fechar(fd);
+    if (close && fd===lockFd) throw new Error('falha sintética de fechamento');
+  });
+  t.mock.method(fs,'unlinkSync',file=>{
+    if (unlink && file===lock) throw new Error('falha sintética de remoção');
+    return remover(file);
+  });
+}
+test('S-review M1 close falha, mas unlink é tentado e o recibo completo é preservado', t => {
+  const dir=temporario(t);
+  falharLiberacao(t,dir,{close:true});
+  const result=promoverCaptura(capturaValida(),dir);
+  assert.equal(result.resultado,'completa');
+  assert.ok(result.avisos.some(a=>a.includes('trava')));
+  assert.equal(fs.existsSync(path.join(dir,'.importacao.lock')),false);
+  assert.equal(lerEstado(dir).ultimaTentativa.resultado,'completa');
+});
+test('S-review M1 unlink falha sem transformar o recibo de validação em erro da trava', t => {
+  const dir=temporario(t), raw=capturaValida();
+  raw.tables.Cenas.complete=false;
+  falharLiberacao(t,dir,{unlink:true});
+  const result=promoverCaptura(raw,dir);
+  assert.equal(result.resultado,'falhou');
+  assert.equal(result.motivoResumo,'Cenas complete: inválido');
+  assert.ok(result.avisos.some(a=>a.includes('trava')));
+  assert.equal(fs.existsSync(path.join(dir,'.importacao.lock')),true);
+  assert.equal(lerEstado(dir).ultimaTentativa.motivoResumo,result.motivoResumo);
+});
+test('S-review M1 erros de close/unlink não substituem o erro original da operação', t => {
+  const dir=temporario(t);
+  fs.writeFileSync(path.join(dir,'atual.json'),'JSON sintético inválido');
+  falharLiberacao(t,dir,{close:true,unlink:true});
+  assert.throws(()=>promoverCaptura(capturaValida(),dir),e=>{
+    assert.equal(e.message,'persistência: falha não pôde ser registrada');
+    assert.ok(e.avisos.some(a=>a.includes('trava')));
+    return true;
+  });
+  assert.equal(fs.readFileSync(path.join(dir,'atual.json'),'utf8'),'JSON sintético inválido');
 });

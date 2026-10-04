@@ -20,10 +20,14 @@ function importarArquivo(input,dataDir) {
   catch (e) { return registrarFalhaEntrada(dataDir,e.code); }
   return promoverCaptura(raw,dataDir);
 }
+function avisar(outcome) {
+  for (const aviso of outcome.avisos ?? []) process.stderr.write('Aviso: '+aviso+'\n');
+}
 function main(argv) {
   try {
     const {input,dataDir}=argumentos(argv);
     const result=importarArquivo(input,dataDir);
+    avisar(result);
     if (result.resultado==='falhou') {
       process.stderr.write('Importação falhou: '+result.motivoResumo+'\n');
       return 1;
@@ -31,6 +35,7 @@ function main(argv) {
     process.stdout.write(result.capturaId+' '+result.resultado+'\n');
     return 0;
   } catch (e) {
+    avisar(e);
     process.stderr.write(e.message+'\n');
     return 1;
   }

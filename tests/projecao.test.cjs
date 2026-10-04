@@ -7,6 +7,30 @@ const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
 function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
 
+test('P-review I1 captura local usa estado provisório, sem afirmar frescor da US2', t => {
+  const input=estado(capturaValida(),t);
+  for (const now of [NOW,'2026-11-15T14:00:00Z']) {
+    const view=projetarVisao(input,now,mapaQuadroValido());
+    assert.equal(view.estado,'captura_local_provisoria');
+    assert.equal(view.selo.texto,'Captura local');
+    assert.equal(view.producoes[0].status,'em_planejamento');
+  }
+});
+test('P-review I1 falha posterior avisa sem apagar captura; nova completa encerra aviso', t => {
+  const dir=temporario(t), raw=capturaValida();
+  promoverCaptura(raw,dir);
+  const invalid=capturaValida(); invalid.tables.Cenas.complete=false;
+  promoverCaptura(invalid,dir);
+  promoverCaptura(raw,dir); // Repetição não encerra a falha posterior.
+  const view=projetarVisao(lerEstado(dir),NOW,mapaQuadroValido());
+  assert.equal(view.captura.capturaId,raw.capturaId);
+  assert.ok(view.avisos.some(a=>a.motivo==='Última importação falhou; captura anterior preservada'));
+  const newer=capturaValida(); newer.capturaId='captura-sintetica-02';
+  promoverCaptura(newer,dir);
+  const next=projetarVisao(lerEstado(dir),NOW,mapaQuadroValido());
+  assert.ok(!next.avisos.some(a=>a.motivo.includes('Última importação falhou')));
+});
+
 test('P-base conserva NTV uma vez, exclui outra marca sem filtro de elegibilidade', t => {
   const raw=capturaValida();
   mudarCelula(raw,'Produções',1,'status','concluida');

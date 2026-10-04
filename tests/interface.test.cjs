@@ -96,3 +96,57 @@ test('U01 peça remarcada fora do período semanal aparece no mês civil em amba
   assert.match(await page.locator('#lista').textContent(),/Conexões do cotidiano/);
   assert.equal(await page.getByRole('button',{name:'1 sem data',exact:true}).count(),1);
 });
+
+test('U-review rótulos conhecidos são legíveis; desconhecido e API preservam o original', {skip}, async t => {
+  const page=await abrir(t,1440,true,raw=>{
+    const table=raw.tables.Produções, header=table.values[0];
+    for (const [id,status] of [['peca-7','cancelada'],['peca-8','estado_NOVO-Sintético']]) {
+      const row=table.values[1].slice();
+      row[header.indexOf('producao_id')]=id;
+      row[header.indexOf('status')]=status;
+      table.values.push(row);
+    }
+    for (const [i,status] of [[1,'em_planejamento'],[2,'pronto'],[3,'publicado'],[4,'erro'],[6,'cancelado']]) mudarCelula(raw,'Produções',i,'status',status);
+  });
+  await page.locator('#calendario [data-producao-id="peca-1"]').waitFor();
+  assert.equal(await page.locator('#calendario [data-producao-id="peca-1"] .status').textContent(),'Em planejamento');
+  await page.getByRole('button',{name:'Lista',exact:true}).click();
+  for (const [id,label] of [['peca-1','Em planejamento'],['peca-2','Pronto'],['peca-3','Publicado'],['peca-4','Erro'],['peca-6','Cancelado'],['peca-7','Cancelada'],['peca-8','estado_NOVO-Sintético']]) {
+    assert.equal(await page.locator('#lista [data-producao-id="'+id+'"] .row-status').textContent(),label);
+  }
+  const view=await page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));
+  assert.equal(view.producoes.find(p=>p.producao_id==='peca-1').status,'em_planejamento');
+  assert.equal(view.producoes.find(p=>p.producao_id==='peca-8').status,'estado_NOVO-Sintético');
+});
+test('U-review mês tem inicial maiúscula e preposição minúscula na apresentação', {skip}, async t => {
+  const page=await abrir(t);
+  await page.locator('.calendar-grid').waitFor();
+  assert.equal(await page.locator('#mes').textContent(),'Outubro de 2026');
+  assert.equal(await page.locator('#mes').evaluate(el=>getComputedStyle(el).textTransform),'none');
+  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  assert.equal(await page.locator('#mes').textContent(),'Novembro de 2026');
+});
+test('U-review calendário elimina semanas inteiras fora do mês, inclusive fevereiro de quatro semanas', {skip}, async t => {
+  const page=await abrir(t);
+  await page.locator('.calendar-grid').waitFor();
+  assert.equal(await page.locator('.calendar-grid > .day').count(),35);
+  assert.equal(await page.locator('.calendar-grid').getByRole('button',{name:'2 de novembro',exact:true}).count(),0);
+  for (let i=0;i<4;i++) await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  assert.equal(await page.locator('.calendar-grid > .day').count(),28);
+  assert.equal(await page.locator('.calendar-grid').getByRole('button',{name:'1 de março',exact:true}).count(),0);
+  assert.equal(await page.locator('.calendar-grid .outside').count(),0);
+});
+test('U-review fundo lateral cobre a página longa e a página menor que a janela', {skip}, async t => {
+  const page=await abrir(t);
+  await page.locator('.calendar-grid').waitFor();
+  const coberta=()=>page.evaluate(()=>{
+    const sidebar=document.querySelector('.sidebar').getBoundingClientRect();
+    return {sidebar:sidebar.height,pagina:document.documentElement.scrollHeight};
+  });
+  const longa=await coberta();
+  // scrollHeight é inteiro; o retângulo CSS pode medir frações do último pixel.
+  assert.ok(Math.ceil(longa.sidebar)>=longa.pagina,JSON.stringify(longa));
+  await page.setViewportSize({width:1440,height:1600});
+  const curta=await coberta();
+  assert.ok(Math.ceil(curta.sidebar)>=curta.pagina,JSON.stringify(curta));
+});

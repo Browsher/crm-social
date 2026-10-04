@@ -73,7 +73,7 @@ function agruparDias(producoes) {
   }
   return [...groups.values()].map(group=>({...group,ids:group.ids.sort(ordinal)})).sort((a,b)=>ordinal(a.data ?? 'z',b.data ?? 'z'));
 }
-function projetarVisao(estadoLocal) {
+function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   const result=base(estadoLocal), captura=estadoLocal.captura;
   if (!captura) return result;
   const ntv=selecionarNtv(captura,result.avisos);
@@ -83,8 +83,12 @@ function projetarVisao(estadoLocal) {
     periodo:{inicio:null,fim:null},contagens:Object.fromEntries(chaves.map(k=>[k,ntv[k].length]))};
   planejar(result);
   // O selo completo é US2; esta base conserva a data real sem declarar sincronização.
-  result.estado='anterior_hoje';
+  result.estado='captura_local_provisoria';
   result.selo={texto:'Captura local',cor:'âmbar',destino:'planilha'};
+  // O ponteiro confirmado mantém a falha ativa até uma nova promoção completa.
+  if (estadoLocal.ultimaTentativa?.resultado==='falhou') {
+    result.avisos.push({motivo:'Última importação falhou; captura anterior preservada'});
+  }
   return result;
 }
 module.exports={projetarVisao};

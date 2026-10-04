@@ -45,8 +45,13 @@ function confirmar(dataDir,before,receipt,capturaId) {
   gravarImutavel(path.join(dataDir,'tentativas',receipt.tentativaId+'.json'),body);
   const next={capturaId,ultimaTentativaId:receipt.tentativaId,historicoIds:[...before.historicoIds,receipt.tentativaId]};
   const staged=path.join(dataDir,'atual-'+randomUUID()+'.tmp');
-  gravarDuravel(staged,JSON.stringify(next));
-  fs.renameSync(staged,path.join(dataDir,'atual.json'));
+  try {
+    gravarDuravel(staged,JSON.stringify(next));
+    fs.renameSync(staged,path.join(dataDir,'atual.json'));
+  } catch (e) {
+    try { fs.unlinkSync(staged); } catch { /* conservar o erro original de gravação/promoção */ }
+    throw e;
+  }
   // Resumo derivado: a confirmação já está no estado único, mesmo se este cache falhar.
   try { fs.writeFileSync(path.join(dataDir,'ultima-tentativa.json'),body,'utf8'); } catch { /* sem autoridade */ }
   return receipt;
@@ -73,13 +78,20 @@ function exclusiva(dataDir,operation) {
   catch (e) {
     throw new Error(e.code==='EEXIST'?'persistência: importação em andamento; confira a instância antes de tentar novamente':'persistência: falha não pôde ser registrada');
   }
+  let outcome;
   try {
     try { fs.writeFileSync(fd,JSON.stringify({pid:process.pid,iniciadaEm:new Date().toISOString()}),'utf8'); fs.fsyncSync(fd); }
     catch { throw new Error('persistência: falha não pôde ser registrada'); }
-    return operation();
+    outcome=operation();
+    return outcome;
+  } catch (e) {
+    outcome=e;
+    throw e;
   } finally {
-    try { fs.closeSync(fd); fs.unlinkSync(lock); }
-    catch { throw new Error('persistência: falha ao liberar a trava; confira o estado local'); }
+    let warning=false;
+    try { fs.closeSync(fd); } catch { warning=true; }
+    try { fs.unlinkSync(lock); } catch { warning=true; }
+    if (warning) outcome.avisos=[...(outcome.avisos ?? []),'falha ao liberar a trava; confira o estado local'];
   }
 }
 function registrarFalhaEntrada(dataDir,codigo) {

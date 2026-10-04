@@ -1,6 +1,6 @@
 :root{--page:#f5f7f8;--white:#fff;--ink:#24312d;--muted:#727d78;--line:#e5eae7;--green:#18855e;--green-dark:#106847;--green-light:#eaf5ee;--orange:#b07531;--purple:#7760a9;--sidebar:240px}
 *{box-sizing:border-box}
-body{margin:0;background:var(--page);color:var(--ink);font:14px/1.5 "Segoe UI",Arial,sans-serif}
+body{position:relative;min-height:100vh;margin:0;background:var(--page);color:var(--ink);font:14px/1.5 "Segoe UI",Arial,sans-serif}
 button,a{font:inherit}
 button{cursor:pointer;color:inherit;background:none;border:0}
 button:disabled{cursor:wait}
@@ -11,7 +11,7 @@ h1{font-size:28px;font-weight:600;letter-spacing:-.7px}
 h2{font-size:19px;font-weight:600;letter-spacing:-.25px}
 h3{font-size:15px;font-weight:600}
 [hidden]{display:none!important}
-.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);border-right:1px solid var(--line);background:var(--white);display:flex;flex-direction:column;z-index:20}
+.sidebar{position:absolute;inset:0 auto 0 0;width:var(--sidebar);border-right:1px solid var(--line);background:var(--white);display:flex;flex-direction:column;z-index:20}
 .brand{height:65px;display:flex;align-items:center;gap:6px;padding:0 24px;border-bottom:1px solid var(--line);font-size:18px;letter-spacing:-.6px;text-decoration:none;color:var(--ink)}
 .brand-mark{height:30px;width:30px;border-radius:8px;background:var(--green);color:white;display:grid;place-items:center;margin-right:7px;font-weight:600}
 .workspace{margin:23px 17px 28px;padding:12px;display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:7px}
@@ -43,7 +43,6 @@ main{margin-left:var(--sidebar);padding:28px 32px 35px;max-width:1900px}
 .month-brief small{color:var(--muted);font-size:11px}
 .month-brief p{font-size:14px;font-weight:500;margin-top:2px;color:#8a958e}
 .month-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-#mes{text-transform:capitalize}
 .month-nav{display:flex;gap:6px}
 .month-nav button{border:1px solid var(--line);background:white;border-radius:5px;width:34px;height:31px;font-size:24px;line-height:1}
 .toolbar{display:flex;justify-content:space-between;gap:15px;margin-bottom:15px}
@@ -94,7 +93,7 @@ dialog .post{margin-top:12px}
 @media(max-width:1050px){main{padding:25px 20px}.day{padding:8px 5px}.post strong{font-size:11px}}
 @media(max-width:720px){
   :root{--sidebar:0px}
-  .sidebar{display:none;width:240px;top:65px;box-shadow:5px 0 25px #24312d22}
+  .sidebar{position:fixed;display:none;width:240px;top:65px;box-shadow:5px 0 25px #24312d22}
   .sidebar.open{display:flex}
   .sidebar .brand{display:none}
   .topbar{padding:0 18px;gap:14px;justify-content:flex-start}

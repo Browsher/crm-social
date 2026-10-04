@@ -13,6 +13,10 @@ function civil(date,options) {
 }
 function idsParaPecas(ids) { return ids.map(id=>state.view.producoes.find(p=>p.producao_id===id)); }
 function aceito(p) { return state.formato==='Todos' || state.formato===p.formato; }
+const rotulosStatus={em_planejamento:'Em planejamento',pronto:'Pronto',publicado:'Publicado',erro:'Erro',cancelado:'Cancelado',cancelada:'Cancelada'};
+function statusLegivel(value) {
+  return Object.hasOwn(rotulosStatus,value)?rotulosStatus[value]:(value || 'Estado não informado');
+}
 function abrirDia(data,ids) {
   $('#dia-titulo').textContent=data?civil(data,{weekday:'long',day:'2-digit',month:'long'}):'Sem data';
   $('#dia-quantidade').textContent=ids.length+(ids.length===1?' peça registrada':' peças registradas');
@@ -28,7 +32,7 @@ function cartao(p,interactive=true) {
       abrirDia(group.data,group.ids);
     });
   }
-  el.append(node('small',p.formato),node('strong',p.titulo || 'Título não informado'),node('span',p.status || 'Estado não informado','status'));
+  el.append(node('small',p.formato),node('strong',p.titulo || 'Título não informado'),node('span',statusLegivel(p.status),'status'));
   return el;
 }
 function dataMais(date,n) {
@@ -41,8 +45,11 @@ function calendario() {
   for (const dia of ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom']) header.append(node('span',dia));
   const first=state.mes+'-01', weekday=new Date(first+'T12:00:00Z').getUTCDay();
   const start=dataMais(first,-((weekday+6)%7));
-  for (let i=0;i<42;i++) {
-    const date=dataMais(start,i), outside=!date.startsWith(state.mes), cell=node('div',undefined,'day'+(outside?' outside':''));
+  const nextMonth=new Date(first+'T12:00:00Z');
+  nextMonth.setUTCMonth(nextMonth.getUTCMonth()+1);
+  const last=dataMais(nextMonth.toISOString().slice(0,10),-1), end=dataMais(last,6-((new Date(last+'T12:00:00Z').getUTCDay()+6)%7));
+  for (let date=start;date<=end;date=dataMais(date,1)) {
+    const outside=!date.startsWith(state.mes), cell=node('div',undefined,'day'+(outside?' outside':''));
     const dateButton=node('button',String(Number(date.slice(-2))),'date-number');
     dateButton.type='button';dateButton.setAttribute('aria-label',civil(date,{day:'numeric',month:'long'}));
     const group=state.view.dias.find(d=>d.data===date), allIds=group?.ids ?? [];
@@ -63,7 +70,7 @@ function row(p) {
   const el=node('button',undefined,'agenda-row');
   el.type='button';el.dataset.producaoId=p.producao_id;
   el.append(node('small',p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'short'}):'Sem data'),
-    node('strong',p.titulo || 'Título não informado'),node('small',p.formato,'row-format'),node('small',p.status || 'Estado não informado','row-status'));
+    node('strong',p.titulo || 'Título não informado'),node('small',p.formato,'row-format'),node('small',statusLegivel(p.status),'row-status'));
   el.addEventListener('click',()=>{
     const group=state.view.dias.find(d=>d.data===p.dataCivil && (d.data!==null || d.semanaId===p.semanaId));
     abrirDia(group.data,group.ids);
@@ -90,7 +97,8 @@ function lista(semData=false) {
   (semData?$('#lista-sem-data'):$('#lista')).replaceChildren(...groups);
 }
 function render() {
-  $('#mes').textContent=civil(state.mes+'-01',{month:'long',year:'numeric'});
+  const mes=civil(state.mes+'-01',{month:'long',year:'numeric'});
+  $('#mes').textContent=mes.charAt(0).toUpperCase()+mes.slice(1);
   const empty=state.view.captura===null;
   $('#sem-captura').hidden=!empty;
   $('#calendario').hidden=empty || state.modo!=='Calendário';
