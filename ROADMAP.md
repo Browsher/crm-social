@@ -2,7 +2,7 @@
 
 Data: 02/10/2026. **Estado: estrutura do Spec Kit inicializada; features ainda não implementadas.** A integração Codex/PowerShell e a [constituição 1.0.0](.specify/memory/constitution.md) estão presentes. Isso não instala perfis editoriais nem comprova integração com a operação.
 
-CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge; geração de testes pelo rótulo `gerar-testes`. O review foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974707424); o gate permanece vermelho por ausência de testes da aplicação.
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). O gate permanece vermelho até a 001 trazer testes reais; a geração de testes pelo rótulo `gerar-testes` ainda não foi exercitada.
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. O [desenho de referência](docs/design/desenho.md) e o protótipo descrevem a intenção, sem representar funcionalidades entregues.
 

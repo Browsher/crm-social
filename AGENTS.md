@@ -6,7 +6,7 @@ Quando este repositório estiver dentro do workspace Social Midia, ../AGENTS.md 
 
 Em 02/10/2026 há scaffold oficial Spec Kit, documentação e plano da feature 001. Não há aplicativo implementado, novo agente editorial instalado ou backend comprovado. Não apresentar o protótipo como dados reais. `CRM de referência local, caminho configurado fora do repositório` é referência em leitura; não alterar esse projeto nem copiar sua infraestrutura por conveniência.
 
-CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge; geração de testes pelo rótulo `gerar-testes`.
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). O gate permanece vermelho até a 001 trazer testes reais; a geração de testes pelo rótulo `gerar-testes` ainda não foi exercitada.
 
 O projeto roda somente neste computador. Sem deploy, novas agendas, geração, publicação, escrita operacional ou mudanças em n8n por consequência de implementar consulta. A Central permanece responsável pelas operações editoriais remotas. Dados coletados ficam em `data/`, ignorados por Git e Graphify, nunca em fixtures ou saída pública.
 
