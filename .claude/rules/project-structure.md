@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-T001–T034/US1–US5 implementadas localmente (34/41); sete tarefas finais pendentes; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md).
+T001–T038 implementadas/verificadas localmente (38/41); T039/T040/T041 pendentes, sem aceite operacional; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local não versionado; remoto usa branch/specs da 001.
@@ -9,15 +9,20 @@ T001–T034/US1–US5 implementadas localmente (34/41); sete tarefas finais pend
 - docs/design/telas.md define telas; mockups/ e prototype/ são demonstrações históricas.
 - docs/design/screenshots/ mostra aplicação real com fixture fictícia, nunca produção.
 - docs/index.md é o índice; docs/architecture.md documenta o código e suas fronteiras.
-- docs/modules/ detalha captura, snapshot, importador, quadro-config, projeção, servidor e web.
+- docs/modules/ detalha captura, triagem, snapshot, importador, quadro-config, projeção, servidor, iniciador e web.
 - EntryPoint real: scripts/importar-captura.cjs <arquivo-local> [--data-dir <diretorio>].
 - EntryPoint real: src/servidor.cjs [--data-dir <diretorio>] [--port <porta>].
+- EntryPoint Windows: Iniciar CRM.ps1 [-DataDir <diretorio>] [-Port <porta>] [-NodePath <exe>].
+- Iniciador resolve -NodePath/CRM_NODE_PATH/PATH, usa Node oculto, confirma stdout em dez segundos e retorna PID/URL/logDir/encerrar.
+- Porta 0–65535, data/ e 4318 padrão; logs privados em DataDir/runtime; erro encerra só filho criado, nunca ocupante.
 - src/captura.cjs valida seis abas/66 mínimos; src/snapshot.cjs confirma estado privado.
 - validarTempoImportacao confere candidata sob trava: futuro até 10 min; fim posterior ao vigente.
 - Falha temporal confirma recibo e mantém vigente; no-op de ID aceito precede essa regra.
 - GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
+- lerRecibo valida objeto/tipos/IDs/data ISO real com fuso dos recibos confirmados; inválido recusa leitura sem escrever.
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
-- src/projecao.cjs seleciona NTV/datas/formatos, detalhes/quadro e seis cópias dos mínimos triados; quadro-config valida mapa.
+- src/triagem.cjs seleciona NTV/66 mínimos e redige; snapshot valida identidades antes do no-op/gravação, sem mapa do quadro.
+- src/projecao.cjs usa triagem para detalhes/quadro/tabelas; sem versão positiva, mídia vigente a confirmar.
 - config/quadro-etapas.json é aplicado na projeção; nove etapas e liberação/revisão vazias.
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas fixas: /, /app.js, /styles.css, /api/visao; GET/HEAD e Host/Origin locais.
@@ -33,18 +38,19 @@ T001–T034/US1–US5 implementadas localmente (34/41); sete tarefas finais pend
 - JSON é dado: só strings alteradas são reserializadas, demais bytes intactos; original/validade privados.
 - Avisos globais relacionados entram no contador da peça; ligado sem link seguro é link não permitido.
 - Avisos conservam linha física por ID/WeakMap; valor sensível não acompanha motivo público.
+- Triagem recusa candidata com _id alterável e preserva vigente; projeção mantém guarda para bytes antigos/corrompidos.
 - tools/quality-gate.mjs é o entrypoint do gate; seus módulos são gate-*.mjs.
 - tools/package.json e package-lock.json isolam ESLint, sem dependência da aplicação.
 - .github/workflows contém CI; o bootstrap instalou os templates do node-kit.
 - .claude/agents e .claude/skills orientam Claude; .agents/skills orienta Codex.
 - data/ é privada e ignorada; não ler, usar em testes, servir ou versionar seus arquivos.
 - Código tem um responsável por arquivo e testes de comportamento antes da implementação.
-- Sete suítes em tests/: node:test, assert/strict, diretórios TEMP e HTTP em porta efêmera.
+- Oito suítes em tests/: node:test, assert/strict, diretórios TEMP e HTTP em porta efêmera.
 - Executar com Node 24.19.0 existente por CRM_NODE_PATH e seu diretório à frente do PATH.
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
 - Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
-- CI=true pula os testes de UI, fora do LCOV (M8); aceite local exige zero pulos.
+- M8: UI fora do LCOV e pulos UI/PowerShell no Linux; CLI coberta; aceite Windows local exige zero pulos.
 - US4: primeira pendência/+N visíveis; mídia oculta no cartão de Planejamento/Redação/Visual; semanaId declarada no estado.
 - US5: abas por teclado/foco, rolagem própria e Histórico confirmado; releitura conserva aba disponível.
-- T035–T041/iniciador/escala/captura operacional/revisão final pendentes; doc-sync do incremento não conclui T041.
+- T039 captura real, T040 gate pós-demonstração e T041 onboarding final pendentes; este doc-sync não conclui T041.
 - Não alterar constituição, ferramentas/gate, agentes oficiais ou operação n8n.

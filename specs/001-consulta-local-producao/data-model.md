@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva identidades e relações: T001–T034/US1–US5 implementadas localmente (34 de 41 tarefas), com revisão corrente e evidências na [validação](validacao.md). Sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes; interfaces atuais na [arquitetura](../../docs/architecture.md), sem leitura Google.
+Como um índice de fotografias, o modelo conserva identidades e relações: T001–T038 implementadas e verificadas localmente (38 de 41 tarefas). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; a 001 não tem aceite operacional. Evidências na [validação](validacao.md) e interfaces atuais na [arquitetura](../../docs/architecture.md).
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
@@ -42,6 +42,15 @@ de todas as demais. Versão/índice preenchidos devem ser inteiros positivos;
 início/duração números finitos não negativos. Inválidos geram aviso localizado,
 vazio permanece desconhecido, nunca zero. JSON inválido gera aviso e fica preservado
 como célula na captura; não é executado.
+
+O módulo compartilhado triagem seleciona NTV/66 mínimos e valida identidades da
+candidata após `validarCaptura`, antes de no-op, gravação ou promoção. Campo NTV
+terminado em `_id` alterável pela redação recusa a candidata; falha confirmável
+preserva a captura vigente e registra aba/linha física/campo sem o valor. Na consulta,
+bytes antigos/corrompidos continuam recusando a projeção inteira, sem criar chave de
+supressão compartilhada; HTTP responde 503 genérico e não escreve. Versão de produção
+vazia gera aviso de vigente não informada; vazia ou inválida não sustenta pendência
+categórica de mídia vigente ausente.
 
 ## Recortes de consulta
 
@@ -265,6 +274,11 @@ nenhuma célula cria navegação ou carregamento automático.
 
 ## Estado local e transições
 
+Cada recibo confirmado é validado na leitura: objeto, tentativaId correspondente,
+capturaId seguro ou null, concluidaEm ISO de data real com fuso, resultado conhecido
+e motivoResumo string. Completa exige capturaId não nulo. Recibo inválido/ilegível
+recusa o estado e produz 503 genérico sem reparar ou alterar arquivos privados.
+
 `atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`. Capturas e recibos
 imutáveis são preparados antes da substituição atômica desse estado no mesmo diretório.
 Somente IDs confirmados em `historicoIds` integram o Histórico e comprovam aceitação;
@@ -280,7 +294,7 @@ e preservar o estado anterior, sem fingir durabilidade do registro.
 | Primeira tentativa completa promovida | nova captura | completa persistida; hoje verde ou outro dia âmbar |
 | Nova tentativa falhou | anterior preservada | falhou persistida; vermelho se há válida, cinza se não há |
 | GET/Atualizar dados/reinício | mesma captura | lê histórico; não apaga erro nem renova fim de captura |
-| Mesmo capturaId e mesmos bytes, com aceitação anterior confirmada | sem alteração | sem duplicação/novo frescor nem retorno a captura antiga; falha posterior não é encerrada |
+| Mesmo capturaId e mesmos bytes, com aceitação anterior confirmada e estrutura/identidades NTV válidas | sem alteração | sem duplicação/novo frescor nem retorno a captura antiga; falha posterior não é encerrada |
 | Interrupção antes de confirmar o estado | anterior preservada | arquivos preparados excluídos do Histórico; mesmos bytes podem ser revalidados e promovidos numa nova tentativa |
 | Mesmo capturaId e bytes diferentes | anterior preservada | conflito/falhou |
 | Nova candidata mais de 10 minutos no futuro em relação ao relógio local | anterior preservada | falhou por captura inválida; motivo no recibo, candidata não gravada |

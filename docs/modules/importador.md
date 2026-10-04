@@ -2,7 +2,7 @@
 
 Como alguém que recebe uma fotografia pronta para colocá-la no álbum, o CLI lê um JSON local e entrega a tentativa à persistência. A coleta pela Central é anterior e independente.
 
-Estado em 04/10/2026: T008 implementada e corrigida após revisão para registrar falhas anteriores ao parse e preservar resultado/erro ao avisar sobre liberação de trava. Fonte: [scripts/importar-captura.cjs](../../scripts/importar-captura.cjs), `argumentos` (linha 5), `lerEntrada` (12), `importarArquivo` (17), `avisar` (23) e `main` (26).
+Importador implementado e verificado localmente; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [scripts/importar-captura.cjs](../../scripts/importar-captura.cjs), funções `argumentos`, `lerEntrada`, `importarArquivo`, `avisar` e `main`.
 
 ## Comando, argumentos e saída
 
@@ -41,10 +41,12 @@ Imports: `node:fs`, `node:path` e [snapshot](snapshot.md). O CLI exporta `main(a
 
 Estas falhas mantêm a captura/instante anteriores, registram capturaId null e não incluem nome de arquivo, caminho, células ou erro bruto. Sem captura aceita, a captura continua null. Se o armazenamento estiver indisponível, o erro informa que a falha não pôde ser registrada. Não inventar durabilidade a partir da saída de erro.
 
+Após parse válido, a [persistência](snapshot.md) valida estrutura e chama `validarIdentidadesNtv` de [triagem](triagem.md) antes de no-op ou gravação da candidata. Identidade/vínculo NTV que seria redigido gera `falhou` e exit 1, com aba/linha física/campo e motivo estático, sem ecoar a célula. A última captura permanece vigente e consultável; a candidata rejeitada não vira um sucesso seguido apenas de erro HTTP.
+
 Argumento inválido/URL é recusado antes da tentativa e não cria recibo. Diretório com importação em andamento recusa outra promoção ou falha de entrada, sem substituir o ponteiro. Recuperação de trava interrompida segue [persistência](snapshot.md); não há remoção automática.
 
 ## Testes, dívida e limites
 
 [tests/importador.test.cjs](../../tests/importador.test.cjs) chama processo CLI real por `process.execPath`, com arquivos e diretórios TEMP. Cobre argumentos, arquivo ausente, JSON quebrado, mensagens saneadas, promoção/no-op/conflito, impossibilidade de persistência e dois processos reais concorrentes. Evidência de RED/regressão/GREEN em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-O gate passou com um aviso de complexidade 12 em `argumentos` (linha 5); é dívida de manutenção registrada, não falha do gate nem autorização para simplificar retirando validações. Parse de JSON inteiro e I/O síncrono são o desenho local atual. Importação sintética não comprova coleta completa da Central: demonstrar com arquivo operacional fica em T039.
+Complexidade de `argumentos`, cobertura e resultados do gate ficam somente na [validação](../../specs/001-consulta-local-producao/validacao.md); manutenção não deve retirar validações. CLI está coberta e é obrigatória no Linux/Windows; M8 refere-se à UI fora do LCOV e aos pulos UI/PowerShell no Linux. Parse de JSON inteiro e I/O síncrono são o desenho local atual. Importação sintética não comprova coleta completa da Central: a captura operacional continua em T039.

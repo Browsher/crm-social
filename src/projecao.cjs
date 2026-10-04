@@ -1,52 +1,6 @@
 const {CAMPOS}=require('./captura.cjs');
 const {COLUNAS}=require('./quadro-config.cjs');
-const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
-// Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
-const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
-function redigirPedacoUrl(pedaco) {
-  const inicio=pedaco.match(/^[('"“”‘’«»`]+/)?.[0] ?? '';
-  const miolo=pedaco.slice(inicio.length),fim=miolo.match(/[.,;:!?()'"“”‘’«»`]+$/)?.[0] ?? '';
-  const candidato=miolo.slice(0,miolo.length-fim.length);
-  if(!/^https?:\/\//i.test(candidato)) return pedaco;
-  // Pontuação só delimita o pedaço; o parser URL decide se há userinfo.
-  try {
-    const url=new URL(candidato);
-    return url.username || url.password?inicio+'[conteúdo suprimido]'+fim:pedaco;
-  } catch {return pedaco;}
-}
-function redigirTexto(texto) {
-  if(sensivel.test(texto)) return '[conteúdo suprimido]';
-  if(jsonValido(texto)) {
-    // JSON é dado. Somente strings redigidas são reserializadas, inclusive chaves
-    // e JSON aninhado em strings; todos os demais bytes permanecem intactos.
-    return texto.replace(/"(?:\\.|[^"\\])*"/g,token=>{
-      const value=JSON.parse(token),redigido=redigirTexto(value);
-      return redigido===value?token:JSON.stringify(redigido);
-    });
-  }
-  return texto.split(/(\s+)/).map(redigirPedacoUrl).join('');
-}
-function jsonValido(value) {
-  try {JSON.parse(value);return true;} catch {return false;}
-}
-function motivoUrl(value) {
-  if(value.trim()==='') return null;
-  try {const url=new URL(value);return url.username || url.password?'conteúdo sensível suprimido':null;}
-  catch {return 'URL inválida suprimida';}
-}
-function selecionar(record,fields,nome,linha,avisos) {
-  return Object.fromEntries(fields.map(field=>{
-    const value=field==='etapa_producao' && record[field]===null?null:record[field] ?? '';
-    const redigido=typeof value==='string'?redigirTexto(value):value;
-    const motivo=redigido!==value?'conteúdo sensível suprimido':
-      (typeof value==='string' && ['url','url_video_final'].includes(field)?motivoUrl(value):null);
-    if (motivo) {
-      avisos.push({aba:nome,linha,campo:field,motivo});
-      return [field,redigido!==value?redigido:'[conteúdo suprimido]'];
-    }
-    return [field,value];
-  }));
-}
+const {chaves,redigirTexto,selecionarNtv}=require('./triagem.cjs');
 function reciboPublico(receipt) {
   if (!receipt) return null;
   return Object.fromEntries(['tentativaId','concluidaEm','resultado','motivoResumo'].map(campo=>[
@@ -58,27 +12,6 @@ function base(estadoLocal) {
   return {schemaVersion:1,estado:'sem_captura',selo:{texto:'Sem dados',cor:'cinza',destino:'planilha'},fonte:'Captura pela Central',
     captura:null,ultimaTentativa:reciboPublico(estadoLocal.ultimaTentativa),semanas:[],producoes:[],dias:[],
     quadro:{colunas:COLUNAS.map(nome=>({nome})),semanas:[]},planilha:[],historico,avisos:[]};
-}
-function selecionarNtv(captura,avisos,origens,validadeJson) {
-  const semanas=captura.semanas.filter(r=>r.marca_id==='ntv');
-  const producoes=captura.producoes.filter(r=>r.marca_id==='ntv');
-  const ids=new Set(producoes.map(r=>r.producao_id)), weeks=new Set(semanas.map(r=>r.semana_id));
-  const linhas=[semanas,producoes,captura.paginas.filter(r=>ids.has(r.producao_id)),captura.cenas.filter(r=>ids.has(r.producao_id)),
-    captura.arquivos.filter(r=>ids.has(r.producao_id) || (!r.producao_id && weeks.has(r.semana_id))),captura.revisoes.filter(r=>ids.has(r.producao_id))];
-  return Object.fromEntries(Object.entries(CAMPOS).map(([nome,fields],i)=>{
-    const table=captura.envelope.tables[nome],keyIndex=table.values[0].indexOf(fields[0]);
-    const fisicas=new Map(table.values.slice(1).map((row,index)=>[row[keyIndex],index+2]));
-    return [chaves[i],linhas[i].map(r=>{
-      const origem={aba:nome,linha:fisicas.get(r[fields[0]])};
-      // Recupera a célula de etapa em todas as linhas para conservar null:
-      // registros normaliza null/undefined; selecionar reaplica a triagem.
-      const entrada=nome==='Produções'?{...r,etapa_producao:table.values[origem.linha-1][table.values[0].indexOf('etapa_producao')]}:r;
-      const selected=selecionar(entrada,fields,nome,origem.linha,avisos);
-      origens.set(selected,origem);
-      if(Object.hasOwn(selected,'origens_json')) validadeJson.set(selected,jsonValido(r.origens_json));
-      return selected;
-    })];
-  }));
 }
 function dataCivil(value) {
   if (typeof value!=='string' || !/^\d{4}-\d\d-\d\d$/.test(value)) return null;
@@ -295,6 +228,7 @@ function detalhar(result,ntv,origens,validadeJson) {
   for(const p of result.producoes) {
     const ctx={...ctxBase,locais:avisosRelacionados(p,ntv,origens,indice)};
     validarNumeros(p,['versao'],[],ctx);
+    if(!preenchido(p.versao)) avisoRegistro(p,'versao','Versão vigente não informada; mídia a confirmar',ctx);
     p.detalhes={responsavelRegistrado:preenchido(p.responsavel_atual)?p.responsavel_atual:'A confirmar',
       publicacaoRegistrada:preenchido(p.publicado_em),paginas:unidades(p,ntv.paginas,'paginas',ctx),cenas:unidades(p,ntv.cenas,'cenas',ctx),
       revisoes:revisoes(p,ntv.revisoes,ctx),arquivos:arquivosRegistrados(p,ntv.arquivos,ctx),documentosSemana:documentosSemana(p,ntv,ctx),avisos:ctx.locais};
@@ -316,6 +250,7 @@ function pendenciasRevisao(p) {
   }));
 }
 function pendenciasMidia(p) {
+  if(!inteiroPositivo(p.versao)) return [];
   const paginas=p.detalhes.paginas.filter(u=>u.vigente),cenas=p.detalhes.cenas.filter(u=>u.vigente);
   const pendencias=[
     ...paginas.filter(u=>!u.arquivos[0]).map(u=>({tipo:'midia',texto:'Imagem ausente',unidade:'pagina',unidadeId:u.pagina_id})),
