@@ -6,9 +6,9 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Feature Directory**: `specs/001-consulta-local-producao`
 
-**Created**: 2026-10-02 | **Updated**: 2026-10-04 (regra temporal aprovada e correções da US2)
+**Created**: 2026-10-02 | **Updated**: 2026-10-04 (US3/gaveta do dia e regra temporal aprovadas)
 
-**Status**: Fundação, US1 e US2 implementadas; demais histórias e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
+**Status**: Fundação, US1, US2 e US3 implementadas; demais histórias e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
@@ -88,23 +88,48 @@ com Escape, conferindo as versões e o foco restaurado.
 
 1. **Given** um dia com várias peças, **When** aciono qualquer cartão ou o dia,
    **Then** a gaveta informa dia da semana, data e quantidade; contém uma seção por peça
-   em acordeão, com a primeira aberta, inclusive peças escondidas pelo resumo "+N no dia".
+   em acordeão, com somente a primeira aberta, inclusive peças escondidas pelo resumo "+N no dia";
+   demais mostram uma linha com páginas/cenas vigentes, revisão e quantidade de avisos,
+   com plural correto. Revisão aberta exige vigente; só ambígua/anterior não resolvida
+   diz revisão a confirmar; nenhuma ou somente resolvidas diz sem revisão.
 2. **Given** a gaveta aberta, **When** consulto uma peça,
-   **Then** vejo estado, formato, etapa e responsável registrados, data prevista e
-   publicação; sem `publicado_em` preenchido, leio "não comprovada". Quando preenchido
-   mas inconsistente, vejo o registro com aviso de qualidade, sem comprovação remota.
+   **Then** vejo estado/formato e faixa de etapa, com quem está, prevista e versão,
+   somente com campos preenchidos. Etapa conhecida tem rótulo legível; desconhecida
+   fica exatamente como está, com original na API. Publicação ocupa uma linha quando
+   registrada; sem `publicado_em`, omito a linha, sem comprovar publicação. Registro
+   inconsistente permanece com aviso de qualidade, sem conferência remota.
 3. **Given** revisão vigente com pedido de correção, **When** consulto o detalhe,
-   **Then** vejo decisão, motivo, versão/unidade e `responsavel_correcao` separado de
-   `responsavel_atual`; revisões resolvidas aparecem em cinza como histórico.
+   **Then** vejo título de decisão/versão/motivo (Revisar · versão 2 — motivo),
+   correção/tratamento abaixo (Corrige: pessoa · tratamento), separado de responsavel_atual;
+   IDs de revisão/unidade continuam na API, fora da linha visual. Outras vigentes ficam
+   em **+1 revisão aberta** ou **+N revisões abertas**; resolvidas/outras versões dentro
+   de **Histórico**, recolhido por clique.
 4. **Given** carrossel ou Reels, **When** consulto as unidades,
-   **Then** vejo páginas ou cenas ordenadas por índice dentro da versão correspondente;
-   página mostra versão e indicador de design novo, com "A confirmar" sem fonte inequívoca.
+   **Then** vejo páginas/cenas compactas ordenadas por índice dentro da versão,
+   com número, texto e link ou mídia ausente, no máximo um aviso de ausência por linha.
+   Cena distingue imagens ausentes/inicial/final e/ou vídeo ausente, sem perder
+   os três slots na API; aviso técnico de mídia é agregado por cena, mantendo
+   validações de índice/tempo/versão independentes.
+   Página mostra versão e design novo "A confirmar" sem fonte inequívoca; versões
+   anteriores e Texto registrado começam recolhidos e abrem por clique, com API completa.
 5. **Given** arquivo relacionado, ausente ou vínculo quebrado, **When** consulto,
    **Then** o arquivo mostra nome de apresentação, versão e "registro"; ausência e
    inconsistência geram avisos, sem prévia nem mídia substituta. Link permitido abre
-   apenas por clique em HTTPS nos hosts exatos Drive/Docs autorizados pelo contrato.
+   apenas por clique em HTTPS nos hosts exatos Drive/Docs autorizados pelo contrato;
+   URL recusada nunca aparece como texto bruto. Usuário/senha em Arquivos.url ou
+   Produções.url_video_final causa supressão na projeção por `new URL`, com aviso sem valor.
+   URL não vazia que não pode ser analisada também é suprimida, com motivo fixo;
+   vazio/somente espaços é preservado sem aviso de URL inválida.
 6. **Given** gaveta aberta por teclado, **When** pressiono Escape,
    **Then** ela fecha e devolve o foco ao acionador; em 390 px ocupa a tela inteira.
+7. **Given** documentos da semana presentes ou ausentes, **When** abro o dia,
+   **Then** Plano/Redação/Visual aparecem uma vez por semana representada no fim da
+   gaveta, com **—** para ausência, inclusive peça sem semana identificada.
+8. **Given** avisos localizados, **When** abro a peça,
+   **Then** vejo somente a quantidade de **aviso(s) de dados nesta peça** e link **ver
+   na Planilha**, com plural correto e sem separador pendurado; o link
+   abre Planilha; aba/linha/campo permanecem na API, fora da gaveta, com tabelas
+   detalhadas futuras na US5. Aviso semanal não se repete no conjunto global por peça.
 
 ### User Story 4 - Localizar peças no quadro de Produção (Priority: P2)
 
@@ -189,6 +214,10 @@ preservando dados privados apenas neste computador.
   sem fingir que o recibo de falha foi gravado.
 - Arquivo inexistente, empate de versão, origem incompatível ou revisão de vigência incerta
   gera aviso localizado; não seleciona documento nem reprova versão nova arbitrariamente.
+- Em revisão não resolvida, vínculo falho aponta ao primeiro pagina_id/cena_id/arquivo_id
+  incompatível, não a versao genericamente; versao é usado quando a versão é inválida.
+  Cena conserva imagem inicial/final/vídeo por slot, com aviso de mídia agregado e
+  causas distintas sem absorver validações independentes de índice/tempo/versão.
 - `arte_aprovada` confirmado na leitura atual fica em Visual se não houver prioridade
   superior. `bloqueado` não é prontidão; `aprovada`/`sem_rejeicao_documental` não são
   revisão em andamento. Não inventar rótulos atuais para preencher colunas.
@@ -196,10 +225,32 @@ preservando dados privados apenas neste computador.
   conserva Publicada com aviso do registro, sem comprovar publicação remota.
 - Configuração ausente/inválida não inicia o servidor com fallback silencioso.
 - Texto livre, JSON e URL são dados; nenhum deles executa HTML, instrução ou ação operacional.
-- Responsável vazio aparece "A confirmar"; vazio de etapa aparece "Não informada", com valor original vazio preservado.
+- Por decisão do autor, texto livre mínimo e recibo público conservam frase e espaços:
+  somente pedaço HTTP(S) separado por espaços em branco que `new URL` identifica
+  com usuário/senha vira **[conteúdo suprimido]**, mantendo pontuação de contorno.
+  Não há promessa de detectar outros esquemas, URL relativa, espaços em userinfo
+  ou forma fora desse pedaço. Segredo/caminho conhecido continua suprimindo o texto
+  reconhecido inteiro. JSON válido é dado, sem ampliar campos HTTP: só tokens de
+  string alterados são reserializados, preservando os demais bytes, números, ordem,
+  espaços e escapes legítimos. Validade original de origens_json permanece privada e não é confundida
+  com o marcador de supressão. Avisos relacionados já globais entram no contador
+  da peça afetada, sem duplicar o conjunto global. Arquivo ligado sem link seguro
+  mostra link não permitido; Texto registrado usa Página/Cena número e versão,
+  mantendo IDs completos somente na API.
+- No cartão futuro de Produção, responsável vazio aparece "A confirmar" e etapa
+  vazia "Não informada", com original preservado. Na faixa compacta da gaveta,
+  campos vazios são omitidos; `detalhes.responsavelRegistrado` mantém o fallback na API.
 - Dados de outra marca não aparecem como produção ou exemplos NTV.
 - Coluna mínima não autoriza expor tokens, credenciais ou caminhos locais embutidos em célula;
   conteúdo sensível indevido recebe aviso e supressão localizada, preservado na captura privada.
+- Nos campos dedicados, URL com usuário ou senha em Arquivos.url/Produções.url_video_final vira
+  **[conteúdo suprimido]** pela análise de `new URL`, sem valor no aviso;
+  JSON HTTP e gaveta não contêm as partes da credencial, inclusive quando codificadas.
+- Nos campos de URL dedicados, parsing de URL não vazia que falha não devolve valor bruto: marcador e motivo
+  **URL inválida suprimida** preservam apenas o original privado; vazio/somente
+  espaços não causa supressão nem aviso de URL inválida.
+- Quando a redação de texto já substituiu um pedaço HTTP(S) credenciado em um
+  campo de URL dedicado, o restante da frase também é preservado, sem a credencial.
 
 ## Requirements
 
@@ -220,7 +271,8 @@ preservando dados privados apenas neste computador.
 - **FR-005**: separar data prevista de publicação; classificar Publicada somente com
   `publicado_em` preenchido, avisando inconsistências de data sem verificar publicação remota.
   Manter "N sem data" acessível contando
-  todas as peças NTV sem data válida, sem desaparecer por filtro ou navegação de mês.
+  todas as peças NTV sem data válida, sem desaparecer por filtro ou navegação de mês;
+  quando não há peças sem data, ocultar o link.
 - **FR-006**: detalhar semana, textos, páginas/cenas, estados, responsável, revisões e
   documentos relacionados, mantendo suas versões e pendências de vínculo separadas.
 - **FR-007**: resolver arquivos por IDs internos, mostrar nome de apresentação, versão,
@@ -249,8 +301,12 @@ preservando dados privados apenas neste computador.
   o número de rótulos distintos não mapeados da semana selecionada. Cartão exibe formato,
   data, título, status informativo, `responsavel_atual` e pendência; não infere encaminhamento.
 - **FR-015**: cartão ou dia abre gaveta do dia inteiro, título/data/quantidade e uma seção
-  por peça em acordeão, primeira aberta. Peça sem data no quadro abre seção Sem data da semana;
-  páginas/cenas ordenadas, correção separada, revisões resolvidas em cinza e mídias ausentes explícitas.
+  por peça em acordeão, primeira aberta e demais resumidas. Peça sem data no quadro abre
+  seção Sem data da semana; faixa de quatro dados preenchidos e publicação registrada em
+  uma linha, páginas/cenas compactas, correção separada e mídia ausente explícita.
+  Texto registrado, versões anteriores e Histórico são recolhidos; outras revisões
+  vigentes ficam em +N. Documentos semanais aparecem uma vez no fim do dia com três
+  papéis/— na ausência; aviso técnico só na API, quantidade/link para Planilha na gaveta.
 - **FR-016**: Planilha reúne horário/cobertura, releitura local, seis abas com contagens e
   os 66 cabeçalhos mínimos e valores registrados, mais Histórico de tentativas completas/falhas,
   resumidas, imutáveis, persistidas privadamente e confirmadas no estado local;

@@ -1,8 +1,8 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T022/US1 e US2 implementadas, com revisão corrente e evidências na [validação](validacao.md). T023–T041 e captura operacional permanecem pendentes; sem leitura real Google. Branch `001-consulta-local-producao`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T026/US1, US2 e US3 implementadas, com revisão corrente e evidências na [validação](validacao.md). T027–T041 e captura operacional permanecem pendentes; sem leitura real Google. Branch `001-consulta-local-producao`.
 
-Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). O mockup de [telas](../../docs/design/mockups/telas-v2.html) serve como referência visual; não valida backend ou persistência.
+Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). Os mockups de [telas](../../docs/design/mockups/telas-v2.html) e [gaveta compacta](../../docs/design/mockups/gaveta-v2.html) servem como referência visual; não validam backend ou persistência.
 
 ## Ambiente e testes da entrega atual
 
@@ -13,7 +13,7 @@ Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright exis
 | `CRM_NODE_PATH` | PowerShell seleciona o executável existente; a aplicação não lê esta variável |
 | `PATH` | Colocar o diretório do Node selecionado à frente para subprocessos do gate com `testCommand: ["node", "--test"]` |
 | `CRM_PLAYWRIGHT_MODULE` | `tests/interface.test.cjs` resolve o Playwright existente; sem ela tenta `playwright`; não versionar seu caminho |
-| `CI=true` | 14 testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
+| `CI=true` | Testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
 
 Não há variáveis Google, chave de serviço ou URL remota no runtime da 001. Configure as variáveis de ferramenta somente no ambiente local; nenhum caminho pessoal é necessário na documentação.
 
@@ -46,7 +46,7 @@ $crmTestFiles = @(
 & $crmNode --test
 ```
 
-No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação, US1 e US2 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
+No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação, US1, US2 e US3 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
 
 Na conferência de 03/10, o PATH encontrava Node 24.14.0, mas o runtime 24.19.0 já
 existia na máquina. Defina `CRM_NODE_PATH` com o caminho desse executável somente no
@@ -81,14 +81,17 @@ if ($LASTEXITCODE -ne 0) { throw 'Confira o motivo resumido da importação ante
 & $crmNode src/servidor.cjs --data-dir $crmDataDir --port 4318
 ```
 
-Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída da consulta. A fixture dos testes de interface/screenshots acrescenta uma quinta peça NTV sem data. Dados e diretórios da demonstração são isolados; não copiar estes exemplos para `data/` operacional nem promover uma fixture a coleta da Central.
+Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída da consulta. A variante de interface acrescenta uma quinta peça NTV sem data; `capturaDetalhada()` acrescenta unidades/revisões/arquivos sintéticos e um dia com carrossel e Reels. Para demonstrar esses detalhes, substituir somente `f.capturaValida()` por `f.capturaDetalhada()` no comando de preparação acima, sempre em diretório TEMP novo. Dados e diretórios da demonstração são isolados; não copiar estes exemplos para `data/` operacional nem promover uma fixture a coleta da Central.
 
 | Conferência atual | Resultado esperado |
 | --- | --- |
 | Menu e objetivo | Planejamento, Produção, Planilha; Ainda não definido |
 | Planejamento | Calendário/lista/filtros; imagem A/B, carrossel e Reels sintéticos; duas peças no mesmo dia |
-| Clique em dia/cartão/lista | Abre grupo inteiro em diálogo básico; detalhes/acordeões ainda não existem |
-| Sem data | Contagem global; fixture de base pode ter zero, variante de interface tem uma |
+| Clique em dia/cartão/lista | Abre grupo inteiro na gaveta compacta, primeira peça aberta, demais resumidas; revisões/versões/arquivos separados, dados preenchidos e documentos únicos; avisos técnicos na API, quantidade/link Planilha no dia; Esc devolve foco |
+| Resumo/revisão | Aberta somente com vigente; a confirmar com ambígua/anterior não resolvida sem vigente; sem revisão quando nenhuma/somente resolvidas. Linha visual legível sem IDs técnicos; +N com revisão aberta/revisões abertas |
+| Cena/mídia | Três slots inicial/final/vídeo na API; texto humano distingue imagens ausentes/inicial/final e/ou vídeo ausente, um aviso visual por linha; validações de índice/tempo/versão permanecem independentes |
+| Texto/avisos/links | Página/Cena número e versão em Texto registrado, sem ID técnico; arquivo ligado sem URL segura mostra link não permitido. Texto livre/recibo redige só pedaço HTTP(S) credenciado separado por espaços em branco, preservando frase/espaços/pontuação; demais formas fora desse escopo. JSON é dado: só tokens de string alterados são reserializados, demais bytes intactos. Supressões de células e avisos relacionados entram no contador; validade original não muda |
+| Sem data | Contagem global; link oculto quando zero, variante de interface tem uma |
 | Selo | Atualizado hoje, HH:MM / Dados de DD/MM / Atualização falhou / Sem dados; clique abre Planilha |
 | Planilha | Fonte, fim em São Paulo, cobertura semanal e avisos; tabelas/Histórico continuam futuros |
 | Atualizar dados | Relê GET /api/visao; conserva tela/falha/horário, sem Google; erro HTTP mantém visão anterior e botão permite repetir |
@@ -103,7 +106,7 @@ A importação adquire `.importacao.lock` no diretório escolhido. Segunda inst�
 
 ## Cenários sintéticos obrigatórios
 
-Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T022 e suas regressões já têm evidência em `validacao.md`; detalhes/acordeões, quadro, tabelas/Histórico, iniciador e escala permanecem futuros. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
+Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T026 e suas regressões já têm evidência em `validacao.md`; quadro, tabelas/Histórico, iniciador e escala permanecem futuros. Executar esses cenários somente quando as tarefas correspondentes existirem; não transformar o roteiro em resultado testado.
 
 | Caso | Ação | Resultado a conferir |
 | --- | --- | --- |
@@ -119,14 +122,14 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T022 e suas
 | Selo falha | Captura válida e tentativa posterior falha; reler e reimportar mesmos ID/bytes | “Atualização falhou”, vermelho, última válida preservada; GET/no-op não limpam falha nem renovam hora |
 | Selo vazio | Sem captura, inclusive primeira tentativa falha | “Sem dados”, cinza; falha aparece no Histórico; nova captura completa aceita encerra falha |
 | Gaveta | Clique em cartão/dia/lista/quadro, inclusive segunda peça e filtro ativo | Dia inteiro, título/quantidade, primeiro acordeão aberto; todas as peças do dia, não só a clicada |
-| Relações/revisões | Reels sem vídeo, páginas/cenas com versões e ordem, revisão antiga/resolvida, órfão/empate | Arquivo como registro, mídia ausente e avisos; responsável principal/correção separados; não inferir próxima ação ou design novo |
+| Relações/revisões | Reels sem imagem inicial/final/vídeo, versões/ordem, revisão antiga/resolvida/ambígua, unidade/semana/versão incompatíveis | Três slots e ausência específica de mídia, aviso agregado por cena sem ocultar números inválidos; revisão localiza primeiro vínculo falho e resumo não afirma ausência quando há impacto a confirmar; API conserva IDs técnicos |
 | Configuração | Carregar JSON válido em TEMP; coluna inexistente, rótulo repetido, JSON/arquivo inválido; acrescentar rótulo sintético só no JSON | Erro claro ao carregar impede iniciar; mapa novo entra sem mudar código. O arquivo versionado inicial conserva nove etapas e duas listas vazias |
 | Quadro/prioridade | Combinar publicação, rótulos sintéticos de liberação/revisão e etapa, retirando prioridades superiores | Publicação > liberação > revisão > etapa; sem prioridade superior, arte_aprovada em Visual e oito etapas em Mídia, inclusive montagem_pronta; status visível não decide coluna |
 | Outras | Rótulo desconhecido repetido, segundo rótulo, vazio, outras semanas/marcas e cartão vencido por prioridade superior | N conta distintos só dos cartões Outras da semana NTV; vazio conta uma vez, repetidos não somam e excluídos não entram. Título Outras · N valores novos, original visível, singular para um e zero sem cartões |
 | Publicação | publicado_em preenchido/vazio/null/espaços; status publicado sem campo; data preenchida inválida/sem fuso/futura | Preenchido dá Publicada com precedência; inconsistência gera aviso sem mudar coluna. Status/aprovação/arquivo sem o campo não comprovam; não há verificação remota |
 | Planilha | Alternar seis abas e Histórico por teclado | 66 mínimos com valores e contagens de linhas NTV apresentadas, mínimos 8/17/8/11/12/10, inclusive IDs/id_drive/sha256/origens_json como dados; todas as tentativas confirmadas no estado, recentes primeiro, e falha sem apagar sucesso; órfãos não aparecem como conclusões |
 | HTTP/segurança | Três estáticos sintéticos em TEMP via webDir confiável; métodos/HEAD, Host/Origin externos, traversal/privados, extras sentinela, célula mínima com conteúdo sensível indevido e texto malicioso | Rotas/status/bytes do contrato antes da criação da interface, allowlist fixa mesmo com webDir; zero escrita HTTP, sem captura bruta/envelope/extras arbitrários/credenciais/caminhos; sensível suprimido com aviso sem retirar coluna; texto não executa |
-| Interface/links | Navegar por teclado/Escape; links Drive/Docs e links não permitidos | Escape fecha e devolve foco; somente HTTPS/hosts autorizados por clique, sem carga automática ou requisição externa durante teste |
+| Interface/links | Navegar por teclado/Escape; links Drive/Docs, recusados, URLs dedicadas com userinfo sintético e malformadas/vazias; frase/JSON legítimos e pedaço HTTP(S) credenciado | Escape fecha e devolve foco; somente HTTPS/hosts autorizados por clique, sem carga automática; recusada não é texto bruto. Nos campos dedicados, userinfo não aparece no JSON nem no dia; malformada não vazia é suprimida com motivo fixo, vazio é preservado sem aviso de URL inválida. Texto livre conserva frase/espaços e só redige o pedaço HTTP(S) credenciado; conferir limites no contrato |
 | Mobile | 390 px e 1440 px nas três telas/gaveta/tabelas | 390: lista semanal, menu recolhido, gaveta cheia; sem corte da página; rolagem horizontal própria de cada tabela |
 | Iniciador | Script real com diretório/porta isolados, porta ocupada e runtime ausente | Processo oculto, bind loopback, orientação em erro sem encerrar ocupante; cleanup só do PID criado |
 | Escala | Fixture sintética de 500 peças | Contagens/filtros/navegação coerentes; registrar tempo observado, sem confundir teste com produção |
@@ -151,7 +154,7 @@ Executar somente após implementação e revisão, conforme T039. O dicionário 
    ```
 
 4. Confirmar somente os três itens de menu; Planejamento com objetivo ainda não definido, calendário/lista/filtros e “N sem data”. Comparar os IDs de todas as peças NTV com a **mesma captura**, inclusive imagem B e registros concluídos/bloqueados. Não usar filtros da fila n8n para essa comparação.
-5. Clicar um dia com várias peças: conferir todas no acordeão e a primeira aberta, etapa/responsável registrados, revisão por versão e correção separada, páginas/cenas ordenadas e arquivos como registros. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Escape fecha e devolve foco.
+5. Clicar um dia com várias peças: conferir todas no acordeão e só a primeira aberta, resumo das demais, faixa de quatro dados preenchidos, publicação registrada em uma linha e etapa conhecida legível/desconhecida original. Conferir revisão inicial, adicionais em +N, páginas/cenas compactas com no máximo um aviso de ausência por linha e Texto registrado/versões/Histórico recolhidos abrindo por clique. Documentos Plano/Redação/Visual aparecem uma vez por semana representada no fim do dia, com — na ausência. Avisos técnicos ficam na API; a gaveta só conta e oferece link funcional para Planilha, cujas tabelas detalhadas são futuras. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Links só HTTPS Drive/Docs permitidos; URL recusada não aparece como texto bruto; os campos de URL dedicados têm guarda de userinfo/malformada. Texto livre conserva a frase e redige somente o pedaço HTTP(S) credenciado, nos limites do contrato. Escape fecha e devolve foco.
 6. Conferir Produção por semana: mapa carregado do JSON, prioridade publicação > liberação > revisão > etapa, arte_aprovada em Visual e oito etapas de mídia preservadas quando não há prioridade superior. Status é informativo; Outras preserva original e conta distintos da semana, não cartões. Publicada vem de publicado_em preenchido, com aviso em dado inconsistente. Clique abre dia inteiro ou Sem data; sem arrastar/editar/encaminhamento inferido.
 7. Clicar o selo para Planilha. Comparar contagens/valores mínimos nas seis tabelas e Histórico com a captura/recibos privados; conferir período/horário e rolagem própria. “Atualizar dados” relê a última captura salva, sem buscar Google, importar pelo navegador ou criar nova coleta.
 8. Conferir teclado e 390/1440. Não compartilhar screenshot de dados operacionais privados; usar fixture sintética para evidência visual compartilhável. Falhas/importações destrutivas de teste permanecem no diretório temporário, não em `data/` real.
@@ -165,7 +168,7 @@ Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editori
 & './.specify/scripts/powershell/check-prerequisites.ps1' -Json -RequireSpec -RequireTasks -IncludeTasks
 ```
 
-Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T022 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
+Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T026 já foram marcadas na implementação; esta sincronização não altera checks nem tarefas futuras.
 
 ## Quality gate e sincronização final da implementação
 
@@ -177,4 +180,4 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 
 T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
-Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. Gate local e US1/US2 estão verificados neste recorte; o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.
+Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. As evidências das três histórias implementadas estão na [validação](validacao.md); o aceite completo da 001 continua dependendo das histórias, cenários finais e captura oficial ainda pendentes.

@@ -1,6 +1,6 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1 e US2 implementadas; detalhes e demais histórias continuam pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1, US2 e US3 implementadas; quadro, tabelas/Histórico e iniciador continuam pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
 Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura
@@ -245,27 +245,138 @@ capacidade, elegibilidade ou monitoramento.
 ## Gaveta do dia e registros
 
 Título com dia da semana/data e subtítulo com quantidade. Uma seção por peça em
-acordeão, primeira aberta, sem filtrar o dia inteiro. Sem data usa título da seção da
-semana, sem inventar dia. Teclado controla acordeões; Escape fecha e restaura foco ao
-acionador. Em 390 px gaveta de tela inteira; lista semanal substitui calendário.
+acordeão, somente a primeira aberta, sem filtrar o dia inteiro; demais peças mostram
+resumo de uma linha com páginas/cenas vigentes, revisão e quantidade de avisos.
+O resumo diz **revisão aberta** quando existe vigente; sem vigente, **revisão a
+confirmar** quando existe ambígua ou anterior não resolvida; **sem revisão** quando
+não existe ou há somente resolvidas. Quantidades têm singular/plural corretos.
+Sem data usa título da seção da semana, sem inventar dia. Teclado controla acordeões;
+Escape fecha e restaura foco ao acionador. Em 390 px gaveta de tela inteira;
+desktop com 520 px de largura, sem corte horizontal. A apresentação segue o
+[mockup compacto](../../../docs/design/mockups/gaveta-v2.html), sem reduzir a API.
 
-Cada peça apresenta estado/formato, etapa, responsável, previsão, publicação,
-textos, páginas/cenas, revisões e arquivos. Revisão mostra decisão, motivo, versão e
-quem corrige. `resolvido`/`resolvida` é histórico cinza; estado desconhecido não é
-resolução. Revisão antiga aberta não se aplica automaticamente à versão nova;
-sem vínculo inequívoco, informar impacto a confirmar.
+Cada peça apresenta estado/formato e faixa de quatro dados: etapa, com quem está,
+prevista e versão, omitindo campos vazios. `responsavel_atual` preenchido é o
+responsável da faixa; o fallback A confirmar de `detalhes.responsavelRegistrado`
+continua na API e a regra do cartão futuro de Produção permanece separada. As nove
+etapas conhecidas do mapa recebem rótulos legíveis somente na apresentação;
+desconhecida preserva o original. Publicação aparece em uma linha apenas quando
+`publicado_em` está preenchido; omissão não comprova publicação.
+
+Primeira revisão vigente mostra título legível como **Revisar · versão 2 — motivo**;
+abaixo, **Corrige: pessoa · tratamento**, somente com dados preenchidos. Decisão
+desconhecida conserva o valor original. IDs de revisão/pagina_id/cena_id/arquivo_id
+e demais campos continuam na API, sem IDs/rótulos técnicos na linha visual nem
+escopo inventado. Outras vigentes ficam em **+1 revisão aberta** ou **+N revisões
+abertas**, recolhido. `resolvido`/`resolvida`, outras
+versões e vínculos ambíguos ficam no **Histórico**, inicialmente recolhido, sem virar
+correção vigente. Estado desconhecido não é resolução; revisão antiga aberta não
+se aplica automaticamente à versão nova; sem vínculo, impacto a confirmar.
 
 Ordenar páginas/cenas por índice dentro da produção e versão pertinente, sem misturar
 versões para preencher uma sequência. Página mostra versão e indicador de design
 novo: **A confirmar** enquanto não houver classificação explícita documentada para
 aquela página/versão. Nenhum dos 66 mínimos fornece essa flag; arquivo presente,
 template ou estado sozinho não a comprovam. Não inventar coluna ou evidência.
+Unidades aparecem em linhas compactas com número, texto e link ou **mídia ausente**;
+no máximo um aviso de ausência por linha. Legenda/campos textuais complementares e
+arquivos como registros ficam em **Texto registrado**, recolhido por padrão;
+versões anteriores também abrem por clique. A API conserva os campos completos.
 
 Arquivo mostra nome de apresentação derivado de tipo/papel (fallback "Arquivo registrado"),
 versão e rótulo "registro". Isso não promete nome original do Drive, ausente nos mínimos,
 nem download/conferência dos bytes. Resolver ponteiros por `arquivo_id` interno;
 Editor/Motion requerem produção, papel, versão e origens inequívocas, com aviso em empate.
 Mídia ausente e referência quebrada aparecem como tais; sem preview automática na 001.
+
+### Detalhes projetados da US3
+
+`producoes[].detalhes` é construído pelo servidor a partir dos mínimos selecionados,
+sem repassar o envelope privado. Como fichas dentro da mesma pasta, os registros
+conservam a produção, versão e ponteiro que os identifica; não preencher lacunas
+de uma versão com unidades de outra.
+
+| Campo adicional | Forma e origem |
+| --- | --- |
+| `responsavelRegistrado` | responsavel_atual preservado; vazio = A confirmar |
+| `publicacaoRegistrada` | booleano derivado somente de publicado_em preenchido; não é consulta remota |
+| `paginas` / `cenas` | mínimos preservados, `vigente` só com versão inteira positiva igual à da peça, `arquivos` ligados ou null; páginas também têm `designNovo:'A confirmar'` |
+| Cena `arquivos` / `avisoMidia` | Três slots fixos na ordem imagem inicial/imagem final/vídeo, cada um arquivo ligado ou null; avisoMidia null quando todos ligados, senão string humana fixa das ausências |
+| `revisoes` | `{vigentes,resolvidas,anteriores,ambiguas}`; mínimos selecionados, sem fabricar correção atual |
+| `arquivos` | registros da produção, com `nomeApresentacao` por tipo/papel e fallback Arquivo registrado; todas as versões continuam identificadas |
+| `documentosSemana` | `[{papel,arquivo}]` para Plano, Redação e Visual, ligados pelo ponteiro interno da semana; ausência = null |
+| `avisos` | avisos localizados da peça/unidades/vínculos, com aba/linha física/campo e motivo; conteúdo privado não é anexado |
+
+Ponteiro de página/cena exige arquivo da mesma produção e versão inteira positiva;
+se o arquivo declara pagina_id/cena_id, precisa coincidir com a unidade. Ponteiro
+semanal exige a mesma semana. Referência quebrada ou incompatível dá null e aviso,
+sem selecionar outra mídia. Arquivos empatados por papel/versão/unidade geram aviso
+e permanecem como registros separados; `origens_json` é texto preservado, validado
+somente quanto à sintaxe JSON, sem executar ou inferir equivalência das origens.
+
+Na cena, ausência de mídia não elimina nem reordena os três slots. `avisoMidia`
+segue a regra abaixo, sem valor de célula, URL, ID ou localização técnica:
+
+| Imagens não ligadas | Texto humano |
+| --- | --- |
+| Inicial e final | imagens ausentes |
+| Somente inicial | imagem inicial ausente |
+| Somente final | imagem final ausente |
+| Nenhuma | sem texto de ausência de imagens |
+
+Vídeo não ligado acrescenta **vídeo ausente**; quando também faltam imagens, as
+causas são unidas por ponto e vírgula. Todos ligados: `avisoMidia=null`. A interface
+mostra no máximo um texto de ausência por linha de cena, sem confundir arquivo
+registrado com bytes comprovados. Se os registros estão ligados mas os links são
+recusados/ausentes, mostra **link não permitido**, sem exibir a URL bruta. Arquivo
+ligado sem link seguro não é tratado como mídia ausente; quando coexistem falta de
+arquivo e link recusado, os motivos ficam juntos em uma única faixa por unidade.
+
+Ausência, referência quebrada ou escopo/versão incompatível geram um único aviso
+técnico agregado de mídia por cena, com causas distintas reunidas e origem no
+primeiro ponteiro falho, na ordem inicial/final/vídeo. Validações de índice, tempo
+e versão inválidos continuam independentes, sem serem absorvidas pela agregação.
+
+Os três papéis de `documentosSemana` existem também sem semana identificada, com
+arquivo null. Na apresentação aparecem uma vez por semana representada no dia,
+no fim da gaveta, usando **—** na ausência. A projeção resolve os mesmos ponteiros
+uma vez por consulta/semana: aviso semanal ocorre uma vez no conjunto global e
+continua nos avisos locais de cada peça afetada, sem perder origem ou registro.
+
+Avisos já globais de origem e supressão também entram no conjunto local da peça
+afetada: produção, páginas/cenas/revisões, semana e arquivos relacionados, inclusive
+documentos apontados pela semana. A associação usa aba/linha física, sem repetir
+o mesmo objeto no local nem acrescentar cópias no conjunto global. Aviso sem origem
+localizada continua global; os novos avisos de detalhe mantêm suas próprias regras.
+
+Uma revisão não resolvida só é vigente com versão positiva igual à peça e todos os
+vínculos preenchidos identificados na mesma produção/versão. Outra versão fica
+em anteriores; vínculo inválido em ambiguas. Resolvido/resolvida fica separado,
+como histórico, mesmo quando avalia a versão atual. Estado desconhecido não prova
+resolução e produz aviso. `responsavel_correcao` não substitui o responsável da peça.
+
+Aviso de vínculo de revisão não resolvida aponta ao primeiro campo falho na ordem
+`pagina_id`, `cena_id`, `arquivo_id`, conservando os demais escopos na API. `versao`
+é usado quando a versão da revisão ou produção não é válida, não como rótulo
+genérico de qualquer referência quebrada. Resolução explícita continua precedendo
+a vigência; não inferir revisão atual por ordem visual ou contagem do mockup.
+
+Versões/índices preenchidos inválidos e tempos preenchidos não finitos/negativos
+geram aviso preservando o original; vazio continua desconhecido, nunca zero.
+As unidades são agrupadas por versão, ordenadas numericamente por índice e, no
+empate, pelo ID ordinal; valores inválidos ficam depois dos válidos. Na gaveta,
+versão vigente vem primeiro e outras versões ficam recolhidas, com impacto atual
+a confirmar. A marcação de design novo continua A confirmar por ausência de fonte.
+
+Os avisos da US3 usam a linha física do retângulo capturado, inclusive após linhas
+vazias ou registros de outra marca. O mapa de origem permanece privado em WeakMap,
+sem novo campo no envelope HTTP. Aviso global (por exemplo, última importação falhou)
+tem somente motivo: não inventar aba/linha/campo para ele. A API conserva aba,
+linha física, campo e motivo localizados, sem descartar o vínculo da unidade. A gaveta
+nunca mostra esses detalhes técnicos: quantidade de **aviso(s) de dados nesta peça**
+e link **ver na Planilha**, com plural correto e sem separador pendurado. O link
+fecha a gaveta e abre Planilha. As tabelas detalhadas dos
+avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
 
 ## Projeção HTTP LOCAL de campos selecionados
 
@@ -295,8 +406,40 @@ Mídia ausente e referência quebrada aparecem como tais; sem preview automátic
   credenciais/tokens ou caminhos de filesystem. Se célula mínima contém segredo/caminho
   local indevido, suprimir esse conteúdo com aviso localizado; conservar original só na
   captura privada. JSON de origem é texto, não instrução nem objeto que expande a whitelist.
+- Nos campos dedicados `Arquivos.url` e `Produções.url_video_final`, após a redação
+  de texto, os valores ainda inalterados são analisados com `new URL`:
+  usuário ou senha preenchidos causam **[conteúdo suprimido]** no campo selecionado,
+  com aviso de aba/linha física/campo e motivo fixo **conteúdo sensível suprimido**,
+  sem expor o valor. A detecção de userinfo não usa regex. Original permanece privado;
+  JSON de `/api/visao` e texto da gaveta não contêm as partes da credencial.
+  Se a string não vazia é recusada pelo construtor, também recebe o marcador, com
+  motivo fixo **URL inválida suprimida**, sem valor nem exceção bruta: parsing falho
+  não permite devolver userinfo malformado. Vazio/somente espaços é preservado,
+  sem aviso de URL inválida.
+- Por decisão do autor, **texto livre mínimo selecionado** e os quatro campos do
+  recibo público são divididos em pedaços por espaços em branco, preservando os
+  separadores. Somente pedaço iniciado em HTTP(S) é candidato; aspas/parênteses de
+  contorno e pontuação final `. , ; : ! ?` não participam da análise de `new URL`.
+  Só o parser decide usuário/senha. Apenas o pedaço credenciado vira
+  **[conteúdo suprimido]**: restante da frase, espaços e pontuação ficam intactos,
+  inclusive se a redação já ocorreu em um campo de URL dedicado. URL legítima
+  seguida de `@`/e-mail e `//` solto são preservados exatamente.
+  **Limite:** em texto livre não há promessa de detectar outros esquemas, URL
+  relativa, espaços em userinfo ou forma fora desse pedaço HTTP(S). O guarda dos
+  campos dedicados permanece; segredo/caminho conhecido continua substituindo
+  o texto reconhecido inteiro. Aviso de célula conserva origem e motivo fixo sem
+  o valor. A captura e os recibos privados permanecem intactos.
+- JSON válido é analisado como dado, incluindo strings decodificadas de chaves,
+  valores e JSON aninhado em string, sem executar código nem expandir a whitelist
+  HTTP. Somente tokens de string alterados são reserializados; os demais bytes,
+  números, ordem, espaços e escapes legítimos não alterados permanecem intactos.
+- Validade de `origens_json` é calculada sobre o original antes da supressão e
+  guardada somente como booleano em WeakMap privado. JSON originalmente válido
+  suprimido não recebe falso aviso de JSON inválido por causa do marcador;
+  JSON originalmente inválido conserva seu aviso. Não expor o original para
+  explicar a supressão nem usar JSON decodificado como instrução.
 - Textos renderizam com `textContent`; não executar HTML/scripts, instruções ou comandos
-  das células, inclusive JSON. URLs registradas na tabela são texto; link interativo só
+  das células, inclusive JSON. URL recusada nunca aparece como texto bruto na tela; link interativo só
   se selecionado/validado e acionado por clique: HTTPS, host exato `drive.google.com` ou
   `docs.google.com`, sem usuário/senha, `rel="noopener noreferrer"`. Sem carga, mídia,
   thumbnail ou download remoto automático.

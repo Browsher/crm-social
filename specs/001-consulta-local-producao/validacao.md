@@ -182,6 +182,8 @@ Inspeção das oito imagens: textos/cores coerentes, ausência de corte e cards 
 
 ### Pendências preservadas e aceite remoto
 
+**Retrato histórico do primeiro envio da US2.** As políticas antes sem decisão e a instrução de manter o PR aberto foram substituídas pela decisão do autor e pelo aceite/merge registrados nas seções seguintes. Contagens desta seção pertencem àquele envio.
+
 T001–T022 concluídas (**22/41**); T023–T041 pendentes (**19**). A próxima história é US3/gaveta do dia. A política para **ID novo com completedAt anterior/igual à captura vigente** continua sem decisão do autor; esta entrega não inventa rejeição cronológica nem consulta histórica explícita. Só fixtures sintéticas, sem captura operacional. M3/índice de linha permanece para os avisos da US3/US5; null explícito continua normalizado sem apagar o envelope original. M8: os **14 casos de interface** são locais e têm SKIP explícito no CI, fora do LCOV de Node; o CLI permanece incluído no LCOV, conforme a evidência histórica acima.
 
 O registro pré-push acima foi seguido pelo aceite de execução abaixo. **O PR da US2 deve permanecer aberto, sem merge.**
@@ -253,3 +255,465 @@ solicitado. Link zero na primeira carga 503 reproduzido em RED **17 PASS / 1 FAI
 HTML inicia `hidden` e render só exibe para N>0. Contagens antigas da interface
 foram retiradas dos documentos de entrada/módulos. A suíte e o gate foram repetidos
 após essa correção. Regra de estrutura: 37 linhas, não a contagem histórica anterior.
+
+## PR #8 — aceite das correções e integração da US2
+
+Head corrigido `d98f71958de26a54e8dd2e2b38dad0a5bdf99211`; diff final de **41 arquivos**
+contra a base `7e17e85`. Suite local **83 PASS / 0 FAIL / 0 SKIP** (18 de interface),
+gate exit 0, cobertura 96,2457%, complexidade PASS (máximo 12), Semgrep SKIP Windows,
+audit N/A; baseline inalterada. Documentos de estado apontam para este histórico.
+
+[Gate Linux SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37206544756/job/111448800900):
+tests, coverage, complexity e **Semgrep 1.179.0 real PASS**, audit N/A, exit 0.
+[Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37206544682/job/111448800441)
+publicou [novo comentário](https://github.com/Browsher/crm-social/pull/8#issuecomment-5980642217),
+sem Critical ou Important; oito Minor. Sem regressão ou achado de segurança bloqueante.
+
+O [PR #8 foi integrado](https://github.com/Browsher/crm-social/pull/8) por merge commit
+`869f0bdba61fd9e9a02133ed43ba8cecb3348598`, com pais `7e17e85` e `d98f719`, autoria
+`204295625+Browsher@users.noreply.github.com` e committer `noreply@github.com`.
+A branch 001 foi mantida e recebeu main localmente antes da US3. O PR #1 permanece aberto.
+
+| Minor do segundo review | Tratamento |
+| --- | --- |
+| m-1 histórico de política desatualizado | Retrato antigo identificado explicitamente acima; regra vigente é a decisão temporal do autor |
+| m-2 contagem antiga de interface no quickstart | Corrigida na sincronização da US3; contagem atual somente como estado local |
+| m-3 JSON de resumo antigo | Marcado como evidência histórica; a US3 tem resumo sanitizado próprio |
+| m-4 dois testes históricos com Date real/horário fixo | Dívida de determinismo registrada; passaram no relógio atual, sem afirmar que o tempo não importa |
+| m-5 números de linha web antigos | Referências atualizadas com o código da US3 |
+| m-6 Mermaid sem passo temporal | Fluxo sincronizado na US3 |
+| m-7 margem futura atravessando meia-noite | Estado âmbar de outro dia civil é coerente com contrato; não inferir política diferente |
+| m-8 require direto/helper no snapshot | Estilo sem regressão funcional; precedência de no-op/conflito preservada |
+
+## US3 — gaveta do dia inteiro (T023–T026)
+
+Base `869f0bd`; head de código observado `98a064b`. **26/41 tarefas concluídas**,
+15 pendentes (T027–T041). Quadro/US4, tabelas/Histórico/US5 e iniciador continuam
+futuros. Nenhuma captura real, dependência nova, alteração de gate/CI/baseline ou
+leitura/escrita de data/ privado. Todas as capturas da entrega são sintéticas em TEMP.
+
+| Tarefa / commit | RED observado | GREEN observado |
+| --- | --- | --- |
+| T023 `ed6cfb2` → T024 `41b0a7f` | Projeção: 16 PASS / 7 FAIL / 0 SKIP; detalhes/relacionamentos ausentes | 23 PASS / 0 FAIL / 0 SKIP; suíte então 90 PASS |
+| T025 `7970b26` → T026 `98a064b` | Interface: 18 PASS / 6 FAIL / 0 SKIP; faltavam acordeões/versões/links/foco | 24 PASS / 0 FAIL / 0 SKIP; suíte completa **96 PASS / 0 FAIL / 0 SKIP** em 14,83 s |
+
+Uma tentativa da suíte no sandbox produziu spawn EPERM antes dos casos; executada
+fora desse limite, passou. Isso foi impedimento do runner, sem alterar os testes.
+Na verificação inicial de `98a064b`, o gate registrou
+exit 0, cobertura **96,9697%**, complexidade/ESLint PASS (dois avisos, nenhum >=21).
+Esse número é histórico: o [resumo sanitizado do gate](../../docs/reports/001-us3-gate-resumo.json)
+acompanha a revisão corrente e sua métrica está registrada na última seção deste documento.
+Naquela verificação:
+Semgrep SKIP por ausência no Windows, audit N/A. A interface passou localmente;
+CI conserva SKIP explícito para os casos locais, fora do LCOV, como pendência M8.
+
+Relações não inventam mídia, responsável, publicação ou design novo. As versões
+ficam separadas e revisões resolvidas/antigas/ambíguas não viram correção atual.
+Esc e fechamento por botão restauram o foco; o dia não é recortado pelo filtro.
+A linha física dos avisos considera vazios e outra marca; fecha a pendência M3
+da projeção. Naquele head a gaveta também apresentava a localização junto ao motivo;
+a revisão compacta abaixo conserva a localização na API e apresenta só contagem/link na gaveta.
+
+### Quatro screenshots da aplicação real
+
+Inspecionadas visualmente, sem corte horizontal, pageerror ou requisição externa.
+Uma peça em 01/10: imagem. Várias em 02/10: carrossel com páginas e Reels com cenas.
+Viewport normal **1440/390 × 1050** para uma peça; altura **4800** para registrar os
+dois acordeões abertos integralmente, sem montagem. A abertura padrão mantém só
+a primeira peça aberta; a segunda foi expandida por clique para as imagens.
+O teste mobile em 390 × 1050 confirmou a gaveta ocupando a tela e rolagem interna.
+
+![US3 uma peça, desktop 1440](../../docs/design/screenshots/001-us3-uma-peca-1440.png)
+
+![US3 uma peça, celular 390](../../docs/design/screenshots/001-us3-uma-peca-390.png)
+
+![US3 várias peças, desktop 1440](../../docs/design/screenshots/001-us3-varias-pecas-1440.png)
+
+![US3 várias peças, celular 390](../../docs/design/screenshots/001-us3-varias-pecas-390.png)
+
+[Procedência e limites](../../docs/design/screenshots/LEIA-ME.md). Fim sintético
+da captura visual: 04/10/2026 11:08 em São Paulo. Imagens não provam leitura Google,
+disponibilidade remota dos arquivos ou a feature completa.
+
+### Revisão independente e verificação final da US3
+
+Revisão estática somente leitura contra `869f0bd..98a064b`: zero Critical e três
+Important de completude/rastreabilidade, nenhum achado de segurança. Sem testes,
+scanners ou acesso a data/ por esse agente. Adaptação no Codex: leitura por comandos
+locais, pois as ferramentas Read/Grep/Glob não estão expostas nesta execução.
+
+Uma única passagem de correções, commit `450e780`, observou **47 PASS / 3 FAIL**
+em projeção/interface antes de implementar: a UI omitia página/cena/arquivo da
+revisão e aba/linha/campo dos avisos; publicação inconsistente não gerava aviso.
+GREEN completo final: **99 PASS / 0 FAIL / 0 SKIP**, incluindo **26 de interface**,
+em **15,97 s**. Registro preenchido de publicação continua visível, mesmo inválido;
+aviso cobre formato/fuso inválido, data impossível, tipo inesperado e instante
+posterior a completedAt. Não foi antecipada a classificação do quadro US4.
+
+Gate final local exit 0: tests PASS, coverage PASS **97.0109%**, complexity/
+ESLint PASS (máximo 13; avisos no CLI e acordeaoPeca), Semgrep SKIP Windows,
+audit N/A; baseline inalterada. Comando node tools/quality-gate.mjs, Node 24.19.0 e
+Playwright existente. Nenhuma dependência instalada. As quatro screenshots foram
+renovadas após as correções e continuam somente sintéticas. Regra de estrutura:
+40 linhas; links relativos/cercas balanceadas, varredura de dados privados limpa.
+O resumo da US2 foi marcado explicitamente como histórico; o atual está ligado acima.
+
+Head de código validado `450e780420a68d59c3df68715e524f149d52a500`; resultados remotos
+da US3 serão registrados depois da execução, sem antecipar SHA ou conclusão.
+Diff da US3 contra `869f0bd`: **30 arquivos**, incluindo os quatro PNG e o resumo
+sanitizado novo. O head de código acima é a referência testada; o commit documental
+seguinte mantém esse código. Todos os T001–T026 estão marcados; T027–T041 continuam
+desmarcados. Constituição, skills, gate/CI/baseline e bloco gerenciado intactos.
+
+### PR #9 — gate Linux, comentário publicado e achado pendente
+
+[PR #9](https://github.com/Browsher/crm-social/pull/9) aberto, **sem merge**, com head
+`15446201e4030174aa8a1fe4d9a5209315211a8f`, 30 arquivos contra `869f0bd`.
+[quality-gate SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37209150138/job/111456574271):
+tests, coverage, complexity e **Semgrep PASS**, audit N/A, exit 0 e baseline false.
+O log registra instalação e execução real de **Semgrep 1.179.0 no Linux**. As métricas
+numéricas do resumo continuam explicitamente locais; não inferir a UI a partir do CI.
+
+[Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37209150140/job/111456574276)
+publicou [o comentário do Claude](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981043366):
+**0 Critical, 2 Important, 8 Minor**. Generate-tests/publish-tests SKIPPED corretamente,
+sem rótulo gerar-testes. O coordenador confirmou o gate no log depois do review.
+
+| Item | Resultado / próximo encaminhamento |
+| --- | --- |
+| I-1 / segurança | URL com userinfo é recusada como link, porém seu texto pode sair na API/gaveta. Nenhuma credencial real foi usada nos testes ou imagens. Achado procede; corrigir com RED de supressão na API/DOM em rodada autorizada. Código preservado, PR aberto sem merge |
+| I-2 / evidência Linux | Resolvida documentalmente pelo job/log acima: Semgrep real PASS; o modelo não recebe status de checks no contexto, por desenho do workflow. UI continua comprovada somente localmente |
+| m-1 | Avisos de documentos semanais podem se repetir por produção; deduplicação futura |
+| m-2 | Campo do aviso de mídia/empate pouco preciso; localizar todos os registros empatados em melhoria futura |
+| m-3 | Avaliar escopo cruzado de página/cena e ponteiro semanal em arquivo de produção; comportamento conservado, sem inferir uma decisão nova |
+| m-4 | Parâmetro/ramo interactive de cartao não mais usado; limpeza futura |
+| m-5 | Fortalecer asserções de links/corte desktop/quantidade de acionamentos; evidências atuais são as registradas acima |
+| m-6 | acordeaoPeca complexidade 13, aviso; refatoração sem mudança de comportamento futura |
+| m-7 | Índices por produção para escala T037; custo atual filtra por peça |
+| m-8 | Limite de processo: adaptação do reviewer para leituras locais no Codex diverge da restrição de shell do template. Foi delimitada pelo coordenador, não uma autorização específica do autor; usar revisão remota com Read/Grep/Glob como evidência independente canônica, sem alegar equivalência de ferramentas |
+
+Somente este registro e o resumo sanitizado recebem as evidências remotas; os demais
+documentos mantêm estado com link. Esta atualização documental não altera o código
+testado `450e780`, nem corrige os novos achados do PR. O autor decide a próxima rodada.
+
+## PR #9 — supressão de credenciais e gaveta compacta
+
+Revisão autorizada sobre `aa7e8f4d5dbe781e7c273a8f8b42bb3a2147437f`, código
+validado em `48edc9a0a46dc385c469bf9da9939474437e374c` e endurecido em
+`ba77775d05d6c7b68a9a89b64eb1069a4214a595`, mantendo
+T001–T026 concluídas (**26/41**, 15 pendentes). PR #9 permanece aberto, sem merge.
+Nenhuma captura operacional, dependência nova ou mudança de gate/CI/baseline.
+Dados e servidor de todos os testes/demonstrações ficaram somente em TEMP.
+
+| Correção | RED observado antes do produto | GREEN observado |
+| --- | --- | --- |
+| I-1, segurança | Projeção + HTTP real + interface: **57 PASS / 3 FAIL / 0 SKIP**, por credencial sintética presente | **60 PASS / 0 FAIL / 0 SKIP**, cobrindo usuário, senha, userinfo percent-encoded, API real e #dia |
+| Apresentação compacta, m-1/m-B e T025 | Projeção + interface: **50 PASS / 7 FAIL / 0 SKIP**; faixa/recolhidos/documentos/avisos faltavam | Suíte completa **107 PASS / 0 FAIL / 0 SKIP**, incluindo **31 de interface**, em **18,82 s** |
+| URL malformada, achado da revisão estática | Projeção: **26 PASS / 1 FAIL / 0 SKIP**, userinfo de URL recusada pelo parser ainda aparecia | Suíte final **108 PASS / 0 FAIL / 0 SKIP**, incluindo **31 de interface**, em **18,69 s**; API e DOM reais sem credencial |
+
+A URL é analisada por `new URL`: username/password não vazios suprimem
+Arquivos.url e Produções.url_video_final, com marcador e aviso fixo localizado
+sem valor. A captura privada original fica intacta. A tela nunca mostra URL
+recusada como texto bruto, inclusive fora da lista de hosts permitidos.
+Se `new URL` recusa uma URL não vazia, ela também é suprimida conservadoramente
+com aviso **URL inválida suprimida**: evita devolver userinfo de host/porta
+malformados sem heurística de regex. Vazios e espaços continuam preservados.
+Fonte da API nativa conferida via Context7: [URL do Node 24](https://nodejs.org/docs/latest-v24.x/api/url.html).
+
+A implementação segue o [mockup da gaveta compacta](../../docs/design/mockups/gaveta-v2.html)
+e [telas, seção 2](../../docs/design/telas.md#2-gaveta-do-dia-001): largura 520 px
+no desktop, tela inteira no celular; primeira peça aberta, demais com resumo.
+Faixa de quatro campos omite vazios, etapa conhecida ganha rótulo legível sem
+mudar o valor na API e publicação preenchida fica em uma linha. Revisão vigente
+aparece primeiro; adicionais em +N; resolvidas/outras versões no Histórico
+recolhido. Textos e unidades antigas também abrem por clique. Lista de unidades
+mostra no máximo um aviso de mídia por linha; aba/linha/campo ficam na API,
+com somente contagem e link Planilha na peça. Tabelas detalhadas seguem para US5.
+
+Documentos semanais aparecem uma vez no fim do dia, separados por semana quando
+necessário. Plano/Redação/Visual ausentes usam travessão, inclusive sem semana
+identificada. A projeção resolve cada semana uma vez e registra o aviso global
+uma vez, mantendo-o nos detalhes de cada peça relacionada. Demais registros,
+versões e vínculos da API permanecem completos. O ramo/parâmetro interactive de
+cartao foi removido (m-4); nenhum modo de cartão não interativo era usado.
+
+T025 agora conta eventos reais: abrir o dia exige um acionamento, expandir a
+segunda peça totaliza dois; mede scrollWidth/clientWidth da gaveta/corpo em
+1440 px. Testes também verificam os recolhidos por clique e o conjunto exato
+de URLs sintéticas permitidas, sem asserção fraca de quantidade mínima (m-5).
+
+Dois ajustes de infraestrutura de teste, sem relaxar requisito: o GET por
+page.request usa URL absoluta (o contexto não possui baseURL); o seletor do
+acordeão usa somente seu summary direto, pois agora existem summaries internos.
+Na primeira tentativa de RED compacto, a lista esperada de links omitira o
+registro sintético do Reels recolhido; a expectativa foi corrigida antes do
+RED confirmado e antes da implementação. Essa falha não foi contada como RED
+do produto. A localização técnica antes exigida na gaveta foi substituída
+pela apresentação aprovada; a nova asserção continua exigindo a localização na API.
+
+### Gate local e cobertura citada (m-A)
+
+Gate final local exit **0**: tests PASS **108**, coverage PASS **97,0549%**,
+complexity/ESLint PASS (máximo **13**, dois avisos), Semgrep **SKIP** por ausência
+no Windows, audit **N/A** sem dependências de aplicação. Baseline atualizada:
+**false**. Node 24.19.0, Playwright e ESLint já existentes, nenhuma instalação.
+Interface continua fora do LCOV e com SKIP explícito no CI (M8); ela passou
+integralmente no computador. A citação anterior de 96,9697% é histórica,
+97,0109% pertence à revisão 450e780; 97,0430% é o primeiro GREEN compacto,
+e o resumo corrente traz **97,0549%** depois do teste/correção de URL malformada.
+Aceite Linux e revisão independente canônica foram conferidos após o push e
+estão registrados abaixo, sem adaptação do reviewer a shell nem alegação de equivalência de ferramentas.
+
+Revisão estática independente recebeu um pacote de trechos/diff e evidências,
+**sem usar ferramentas**, executar código ou ler o disco. Identificou um Important
+no catch permissivo do parser; o RED acima confirmou o caso e a segunda análise
+lógica o considerou resolvido. Limite: pacote parcial, sem execução independente;
+não equivale à leitura integral que o reviewer remoto faz do checkout.
+Doc-sync-onboarding atualizou os documentos afetados. Project-structure tem
+**43 linhas**, contando vazias; links relativos conferidos, cercas balanceadas,
+sem caminhos pessoais e bloco gerenciado/constituição preservados.
+
+### Screenshots atuais, somente fixtures sintéticas
+
+Aplicação real, quatro viewports **1440/390 × 1050**, inspecionados: sem corte
+horizontal, erro de página ou requisição externa. Primeira peça aberta e Reels
+recolhido conforme o estado inicial aprovado; suas duas cenas são verificadas
+pelos testes que expandem o acordeão. A imagem de uma peça é de 01/10; o dia com
+carrossel e Reels é 02/10. Captura visual sintética terminada em
+04/10/2026 **12:07:13** em São Paulo. As imagens antigas conservam seu caráter histórico.
+
+| Dia | Desktop 1440 | Celular 390 |
+| --- | --- | --- |
+| Uma peça | [Imagem](../../docs/design/screenshots/001-us3-compacta-uma-peca-1440.png) | [Imagem](../../docs/design/screenshots/001-us3-compacta-uma-peca-390.png) |
+| Carrossel + Reels | [Imagem](../../docs/design/screenshots/001-us3-compacta-varias-pecas-1440.png) | [Imagem](../../docs/design/screenshots/001-us3-compacta-varias-pecas-390.png) |
+
+![Gaveta compacta uma peça desktop](../../docs/design/screenshots/001-us3-compacta-uma-peca-1440.png)
+
+![Gaveta compacta uma peça celular](../../docs/design/screenshots/001-us3-compacta-uma-peca-390.png)
+
+![Gaveta compacta carrossel e Reels desktop](../../docs/design/screenshots/001-us3-compacta-varias-pecas-1440.png)
+
+![Gaveta compacta carrossel e Reels celular](../../docs/design/screenshots/001-us3-compacta-varias-pecas-390.png)
+
+Pendências anteriores m-2/m-3 (precisão/escopo de vínculo), m-6 (complexidade),
+m-7/T037 (escala), M8/CI local e captura operacional não são promovidas a
+resolvidas. Esta rodada corrige I-1, m-1, m-B, m-4, m-5 e m-A conforme autorizado.
+
+### Aceite remoto da revisão compacta
+
+Head observado no [PR #9](https://github.com/Browsher/crm-social/pull/9):
+`e39afd8b3bcbd0e91984da4dd5f80903f591e4e1`, **37 arquivos** contra `869f0bd`.
+O PR está **OPEN**, sem merge. Os commits de código são `48edc9a` e `ba77775`;
+`e39afd8` reúne documentação e screenshots, sem mudança adicional do código.
+Autor/committer dos três: noreply configurado, sem coautoria.
+
+| Check | Conclusão observada | Evidência |
+| --- | --- | --- |
+| quality-gate | **SUCCESS** | [Job 111466657156](https://github.com/Browsher/crm-social/actions/runs/37212606745/job/111466657156) |
+| review | **SUCCESS**, comentário publicado | [Job 111466657198](https://github.com/Browsher/crm-social/actions/runs/37212606805/job/111466657198) |
+| generate-tests | **SKIPPED**, sem rótulo gerar-testes | [Job](https://github.com/Browsher/crm-social/actions/runs/37212606805/job/111466657969) |
+| publish-tests | **SKIPPED**, sem geração | [Job](https://github.com/Browsher/crm-social/actions/runs/37212606805/job/111466658225) |
+
+Log do gate lido: instalação real de **Semgrep 1.179.0 no Linux**; tabela final
+tests/coverage/complexity/**semgrep PASS**, audit N/A, **exit 0** e baseline
+atualizada **false**. Isso fecha a pendência de evidência Linux do review neste
+head; não equivale a executar a interface no CI. O resumo sanitizado foi atualizado
+com os estados observados; métricas numéricas permanecem identificadas como locais.
+
+No head `e39afd8`, comando explícito no computador, com Playwright existente
+indicado por `CRM_PLAYWRIGHT_MODULE` e `CI` removido do ambiente:
+
+```powershell
+node --test tests/interface.test.cjs
+```
+
+Resultado **31 PASS / 0 FAIL / 0 SKIP**, **18,43 s**. Suíte completa anterior,
+`node --test`, **108 PASS / 0 FAIL / 0 SKIP**; gate local `node tools/quality-gate.mjs`
+exit 0, mesma árvore de código. Apenas documentação foi adicionada depois.
+
+[Comentário integral do Claude](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981545248),
+publicado em 04/10/2026 15:23:35 UTC: **0 Critical, 0 Important, 7 Minor**.
+O reviewer registra leitura integral de reviewer.md, AGENTS, constituição e diff,
+usando o checkout; nenhum teste/scanner, data/ ou dependência lidos por ele.
+Trecho: “Não encontrei problema de segurança.” Nenhuma mensagem de falha falsa:
+passo Avisar falha do review **SKIPPED** após publicação bem-sucedida.
+
+| Minor desse novo comentário | Registro para próxima rodada, sem correção nova |
+| --- | --- |
+| m1 | A complexidade 13 atual é de documentosDoDia, app.js:145; a dívida textual ainda cita acordeaoPeca. O relatório numérico está correto; atualizar a referência documental futura |
+| m2 | Resumo usa revisão aberta também para estado de tratamento desconhecido; avaliar revisão vigente/a conferir com teste dedicado |
+| m3 | Singular das contagens: 1 avisos. Ajuste de apresentação pendente |
+| m4 | Precisão do campo do aviso de ausência/ambiguidade/empate; mantém a dívida anterior m-2 |
+| m5 | Arquivos apenas semanais não passam pelas mesmas validações numéricas/origens_json dos arquivos de produção; alinhar contrato/validação |
+| m6 | Link Planilha atualmente mostra motivos distintos, sem localização técnica e sem separar origem dos motivos; detalhamento continua na US5 |
+| m7 | Índices por produção/performance para T037; mantém a dívida anterior m-7 |
+
+Limites do reviewer: não inspecionou PNG, não reproduziu testes/cobertura ou
+desempenho. Informou modificação local do project-structure no checkout efêmero
+e avaliou o diff do PR; a cópia local do projeto foi verificada limpa após os
+commits, com 43 linhas. A evidência visual foi conferida pelo coordenador.
+Nenhum desses Minor foi convertido em nova implementação nesta rodada.
+
+## Revisão final da US3 — PR #9
+
+04/10/2026. O comentário [5981622657](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981622657)
+no head `75bdc51` trouxe **1 Important (I-1)** e cinco Minor novos; esta rodada
+aplica a decisão do autor, mantendo T001–T026 concluídas e US4 ainda pendente.
+
+| Item | Correção e evidência local |
+| --- | --- |
+| I-1 | Resumo fechado distingue vigente, vínculo/versão a confirmar e ausência/só resolvidas. Teste de interface observado RED: casos ambíguo e versão anterior exibiam sem revisão; GREEN cobre os cinco cenários |
+| Apresentação | Revisão em duas linhas, sem rótulos Decisão/Versão/Motivo nem IDs técnicos; JSON conserva IDs e vínculos. +N com singular/plural; aviso de dados sem separador solto |
+| m-d | Helper de plural para página/cena/aviso/revisão; teste com uma unidade/um aviso e adicionais singular/plural |
+| m-a | Cenas conservam três slots; avisoMidia qualifica imagem inicial/final/ambas e vídeo ausentes. Um aviso de mídia por cena agrega causas e aponta primeiro ponteiro falho; números/tempos são avisos independentes. RED antes, GREEN na projeção e interface |
+| m-b | Testes de arquivo da unidade errada (mesma produção/versão), documento de outra semana e versão inválida em Revisoes/Arquivos. São caracterizações: já passaram antes; não foi fabricado RED |
+| m-c | Aviso de revisão ambígua aponta primeiro pagina_id/cena_id/arquivo_id inválido; versao quando versão é inválida. RED observado antes de corrigir |
+| m-e | LEIA-ME dos mockups registra prevalência da spec/contrato nas divergências ilustrativas |
+
+Comandos com Node 24.19.0 existente, PATH local selecionado, Playwright existente
+por CRM_PLAYWRIGHT_MODULE e CI removido do ambiente; somente fixtures sintéticas
+e estado em TEMP, sem acesso a dados privados:
+
+```powershell
+node --test tests/interface.test.cjs
+node --test tests/projecao.test.cjs
+node --test
+node tools/quality-gate.mjs
+```
+
+Interface **40 PASS / 0 FAIL / 0 SKIP**, 23,39 s; projeção **34/0/0**.
+Suíte completa **124 PASS / 0 FAIL / 0 SKIP**, 23,69 s.
+Gate local **exit 0**, 25,52 s: tests/coverage/complexity PASS; cobertura
+**97,1317%**, complexidade máxima **13** (`documentosDoDia`, app.js:149).
+Avisos 11 em arquivosDaUnidade/unidadeDetalhe e 12 no CLI são dívidas de
+refatoração; nenhum valor >=21. Semgrep **SKIP** no Windows por ausência da
+ferramenta; audit **N/A** por ausência de dependências de aplicação.
+Baseline não atualizada; ferramentas, CI e constituição intactos.
+O [resumo sanitizado](../../docs/reports/001-us3-gate-resumo.json) guarda métricas;
+aceite Linux e merge ainda dependem do novo review, sem inferência pelo Windows.
+
+Screenshots da aplicação real, com carrossel e reels sintéticos. Primeira peça abre
+automaticamente; segunda foi aberta por um clique para conferir ambos. Texto,
+Histórico e versões anteriores continuam recolhidos. Sem corte horizontal, erro
+de página ou requisição externa; desktop 1440×1440 e celular 390×1600:
+
+![Gaveta final desktop](../../docs/design/screenshots/001-us3-final-varias-pecas-1440.png)
+![Gaveta final celular](../../docs/design/screenshots/001-us3-final-varias-pecas-390.png)
+
+Continuam pendentes as dívidas fora deste recorte: detalhes da Planilha na US5,
+validações adicionais de arquivos apenas semanais, precisão de avisos de empate/
+ausência sem vínculo, índices/desempenho em T037, CLI fora do LCOV e UI com SKIP
+explícito no CI (M8). Não se declara aceite completo da feature ou captura real.
+
+## Pendências para a revisão final (Fase 8)
+
+Decisão do autor na última rodada da US3: Critical, segurança e regressão bloqueiam;
+Important/Minor novos fora dessas categorias são corrigidos se triviais ou registrados
+aqui para a Fase 8. O review continua sendo comentário, separado do quality-gate.
+O [review 5981923824](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981923824)
+no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
+
+| Origem | Pendência / impacto / verificação futura |
+| --- | --- |
+| PR #9, m-2 | Revisão com tratamento desconhecido fica no grupo vigente e recebe aviso, mas resumo/+N usam revisão aberta. Definir rótulo neutro ou decisão explícita na revisão final; manter estados originais na API |
+| PR #9, m-5 | A dívida textual de complexidade em architecture.md ainda aponta acordeaoPeca/localização desatualizada. Conferir nomes/linhas contra o relatório atual na Fase 8; não alterar limites, baseline ou código para ocultar avisos |
+| PR #9, m-6 | A seção histórica Revisão final da US3 não informa o SHA exato do código medido; seu resumo Linux estava pendente naquele momento. Reconciliar rastreabilidade dos recibos na Fase 8 sem reescrever medições históricas como novas |
+| PR #6, M8 | CLI fora do LCOV e Playwright com SKIP explícito no CI; interface precisa de aceite local. Preservar distinção entre as cinco camadas |
+| Revisões anteriores da US3 | Validações adicionais dos arquivos apenas semanais, precisão de aviso de empate/ausência sem vínculo e índices/escala pertencem às tarefas finais; tabelas detalhadas de avisos pertencem à US5 |
+| PR #9, review 5982320198, m-1 | Custo da triagem de texto por requisição; avaliar atalho seguro para texto sem @ e índices/escala em T037, incluindo JSON decodificado. Não confundir otimização com relaxamento de supressão |
+| PR #9, review 5982320198, m-2 | Referência da classificação pendente em architecture.md aponta projecao.cjs:253, enquanto projetarVisao passou a :313; reconciliar com a implementação do quadro. A parte da dívida de complexidade já está no m-5 anterior |
+| PR #9, review 5982320198, m-3 | Reitera tratamento de revisão desconhecido chamado aberto; mesma pendência m-2 anterior, sem novo comportamento nesta rodada |
+| PR #9, review 5982320198, m-4 | Indentação do loop HTTP e consolidação dos imports de fixtures; estilo sem efeito funcional. Adiado porque a regressão I-1 interrompeu a rodada antes de novas alterações de código |
+
+## Última rodada da US3 — avisos e textos projetados
+
+Em 04/10/2026, alterações conferidas sobre o pai `244d9e7cc140be850434440bc5059f318ec288c5`.
+I-1 agrega aos avisos locais os da linha da produção e dos registros relacionados,
+com aba/linha físicas, sem duplicar os globais. As regressões cobrem sem data,
+semana desconhecida e URL suprimida; a gaveta mostra a contagem real.
+m-1 distingue registro ligado sem link permitido de mídia ausente, em um aviso por
+unidade; m-3 usa Página/Cena, número e versão no Texto registrado, sem IDs técnicos.
+m-4 aplica a triagem por `new URL` a todos os textos mínimos e recibos, inclusive
+userinfo dentro de JSON, chaves e strings aninhadas. JSON é dado, nunca código;
+validade original privada evita chamar o marcador de supressão de JSON inválido.
+Sem alterações em m-2/m-5/m-6, ferramentas, CI, baseline ou constituição.
+
+RED observado: projeção **35 PASS / 5 FAIL**, interface/HTTP **0/11**;
+cena com ausência e link recusado **0/1**. Proveniência de JSON **0/2** antes da
+correção. GREEN da projeção **41/0/0**; suíte completa **143/0/0**, incluindo
+**51 testes de interface**, em 30,06 s. Gate local **exit 0**, 32,91 s:
+tests/coverage/complexity PASS, cobertura **97,3398%**, complexidade máxima **13**;
+Semgrep SKIP no Windows e audit N/A. Nenhuma baseline atualizada.
+[Resumo sanitizado](../../docs/reports/001-us3-ultima-local.json).
+
+As imagens sintéticas novas preservam as anteriores, sem pageerror, requisição
+externa ou corte horizontal. Segundo acordeão aberto por clique; os recolhidos
+continuam fechados. Aceite Linux e decisão de merge serão registrados após o push.
+
+![Gaveta — última rodada, desktop](../../docs/design/screenshots/001-us3-ultima-varias-pecas-1440.png)
+![Gaveta — última rodada, celular](../../docs/design/screenshots/001-us3-ultima-varias-pecas-390.png)
+
+### Aceite remoto e parada por regressão
+
+Código publicado e verificado: `bdf20815b097049dfba01c467d15c25f3c18f361`,
+autor/committer Alexandre Melo com noreply. O [quality-gate Linux](https://github.com/Browsher/crm-social/actions/runs/37218435501/job/111483652027)
+concluiu SUCCESS, com tests/coverage/complexity/Semgrep PASS, audit N/A,
+exit 0 e baseline não atualizada. O [review](https://github.com/Browsher/crm-social/actions/runs/37218435489/job/111483652087)
+concluiu SUCCESS e publicou o [comentário 5982320198](https://github.com/Browsher/crm-social/pull/9#issuecomment-5982320198),
+com um Important e quatro Minor, sem Critical. generate-tests/publish-tests ficaram
+SKIPPED, sem rótulo gerar-testes; isso não é SKIP do Semgrep.
+
+**I-1 do novo review é regressão confirmada e bloqueia o merge.** A triagem tenta
+interpretar texto depois dos delimitadores como uma URL inteira: um @ legítimo
+posterior ao domínio vira userinfo para o parser. Reprodutor somente leitura,
+sem persistência ou dados reais, comparou `244d9e7` com `bdf2081` usando a mesma
+captura sintética em memória e confirmou os quatro casos:
+
+| Texto legítimo sintético | 244d9e7 | bdf2081 |
+| --- | --- | --- |
+| Saiba mais em https://exemplo.invalid e siga @perfil | Preservado | [conteúdo suprimido] |
+| Visite https://site.invalid. Dúvidas: contato@site.invalid | Preservado | [conteúdo suprimido] |
+| Texto // siga @perfil | Preservado | [conteúdo suprimido] |
+| JSON com url https://exemplo.invalid e contato contato@site.invalid | Preservado | [conteúdo suprimido] |
+
+Não houve tentativa de merge, nova correção ou implementação da US4 após confirmar
+o bloqueio. O PR #9 continua aberto; T027–T030 continuam desmarcadas. A definição
+dos limites de candidatos em texto livre precisa resolver esse falso positivo
+preservando a proteção de credenciais, inclusive as URLs e JSON já testados.
+
+### Correção da regressão — decisão do autor
+
+Em 04/10/2026, o autor definiu os limites da triagem de **texto livre**: pedaços
+separados por espaços em branco, com início HTTP(S), ignorando aspas/parênteses
+externos e pontuação final comum apenas durante a análise por `new URL`.
+Somente o pedaço com usuário/senha é substituído pelo marcador; o restante,
+whitespace e pontuação são preservados. E-mail, @menção e os quatro exemplos da
+tabela anterior permanecem exatamente como foram registrados.
+
+JSON válido é percorrido como dados: somente tokens de string alterados são
+reserializados; demais bytes, inclusive ordem, espaços e notação de números,
+permanecem intactos. Não há execução nem expansão dos campos HTTP. A defesa
+anterior de campos URL dedicados continua recusando userinfo/valor malformado;
+uma frase com pedaço redigido conserva seu restante. Triagem de formatos conhecidos
+de segredo/caminho pessoal permanece integral. Texto livre não promete reconhecer
+outros esquemas, URL relativa, userinfo com espaços ou formas fora do delimitador
+aprovado: os testes antigos dessa ampliação foram ajustados somente ao requisito
+substituído, preservando defesa dedicada, conteúdo HTML e formatos sensíveis.
+
+Base local antes da alteração: `fd4ce502356051aedad87ea4ff280e8a3503d2c0`,
+que registra a parada anterior e será incluído no push. RED de projeção
+**37 PASS / 11 FAIL / 0 SKIP**, incluindo os quatro exemplos; RED HTTP/interface
+**0 PASS / 4 FAIL / 0 SKIP**, por supressão integral indevida. GREEN da projeção
+**48/0/0**; suíte completa **153/0/0**, incluindo **53 testes de interface**,
+em 34,03 s. O HTTP e #dia não recebem pessoa/senha sintéticas e mantêm o texto
+ao redor do marcador. Nenhuma dependência, dado real, gate, CI ou baseline alterada.
+
+O primeiro gate terminou exit 0 após 361,72 s, com demora no encerramento do
+Chromium: o navegador exclusivo daquela execução foi encerrado, liberando o runner
+sem falhas de assert. Houve tentativa protegida de encerrar o runner depois disso,
+mas o processo já havia saído e a conferência recusou a operação. Nenhum navegador
+do usuário foi encerrado. Repetição autônoma com diagnóstico apenas em TEMP:
+**exit 0 em 32,84 s**, tests/coverage/complexity PASS, cobertura **97,3039%**,
+máximo **13**, Semgrep SKIP no Windows e audit N/A; baseline não atualizada.
+[Resumo sanitizado](../../docs/reports/001-us3-regressao-local.json).
+Aceite Linux e novo review dependem do push desta correção.

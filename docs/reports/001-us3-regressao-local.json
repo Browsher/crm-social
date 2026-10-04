@@ -1,0 +1,72 @@
+{
+  "observadoEm": "2026-10-04",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
+  "escopo": "US3: correção da regressão de URL por trecho; somente fixtures sintéticas",
+  "local": {
+    "exitCode": 0,
+    "tests": {
+      "pass": 153,
+      "fail": 0,
+      "skip": 0,
+      "interface": 53
+    },
+    "results": [
+      {
+        "name": "tests",
+        "state": "PASS",
+        "reason": "",
+        "count": 153
+      },
+      {
+        "name": "coverage",
+        "state": "PASS",
+        "reason": "",
+        "percent": 97.30392156862744,
+        "drop": 0
+      },
+      {
+        "name": "complexity",
+        "state": "PASS",
+        "reason": ""
+      },
+      {
+        "name": "semgrep",
+        "state": "SKIP",
+        "reason": "Semgrep ausente; instalar CE 1.179.0"
+      },
+      {
+        "name": "audit",
+        "state": "N/A",
+        "reason": "sem package.json/dependencias do app"
+      }
+    ],
+    "complexityMax": 13,
+    "avisosComplexidade": [
+      {
+        "file": "scripts/importar-captura.cjs",
+        "line": 5,
+        "value": 12
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 72,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 84,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 150,
+        "value": 13
+      }
+    ],
+    "baselineAtualizada": false
+  },
+  "linux": {
+    "estado": "Aguardando execução deste head; execução anterior é histórica na procedência",
+    "limite": "Estados Linux não inferidos do Windows; interface tem SKIP no CI e aceite local explícito."
+  }
+}

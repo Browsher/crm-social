@@ -17,21 +17,189 @@ const rotulosStatus={em_planejamento:'Em planejamento',pronto:'Pronto',publicado
 function statusLegivel(value) {
   return Object.hasOwn(rotulosStatus,value)?rotulosStatus[value]:(value || 'Estado não informado');
 }
-function abrirDia(data,ids) {
-  $('#dia-titulo').textContent=data?civil(data,{weekday:'long',day:'2-digit',month:'long'}):'Sem data';
+let focoDia=null;
+function abrirDia(data,ids,semanaId=null) {
+  focoDia=document.activeElement;
+  const semana=state.view.semanas.find(s=>s.semana_id===semanaId);
+  $('#dia-titulo').textContent=data?civil(data,{weekday:'long',day:'2-digit',month:'long'}):'Sem data · '+(semana?.tema || 'Semana não identificada');
   $('#dia-quantidade').textContent=ids.length+(ids.length===1?' peça registrada':' peças registradas');
-  $('#dia-pecas').replaceChildren(...idsParaPecas(ids).map(p=>cartao(p,false)));
+  const registros=idsParaPecas(ids),pecas=registros.map((p,i)=>acordeaoPeca(p,i===0));
+  if(pecas.length) pecas.push(documentosDoDia(registros));
+  $('#dia-pecas').replaceChildren(...(pecas.length?pecas:[node('p','Nenhuma peça registrada neste dia.','empty')]));
   $('#dia').showModal();
 }
-function cartao(p,interactive=true) {
-  const el=node(interactive?'button':'article',undefined,'post '+p.formato.toLowerCase());
-  if (interactive) {
+function valor(value) {return value===null || value===undefined || (typeof value==='string' && value.trim()==='')?'Não informado':String(value);}
+const preenchido=value=>value!==null && value!==undefined && String(value).trim()!=='';
+function plural(n,um,muitos=um+'s') {return n+' '+(n===1?um:muitos);}
+const rotulosEtapa={arte_aprovada:'Arte aprovada',prompts_imagem_prontos:'Prompts de imagem prontos',
+  imagens_em_producao:'Imagens em produção',voz_pronta_para_gerar:'Voz pronta para gerar',voz_em_producao:'Voz em produção',
+  clipes_prontos_para_gerar:'Clipes prontos para gerar',clipes_em_producao:'Clipes em produção',
+  montagem_pronta:'Montagem pronta',montagem_em_producao:'Montagem em produção'};
+function etapaLegivel(value) {return Object.hasOwn(rotulosEtapa,value)?rotulosEtapa[value]:String(value);}
+function fatosPeca(p) {
+  const dl=node('dl',undefined,'piece-facts');
+  const campos=[['Etapa',preenchido(p.etapa_producao)?etapaLegivel(p.etapa_producao):null],['Com quem está',p.responsavel_atual],
+    ['Prevista',p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'2-digit'}):null],['Versão',p.versao]];
+  for(const [nome,value] of campos) {
+    if(!preenchido(value)) continue;
+    const pair=node('div');pair.append(node('dt',nome),node('dd',valor(value)));dl.append(pair);
+  }
+  return dl;
+}
+function secaoDetalhe(titulo) {
+  const section=node('section',undefined,'detail-section');section.append(node('h3',titulo));return section;
+}
+function urlAutorizada(value) {
+  if(typeof value!=='string') return null;
+  try {
+    const u=new URL(value);
+    return u.protocol==='https:' && ['drive.google.com','docs.google.com'].includes(u.host) && !u.username && !u.password?u.href:null;
+  } catch {return null;}
+}
+function linkArquivo(a,label) {
+  const href=urlAutorizada(a?.url);
+  if(!href) return null;
+  const link=node('a',label);link.href=href;link.target='_blank';link.rel='noopener noreferrer';return link;
+}
+function arquivoRegistro(a) {
+  const box=node('article',undefined,'file-record');
+  box.append(node('strong',a.nomeApresentacao),node('small','Versão '+valor(a.versao)+' · registro'));
+  const link=linkArquivo(a,'Abrir registro no Drive/Docs');
+  if(link) box.append(link);
+  else box.append(node('p','link não permitido','record-text'));
+  return box;
+}
+function arquivosDaUnidade(records,avisoMidia) {
+  const list=node('span',undefined,'unit-files'),ids=new Set();let ausente=records.length===0,recusado=false;
+  for(const a of records) {
+    const link=linkArquivo(a,a?.nomeApresentacao || 'Mídia');
+    if(!a) ausente=true;
+    else if(!link) recusado=true;
+    else if(!ids.has(a.arquivo_id)) {ids.add(a.arquivo_id);list.append(link);}
+  }
+  const aviso=[avisoMidia || (ausente?'Mídia ausente':null),recusado?'link não permitido':null].filter(preenchido).join('; ');
+  if(aviso) list.append(node('span',aviso,'notice'));
+  return list;
+}
+function unidadeDetalhe(u,tipo) {
+  const pagina=tipo==='paginas',box=node('article',undefined,'unit-record');
+  box.dataset[pagina?'pagina':'cena']=u[pagina?'pagina_id':'cena_id'];
+  const text=node('span',undefined,'unit-text');
+  box.append(node('span',(pagina?'Página ':'Cena ')+valor(u.indice),'unit-number'));
+  if(pagina) {
+    text.append(node('span',u.titulo || u.corpo || 'Texto não registrado'),node('small','Design novo: '+u.designNovo));
+  } else {
+    text.append(node('span',u.texto || 'Texto não registrado'));
+    if(preenchido(u.inicio_segundos) || preenchido(u.duracao_segundos)) text.append(node('small',
+      'Início: '+valor(u.inicio_segundos)+' s · duração: '+valor(u.duracao_segundos)+' s'));
+  }
+  box.append(text);
+  box.append(arquivosDaUnidade(u.arquivos,pagina?undefined:u.avisoMidia));return box;
+}
+function secaoUnidades(records,tipo) {
+  const section=secaoDetalhe(tipo==='paginas'?'Páginas':'Cenas');section.dataset.unidades=tipo;
+  const groups=new Map();
+  for(const u of records) {
+    const key=JSON.stringify(u.versao);
+    if(!groups.has(key)) groups.set(key,[]);groups.get(key).push(u);
+  }
+  const ordenados=[...groups.values()].sort((a,b)=>Number(b[0].vigente)-Number(a[0].vigente));
+  for(const group of ordenados) {
+    const first=group[0],box=node(first.vigente?'section':'details',undefined,'version-group'+(first.vigente?'':' history'));
+    box.dataset.versao=String(first.versao);
+    box.append(node(first.vigente?'h4':'summary','Versão '+valor(first.versao)+(first.vigente?' · vigente':' · impacto atual a confirmar')));
+    box.append(...group.map(u=>unidadeDetalhe(u,tipo)));section.append(box);
+  }
+  return section;
+}
+function secaoRevisoes(records,grupo) {
+  const nomes={vigentes:'Revisão vigente',resolvidas:'Revisões resolvidas · histórico',anteriores:'Revisões de outras versões',ambiguas:'Revisões com vínculo a confirmar'};
+  const section=secaoDetalhe(nomes[grupo]);section.dataset.revisoes=grupo;
+  if(grupo!=='vigentes') section.classList.add('history');
+  if(grupo==='vigentes') {
+    if(records[0]) section.append(revisaoLinha(records[0],grupo));
+    if(records.length>1) {
+      const more=recolhido('+'+plural(records.length-1,'revisão aberta','revisões abertas'));
+      more.append(...records.slice(1).map(r=>revisaoLinha(r,grupo)));section.append(more);
+    }
+  } else section.append(...records.map(r=>revisaoLinha(r,grupo)));
+  return section;
+}
+function revisaoLinha(r,grupo) {
+  const review=node('article',undefined,'review-record');
+  const titulo=[r.decisao==='revisar'?'Revisar':r.decisao,preenchido(r.versao)?'versão '+r.versao:null].filter(preenchido).join(' · ');
+  review.append(node('span',titulo+(preenchido(r.motivo)?' — '+r.motivo:'')));
+  const correcao=[preenchido(r.responsavel_correcao)?'Corrige: '+r.responsavel_correcao:null,r.estado_tratamento].filter(preenchido);
+  if(correcao.length) review.append(node('small',correcao.join(' · ')));
+  if(grupo==='anteriores' || grupo==='ambiguas') review.append(node('small','Impacto atual a confirmar.'));
+  return review;
+}
+function recolhido(titulo) {
+  const el=node('details',undefined,'fold');el.append(node('summary',titulo));return el;
+}
+function textosRegistrados(p) {
+  const el=recolhido('Texto registrado');el.dataset.textos='';
+  if(preenchido(p.legenda)) el.append(node('p',p.legenda));
+  for(const [tipo,records] of [['Página',p.detalhes.paginas],['Cena',p.detalhes.cenas]]) for(const u of records) {
+    const partes=[['Corpo',u.corpo],['Função',u.funcao],['Texto na tela',u.texto_tela]].filter(([,v])=>preenchido(v));
+    if(partes.length) el.append(node('p',tipo+' '+valor(u.indice)+' · versão '+valor(u.versao)+' · '+partes.map(([nome,v])=>nome+': '+v).join(' · ')));
+  }
+  const files=secaoDetalhe('Arquivos · registros');files.append(...p.detalhes.arquivos.map(arquivoRegistro));
+  el.append(files);return el;
+}
+function documentosDoDia(pecas) {
+  const section=secaoDetalhe('Documentos da semana'),weeks=new Map();section.dataset.documentosDia='';
+  for(const p of pecas) if(!weeks.has(p.semanaId)) weeks.set(p.semanaId,p.detalhes.documentosSemana);
+  for(const [id,records] of weeks) {
+    const group=node('div',undefined,'week-documents');group.dataset.semana=id ?? '';
+    if(weeks.size>1 || id===null) group.append(node('small',state.view.semanas.find(s=>s.semana_id===id)?.tema || 'Semana não identificada'));
+    for(const r of records) {
+      const label=r.papel+': '+(r.arquivo?.nomeApresentacao || '—');
+      const item=linkArquivo(r.arquivo,label) || node('span',label);
+      item.dataset.papel=r.papel;group.append(item);
+    }
+    section.append(group);
+  }
+  return section;
+}
+function resumoPeca(d) {
+  const unidades=['paginas','cenas'].map(tipo=>[tipo,d[tipo].filter(u=>u.vigente).length]).filter(([,n])=>n>0)
+    .map(([tipo,n])=>plural(n,tipo==='paginas'?'página':'cena'));
+  const revisao=d.revisoes.vigentes.length?'revisão aberta':
+    (d.revisoes.ambiguas.length || d.revisoes.anteriores.length?'revisão a confirmar':'sem revisão');
+  return [...unidades,revisao,plural(d.avisos.length,'aviso')].join(' · ');
+}
+function avisosPeca(avisos) {
+  const box=node('div',undefined,'data-notice');
+  box.append(node('span',plural(avisos.length,'aviso')+' de dados nesta peça'));
+  const link=node('a','ver na Planilha');link.href='#planilha';
+  link.addEventListener('click',e=>{e.preventDefault();focoDia=$('#selo');$('#dia').close();navegar('planilha');});
+  box.append(link);return box;
+}
+function acordeaoPeca(p,aberto) {
+  const el=node('details',undefined,'peca-acordeao'),summary=node('summary'),d=p.detalhes;
+  el.dataset.peca=p.producao_id;el.open=aberto;
+  summary.append(node('span',p.formato,'format-label'),node('strong',p.titulo || 'Título não informado'),node('span',statusLegivel(p.status),'status'),
+    node('small',resumoPeca(d),'piece-hint'));
+  const body=node('div',undefined,'piece-body');
+  body.append(fatosPeca(p));
+  if(d.publicacaoRegistrada) body.append(node('p','Publicação: '+valor(p.publicado_em)+' · registro explícito','publication'));
+  if(d.revisoes.vigentes.length) body.append(secaoRevisoes(d.revisoes.vigentes,'vigentes'));
+  for(const tipo of ['paginas','cenas']) if(d[tipo].length) body.append(secaoUnidades(d[tipo],tipo));
+  body.append(textosRegistrados(p));
+  const historico=recolhido('Histórico');historico.dataset.historico='';
+  for(const grupo of ['resolvidas','anteriores','ambiguas']) if(d.revisoes[grupo].length) historico.append(secaoRevisoes(d.revisoes[grupo],grupo));
+  if(historico.children.length>1) body.append(historico);
+  if(d.avisos.length) body.append(avisosPeca(d.avisos));
+  el.append(summary,body);return el;
+}
+function cartao(p) {
+  const el=node('button',undefined,'post '+p.formato.toLowerCase());
     el.type='button'; el.dataset.producaoId=p.producao_id;
     el.addEventListener('click',()=>{
       const group=state.view.dias.find(d=>d.data===p.dataCivil && (d.data!==null || d.semanaId===p.semanaId));
-      abrirDia(group.data,group.ids);
+      abrirDia(group.data,group.ids,group.semanaId);
     });
-  }
   el.append(node('small',p.formato),node('strong',p.titulo || 'Título não informado'),node('span',statusLegivel(p.status),'status'));
   return el;
 }
@@ -73,7 +241,7 @@ function row(p) {
     node('strong',p.titulo || 'Título não informado'),node('small',p.formato,'row-format'),node('small',statusLegivel(p.status),'row-status'));
   el.addEventListener('click',()=>{
     const group=state.view.dias.find(d=>d.data===p.dataCivil && (d.data!==null || d.semanaId===p.semanaId));
-    abrirDia(group.data,group.ids);
+    abrirDia(group.data,group.ids,group.semanaId);
   });
   return el;
 }
@@ -129,6 +297,7 @@ function controles() {
   $('#abrir-sem-data').addEventListener('click',()=>{$('#sem-data').hidden=false;$('#sem-data').scrollIntoView({block:'start'});});
   $('#fechar-sem-data').addEventListener('click',()=>{$('#sem-data').hidden=true;$('#abrir-sem-data').focus();});
   $('#fechar-dia').addEventListener('click',()=>$('#dia').close());
+  $('#dia').addEventListener('close',()=>{if(focoDia?.isConnected) focoDia.focus();});
   $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');$('#menu').setAttribute('aria-expanded',String(open));});
   $('#selo').addEventListener('click',()=>navegar('planilha'));
   $('#atualizar').addEventListener('click',reler);

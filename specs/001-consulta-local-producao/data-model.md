@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva identidades e relações: T001–T022/US1 e US2 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
+Como um índice de fotografias, o modelo conserva identidades e relações: T001–T026/US1, US2 e US3 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
@@ -56,7 +56,7 @@ Seu schema e conteúdo inicial estão no [contrato](contracts/captura-e-consulta
 | Projeção | Conteúdo |
 | --- | --- |
 | `semanas` | agrupamento NTV, tema, início/fim civil e objetivo semanal registrado |
-| `producoes` | resumos e detalhe selecionado com facetas separadas, unidades e avisos |
+| `producoes` | resumos e detalhes com facetas separadas, unidades por versão, quatro grupos de revisões, arquivos/documentos e avisos localizados |
 | `dias` | peças por data civil válida; grupos Sem data por semana e sem semana |
 | `quadro` | semana, oito colunas fixas, IDs por classificação prioritária; Outras tem quantidadeValoresNovos e título derivados de seus rótulos distintos |
 | `planilha` | seis abas com nomes, 66 cabeçalhos/valores mínimos e contagem de linhas NTV apresentadas |
@@ -72,8 +72,34 @@ Todos os 66 campos mínimos e valores fazem parte da **Planilha local** como reg
 inclusive IDs, hashes e origens JSON. Isso não autoriza servir captura/envelope bruto,
 extras arbitrários, tokens, credenciais ou paths; célula mínima com segredo/caminho
 indevido recebe supressão localizada e aviso, original somente na captura privada.
+Nos campos dedicados `Arquivos.url` e `Produções.url_video_final`, após a redação
+de texto, `new URL` detecta usuário ou senha nos valores ainda inalterados:
+o campo projetado vira **[conteúdo suprimido]**, com origem e motivo fixo sem o valor.
+O JSON HTTP não transporta a credencial; URL recusada pela UI também não é ecoada
+como texto bruto. Não confundir essa seleção segura com alteração da captura privada.
+String não vazia recusada pelo construtor também recebe o marcador e o motivo fixo
+**URL inválida suprimida**, sem exceção bruta nem valor; userinfo malformado não
+retorna ao HTTP. Vazio/somente espaços permanece sem aviso de URL inválida.
 Fixtures e mockups compartilháveis são sintéticos. HTTP e interface renderizam
 textos/JSON como dados, sem instruções, HTML executável ou navegação arbitrária.
+
+Por decisão do autor, em texto livre mínimo e nos quatro campos do recibo público,
+a redação divide o texto preservando espaços em branco: só pedaço iniciado em
+HTTP(S), com aspas/parênteses de contorno e pontuação final desconsiderados, é
+analisado por `new URL`. Somente o pedaço com usuário/senha vira marcador, mantendo
+o restante da frase, espaços e pontuação, também se já redigido em campo de URL.
+URL legítima seguida de `@`/e-mail e `//` solto permanecem exatos. Não promete
+detectar outros esquemas, URL relativa, espaços em userinfo ou forma fora desse
+pedaço; os campos de URL dedicados mantêm seu guarda. Segredo/caminho conhecido
+continua suprimindo o texto reconhecido inteiro. Célula alterada tem aviso fixo
+localizado; original e recibos privados permanecem intactos.
+
+JSON válido é dado, nunca código ou expansão de campos HTTP. Strings decodificadas
+são redigidas; somente tokens alterados são reserializados, incluindo chaves.
+Demais bytes, números, ordem, espaços e escapes legítimos não alterados permanecem.
+A validade original de origens_json fica como booleano em WeakMap privado, antes
+da supressão: o marcador não cria falso aviso de JSON inválido quando o original
+era válido, e JSON originalmente inválido continua identificado.
 
 ## Formato, dia e objetivo
 
@@ -85,7 +111,7 @@ textos/JSON como dados, sem instruções, HTML executável ou navegação arbitr
 - Dia reúne **todas** as peças NTV naquela data; filtro do resumo não recorta a gaveta.
   Ordem ordinal por `producao_id` estabiliza primeiro cartão e primeiro acordeão.
 - Link "N sem data" é total global das peças NTV sem data válida, independente de
-  filtro/mês; lista delas agrupada por semana. No quadro, peça abre Sem data da sua semana.
+  filtro/mês; oculto quando zero, lista delas agrupada por semana. No quadro, peça abre Sem data da sua semana.
 - Período coberto é mínimo início semanal válido até máximo fim civil semanal;
   sem datas semanais válidas, limites null e aviso. Semana cruzando mês mantém identidade.
 - `Semanas.objetivo` é semanal. Objetivo mensal mostra "Ainda não definido" na 001,
@@ -145,14 +171,63 @@ inferir responsável, aguarda-de, próxima ação, agente trabalhando ou elegibi
 - Páginas/cenas são ordenadas dentro da versão pertinente; não misturar versões para
   completar sequência. Design novo: A confirmar quando não há classificação explícita
   da página/versão; arquivo/template/estado presente não é prova. Não existe flag nos mínimos.
+- Na projeção implementada, `detalhes.paginas`/`cenas` conservam todas as versões:
+  ordenação por versão/índice positivos e ID, com inválidos preservados ao final e aviso.
+  `vigente` exige versão positiva igual à da produção; a UI exibe essa versão primeiro
+  e as demais recolhidas, com impacto atual a confirmar.
 - Revisão mostra decisão, tratamento, versão/unidade e motivo separados. Resolvido/resolvida
   é histórico cinza; desconhecido não é encerrado. Revisão antiga aberta não reprova
   automaticamente a versão nova; sem vínculo, impacto a confirmar.
+- `detalhes.revisoes` separa `vigentes`, `resolvidas`, `anteriores` e `ambiguas`.
+  Resolução explícita precede a classificação por versão; revisão sem versão/vínculo
+  inequívoco é ambígua, outra versão válida é anterior e a versão atual é vigente.
+  Tratamento desconhecido conserva a revisão vigente com aviso, sem fabricar encerramento.
+  IDs originais de revisão/página/cena/arquivo e campos de escopo permanecem na API,
+  sem IDs/rótulos técnicos na linha visual nem vínculo inventado. A API conserva avisos com aba/linha física/campo
+  e motivo; a gaveta apresenta só quantidade e link para Planilha.
 - Arquivo é registro, não bytes conferidos/validado/agendamento. Nome de apresentação
   vem de tipo/papel, fallback Arquivo registrado; não promete nome original ausente nos mínimos.
   Sem mídia = ausente; referência quebrada = aviso, sem substituta ou miniatura.
 - URL selecionada interativa só HTTPS Drive/Docs exatos, sem userinfo e somente por clique;
-  tabela guarda URL como texto. Nenhum download ou busca remota por renderização.
+  URL recusada nunca aparece como texto bruto na tela. Nenhum download ou busca remota por renderização.
+
+A gaveta compacta não elimina dados: faixa de quatro campos preenchidos, publicação
+em uma linha quando registrada, revisão vigente com decisão/versão/motivo e
+correção/tratamento abaixo; adicionais em +N revisão aberta/revisões abertas. Texto
+registrado, versões anteriores e Histórico ficam recolhidos por clique; páginas/cenas
+em linhas compactas têm no máximo um aviso de ausência por linha. Campo vazio na
+faixa é omitido, preservando o original/fallback de responsável na API e a regra
+separada do cartão futuro de Produção. Etapa conhecida usa rótulo legível só na UI;
+desconhecida mantém o original. Detalhes técnicos dos avisos continuam na projeção,
+com tabelas detalhadas de Planilha futuras na US5.
+
+Resumo da peça diferencia **revisão aberta** (há vigente), **revisão a confirmar**
+(sem vigente, há ambígua ou anterior não resolvida) e **sem revisão** (nenhuma ou
+somente resolvidas). Página/cena/aviso têm singular/plural corretos; a quantidade
+considera somente unidades vigentes, sem inferir pela versão ilustrativa do mockup.
+
+`documentosSemana` sempre contém Plano/Redação/Visual, com arquivo null na ausência,
+inclusive peça sem semana identificada. A UI agrupa esses documentos uma vez por
+semana representada no fim do dia, usando **—**. A resolução é reaproveitada somente
+na mesma consulta: aviso semanal entra uma vez no conjunto global e permanece nos
+avisos locais de cada peça afetada, sem mudar as relações ou a captura original.
+
+Ponteiro de unidade exige arquivo da mesma produção/versão; página/cena preenchida
+no arquivo também precisa corresponder. Ausência, referência quebrada e escopo
+incompatível produzem aviso, sem substituta. Empates por papel/versão/página/cena e
+origens JSON inválidas mantêm os registros, sem selecionar vigente automático.
+Avisos públicos trazem aba, linha física e campo quando disponíveis; o vínculo de
+origem é mantido internamente por ID/WeakMap, sem enviar matriz bruta ou mapas privados.
+
+Cena mantém `arquivos` com três posições imagem inicial/imagem final/vídeo, ligadas
+ou null, e `avisoMidia` null quando todas ligadas. Ausências geram texto fixo:
+**imagens ausentes**, **imagem inicial ausente** ou **imagem final ausente**, mais
+**vídeo ausente** quando aplicável, unidos por ponto e vírgula. Um único aviso
+técnico de mídia por cena reúne causas distintas no primeiro ponteiro falho;
+índice, tempo e versão inválidos conservam avisos independentes. Na revisão não
+resolvida, o aviso aponta ao primeiro pagina_id/cena_id/arquivo_id falho; versao
+é usado quando a versão da revisão/produção é inválida. Escopos completos permanecem
+na API, sem exposição técnica na linha visual.
 
 ## Estado local e transições
 

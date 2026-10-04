@@ -80,6 +80,28 @@ function redefinirHorario(raw,startedAt,completedAt) {
   for(const table of Object.values(raw.tables)) table.readAt=completedAt;
   return raw;
 }
+function adicionarRegistro(raw,nome,record) {
+  const table=raw.tables[nome];
+  table.values.push(table.values[0].map(h=>record[h] ?? ''));
+  return recalcularHashes(raw);
+}
+function capturaDetalhada() {
+  const raw=capturaValida();
+  mudarCelula(raw,'Produções',3,'versao',2);
+  mudarCelula(raw,'Páginas',1,'versao',2);mudarCelula(raw,'Páginas',1,'indice',2);
+  adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-02',producao_id:'peca-3',versao:2,indice:1,titulo:'Abertura sintética',corpo:'Texto da primeira página',arquivo_imagem_id:'arquivo-pagina'});
+  adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-antiga',producao_id:'peca-3',versao:1,indice:1,titulo:'Página de versão anterior'});
+  mudarCelula(raw,'Cenas',1,'indice',2);
+  adicionarRegistro(raw,'Cenas',{cena_id:'cena-02',producao_id:'peca-4',versao:1,indice:1,texto:'Primeira cena sintética',texto_tela:'Texto na tela',inicio_segundos:0,duracao_segundos:4,arquivo_video_id:'arquivo-clipe'});
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-pagina',producao_id:'peca-3',pagina_id:'pagina-02',semana_id:'semana-01',tipo:'imagem',papel:'página',versao:2,url:'https://drive.google.com/file/d/exemplo-sintetico'});
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-clipe',producao_id:'peca-4',cena_id:'cena-02',semana_id:'semana-01',tipo:'vídeo',papel:'clipe',versao:1,url:'https://docs.google.com/document/d/exemplo-sintetico'});
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-plano',semana_id:'semana-01',tipo:'documento',papel:'plano',versao:1});
+  mudarCelula(raw,'Semanas',1,'plano_json_arquivo_id','arquivo-plano');
+  for(const [id,v,estado] of [['revisao-atual',2,'aberta'],['revisao-resolvida',2,'resolvida'],['revisao-antiga',1,'aberta'],['revisao-incerta',2,'estado-novo-sintético']]) {
+    adicionarRegistro(raw,'Revisoes',{revisao_id:id,producao_id:'peca-3',versao:v,decisao:'revisar',motivo:'Conferir texto de exemplo',responsavel_correcao:'Correção sintética',estado_tratamento:estado});
+  }
+  return raw;
+}
 function temporario(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(),'crm001-test-'));
   t.after(() => fs.rmSync(dir,{recursive:true,force:true}));
@@ -90,4 +112,4 @@ function carregarModulo(relative, exports) {
   if (fs.existsSync(filename)) return require(filename);
   return Object.fromEntries(exports.map(name => [name, () => { throw new Error(name + ': comportamento ainda não implementado'); }]));
 }
-module.exports = {campos,capturaValida,mapaQuadroValido,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};
+module.exports = {campos,capturaValida,capturaDetalhada,adicionarRegistro,mapaQuadroValido,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};
