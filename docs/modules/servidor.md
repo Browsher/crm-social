@@ -28,7 +28,7 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | GET / | `index.html`, `text/html` |
 | GET /app.js | JavaScript da aplicação |
 | GET /styles.css | CSS da aplicação |
-| GET /api/visao | 200, JSON de `projetarVisao(lerEstado(dataDir))`; ausência de captura é resultado estruturado |
+| GET /api/visao | 200, JSON de `projetarVisao(lerEstado(dataDir), nowIso, mapa)`; ausência de captura é resultado estruturado |
 | HEAD nas rotas permitidas | Mesmos controles/tipo/status, sem corpo |
 | GET/HEAD de qualquer outra rota | 404, incluindo privados, configuração, importação e traversal |
 | Outros métodos, com Host/Origin válidos | 405, `Allow: GET, HEAD`; inclusive OPTIONS |

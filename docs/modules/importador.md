@@ -2,7 +2,7 @@
 
 Como alguém que recebe uma fotografia pronta para colocá-la no álbum, o CLI lê um JSON local e entrega a tentativa à persistência. A coleta pela Central é anterior e independente.
 
-Estado em 04/10/2026: T008 implementada e corrigida após revisão para registrar falhas anteriores ao parse. Fonte: [scripts/importar-captura.cjs](../../scripts/importar-captura.cjs), `argumentos` (linha 5), `lerEntrada` (12), `importarArquivo` (17) e `main` (23).
+Estado em 04/10/2026: T008 implementada e corrigida após revisão para registrar falhas anteriores ao parse e preservar resultado/erro ao avisar sobre liberação de trava. Fonte: [scripts/importar-captura.cjs](../../scripts/importar-captura.cjs), `argumentos` (linha 5), `lerEntrada` (12), `importarArquivo` (17), `avisar` (23) e `main` (26).
 
 ## Comando, argumentos e saída
 
@@ -25,6 +25,8 @@ O [quickstart](../../specs/001-consulta-local-producao/quickstart.md) define amb
 | Mesma captura já aceita | stdout com capturaId e `sem_alteracao`; 0 |
 | Tentativa falhou | stderr com motivo resumido; 1 |
 | Argumento/persistência/trava inválidos | stderr resumido; 1 |
+
+Avisos transitórios de liberação da trava são escritos em stderr com prefixo **Aviso:**, tanto no resultado como no erro. Um resultado `completa`/`sem_alteracao` continua com exit 0 e stdout resumido, mesmo que a liberação produza aviso; falha continua com exit 1 e seu motivo original. Esses avisos não alteram captura/recibo confirmado e não equivalem a uma nova tentativa.
 
 Imports: `node:fs`, `node:path` e [snapshot](snapshot.md). O CLI exporta `main(argv)`; só o ponto de entrada aplica `process.exitCode`. Não lê variável de ambiente de aplicação, não conhece Google, fila ou serviço de mídia.
 

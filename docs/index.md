@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página indica onde encontrar decisões, código explicado e evidências sem confundir uma fotografia de demonstração com a operação. Estado em 04/10/2026: primeira entrega local da 001/T001–T018 implementada; 23 tarefas pendentes, Linux/PR e captura operacional aguardam.
+Como o índice de um álbum, esta página indica onde encontrar decisões, código explicado e evidências sem confundir uma fotografia de demonstração com a operação. Estado em 04/10/2026: primeira entrega local da 001/T001–T018 implementada; 23 tarefas pendentes; primeiro CI Linux do PR #6 passou, nova validação remota das correções está pendente no retrato pré-push desta rodada (04/10/2026), e captura operacional aguarda.
 
 ## Ordem de leitura
 

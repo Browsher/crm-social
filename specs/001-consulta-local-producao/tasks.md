@@ -2,7 +2,7 @@
 
 Como as páginas de um álbum montadas em ordem, estas tarefas dividem a consulta completa em entregas verificáveis. **Estado em 04/10/2026:** T001–T018 implementadas e marcadas após RED/GREEN; T019–T041, 23 tarefas, permanecem pendentes. O recorte cobre fundação e US1 Planejamento; não conclui a 001 nem o aceite operacional. Branch `001-consulta-local-producao`, originada da `main`. Caminhos abaixo relativos a `crm-social/`. Evidência em [validacao.md](validacao.md).
 
-**Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas](../../docs/design/telas.md). Uma spec vigente, sem repetir a criação da feature. Esta sincronização registra o código/testes do recorte, sem alterar requisitos, tarefas ou checks. Próxima etapa: US2 (T019–T022); US3/US4/US5, iniciador e entrega completa continuam posteriores. Captura operacional e Linux/PR ainda aguardam; nenhuma leitura Google nem mudança na operação.
+**Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas](../../docs/design/telas.md). Uma spec vigente, sem repetir a criação da feature. Esta sincronização registra o código/testes do recorte, sem alterar requisitos, tarefas ou checks. Próxima etapa: US2 (T019–T022); US3/US4/US5, iniciador e entrega completa continuam posteriores. Captura operacional aguarda; nova validação remota das correções do PR #6 está pendente no retrato pré-push desta rodada (04/10/2026); nenhuma leitura Google nem mudança na operação.
 
 ## Regra de execução e responsabilidade
 

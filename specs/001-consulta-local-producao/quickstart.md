@@ -1,6 +1,6 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa a primeira entrega executável da verificação final. **Estado em 04/10/2026:** T001–T018 implementadas; importador, servidor, Planejamento e sete suítes existem. Resultado local após revisão/regressões: 58 PASS, 0 FAIL, 0 SKIP; gate exit 0, cobertura 95,91%, complexidade PASS com aviso 12 no CLI, Semgrep SKIP no Windows e audit N/A. Fonte da evidência: [validacao.md](validacao.md). As 23 tarefas seguintes, captura operacional e Linux/PR aguardam. Nenhuma leitura real Google. Branch vigente: `001-consulta-local-producao`, criada da `main`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa a primeira entrega executável da verificação final. **Estado em 04/10/2026:** T001–T018 implementadas; importador, servidor, Planejamento e sete suítes existem. Resultado local atual após correções do PR #6: 67 PASS, 0 FAIL, 0 SKIP; gate exit 0, cobertura 96,06%, complexidade PASS com aviso 12 no CLI, Semgrep SKIP no Windows e audit N/A. Fonte da evidência: [validacao.md](validacao.md). As 23 tarefas seguintes e captura operacional aguardam. Primeiro CI Linux do PR #6 passou; nova validação remota das correções ainda está pendente. Nenhuma leitura real Google. Branch vigente: `001-consulta-local-producao`, criada da `main`.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). O mockup de [telas](../../docs/design/mockups/telas-v2.html) serve como referência visual; não valida backend ou persistência.
 
@@ -13,7 +13,7 @@ Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright exis
 | `CRM_NODE_PATH` | PowerShell seleciona o executável existente; a aplicação não lê esta variável |
 | `PATH` | Colocar o diretório do Node selecionado à frente para subprocessos do gate com `testCommand: ["node", "--test"]` |
 | `CRM_PLAYWRIGHT_MODULE` | `tests/interface.test.cjs` resolve o Playwright existente; sem ela tenta `playwright`; não versionar seu caminho |
-| `CI=true` | Cinco testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
+| `CI=true` | Nove testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
 
 Não há variáveis Google, chave de serviço ou URL remota no runtime da 001. Configure as variáveis de ferramenta somente no ambiente local; nenhum caminho pessoal é necessário na documentação.
 
@@ -53,7 +53,7 @@ existia na máquina. Defina `CRM_NODE_PATH` com o caminho desse executável some
 ambiente local, sem versionar caminho pessoal. O bloco também põe seu diretório à frente do PATH: selecionar apenas `$crmNode` não garante o mesmo runtime nos subprocessos do gate. CLI e gate usam o executável selecionado;
 o iniciador futuro o receberá por `-NodePath`.
 
-O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e HTTP são obrigatórios. Os cinco casos atuais de interface declaram SKIP explícito com `CI=true` antes de carregar Playwright. Esta branch ainda não tem resultado Linux; o PR deverá comprovar o gate estrito, incluindo Semgrep. Iniciador/Windows PowerShell e seus pulos de plataforma serão implementados em T035–T036. Aceite local atual exige sete suítes sem pulos; o completo exigirá oito. Não alterar workflows/configuração ou instalar dependências para contornar a fronteira. SKIP de ferramenta do gate continua regido pelo `--strict`, independente dos pulos de testes por plataforma.
+O CI vigente usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e HTTP são obrigatórios. Os nove casos atuais de interface declaram SKIP explícito com `CI=true` antes de carregar Playwright. O primeiro [CI Linux do PR #6](https://github.com/Browsher/crm-social/actions/runs/37182000254) terminou SUCCESS com Semgrep 1.179.0 PASS e [review publicado](https://github.com/Browsher/crm-social/pull/6#issuecomment-5977215935); isso precede as correções atuais. Nova validação remota/aceite estão pendentes no retrato pré-push desta rodada (04/10/2026); aplicabilidade dos nove SKIP permanece pendência M8 da revisão. Iniciador/Windows PowerShell e seus pulos de plataforma serão implementados em T035–T036. Aceite local atual exige sete suítes sem pulos; o completo exigirá oito. Não alterar workflows/configuração ou instalar dependências para contornar a fronteira. SKIP de ferramenta do gate continua regido pelo `--strict`, independente dos pulos de testes por plataforma.
 
 Durante implementação, executar o arquivo pertinente **antes** do código e registrar RED pelo comportamento ausente; depois registrar GREEN. Suítes ignoradas no aceite local, zero testes ou gate anterior à criação do aplicativo não comprovam aceite. Resultados e contagens vêm da execução real, sem número antecipado.
 
@@ -89,13 +89,13 @@ Esse conjunto de base tem quatro peças NTV fictícias e outra marca excluída d
 | Planejamento | Calendário/lista/filtros; imagem A/B, carrossel e Reels sintéticos; duas peças no mesmo dia |
 | Clique em dia/cartão/lista | Abre grupo inteiro em diálogo básico; detalhes/acordeões ainda não existem |
 | Sem data | Contagem global; fixture de base pode ter zero, variante de interface tem uma |
-| Selo capturado | Captura local; quatro estados ainda não aceitos |
+| Selo capturado | Captura local/captura_local_provisoria; quatro estados ainda não aceitos |
 | Produção/Planilha | Mensagens de próxima entrega |
 | Interface mobile | Lista e menu recolhido em 390 px |
 
-Importar novamente os mesmos ID/serialização deve retornar `sem_alteracao`, sem criar recibo ou renovar instante. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. A tela de Histórico e o selo de falha ainda são tarefas futuras; seus recibos já existem na persistência.
+Importar novamente os mesmos ID/serialização deve retornar `sem_alteracao`, sem criar recibo ou renovar instante. Arquivo ausente ou JSON quebrado, com armazenamento disponível, confirma falha saneada e preserva a última válida. Não testar essas falhas em dados reais. A tela de Histórico e o selo de falha ainda são tarefas futuras; seus recibos já existem na persistência. Com captura vigente, a API inclui aviso curto de última importação falha; a UI atual ainda não mostra esses avisos.
 
-A importação adquire `.importacao.lock` no diretório escolhido. Segunda instância falha claramente sem mudar o estado. Interrupção pode deixar trava; nunca removê-la automaticamente: conferir proprietário/PID, processo e estado confirmado antes de recuperação manual, conforme o [módulo de persistência](../../docs/modules/snapshot.md).
+A importação adquire `.importacao.lock` no diretório escolhido. Segunda instância falha claramente sem mudar o estado. A liberação tenta close/unlink separadamente e preserva resultado/erro com avisos transitórios em stderr, sem trocar o exit. Falha ao preparar/promover o ponteiro tenta remover só seu temporário, sem substituir o erro original. Interrupção pode deixar trava; nunca removê-la automaticamente: conferir proprietário/PID, processo e estado confirmado antes de recuperação manual, conforme o [módulo de persistência](../../docs/modules/snapshot.md).
 
 ## Cenários sintéticos obrigatórios
 

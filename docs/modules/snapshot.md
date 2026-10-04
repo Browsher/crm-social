@@ -2,7 +2,7 @@
 
 Como um álbum que só troca a capa depois de guardar as novas páginas, este módulo prepara arquivos e confirma o estado por um único ponteiro. Uma captura rejeitada não substitui a última válida.
 
-Estado em 04/10/2026: T006 implementada, com regressões de falha de entrada e concorrência após revisão independente. Fonte: [src/snapshot.cjs](../../src/snapshot.cjs), `ponteiro` (linha 7), `lerEstado` (20), `confirmar` (43), `exclusiva` (67), `registrarFalhaEntrada` (85), `promoverComTrava` (96) e `promoverCaptura` (113).
+Estado em 04/10/2026: T006 implementada, com regressões de falha de entrada, concorrência e limpeza após revisão independente/PR #6. Fonte: [src/snapshot.cjs](../../src/snapshot.cjs), `ponteiro` (linha 7), `lerEstado` (20), `confirmar` (43), `exclusiva` (72), `registrarFalhaEntrada` (97), `promoverComTrava` (108) e `promoverCaptura` (125).
 
 ## Interfaces
 
@@ -42,15 +42,18 @@ flowchart TD
   Falha --> Temporario[Preparar ponteiro temporário com fsync]
   Recibo --> Temporario
   Temporario --> Rename[rename no mesmo diretório confirma atual.json]
+  Temporario -->|gravação falhou| Limpeza[Remover somente temporário preparado se possível]
+  Rename -->|rename falhou| Limpeza
+  Limpeza --> Original[Conservar erro original e estado anterior]
   Rename --> Cache[Atualizar resumo derivado]
   Cache --> Liberar[Fechar e liberar somente trava adquirida]
   NoOp --> Liberar
   Rename --> Leitor[lerEstado consulta apenas IDs confirmados]
 ```
 
-As gravações duráveis usam abertura `wx`, write, fsync e close. Arquivo imutável existente só é reaproveitado se o conteúdo for igual. A substituição de `atual.json` confirma captura, última tentativa e Histórico juntos.
+As gravações duráveis usam abertura `wx`, write, fsync e close. Arquivo imutável existente só é reaproveitado se o conteúdo for igual. A substituição de `atual.json` confirma captura, última tentativa e Histórico juntos. Falha na gravação/rename do ponteiro tenta remover somente o `atual-<uuid>.tmp` preparado, sem trocar o erro original por uma falha de limpeza. Essa remoção é tentativa, não garantia de recuperação após interrupção do processo.
 
-O `finally` da importação normal libera sua própria trava. Uma segunda instância, inclusive tentando registrar entrada inválida, falha com **importação em andamento**, antes de ler/mutar o estado. O teste usa dois processos reais e uma barreira antes da confirmação.
+O `finally` tenta fechar o descritor e remover sua própria trava separadamente: falha no close não impede a tentativa de unlink. O resultado da operação ou seu erro original é preservado; falha de liberação acrescenta `avisos` transitórios ao objeto devolvido/erro, sem mudar o recibo persistido. O [CLI](importador.md) escreve esses avisos em stderr e mantém o exit correspondente ao resultado original. Uma segunda instância, inclusive tentando registrar entrada inválida, falha com **importação em andamento**, antes de ler/mutar o estado. O teste usa dois processos reais e uma barreira antes da confirmação.
 
 Se o processo for interrompido, a trava pode permanecer. **Não há expiração ou remoção automática**: conferir proprietário/PID, processo vivo e estado confirmado antes de qualquer recuperação manual. Nunca remover uma trava apenas porque outra importação falhou. Arquivos preparados sem confirmação não comprovam sucesso e não entram no Histórico.
 
@@ -65,12 +68,12 @@ Se o processo for interrompido, a trava pode permanecer. **Não há expiração 
 | Arquivo ausente/ilegível ou JSON quebrado | Mensagens fixas de entrada; capturaId do recibo null |
 | Persistência impossibilita confirmar a falha | Erro explícito **falha não pôde ser registrada**; sem garantia de Histórico durável |
 | GET/reinício/releitura | Lê o mesmo estado; não renova horário ou apaga falha |
-| Falha ao liberar trava | Erro explícito para conferir estado local; não anuncia sucesso silencioso |
+| Falha ao fechar/remover trava | Resultado/erro original preservado com aviso transitório para conferir estado local; unlink é tentado mesmo se close falhar |
 
 A comparação de identidade é entre bytes de `JSON.stringify(raw)`, não entre espaços/indentação do arquivo de entrada. Ordem de propriedades faz parte dessa serialização. Captura aceita previamente não é reativada por reimportar seu ID.
 
 ## Verificação e pegadinhas
 
-[tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) prova ausência, imutabilidade, no-op, conflito, falha, órfãos e promoção após interrupção da confirmação. [tests/importador.test.cjs](../../tests/importador.test.cjs) cobre os recibos de falha de leitura e duas instâncias reais concorrentes. Tudo fica em TEMP; evidência em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
+[tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) prova ausência, imutabilidade, no-op, conflito, falha, órfãos e promoção após interrupção da confirmação. As regressões do PR #6 cobrem close/unlink separados, preservação do resultado/erro e remoção do temporário após falha de rename. [tests/importador.test.cjs](../../tests/importador.test.cjs) cobre os recibos de falha de leitura e duas instâncias reais concorrentes. Tudo fica em TEMP; evidência em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-O nome “Histórico” aqui significa recibos persistidos/projetados; a tela de Histórico só será entregue em US5. A captura é revalidada na leitura. Falha de rename testada não comprova resistência a queda de energia. Recibos preparados e temporários órfãos permanecem preservados; não há limpeza automática nem restauração que fabrique aceitação.
+O nome “Histórico” aqui significa recibos persistidos/projetados; a tela de Histórico só será entregue em US5. A captura é revalidada na leitura. Falha de rename testada não comprova resistência a queda de energia. Capturas/recibos preparados sem confirmação permanecem preservados; temporários têm limpeza localizada por tentativa quando gravação/rename falham. Interrupção pode deixar arquivos/trava; não há varredura de limpeza automática nem restauração que fabrique aceitação.

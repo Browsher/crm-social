@@ -30,6 +30,6 @@ A 001 completa e a captura operacional ainda não foram aceitas; 23 tarefas pend
 - Executar com Node 24.19.0 existente por CRM_NODE_PATH e seu diretório à frente do PATH.
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
 - Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
-- CI=true pula explicitamente cinco testes de UI; aceite local exige zero pulos.
+- CI=true pula explicitamente nove testes de UI (M8 pendente); aceite local exige zero pulos.
 - Quatro estados/detalhes/quadro/Planilha/iniciador/escala continuam tarefas futuras.
 - Não alterar constituição, ferramentas/gate, agentes oficiais ou operação n8n.

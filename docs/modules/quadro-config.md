@@ -2,7 +2,7 @@
 
 Como etiquetas previamente aprovadas para as colunas de uma agenda, o mapa guarda a correspondência entre rótulo registrado e coluna de apresentação. Carregar essas etiquetas não significa que os cartões já estejam classificados.
 
-Estado em 04/10/2026: carregamento/validação implementados em T010; classificação e tela de Produção continuam em T027–T030. Fontes: [src/quadro-config.cjs](../../src/quadro-config.cjs), `lista` (linha 4), `validarMapaQuadro` (15), `carregarMapaQuadro` (24), e [config/quadro-etapas.json](../../config/quadro-etapas.json).
+Estado em 04/10/2026: carregamento/validação implementados em T010; classificação e tela de Produção continuam em T027–T030. Fontes: [src/quadro-config.cjs](../../src/quadro-config.cjs), `lista` (linha 4), `validarMapaQuadro` (15), `carregarMapaQuadro` (24), e [config/quadro-etapas.json](../../config/quadro-etapas.json). O validador é genérico: não exige uma quantidade fixa de etapas.
 
 ## Interface e dados
 
@@ -26,7 +26,7 @@ Comparação literal e sensível a maiúsculas. Espaços não são removidos do 
 
 ## Integração, rotas e erros
 
-O [servidor](servidor.md) carrega o mapa antes de criar o handler e o passa à projeção. Argumento confiável `quadroConfigPath` permite testes com JSON em TEMP; padrão é `config/quadro-etapas.json`. Não existe variável de ambiente, rota de edição, recarga por query ou entrega do JSON bruto.
+O [servidor](servidor.md) define o caminho padrão `config/quadro-etapas.json`, carrega o mapa antes de criar o handler e o passa à projeção. `carregarMapaQuadro(file)` lê o caminho recebido, sem padrão próprio. Argumento confiável `quadroConfigPath` do servidor permite testes com JSON em TEMP. Não existe variável de ambiente, rota de edição, recarga por query ou entrega do JSON bruto.
 
 Erros começam por `configuração:`, identificando arquivo/JSON, schema, lista, índice, rótulo ou coluna. Configuração inválida impede o início, sem mapa parcial ou fallback.
 

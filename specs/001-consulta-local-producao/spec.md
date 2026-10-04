@@ -8,7 +8,7 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Created**: 2026-10-02 | **Updated**: 2026-10-04 (estado de implementação; requisitos preservados)
 
-**Status**: T001–T018 implementadas e testadas localmente: fundação e US1 Planejamento. T019–T041 (23 tarefas) permanecem pendentes. Selo provisório **Captura local**, abertura básica do dia, Produção/Planilha com mensagens de próxima entrega; quatro estados, detalhes/acordeões, quadro, abas/Histórico e iniciador ainda não aceitos. PR/Linux e captura operacional aguardam; nenhuma leitura real Google. Evidência em [validacao.md](validacao.md).
+**Status**: T001–T018 implementadas e testadas localmente: fundação e US1 Planejamento. T019–T041 (23 tarefas) permanecem pendentes. Selo provisório **Captura local**, abertura básica do dia, Produção/Planilha com mensagens de próxima entrega; quatro estados, detalhes/acordeões, quadro, abas/Histórico e iniciador ainda não aceitos. Primeiro CI Linux do PR #6 passou; nova validação remota das correções está pendente no retrato pré-push desta rodada (04/10/2026), e captura operacional aguarda; nenhuma leitura real Google. Evidência em [validacao.md](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em

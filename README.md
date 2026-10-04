@@ -8,7 +8,7 @@ CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por coment
 
 O review do [PR #1](https://github.com/Browsher/crm-social/pull/1) precisou de 23 turnos; o kit 0.4.8 conserva o limite de 40 turnos e timeout de 20 minutos. Esse custo/limite permanece dívida de acompanhamento. Retenção por possível segredo e falha foram testadas somente localmente, sem prova desses caminhos no Actions; `gerar-testes` também não foi exercitado. Se `files` vier menor que `changedFiles`, o review recusa a lista incompleta; o teto numérico ainda não foi documentado.
 
-O gate local desta entrega passou em testes, cobertura e complexidade; Semgrep ficou **SKIP** por ausência no Windows e audit **N/A** porque a aplicação não tem `package.json`. A evidência detalhada está em [validacao.md](specs/001-consulta-local-producao/validacao.md). PR e execução Linux desta entrega ainda aguardam; o histórico do kit não comprova o CI do aplicativo.
+O gate local após as correções do PR #6 passou: 67 testes, zero falhas/pulos, cobertura 96,06% e complexidade PASS com aviso 12 no CLI; Semgrep SKIP por ausência no Windows, audit N/A sem `package.json` da aplicação. O primeiro [CI Linux do PR #6](https://github.com/Browsher/crm-social/actions/runs/37182000254) terminou SUCCESS, com Semgrep 1.179.0 PASS e [review publicado](https://github.com/Browsher/crm-social/pull/6#issuecomment-5977215935). Nova validação remota/aceite das correções estão pendentes no retrato pré-push desta rodada (04/10/2026). Os nove casos atuais de interface têm SKIP explícito no CI, com aplicabilidade pendente na revisão (M8). Consultar [validação da entrega](specs/001-consulta-local-producao/validacao.md); nenhuma captura operacional validada.
 
 ## Onde começar
 
@@ -44,6 +44,6 @@ Na raiz do repositório, selecione o Node 24.19.0 existente por `CRM_NODE_PATH` 
 
 `$crmCapturePath` identifica um JSON local já coletado e `$crmDataDir`, um diretório privado ou TEMP de demonstração. Sem captura, o servidor apresenta ausência real; não carrega uma demonstração automaticamente. Abrir `http://127.0.0.1:4318`; `localhost` não é o Host aceito. O iniciador PowerShell de duplo clique ainda não existe.
 
-Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No CI, os cinco testes de interface registram SKIP explícito; o aceite local exige executá-los.
+Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No CI, os nove testes de interface registram SKIP explícito; o aceite local exige executá-los; a aplicabilidade dos pulos é a pendência M8 da revisão.
 
 **Próximo passo:** T019–T022, quatro estados do selo e releitura local. A integração operacional e a demonstração completa continuam posteriores. Esta consulta não instala agentes, muda agendas, gera mídia ou escreve na operação.
