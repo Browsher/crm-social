@@ -3,9 +3,100 @@ const assert=require('node:assert/strict');
 const {capturaValida,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
 const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
 const {projetarVisao}=carregarModulo('src/projecao.cjs',['projetarVisao']);
+const {capturaDetalhada,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
 const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
 function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
+
+test('P05 dia inteiro, versões separadas, páginas/cenas em ordem e fontes internas', t=>{
+  const raw=capturaDetalhada(),view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.dias.find(d=>d.data==='2026-10-02').ids,['peca-3','peca-4']);
+  const carousel=view.producoes.find(p=>p.producao_id==='peca-3').detalhes;
+  assert.deepEqual(carousel.paginas.map(p=>[p.pagina_id,p.versao,p.vigente]),[['pagina-antiga',1,false],['pagina-02',2,true],['pagina-01',2,true]]);
+  assert.equal(carousel.paginas[1].arquivos[0].arquivo_id,'arquivo-pagina');
+  assert.ok(carousel.paginas.every(p=>p.designNovo==='A confirmar'));
+  const reels=view.producoes.find(p=>p.producao_id==='peca-4').detalhes;
+  assert.deepEqual(reels.cenas.map(c=>c.cena_id),['cena-02','cena-01']);
+  assert.equal(reels.cenas[0].arquivos.find(a=>a?.arquivo_id==='arquivo-clipe').nomeApresentacao,'vídeo · clipe');
+  assert.equal(carousel.documentosSemana[0].arquivo.arquivo_id,'arquivo-plano');
+  assert.equal(carousel.documentosSemana[1].arquivo,null);
+  assert.deepEqual(Object.keys(view).sort(),envelope);
+  assert.ok(!JSON.stringify(view).includes('sentinela-nao-publicar'));
+});
+
+test('P06 responsável registrado não vira correção; resolvidas/antigas ficam separadas', t=>{
+  const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'responsavel_atual','');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),d=view.producoes[2].detalhes;
+  assert.equal(d.responsavelRegistrado,'A confirmar');
+  assert.deepEqual(d.revisoes.vigentes.map(r=>r.revisao_id),['revisao-atual','revisao-incerta']);
+  assert.deepEqual(d.revisoes.resolvidas.map(r=>r.revisao_id),['revisao-resolvida']);
+  assert.deepEqual(d.revisoes.anteriores.map(r=>r.revisao_id),['revisao-antiga']);
+  assert.equal(d.revisoes.vigentes[0].responsavel_correcao,'Correção sintética');
+  assert.ok(d.avisos.some(a=>a.campo==='estado_tratamento'));
+  assert.equal(d.publicacaoRegistrada,false);
+  mudarCelula(raw,'Produções',3,'publicado_em','registro explícito sintético');
+  assert.equal(projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[2].detalhes.publicacaoRegistrada,true);
+});
+
+test('P07 ponteiro quebrado, escopo/versão incompatível e revisão órfã não inventam relação', t=>{
+  const raw=capturaDetalhada();
+  mudarCelula(raw,'Páginas',1,'arquivo_imagem_id','arquivo-inexistente');
+  mudarCelula(raw,'Arquivos',2,'versao',1);
+  adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-orfa',producao_id:'peca-3',pagina_id:'pagina-inexistente',versao:2,estado_tratamento:'aberta'});
+  const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[2].detalhes;
+  assert.equal(d.paginas[1].arquivos[0],null);
+  assert.equal(d.paginas[2].arquivos[0],null);
+  assert.ok(d.avisos.some(a=>a.motivo.includes('Referência quebrada')));
+  assert.ok(d.avisos.some(a=>a.motivo.includes('Escopo ou versão')));
+  assert.ok(d.revisoes.ambiguas.some(r=>r.revisao_id==='revisao-orfa'));
+  assert.ok(!d.revisoes.vigentes.some(r=>r.revisao_id==='revisao-orfa'));
+});
+
+test('P07 empate/origens incompatíveis e JSON inválido são avisos, não escolha de mídia', t=>{
+  const raw=capturaDetalhada();
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'editor-a',producao_id:'peca-4',papel:'editor',versao:1,origens_json:'{"origem":"a-sintética"}'});
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'editor-b',producao_id:'peca-4',papel:'editor',versao:1,origens_json:'{"origem":"b-sintética"}'});
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-json-invalido',producao_id:'peca-4',versao:1,origens_json:'{'});
+  const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[3].detalhes;
+  assert.ok(d.avisos.some(a=>/empatados.*origens/i.test(a.motivo)));
+  assert.ok(d.avisos.some(a=>a.campo==='origens_json'));
+  assert.equal(d.arquivos.find(a=>a.arquivo_id==='arquivo-json-invalido').nomeApresentacao,'Arquivo registrado');
+  assert.equal(d.arquivos.filter(a=>a.papel==='editor').length,2);
+});
+
+test('P07 inteiros/tempos inválidos e vazios conservam originais sem virar zero', t=>{
+  const raw=capturaDetalhada();
+  mudarCelula(raw,'Páginas',1,'indice',-1);mudarCelula(raw,'Páginas',1,'versao','');
+  mudarCelula(raw,'Cenas',1,'inicio_segundos',-1);mudarCelula(raw,'Cenas',1,'duracao_segundos','');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const page=view.producoes[2].detalhes.paginas.find(p=>p.pagina_id==='pagina-01');
+  assert.equal(page.versao,'');assert.equal(page.vigente,false);assert.equal(page.indice,-1);
+  const scene=view.producoes[3].detalhes.cenas.find(c=>c.cena_id==='cena-01');
+  assert.equal(scene.inicio_segundos,-1);assert.equal(scene.duracao_segundos,'');
+  assert.ok(view.avisos.some(a=>a.campo==='indice'));
+  assert.ok(view.avisos.some(a=>a.campo==='inicio_segundos'));
+  assert.ok(!view.avisos.some(a=>a.campo==='duracao_segundos'));
+});
+
+test('P05 Sem data separa semanas e conserva documentos ausentes como registro a confirmar', t=>{
+  const raw=capturaDetalhada();
+  mudarCelula(raw,'Produções',3,'data_prevista','');mudarCelula(raw,'Produções',4,'data_prevista','');
+  mudarCelula(raw,'Produções',4,'semana_id','semana-inexistente');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.deepEqual(view.dias.filter(d=>d.data===null).map(d=>[d.semanaId,d.ids]),[['semana-01',['peca-3']],[null,['peca-4']]]);
+  assert.equal(view.producoes[3].detalhes.documentosSemana.length,0);
+});
+
+test('P07 avisos preservam linha física depois de vazia e outra marca', t=>{
+  const raw=capturaDetalhada(),table=raw.tables.Produções;
+  const foreign=table.values.pop();table.values.splice(1,0,[],foreign);
+  const index=table.values.findIndex(r=>r[0]==='peca-1');
+  mudarCelula(raw,'Produções',index,'data_prevista','sem-data-sintética');
+  mudarCelula(raw,'Produções',index,'legenda','sk-ant-'+'x'.repeat(30));
+  const view=projetarVisao(estado(recalcularHashes(raw),t),NOW,mapaQuadroValido());
+  assert.equal(view.avisos.find(a=>a.campo==='data_prevista').linha,index+1);
+  assert.equal(view.avisos.find(a=>a.campo==='legenda').linha,index+1);
+});
 
 test('P04 frescor usa o fim da captura, e não o horário da consulta', t => {
   const input=estado(capturaValida(),t);
