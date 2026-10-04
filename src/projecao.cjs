@@ -197,6 +197,15 @@ function documentosSemana(p,ntv,ctx) {
     papel,arquivo:preenchido(s[campo])?arquivoLigado(s,campo,{semana_id:s.semana_id},ctx):null
   }));
 }
+function avisarPublicacao(p,completedAt,ctx) {
+  const value=p.publicado_em;
+  if(!preenchido(value)) return;
+  const iso=typeof value==='string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:\d\d)$/.test(value);
+  const instante=iso && dataCivil(value.slice(0,10))?Date.parse(value):NaN;
+  if(!Number.isFinite(instante) || instante>Date.parse(completedAt)) {
+    avisoRegistro(p,'publicado_em','Publicação registrada inconsistente: formato, fuso ou instante posterior à captura; original preservado',ctx);
+  }
+}
 function detalhar(result,ntv,origens) {
   const ctxBase={origens,avisos:result.avisos,arquivos:new Map(ntv.arquivos.map(a=>[a.arquivo_id,a])),
     paginas:new Map(ntv.paginas.map(p=>[p.pagina_id,p])),cenas:new Map(ntv.cenas.map(c=>[c.cena_id,c]))};
@@ -207,6 +216,7 @@ function detalhar(result,ntv,origens) {
       publicacaoRegistrada:preenchido(p.publicado_em),paginas:unidades(p,ntv.paginas,'paginas',ctx),cenas:unidades(p,ntv.cenas,'cenas',ctx),
       revisoes:revisoes(p,ntv.revisoes,ctx),arquivos:arquivosRegistrados(p,ntv.arquivos,ctx),documentosSemana:documentosSemana(p,ntv,ctx),avisos:ctx.locais};
     if(p.detalhes.arquivos.length===0) avisoRegistro(p,'versao','Mídia ausente: nenhum arquivo da produção registrado',ctx);
+    avisarPublicacao(p,result.captura.completedAt,ctx);
   }
 }
 function projetarVisao(estadoLocal,nowIso,mapaQuadro) {

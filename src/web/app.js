@@ -97,7 +97,8 @@ function secaoRevisoes(records,grupo) {
   for(const r of records) {
     const review=node('article',undefined,'review-record');
     review.append(node('small',r.revisao_id),meta([['Decisão',r.decisao],['Motivo',r.motivo],['Versão avaliada',r.versao],
-      ['Quem corrige',r.responsavel_correcao],['Tratamento',r.estado_tratamento]]));
+      ['Quem corrige',r.responsavel_correcao],['Tratamento',r.estado_tratamento],
+      ['Página',r.pagina_id],['Cena',r.cena_id],['Arquivo',r.arquivo_id]]));
     if(grupo==='anteriores' || grupo==='ambiguas') review.append(node('p','Impacto atual a confirmar.','record-text'));
     section.append(review);
   }
@@ -128,7 +129,7 @@ function acordeaoPeca(p,aberto) {
   if(d.documentosSemana.length) body.append(documentosDetalhe(d.documentosSemana));
   if(d.avisos.length) {
     const section=secaoDetalhe('Avisos registrados');section.classList.add('notice');
-    for(const a of d.avisos) section.append(node('p',a.motivo));body.append(section);
+    for(const a of d.avisos) section.append(node('p',a.aba?a.aba+' · linha '+a.linha+' · '+a.campo+': '+a.motivo:a.motivo));body.append(section);
   }
   el.append(summary,body);return el;
 }

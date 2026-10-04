@@ -38,6 +38,20 @@ test('P06 responsável registrado não vira correção; resolvidas/antigas ficam
   assert.equal(projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[2].detalhes.publicacaoRegistrada,true);
 });
 
+test('P07 review: publicação inconsistente conserva registro e gera aviso localizado', t=>{
+  for(const value of ['registro sintético','2026-10-02T11:00:00','2026-02-30T11:00:00Z','2026-10-02T12:06:00Z',42,
+    '2026-10-02T12:05:00Z','2026-10-02T09:04:00-03:00','',null,'  ']) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'publicado_em',value);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),p=view.producoes[2];
+    const preenchido=value!==null && value!=='' && value!=='  ',invalido=preenchido && !['2026-10-02T12:05:00Z','2026-10-02T09:04:00-03:00'].includes(value);
+    assert.equal(p.detalhes.publicacaoRegistrada,preenchido);
+    assert.equal(p.publicado_em,value ?? '');
+    const aviso=p.detalhes.avisos.find(a=>a.campo==='publicado_em');
+    assert.equal(Boolean(aviso),invalido,'registro '+JSON.stringify(value));
+    if(invalido) {assert.equal(aviso.aba,'Produções');assert.equal(aviso.linha,4);assert.match(aviso.motivo,/Publicação.*inconsistente/);}
+  }
+});
+
 test('P07 ponteiro quebrado, escopo/versão incompatível e revisão órfã não inventam relação', t=>{
   const raw=capturaDetalhada();
   mudarCelula(raw,'Páginas',1,'arquivo_imagem_id','arquivo-inexistente');

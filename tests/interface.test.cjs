@@ -94,6 +94,28 @@ test('U06 versões/páginas/cenas e revisão vigente não se misturam ao histór
   assert.match(await reels.textContent(),/Mídia ausente/);
 });
 
+test('U06 review: revisões mostram escopo de página, cena e arquivo sem inferir', {skip}, async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Revisoes',2,'pagina_id','pagina-02');mudarCelula(raw,'Revisoes',2,'arquivo_id','arquivo-pagina');
+    adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-cena',producao_id:'peca-4',cena_id:'cena-02',arquivo_id:'arquivo-clipe',versao:1,estado_tratamento:'aberta'});
+  },()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  const carousel=page.locator('#dia [data-peca="peca-3"] [data-revisoes="vigentes"]');
+  assert.match(await carousel.textContent(),/Página.*pagina-02.*Arquivo.*arquivo-pagina/s);
+  const reels=page.locator('#dia [data-peca="peca-4"]');await reels.locator('summary').first().click();
+  assert.match(await reels.locator('[data-revisoes="vigentes"]').textContent(),/Cena.*cena-02.*Arquivo.*arquivo-clipe/s);
+});
+
+test('U06 review: avisos iguais identificam as linhas/unidades distintas', {skip}, async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Páginas',1,'indice',-1);mudarCelula(raw,'Páginas',2,'indice',-1);
+  },()=>{},capturaDetalhada);
+  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  const avisos=await page.locator('#dia [data-peca="peca-3"] .notice').allTextContents();
+  assert.ok(avisos.some(a=>/Páginas.*linha 2.*indice.*Inteiro positivo inválido/s.test(a)));
+  assert.ok(avisos.some(a=>/Páginas.*linha 3.*indice.*Inteiro positivo inválido/s.test(a)));
+});
+
 test('U06 celular em tela cheia abre dia com várias peças; Esc retorna à lista', {skip}, async t=>{
   const page=await abrir(t,390,true,()=>{},()=>{},capturaDetalhada);
   const trigger=page.locator('#lista [data-producao-id="peca-3"]');await trigger.click();
