@@ -3,15 +3,18 @@ const {COLUNAS}=require('./quadro-config.cjs');
 const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 // Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
 const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
-function urlComCredencial(value) {
-  try {const url=new URL(value);return Boolean(url.username || url.password);}
-  catch {return false;}
+function motivoUrl(value) {
+  if(value.trim()==='') return null;
+  try {const url=new URL(value);return url.username || url.password?'conteúdo sensível suprimido':null;}
+  catch {return 'URL inválida suprimida';}
 }
 function selecionar(record,fields,nome,linha,avisos) {
   return Object.fromEntries(fields.map(field=>{
     const value=record[field] ?? '';
-    if (typeof value==='string' && (sensivel.test(value) || (['url','url_video_final'].includes(field) && urlComCredencial(value)))) {
-      avisos.push({aba:nome,linha,campo:field,motivo:'conteúdo sensível suprimido'});
+    const motivo=typeof value==='string' && (sensivel.test(value)?'conteúdo sensível suprimido':
+      (['url','url_video_final'].includes(field)?motivoUrl(value):null));
+    if (motivo) {
+      avisos.push({aba:nome,linha,campo:field,motivo});
       return [field,'[conteúdo suprimido]'];
     }
     return [field,value];

@@ -175,7 +175,7 @@ test('U06 conteúdo HTML é texto; somente HTTPS Drive/Docs sem credenciais vira
 test('U-review I1 gaveta não ecoa URL recusada nem parte de credencial sintética', {skip}, async t=>{
   const page=await abrir(t,1440,true,raw=>{
     mudarCelula(raw,'Arquivos',2,'url','https://usuario-sintetico:senha-sintetica@docs.google.com/x');
-    mudarCelula(raw,'Produções',3,'url_video_final','https://usuario-sintetico:senha-sintetica@docs.google.com/x');
+    mudarCelula(raw,'Produções',3,'url_video_final','https://usuario-sintetico:senha-sintetica@docs.google.com:porta-invalida');
     adicionarRegistro(raw,'Arquivos',{arquivo_id:'url-recusada',producao_id:'peca-3',versao:2,url:'https://servidor-sintetico.invalid/registro-recusado'});
   },()=>{},capturaDetalhada);
   await page.locator('#calendario [data-producao-id="peca-3"]').click();

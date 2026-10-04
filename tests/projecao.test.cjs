@@ -39,6 +39,17 @@ test('P-review I1 URL com usuário/senha é suprimida sem expor valor em avisos'
   }
 });
 
+test('P-review I1 URL malformada não devolve credencial e vazio continua vazio', t=>{
+  for(const url of ['https://usuario-sintetico:senha-sintetica@exa[mple.invalid','https://usuario-sintetico:senha-sintetica@docs.google.com:porta-invalida','URL inválida sintética','', '  ']) {
+    const raw=capturaDetalhada();mudarCelula(raw,'Arquivos',2,'url',url);mudarCelula(raw,'Produções',3,'url_video_final',url);
+    const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),p=view.producoes[2];
+    assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico|senha-sintetica/);
+    assert.equal(p.url_video_final,url.trim()?'[conteúdo suprimido]':url);
+    assert.equal(p.detalhes.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').url,p.url_video_final);
+    assert.equal(view.avisos.filter(a=>a.motivo==='URL inválida suprimida').length,url.trim()?2:0);
+  }
+});
+
 test('P06 responsável registrado não vira correção; resolvidas/antigas ficam separadas', t=>{
   const raw=capturaDetalhada();mudarCelula(raw,'Produções',3,'responsavel_atual','');
   const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),d=view.producoes[2].detalhes;

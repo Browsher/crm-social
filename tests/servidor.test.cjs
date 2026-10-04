@@ -44,8 +44,8 @@ test('H01 ausência estruturada não vira dados de demonstração', async t => {
 });
 
 test('H-review I1 JSON de /api/visao não entrega credenciais em URLs registradas', async t=>{
+  for(const url of ['https://usuario-sintetico:senha-sintetica@drive.google.com/x','https://usuario-sintetico:senha-sintetica@docs.google.com:porta-invalida']) {
   const {port,dataDir}=await ambiente(t,false),raw=capturaValida();
-  const url='https://usuario-sintetico:senha-sintetica@drive.google.com/x';
   mudarCelula(raw,'Arquivos',1,'url',url);mudarCelula(raw,'Produções',1,'url_video_final',url);
   promoverCaptura(raw,dataDir);
   const response=await request(port,'/api/visao');
@@ -53,6 +53,7 @@ test('H-review I1 JSON de /api/visao não entrega credenciais em URLs registrada
   const body=JSON.parse(response.body);
   assert.equal(body.producoes[0].url_video_final,'[conteúdo suprimido]');
   assert.equal(body.producoes[0].detalhes.arquivos[0].url,'[conteúdo suprimido]');
+  }
 });
 test('H02 três estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos', async t => {
   const {port}=await ambiente(t);
