@@ -114,12 +114,13 @@ jobs:
               raise SystemExit('Comentário ausente, vazio ou maior que 60000 bytes UTF-8')
           target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'node-kit-review-comment.md'
           run_url = os.environ['GITHUB_SERVER_URL'] + '/' + os.environ['REPO'] + '/actions/runs/' + os.environ['GITHUB_RUN_ID']
-          # Triagem heurística; não substitui o secret scanning do GitHub.
+          # Triagem heurística por prefixo e comprimento, sem limite de palavra.
+          # Corpo mínimo: 20 caracteres permitidos; não substitui o secret scanning do GitHub.
           # n8n: JWT atual (detector abaixo) e prefixo legado; formatos opacos sem
           # prefixo reconhecível não são detectáveis de forma confiável.
-          secret = (r'\b(?:sk-ant-|gh[oprsu]_|github_pat_|n8n_api_)'
-                    r'|\bAIza[A-Za-z0-9_-]{20,}|\bya29\.[A-Za-z0-9._-]+'
-                    r'|\b1//?[A-Za-z0-9_-]{20,}'
+          secret = (r'(?:sk-ant-|gh[oprsu]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}'
+                    r'|AIza[A-Za-z0-9_-]{20,}|ya29\.[A-Za-z0-9._-]{20,}'
+                    r'|1//?[A-Za-z0-9_-]{20,}'
                     r'|\bey[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b'
                     r'|-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----')
           jwt = False

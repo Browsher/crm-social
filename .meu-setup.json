@@ -1,6 +1,6 @@
 {
     "kit":  "node-kit",
-    "version":  "0.4.6",
+    "version":  "0.4.7",
     "preset":  "full",
     "files":  {
                   ".agents/skills/cyclomatic-complexity/SKILL.md":  "5a5af1d6d0657bb846b6607881f117fe8c6a26fca659cf47a30da95cafcfb24d",
@@ -16,7 +16,7 @@
                   ".github/rulesets/main.json":  "ec9fbf88fbe94064198e3abd7945bedf2b72639b4cf083448ef5563475e9bc40",
                   ".github/workflows/claude.yml":  "1ff1319312a646bc4732664288974f84af8a1df48f6431b9a5fd98e5dfca61a3",
                   ".github/workflows/issue-triage.yml":  "c7c07198958eeae7663418901a8f3ed5f6e9e0518c8673732df0a8e40dc904d4",
-                  ".github/workflows/pr-review.yml":  "8b7ee5f4f819a1deb14e5f521a811e697d8f99289e8befdf1b7b86bec6d25a59",
+                  ".github/workflows/pr-review.yml":  "1571d9b432e84fa4380057b210aa5ec2b232b0f897adf7cde36ef7a77e051b33",
                   ".github/workflows/quality-gate.yml":  "c3d544e0f9d788762965a119a7f4c9ae062962c7909d192428b606a081d0f6fd",
                   ".github/workflows/release-notes.yml":  "2036808574195aaeda300a7ebea04572832c7568f31bc58542b0fccb0936f944",
                   "docs/architecture.md":  "efb8ec66c773b14c31922f07452257fe05b1bcc75364c7631eae764d0a94ce47",
