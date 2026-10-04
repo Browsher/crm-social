@@ -90,6 +90,16 @@ dialog::backdrop{background:#24312d66}
 dialog .section-heading{margin-top:0}
 dialog .post{margin-top:12px}
 #erro{padding:20px;border:1px solid #e0b7b7;border-radius:6px;color:#8e4242;background:#fff1f1}
+.capture-info{padding:24px;background:white;border:1px solid var(--line);border-radius:8px;margin-bottom:20px}
+.capture-info h2{font-size:18px;margin-bottom:20px}
+.capture-info dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:22px}
+.capture-info dt{color:var(--muted);font-size:12px;margin-bottom:6px}
+.capture-info dd{margin:0;font-size:14px;overflow-wrap:anywhere}
+.capture-notice{padding:12px 16px;border-left:3px solid #d7a849;background:#fff8e7;margin:16px 0;font-size:13px}
+.capture-notice p+p{margin-top:7px}
+.refresh-button{padding:10px 16px;background:var(--green);color:white;border-radius:6px;font-weight:600}
+.refresh-button:disabled{opacity:.6;cursor:wait}
+#releitura-aviso{font-size:12px;color:var(--muted);margin-top:10px}
 @media(max-width:1050px){main{padding:25px 20px}.day{padding:8px 5px}.post strong{font-size:11px}}
 @media(max-width:720px){
   :root{--sidebar:0px}

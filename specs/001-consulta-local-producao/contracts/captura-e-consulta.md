@@ -1,9 +1,7 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Estado em 04/10/2026: envelope/validação, persistência, CLI, mapa validado, API restrita e US1 implementados (T001–T018). O contrato abaixo define a 001 completa; quatro estados do selo, detalhes/acordeões, quadro e Planilha/Histórico continuam pendentes. A API atual usa **Captura local**, `captura_local_provisoria` e bases vazias de quadro/Planilha, sem frescor aceito; com captura vigente, a última tentativa falha gera aviso curto na projeção, ainda sem exibição na UI. Evidência em [validação](../validacao.md); primeiro CI Linux do PR #6 passou, nova validação remota das correções está pendente no retrato pré-push desta rodada (04/10/2026), e captura operacional aguarda. Coletor previsto: Central com
-conector autenticado. Consumidor implementado: CRM neste computador, sem credenciais Google; nenhuma leitura real Google foi realizada.
-Requisitos em [spec.md](../spec.md); decisão de interface em
-[telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1 e US2 implementadas; detalhes e demais histórias continuam pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura
 
@@ -114,6 +112,15 @@ recentes primeiro, excluindo arquivos órfãos ou preparados sem confirmação;
 paginação é permitida desde que as anteriores continuem acessíveis. `ultimaTentativa`
 é projeção do recibo referenciado pelo estado, sem servir o arquivo privado inteiro.
 Nova captura com novo ID, fim de coleta novo e mesmas células pode atualizar frescor.
+Na importação sob trava, após validação estrutural e conferência de conflito/no-op,
+comparar `completedAt` com o relógio local e o fim da vigente: até **10 minutos**
+no futuro é aceito (limite inclusivo); acima disso recusar como **captura inválida**.
+Captura nova com `completedAt` **igual ou anterior** ao da vigente é **desatualizada**
+e recusada. Nos dois casos, confirmar recibo `falhou` com motivo curto e manter a
+vigente, seus bytes e seu horário. Não preparar arquivo de captura desses candidatos.
+Repetição idêntica de ID já aceito continua `sem_alteracao` antes dessa política;
+conflito do mesmo ID permanece conflito. A leitura de uma captura aceita valida
+estrutura, sem reaplicar a comparação com o relógio atual ou com ela própria.
 Reimportar a mesma captura não encerra falha posterior. GET/releitura local não escreve,
 não gera recibo, não muda horário e não limpa erro.
 
@@ -142,7 +149,7 @@ ou momento de atualização da tela. O selo em todas as telas abre Planilha.
 - Grupo de dia inclui todas as peças NTV com a mesma data, mesmo se o filtro resumido
   ocultar alguma. Ordem determinística por `producao_id` com comparação ordinal;
   mesma ordem no primeiro cartão do calendário e no primeiro acordeão aberto.
-- Link global "N sem data" conta todas as peças NTV inválidas/sem data da captura,
+- Link global "N sem data" só aparece quando N > 0 e conta todas as peças NTV inválidas/sem data da captura,
   sem depender de mês ou filtro, e abre lista delas agrupada por semana. Órfã fica em
   Semana não identificada com aviso. No quadro, cartão sem data abre Sem data da semana.
 - Calendário: formato, título e estado registrados; tema no primeiro dia da semana;

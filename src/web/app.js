@@ -97,13 +97,16 @@ function lista(semData=false) {
   (semData?$('#lista-sem-data'):$('#lista')).replaceChildren(...groups);
 }
 function render() {
+  if(!state.view) return;
   const mes=civil(state.mes+'-01',{month:'long',year:'numeric'});
   $('#mes').textContent=mes.charAt(0).toUpperCase()+mes.slice(1);
   const empty=state.view.captura===null;
   $('#sem-captura').hidden=!empty;
   $('#calendario').hidden=empty || state.modo!=='Calendário';
   $('#lista').hidden=empty || state.modo!=='Lista';
-  $('#abrir-sem-data').textContent=state.view.producoes.filter(p=>p.dataCivil===null).length+' sem data';
+  const semData=state.view.producoes.filter(p=>p.dataCivil===null).length;
+  $('#abrir-sem-data').textContent=semData+' sem data';
+  $('#abrir-sem-data').hidden=semData===0;
   $('#total').textContent=state.view.producoes.length+' peças registradas';
   for (const b of document.querySelectorAll('[data-formato]')) { const active=b.dataset.formato===state.formato;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active)); }
   for (const b of document.querySelectorAll('[data-modo]')) { const active=b.dataset.modo===state.modo;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active)); }
@@ -128,20 +131,34 @@ function controles() {
   $('#fechar-dia').addEventListener('click',()=>$('#dia').close());
   $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');$('#menu').setAttribute('aria-expanded',String(open));});
   $('#selo').addEventListener('click',()=>navegar('planilha'));
+  $('#atualizar').addEventListener('click',reler);
 }
-async function iniciar() {
-  const buttons=[...document.querySelectorAll('button')];
-  buttons.forEach(b=>b.disabled=true);
+function detalhesCaptura() {
+  const view=state.view,captura=view.captura;
+  $('#selo').textContent=view.selo.texto;$('#selo').className='badge '+view.selo.cor;
+  $('#fonte-captura').textContent=view.fonte;
+  $('#fim-captura').textContent=captura?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',
+    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(captura.completedAt)):'Sem captura disponível';
+  const periodo=captura?.periodo;
+  $('#periodo-captura').textContent=periodo?.inicio && periodo?.fim?
+    civil(periodo.inicio,{day:'2-digit',month:'2-digit',year:'numeric'})+' a '+civil(periodo.fim,{day:'2-digit',month:'2-digit',year:'numeric'}):'Cobertura não disponível';
+  const avisos=[...new Set(view.avisos.map(a=>a.motivo))];
+  $('#avisos-captura').replaceChildren(...avisos.map(motivo=>node('p',motivo)));
+  $('#avisos-captura').hidden=avisos.length===0;
+}
+async function reler() {
+  $('#atualizar').disabled=true;
   try {
     const response=await fetch('/api/visao',{cache:'no-store'});
     if (!response.ok) throw new Error('consulta indisponível');
     state.view=await response.json();
-    $('#selo').textContent=state.view.selo.texto;$('#selo').className='badge '+state.view.selo.cor;
-    controles();render();navegar('planejamento');
-    buttons.forEach(b=>b.disabled=false);
+    detalhesCaptura();render();$('#erro').hidden=true;
   } catch {
     $('#erro').textContent='Não foi possível ler a captura local. Confira o servidor e tente novamente.';$('#erro').hidden=false;
-    $('#selo').textContent='Consulta indisponível';
+    if(!state.view) $('#selo').textContent='Consulta indisponível';
+  } finally {
+    $('#atualizar').disabled=false;
   }
 }
+async function iniciar() {controles();navegar('planejamento');await reler();}
 iniciar();

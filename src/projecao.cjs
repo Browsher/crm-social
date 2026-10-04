@@ -73,6 +73,25 @@ function agruparDias(producoes) {
   }
   return [...groups.values()].map(group=>({...group,ids:group.ids.sort(ordinal)})).sort((a,b)=>ordinal(a.data ?? 'z',b.data ?? 'z'));
 }
+function aplicarFrescor(result,estadoLocal,nowIso) {
+  if(estadoLocal.ultimaTentativa?.resultado==='falhou') {
+    result.estado='falha_atualizacao';
+    result.selo={texto:'Atualização falhou',cor:'vermelho',destino:'planilha'};
+    result.avisos.push({motivo:'Última importação falhou; captura anterior preservada'});
+    return;
+  }
+  const completed=new Date(result.captura.completedAt),timeZone='America/Sao_Paulo';
+  const day=new Intl.DateTimeFormat('sv-SE',{timeZone,year:'numeric',month:'2-digit',day:'2-digit'});
+  if(day.format(completed)===day.format(new Date(nowIso))) {
+    const hour=new Intl.DateTimeFormat('pt-BR',{timeZone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(completed);
+    result.estado='atualizada_hoje';
+    result.selo={texto:'Atualizado hoje, '+hour,cor:'verde',destino:'planilha'};
+  } else {
+    const date=new Intl.DateTimeFormat('pt-BR',{timeZone,day:'2-digit',month:'2-digit'}).format(completed);
+    result.estado='anterior_hoje';
+    result.selo={texto:'Dados de '+date,cor:'âmbar',destino:'planilha'};
+  }
+}
 function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   const result=base(estadoLocal), captura=estadoLocal.captura;
   if (!captura) return result;
@@ -82,13 +101,7 @@ function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   result.captura={capturaId:captura.envelope.capturaId,completedAt:captura.envelope.completedAt,
     periodo:{inicio:null,fim:null},contagens:Object.fromEntries(chaves.map(k=>[k,ntv[k].length]))};
   planejar(result);
-  // O selo completo é US2; esta base conserva a data real sem declarar sincronização.
-  result.estado='captura_local_provisoria';
-  result.selo={texto:'Captura local',cor:'âmbar',destino:'planilha'};
-  // O ponteiro confirmado mantém a falha ativa até uma nova promoção completa.
-  if (estadoLocal.ultimaTentativa?.resultado==='falhou') {
-    result.avisos.push({motivo:'Última importação falhou; captura anterior preservada'});
-  }
+  aplicarFrescor(result,estadoLocal,nowIso);
   return result;
 }
 module.exports={projetarVisao};

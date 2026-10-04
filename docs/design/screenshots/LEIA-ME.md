@@ -2,7 +2,7 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
-Estado em 04/10/2026: evidência visual local de T001–T018/US1, refeita após a revisão do PR #6. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
+Estado em 04/10/2026: evidência visual local de T001–T022/US1 e US2. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
 
 | Arquivo | O que mostra |
 | --- | --- |
@@ -21,6 +21,19 @@ Aplicação em execução, dados fictícios — lista semanal mobile da primeira
 
 ## Limites da evidência
 
-As imagens comprovam a aparência capturada do Planejamento, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** é provisório. US2/quatro estados e releitura, US3/detalhes e acordeões, US4/quadro, US5/Planilha e Histórico e o iniciador continuam pendentes. Produção e Planilha exibem mensagens de próxima entrega.
+As imagens originais comprovam a aparência histórica do Planejamento da US1, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** dessas duas imagens era provisório e foi substituído na US2. US3/detalhes e acordeões, US4/quadro, US5/abas completas e Histórico e o iniciador continuam pendentes. Produção exibe mensagem de próxima entrega; Planilha já mostra detalhes da captura e releitura local, sem as tabelas futuras.
 
 Não substituir essas imagens por screenshots com dados privados. [Telas decididas](../telas.md) e [spec canônica](../../../specs/001-consulta-local-producao/spec.md) mantêm os requisitos completos; resultados de testes ficam no registro de validação, não deduzidos da imagem.
+
+## US2 — quatro estados, desktop e celular
+
+As oito imagens abaixo registram a implementação da US2 em 04/10/2026; procedência e head na [validação](../../../specs/001-consulta-local-producao/validacao.md). Desktop 1440 × 1240 e celular 390 × 1050. Agenda somente fictícia; captura.completedAt sintético de 04/10/2026 09:46 (hoje/falha) ou 03/10/2026 09:46 (anterior), no fuso America/Sao_Paulo. A ausência tem uma tentativa falha sem captura válida e conserva o selo cinza. Nenhuma imagem foi alterada para simular resultado.
+
+| Selo | Desktop | Celular | Conferência visual |
+| --- | --- | --- | --- |
+| Atualizado hoje, 09:46 | [1440](001-us2-hoje-1440.png) | [390](001-us2-hoje-390.png) | Verde, horário vem do fim da captura |
+| Dados de 03/10 | [1440](001-us2-anterior-1440.png) | [390](001-us2-anterior-390.png) | Âmbar, mesmas peças conservadas |
+| Atualização falhou | [1440](001-us2-falha-1440.png) | [390](001-us2-falha-390.png) | Vermelho, última captura válida continua visível |
+| Sem dados | [1440](001-us2-sem-dados-1440.png) | [390](001-us2-sem-dados-390.png) | Cinza, sem cartões ou fallback inventado |
+
+O selo permanece no cabeçalho das três telas e abre Planilha. O teste real de interface e a inspeção no navegador conferiram detalhes/aviso e a legenda **Reler captura local; não consulta o Google**. As imagens documentam o estado de apresentação; somente os testes e o registro de validação comprovam as interações de releitura/conservação.

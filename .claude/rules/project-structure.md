@@ -1,8 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-Estado em 04/10/2026: T001–T018 implementadas (fundação e US1 Planejamento).
-A 001 completa e a captura operacional ainda não foram aceitas; 23 tarefas pendentes.
+T001–T022/US1 e US2 implementadas; estado, evidências e pendências na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local não versionado; remoto usa branch/specs da 001.
@@ -14,12 +13,15 @@ A 001 completa e a captura operacional ainda não foram aceitas; 23 tarefas pend
 - EntryPoint real: scripts/importar-captura.cjs <arquivo-local> [--data-dir <diretorio>].
 - EntryPoint real: src/servidor.cjs [--data-dir <diretorio>] [--port <porta>].
 - src/captura.cjs valida seis abas/66 mínimos; src/snapshot.cjs confirma estado privado.
+- validarTempoImportacao confere candidata sob trava: futuro até 10 min; fim posterior ao vigente.
+- Falha temporal confirma recibo e mantém vigente; no-op de ID aceito precede essa regra.
+- GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
-- src/projecao.cjs seleciona NTV/datas/formatos; src/quadro-config.cjs valida o mapa.
+- src/projecao.cjs seleciona NTV/datas/formatos e frescor São Paulo; quadro-config valida mapa.
 - config/quadro-etapas.json é versionado; mapa não é dado de linha nem entregue por HTTP.
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas fixas: /, /app.js, /styles.css, /api/visao; GET/HEAD e Host/Origin locais.
-- src/web/ entrega Planejamento; Produção/Planilha têm mensagem de próxima entrega.
+- src/web/ entrega Planejamento, selo e origem/releitura em Planilha; quadro/tabelas futuros.
 - tools/quality-gate.mjs é o entrypoint do gate; seus módulos são gate-*.mjs.
 - tools/package.json e package-lock.json isolam ESLint, sem dependência da aplicação.
 - .github/workflows contém CI; o bootstrap instalou os templates do node-kit.
@@ -30,6 +32,6 @@ A 001 completa e a captura operacional ainda não foram aceitas; 23 tarefas pend
 - Executar com Node 24.19.0 existente por CRM_NODE_PATH e seu diretório à frente do PATH.
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
 - Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
-- CI=true pula explicitamente nove testes de UI (M8 pendente); aceite local exige zero pulos.
-- Quatro estados/detalhes/quadro/Planilha/iniciador/escala continuam tarefas futuras.
+- CI=true pula os testes de UI, fora do LCOV (M8); aceite local exige zero pulos.
+- Detalhes/quadro/tabelas/Histórico/iniciador/escala continuam tarefas futuras.
 - Não alterar constituição, ferramentas/gate, agentes oficiais ou operação n8n.

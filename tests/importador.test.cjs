@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const {spawnSync,spawn}=require('node:child_process');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,temporario}=require('./fixtures.cjs');
+const {capturaValida,temporario,redefinirHorario}=require('./fixtures.cjs');
 const {lerEstado,promoverCaptura}=require('../src/snapshot.cjs');
 const cli=path.resolve(__dirname,'../scripts/importar-captura.cjs');
 function executar(args) {
@@ -95,8 +95,12 @@ test('C05 duas instâncias reais não perdem recibos nem fazem rollback da captu
   const dir=temporario(t), data=path.join(dir,'dados'), raw=capturaValida();
   promoverCaptura(raw,data);
   const inputA=path.join(dir,'a.json'), inputB=path.join(dir,'b.json');
-  fs.writeFileSync(inputA,JSON.stringify({...raw,capturaId:'captura-a'}));
-  fs.writeFileSync(inputB,JSON.stringify({...raw,capturaId:'captura-b'}));
+  const a=structuredClone(raw),b=structuredClone(raw);
+  a.capturaId='captura-a';b.capturaId='captura-b';
+  redefinirHorario(a,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
+  redefinirHorario(b,'2026-10-02T12:02:00Z','2026-10-02T12:07:00Z');
+  fs.writeFileSync(inputA,JSON.stringify(a));
+  fs.writeFileSync(inputB,JSON.stringify(b));
   const marker=path.join(dir,'barreira'), release=path.join(dir,'continuar');
   const snapshot=path.resolve(__dirname,'../src/snapshot.cjs');
   const code="const fs=require('node:fs'),path=require('node:path');const [module,input,data,marker,release]=process.argv.slice(1);const rename=fs.renameSync;fs.renameSync=(a,b)=>{if(b===path.join(data,'atual.json')){fs.writeFileSync(marker,'pronto');while(!fs.existsSync(release))Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,10);}return rename(a,b);};const result=require(module).promoverCaptura(JSON.parse(fs.readFileSync(input,'utf8')),data);process.exitCode=result.resultado==='completa'?0:1;";

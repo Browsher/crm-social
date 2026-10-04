@@ -1,8 +1,8 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva a identidade dos registros e define como reuni-los na consulta. Estado em 04/10/2026: validação, persistência e projeção de Planejamento implementadas em T001–T018. O restante deste modelo é o alvo da 001 completa, sem aceite antecipado: quatro estados do selo, detalhes/relações, quadro e tabelas de Planilha permanecem pendentes. A projeção atual usa **Captura local**/`captura_local_provisoria`, preserva aviso curto de última importação falha na API e mantém `quadro`/`planilha` como bases vazias. Consultar [arquitetura real](../../docs/architecture.md) e [validação](validacao.md); nenhuma captura operacional ou leitura Google foi validada.
-[Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos
-e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
+Como um índice de fotografias, o modelo conserva identidades e relações: T001–T022/US1 e US2 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
+
+[Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
 ## Captura e identidade
 
@@ -15,6 +15,14 @@ Extras permanecem só na captura privada, sem exposição automática na consult
 Aba mínima ausente/incompleta, hash divergente, cabeçalho não vazio duplicado,
 ID duplicado ou linha preenchida sem chave invalida a tentativa. Aba com cabeçalhos
 válidos e sem linhas é conjunto vazio válido. Falha mantém captura anterior.
+
+Na promoção sob trava, uma candidata estruturalmente válida admite `completedAt`
+até 10 minutos no futuro em relação ao relógio local, inclusive o limite. Mais
+que isso confirma tentativa `falhou` por captura inválida. Havendo vigente, ID
+novo com fim igual ou anterior ao dela confirma tentativa `falhou` por captura
+desatualizada. Ambas conservam a vigente e registram motivo fixo antes de gravar a
+candidata. Conflito de ID e no-op já confirmado precedem a política temporal;
+GET, releitura e reinício validam estrutura sem reaplicar essas comparações.
 
 ## Entidades privadas e projeções
 
@@ -166,7 +174,9 @@ e preservar o estado anterior, sem fingir durabilidade do registro.
 | Mesmo capturaId e mesmos bytes, com aceitação anterior confirmada | sem alteração | sem duplicação/novo frescor nem retorno a captura antiga; falha posterior não é encerrada |
 | Interrupção antes de confirmar o estado | anterior preservada | arquivos preparados excluídos do Histórico; mesmos bytes podem ser revalidados e promovidos numa nova tentativa |
 | Mesmo capturaId e bytes diferentes | anterior preservada | conflito/falhou |
-| Novo ID/fim novo, mesmas células, completa promovida | nova observação | encerra falha ativa, preservando todos os recibos |
+| Nova candidata mais de 10 minutos no futuro em relação ao relógio local | anterior preservada | falhou por captura inválida; motivo no recibo, candidata não gravada |
+| Novo ID com fim igual ou anterior ao da vigente | anterior preservada | falhou por captura desatualizada; motivo no recibo, candidata não gravada |
+| Novo ID/fim estritamente posterior ao vigente e até 10 minutos no futuro, mesmas células, completa promovida | nova observação | encerra falha ativa, preservando todos os recibos |
 
 Precedência: sem captura → cinza; captura + falha ativa posterior → vermelho;
 captura sem falha + data civil hoje em São Paulo → verde HH:MM; outro dia → âmbar DD/MM.

@@ -1,7 +1,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const {randomUUID}=require('node:crypto');
-const {validarCaptura,idSeguro}=require('./captura.cjs');
+const {validarCaptura,validarTempoImportacao,idSeguro}=require('./captura.cjs');
 
 function json(file) { return JSON.parse(fs.readFileSync(file,'utf8')); }
 function ponteiro(dataDir) {
@@ -111,10 +111,14 @@ function promoverComTrava(raw,dataDir) {
   catch { throw new Error('persistência: falha não pôde ser registrada'); }
   try {
     validarCaptura(raw);
-    gravarImutavel(path.join(dataDir,'capturas',raw.capturaId+'.json'),JSON.stringify(raw));
+    const file=path.join(dataDir,'capturas',raw.capturaId+'.json'),body=JSON.stringify(raw);
+    if (fs.existsSync(file) && fs.readFileSync(file,'utf8')!==body) throw new Error('captura: conflito de conteúdo no mesmo ID');
     if (before.historico.some(r=>r.resultado==='completa' && r.capturaId===raw.capturaId)) {
+      gravarImutavel(file,body);
       return {resultado:'sem_alteracao',capturaId:raw.capturaId};
     }
+    validarTempoImportacao(raw.completedAt,new Date().toISOString(),before.captura?.envelope.completedAt ?? null);
+    gravarImutavel(file,body);
     return confirmar(dataDir,before.estado,recibo(raw,'completa',''),raw.capturaId);
   } catch (e) {
     const reason=e.message.endsWith(': inválido') ? e.message : motivoSeguro(e);

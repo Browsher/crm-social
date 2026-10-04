@@ -1,10 +1,10 @@
-# Validação — primeiro PR da feature 001
+# Validação — feature 001, US1 e US2
 
-Como conferir um álbum antes de entregá-lo: cada regra será provada com uma captura sintética, sem tocar na operação. Recorte autorizado: T001–T018, fundação e US1 Planejamento; as demais tarefas continuam pendentes.
+Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T022, fundação, US1 Planejamento e US2/frescor e releitura local; T023–T041 continuam pendentes. Os registros anteriores à seção **US2 — T019–T022** abaixo são históricos da US1/PR #6: seus selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado atual.
 
 ## Preparação T001
 
-Em 04/10/2026, feature ativa e branch conferidas; árvore inicial limpa. Pré-requisitos oficiais encontrados. Hooks before/after_analyze de commit são opcionais e não foram executados. A regra project-structure foi gerada do estado real e sincronizada ao final da implementação: **35 linhas**, sem tratar módulos planejados como implementados.
+Em 04/10/2026, feature ativa e branch conferidas; árvore inicial limpa. Pré-requisitos oficiais encontrados. Hooks before/after_analyze de commit são opcionais e não foram executados. A regra project-structure foi gerada do estado real e sincronizada ao final da implementação: **37 linhas**, sem tratar módulos planejados como implementados.
 
 Ambiente: Node 24.19.0 existente via CRM_NODE_PATH; PATH padrão 24.14.0. Playwright existente resolvido por CRM_PLAYWRIGHT_MODULE fora do repositório; Windows PowerShell 5.1.26100.9444. ESLint já preparado em tools/. Configuração do gate preservada: node --test, modo full, Node 24.19.0.
 
@@ -87,7 +87,7 @@ Correções autorizadas em 04/10/2026, na mesma branch da 001. T019–T041 conti
 | M2 | Snapshot: 9 PASS / 2 FAIL / 0 SKIP | 11 PASS; temporário removido após rename falhar, mantendo captura/recibos imutáveis e erro original |
 | Tela 1–4 | Interface: 5 PASS / 4 FAIL / 0 SKIP | 9 PASS em Chromium: rótulos conhecidos legíveis, desconhecidos literais/API original; Outubro de 2026; sidebar inteira; outubro com 35 dias e fevereiro/2027 com 28, sem semana inteiramente fora do mês |
 
-M4: assinatura completa projetarVisao(estadoLocal, nowIso, mapaQuadro); relógio e mapa ficam reservados às US2/US4. M5: Mermaid registra o caminho padrão do mapa no servidor e snapshot → node:crypto. M6: nove etapas é conteúdo do JSON versionado, não quantidade fixa do validador. M7: contagem da regra conferida em disco, 35 linhas.
+M4: assinatura completa projetarVisao(estadoLocal, nowIso, mapaQuadro); relógio e mapa ficam reservados às US2/US4. M5: Mermaid registra o caminho padrão do mapa no servidor e snapshot → node:crypto. M6: nove etapas é conteúdo do JSON versionado, não quantidade fixa do validador. M7: contagem da regra conferida em disco, 37 linhas.
 
 Durante GREEN, uma expectativa nova de M1 usava o termo genérico captura, mas a mensagem real do contrato é Cenas complete: inválido; a expectativa foi corrigida para esse motivo, sem alterar a validação. A medição da sidebar usa arredondamento ao pixel: DOMRect retornou 1239,5 px e scrollHeight 1240; Math.ceil conserva a verificação da cobertura visual e evita comparar um inteiro com um subpixel. O RED original mostrava o fundo limitado à altura da janela, sem chegar ao fim da página.
 
@@ -127,3 +127,129 @@ Só documentação/evidências muda após ab3b036; código/testes/gate permanece
 ### Conferência após anexar as evidências
 
 No head 71fabb524f9b7ed02f2b86165193667f1e193099, o [gate Linux](https://github.com/Browsher/crm-social/actions/runs/37196385842/job/111419036471) passou novamente, inclusive Semgrep real. O [review](https://github.com/Browsher/crm-social/actions/runs/37196385840/job/111419036507) falhou com a mensagem: `Claude reported a successful result after 42 turns, exceeding the configured maximum of 40`. O resultado do modelo não foi publicado; apareceu somente o [aviso fixo de falha](https://github.com/Browsher/crm-social/pull/6#issuecomment-5979165747). Nenhuma ferramenta, permissão ou limite do workflow foi alterado. Este registro documental segue na mesma branch; o merge aguarda um review concluído do novo head, nas condições autorizadas pelo autor.
+
+## US2 — T019–T022, frescor e releitura local
+
+Em 04/10/2026, o recorte da US2 está implementado e testado localmente. O PR #6 foi integrado em `19e222a`; a base desta entrega é `7e17e85`, já com o node-kit 0.4.9. O [PR #7](https://github.com/Browsher/crm-social/pull/7) foi integrado após o [quality-gate verde](https://github.com/Browsher/crm-social/actions/runs/37202478722/job/111436807063) e o [review concluído](https://github.com/Browsher/crm-social/actions/runs/37202478729/job/111436806960), com [comentário publicado](https://github.com/Browsher/crm-social/pull/7#issuecomment-5979972293), no head `ef9ac93`. Merge `7e17e85` com autoria noreply; branch de atualização removida. Review passou a 60 turnos; gerar-testes permanece em 20. Nenhum gate, baseline ou workflow muda no PR da US2.
+
+Como o carimbo de data de um álbum, o selo descreve a captura salva, não a data de uma produção nem o instante do clique. Horário/frescor usam **captura.completedAt**, no fuso **America/Sao_Paulo**. Os valores públicos são os do contrato:
+
+| Precedência | Estado | Selo / cor |
+| --- | --- | --- |
+| Sem captura válida, mesmo havendo falha no histórico | sem_captura | Sem dados / cinza |
+| Captura válida e última tentativa confirmada falhou | falha_atualizacao | Atualização falhou / vermelho |
+| Captura válida do mesmo dia civil de São Paulo | atualizada_hoje | Atualizado hoje, HH:MM / verde |
+| Captura válida de outro dia civil | anterior_hoje | Dados de DD/MM / âmbar |
+
+### TDD observado e resultado local
+
+| Tarefa / commit | RED real | GREEN real |
+| --- | --- | --- |
+| T019 / `89f5ae4` → T020 / `8e4454e` | Snapshot + projeção: 25 PASS / 3 FAIL / 0 SKIP; três expectativas de selo encontraram captura_local_provisoria | 28 PASS / 0 FAIL / 0 SKIP; suíte completa 70 PASS |
+| T021 / `37565e9` → T022 / `3857816` | Interface: 9 PASS / 5 FAIL / 0 SKIP; faltavam detalhes e botão de releitura | 14 PASS / 0 FAIL / 0 SKIP; suíte completa **75 PASS / 0 FAIL / 0 SKIP** (9,20 s) |
+
+T019 cobre no-op sem recibo novo/fim de falha, ID/horário novos com as mesmas células, captura vigente preservada após falha, ausência cinza, virada de dia UTC→São Paulo e produção futura que não muda o selo. A persistência existente já cumpria os cenários S03/S04; **src/snapshot.cjs não precisou mudar**. O GREEN altera a projeção dos estados e avisos. A primeira execução de T019 teve duas falhas de fixture: o intervalo do envelope foi mudado sem mover os readAt das abas. A fixture foi corrigida para timestamps coerentes, sem relaxar a validação; essa execução não foi usada como RED do produto. A comparação de células conserva values, já que readAt deve mudar com a nova captura.
+
+T021 usa relógio Date congelado no Node/Chromium e servidor real em porta efêmera. Exercita o selo nas três telas, clique para Planilha, fonte/fim/cobertura, aviso de falha, exatamente três GET /api/visao, nenhuma requisição externa e nenhum write no estado pela releitura. Nova captura sintética completa aparece ao reler. Estado local temporariamente ilegível gera HTTP 503, mantém dados/selo anteriores, mostra mensagem fixa e libera o botão. A falha de consulta não é registrada como tentativa de importação.
+
+O I1 inicial do review do PR #6 está fechado neste recorte: saiu o estado provisório; **Atualização falhou** fica visível em todas as telas e Planilha mostra **Última importação falhou; captura anterior preservada**. Clicar **Atualizar dados** conserva esse aviso até uma nova captura completa aceita. A legenda **Reler captura local; não consulta o Google** fica junto ao botão. As abas completas e o Histórico continuam para a US5; Produção continua com a mensagem de próxima entrega.
+
+Gate real local em `3857816`: **exit 0**, tests PASS (75), coverage PASS **96,19%**, drop 0, complexity/ESLint PASS (máximo 12, aviso no CLI existente), Semgrep SKIP por ausência da ferramenta no Windows, audit N/A por ausência de dependências de aplicação. Node **24.19.0**, Playwright existente; nenhuma dependência nova. Baseline não criada/atualizada. Comando: **node tools/quality-gate.mjs**, usando o runtime selecionado no quickstart e CRM_PLAYWRIGHT_MODULE existente. O aceite Linux desta US2 será conferido no novo PR, incluindo Semgrep real.
+
+Revisão independente somente leitura de `7e17e85..3857816`: **zero Critical / Important / Minor verificáveis**, nenhuma regressão ou bloqueante de segurança. Conferidas precedência, completude do horário, conservação da falha/dados, API local e HTTP 503; recebeu a evidência RED/GREEN/gate, sem executar novamente os testes. Documentação e imagens foram conferidas separadamente pelo coordenador.
+
+### Oito screenshots da aplicação real com fixtures sintéticas
+
+Geradas em 04/10/2026 a partir do código `3857816`, com Chromium existente, servidores loopback e estado em TEMP. Desktop **1440 × 1240**, celular **390 × 1050**, sem corte horizontal ou erro de página e sem rede externa. Nenhum dado operacional, arquivo real de data/ ou captura Google foi usado. Mesma agenda fictícia de cinco peças NTV da US1; outra marca permanece excluída. Fim sintético de hoje **04/10/2026 09:46**, anterior **03/10/2026 09:46**, no fuso São Paulo. O cenário vermelho conserva as cinco peças; o cinza não cria demonstração como fallback.
+
+![US2 hoje, desktop 1440](../../docs/design/screenshots/001-us2-hoje-1440.png)
+
+![US2 hoje, celular 390](../../docs/design/screenshots/001-us2-hoje-390.png)
+
+![US2 anterior, desktop 1440](../../docs/design/screenshots/001-us2-anterior-1440.png)
+
+![US2 anterior, celular 390](../../docs/design/screenshots/001-us2-anterior-390.png)
+
+![US2 falha, desktop 1440, dados válidos preservados](../../docs/design/screenshots/001-us2-falha-1440.png)
+
+![US2 falha, celular 390, dados válidos preservados](../../docs/design/screenshots/001-us2-falha-390.png)
+
+![US2 sem dados, desktop 1440](../../docs/design/screenshots/001-us2-sem-dados-1440.png)
+
+![US2 sem dados, celular 390](../../docs/design/screenshots/001-us2-sem-dados-390.png)
+
+Inspeção das oito imagens: textos/cores coerentes, ausência de corte e cards preservados no vermelho. Aplicação também aberta no navegador: clique no selo vermelho abriu Planilha com fonte, fim 09:46, cobertura 28/09–04/10 e aviso; clique Atualizar dados permaneceu na tela, com o mesmo horário e aviso. [Origem e limites das imagens](../../docs/design/screenshots/LEIA-ME.md). As screenshots não provam integração operacional, todas as interações ou as histórias futuras.
+
+### Pendências preservadas e aceite remoto
+
+T001–T022 concluídas (**22/41**); T023–T041 pendentes (**19**). A próxima história é US3/gaveta do dia. A política para **ID novo com completedAt anterior/igual à captura vigente** continua sem decisão do autor; esta entrega não inventa rejeição cronológica nem consulta histórica explícita. Só fixtures sintéticas, sem captura operacional. M3/índice de linha permanece para os avisos da US3/US5; null explícito continua normalizado sem apagar o envelope original. M8: os **14 casos de interface** são locais e têm SKIP explícito no CI, fora do LCOV de Node; o CLI permanece incluído no LCOV, conforme a evidência histórica acima.
+
+O registro pré-push acima foi seguido pelo aceite de execução abaixo. **O PR da US2 deve permanecer aberto, sem merge.**
+
+### PR #8 — gate Linux e comentário do Claude
+
+O [PR #8](https://github.com/Browsher/crm-social/pull/8) foi aberto para US2/T019–T022 na mesma branch da 001. Head de código/documentação `7657d9e1c6a83713c202854fede396a743f44b3f`, base `7e17e85`; 34 arquivos no diff. O [quality-gate requerido](https://github.com/Browsher/crm-social/actions/runs/37204282310/job/111442117283) terminou **SUCCESS** em 04/10/2026, com tests, coverage, complexity e **Semgrep PASS**, audit N/A, exit 0 e baseline não atualizada. Semgrep **1.179.0** foi instalado e executado realmente no Linux, sem SKIP. [Resumo sanitizado local/remoto](../../docs/reports/001-us2-gate-resumo.json): máximo local 12; funções novas aplicarFrescor 4, detalhesCaptura 7 e reler 4. O workflow não exporta o JSON Linux como artefato; os estados remotos foram conferidos no log, sem atribuir ao Linux as métricas numéricas locais.
+
+O [review](https://github.com/Browsher/crm-social/actions/runs/37204282276/job/111442117262) terminou **SUCCESS**, em 2m10s, e publicou o [comentário do Claude](https://github.com/Browsher/crm-social/pull/8#issuecomment-5980255578): **“Não encontrei achado Critical nem Important.”** Leu código, contrato, spec, AGENTS, constituição e reviewer; abriu uma screenshot. Generate-tests/publish-tests ficaram SKIPPED, sem rótulo gerar-testes; aviso de falha também pulado corretamente. O comentário não recebeu os checks enquanto rodava; a prova do gate concluído fica nos links acima, como check separado. Nenhuma permissão, ferramenta, configuração de gate ou baseline foi alterada.
+
+| Item do review | Registro / encaminhamento |
+| --- | --- |
+| Evidência Linux | Job verde com Semgrep real conferido acima. Relatório local resumido anexado com procedência explícita |
+| M8 / UI fora de CI e LCOV | Pendência preservada para o aceite completo; 14 casos passaram localmente, não presumir prova remota da interface |
+| M-a / completedAt futuro | Política ainda **sem decisão do autor**: o validador atual aceita instante UTC coerente no envelope; data futura recebe Dados de DD/MM, ou Atualizado hoje com hora futura no mesmo dia. Decidir aviso/recusa junto com a política de ID novo com fim anterior/igual, antes da captura operacional. Não foi inventada regra nova |
+| M-b / página aberta à meia-noite | Documentado no módulo web: o selo é recalculado no próximo GET/releitura/reload. Não existe atualização automática nesta US2 |
+| M-c / restauração do ponteiro no teste | Teste TEMP restaura após asserções; t.after remove o diretório mesmo em falha. Refatoração para finally futura, sem impacto na persistência real; não modificada |
+| M-d / índice da projeção | Texto alinhado com os quatro estados reais; bases de quadro/Planilha completos continuam futuras |
+| M-e / aviso global sem localização | Aviso de falha ativa tem somente motivo; não inventar aba/linha/campo para uma falha global. Registrar convenção explícita no contrato de avisos ao completar US3/US5/Histórico |
+
+Depois desta conferência só documentação/evidência mudou; código e testes continuam em `3857816`. O novo head documental dispara os checks outra vez, a serem conferidos pelo coordenador antes de encerrar. A **US2 permanece em PR aberto, sem merge**; T023–T041 e captura operacional continuam pendentes.
+
+## Revisão do PR #8 — correções solicitadas pelo autor
+
+Base observada: `4f9bdc461b9fbad883da3a146b349b991cf61957`, com código da US2 em `3857816`.
+O head `7657d9e` citado acima foi o primeiro aceite; o último head anterior a esta
+rodada foi `4f9bdc4`: [gate SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37204777931/job/111443578355)
+e [review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37204777927/job/111443578262),
+[comentário](https://github.com/Browsher/crm-social/pull/8#issuecomment-5980351907).
+São evidências históricas; o head corrigido terá seus próprios checks.
+
+- m3: removido o histórico duplicado dos documentos de entrada/módulos/spec/plan/tasks;
+  estados curtos apontam para este arquivo. A regra de estrutura tem 37 linhas.
+- m4: dados + persistência RED **25 PASS / 3 FAIL / 0 SKIP**, depois GREEN
+  com CLI **35 PASS / 0 FAIL / 0 SKIP**. Limite inclusivo de 10 minutos;
+  excesso, empate e regressão temporal geram falha confirmada preservando vigente.
+  No-op/conflito mantêm precedência; GET não reaplica o relógio da importação.
+- m1: primeira carga 503 com Consulta indisponível, erro visível e filtros sem
+  pageerror; botão desabilitado durante GET pendente. Ambos já passaram antes de
+  mudar código: cobertura de comportamento existente, sem RED artificial.
+- Tela: interface RED **16 PASS / 1 FAIL**, link zero visível; corrigido para
+  ocultar N sem data quando zero, inclusive sem captura.
+- m2: removido state.tela; navegação continua pela UI existente.
+- m5: ponteiro corrompido pelo teste restaurado em try/finally.
+
+Os fixtures de retry/promoção/concorrência foram ajustados para fins estritamente
+posteriores: preservam o propósito dos testes de I/O diante da política nova.
+Uma tentativa GREEN encontrou reativação de MockTimers no mesmo teste, erro do
+helper; cenários sem/com captura foram separados em testes independentes.
+Sem captura operacional, nova dependência, mudança de gate, CI ou baseline.
+
+### Histórico de aceites do CI instalado, centralizado
+
+O parágrafo a seguir registra o retrato histórico removido dos documentos de entrada;
+as rodadas da feature estão descritas acima, sem promover uma prova local a aceite remoto.
+
+CI instalado em 03/10/2026: quality-gate em cada PR; review do Claude por comentário, sem bloquear o merge. O review **0.4.4** foi validado no [PR #2](https://github.com/Browsher/crm-social/pull/2#issuecomment-5974734150), commit `6f88479`, [execução 37162882452](https://github.com/Browsher/crm-social/actions/runs/37162882452). A **0.4.5** foi aceita no [PR #3](https://github.com/Browsher/crm-social/pull/3#issuecomment-5975683038), commit `afd8238` (merge `72efb98`), [execução 37170294491](https://github.com/Browsher/crm-social/actions/runs/37170294491). A **0.4.7** foi aceita no [PR #4](https://github.com/Browsher/crm-social/pull/4#issuecomment-5976055197), commit `c9d1e91` (merge `506d7a7`), [execução 37173190416](https://github.com/Browsher/crm-social/actions/runs/37173190416). A **0.4.8** foi aceita no [PR #5](https://github.com/Browsher/crm-social/pull/5#issuecomment-5976475669), head `bc0b02b` (merge `4f20f20`), [execução 37176292254](https://github.com/Browsher/crm-social/actions/runs/37176292254). Repositório público; ruleset ativo da `main` exige `quality-gate`.
+
+Conferência antes do push desta revisão: **41 arquivos** no diff completo
+contra `7e17e85` (inclui os arquivos da US2 anteriores à rodada). A contagem se refere
+ao conteúdo, não a linhas da regra: `.claude/rules/project-structure.md` tem **37 linhas**.
+Suíte completa corrigida: **83 PASS / 0 FAIL / 0 SKIP**, 11,42 s, **18 casos UI** locais.
+Gate local **exit 0**, cobertura **96,25%**, complexidade/ESLint PASS (aviso existente CLI 12),
+Semgrep SKIP no Windows, audit N/A; baseline não atualizada. O aceite remoto corrigido
+será acrescentado após a execução; nenhum SHA futuro é antecipado.
+
+Revisão independente contra `4f9bdc4`: zero Critical/Important, dois Minor do escopo
+solicitado. Link zero na primeira carga 503 reproduzido em RED **17 PASS / 1 FAIL**;
+HTML inicia `hidden` e render só exibe para N>0. Contagens antigas da interface
+foram retiradas dos documentos de entrada/módulos. A suíte e o gate foram repetidos
+após essa correção. Regra de estrutura: 37 linhas, não a contagem histórica anterior.

@@ -2,11 +2,11 @@
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Estado em 04/10/2026: base T012 e US1/T016 implementadas. Fonte: [src/projecao.cjs](../../src/projecao.cjs), `selecionar` (linha 6), `selecionarNtv` (26), `planejar` (47), `agruparDias` (67) e `projetarVisao` (76).
+Estado em 04/10/2026: base T012, US1/T016 e US2/T020 implementadas e testadas localmente. Fonte: [src/projecao.cjs](../../src/projecao.cjs), `selecionar` (linha 6), `selecionarNtv` (26), `planejar` (47), `agruparDias` (67), `aplicarFrescor` (76) e `projetarVisao` (95).
 
 ## Interface, seleção e dados
 
-Export real: `projetarVisao(estadoLocal, nowIso, mapaQuadro)`, conforme a interface do plano. Relógio e mapa já são parâmetros declarados e recebidos do servidor; o cálculo de frescor e a classificação por mapa continuam pendentes em US2/US4. Esta base não deriva quatro estados finais desses parâmetros.
+Export real: `projetarVisao(estadoLocal, nowIso, mapaQuadro)`, conforme a interface do plano. `nowIso` e `captura.completedAt` determinam frescor em `America/Sao_Paulo`; a data das linhas não decide o selo. O mapa é recebido do servidor, com classificação dos cartões reservada a US4.
 
 Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro-config.md). Não há I/O, rota própria, variável de ambiente ou escrita na entrada.
 
@@ -14,7 +14,7 @@ Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro
 | --- | --- |
 | `schemaVersion` / `fonte` | 1 e rótulo Captura pela Central |
 | `captura` | null sem captura; senão capturaId, completedAt, período e contagens NTV |
-| `estado` / `selo` | Ausência = sem_captura / Sem dados cinza; com captura = captura_local_provisoria / **Captura local** âmbar |
+| `estado` / `selo` | Quatro estados contratuais abaixo; destino planilha em todos eles |
 | `semanas` | Mínimos selecionados + período civil de sete dias, objetivo mensal indefinido e IDs ordinais |
 | `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null e formato por slot |
 | `dias` | Grupos por data civil; sem data agrupado por semanaId, inclusive null |
@@ -23,7 +23,14 @@ Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro
 | `historico` / `ultimaTentativa` | Recibos confirmados selecionados, recentes primeiro; tela ainda pendente |
 | `avisos` | Data/semana inválidas, supressão localizada de conteúdo sensível e aviso curto de última importação falha quando há captura vigente |
 
-Selo **Captura local** não distingue hoje, antigo ou falha; `captura_local_provisoria` nomeia explicitamente essa base. Com captura vigente e `ultimaTentativa.resultado=falhou`, a projeção acrescenta **Última importação falhou; captura anterior preservada**, sem expor motivo bruto, caminho ou conteúdo privado. GET/no-op não apagam a tentativa confirmada. Esse aviso não entrega o selo vermelho nem substitui os quatro estados de US2; a UI atual ainda não apresenta os avisos da projeção.
+| Precedência | `estado` | Texto / cor |
+| --- | --- | --- |
+| Sem captura válida, mesmo após primeira falha | `sem_captura` | Sem dados / cinza |
+| Captura válida e última tentativa falhou | `falha_atualizacao` | Atualização falhou / vermelho |
+| Sem falha ativa e fim da captura no dia civil de nowIso em São Paulo | `atualizada_hoje` | Atualizado hoje, HH:MM / verde |
+| Sem falha ativa e fim da captura em outro dia civil | `anterior_hoje` | Dados de DD/MM / âmbar |
+
+Com captura vigente e `ultimaTentativa.resultado=falhou`, a projeção acrescenta **Última importação falhou; captura anterior preservada**, sem expor motivo bruto, caminho ou conteúdo privado. A UI apresenta motivos resumidos distintos em Planilha. GET/no-op não apagam a tentativa confirmada, não renovam `completedAt` e não encerram a falha; nova captura completa aceita encerra a falha na persistência. O cálculo não modifica a entrada ou o horário da captura.
 
 Semanas/produções exigem `marca_id=ntv`. Páginas, cenas e revisões são selecionadas pelo conjunto de produções; arquivos, pela produção ou semana quando não têm produção. Seus conjuntos contribuem às contagens, sem detalhamento público já implementado. Nenhum seletor de elegibilidade do n8n é reutilizado.
 
@@ -50,6 +57,6 @@ Dia válido agrupa todas as peças NTV na data, independente de formato. Sem dat
 
 A expressão `sensivel` (linha 5) procura formatos conhecidos de segredo/chave e caminhos pessoais indevidos; troca a célula por **[conteúdo suprimido]** e acrescenta aviso. É triagem conservadora, sem garantia de detectar todos os segredos. A regressão preserva HTTP/HTTPS comuns, inclusive como texto dentro de JSON; a regra de drive Windows não confunde o final do esquema com caminho.
 
-[tests/projecao.test.cjs](../../tests/projecao.test.cjs) cobre seleção NTV, isolamento da entrada, campos selecionados, supressão e preservação de URLs, datas civis, formatos, cobertura, órfãos e ordem. Regressões do PR #6 verificam assinatura completa, estado provisório distinto dos finais e aviso de falha preservado sem payload privado. Resultados em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
+[tests/projecao.test.cjs](../../tests/projecao.test.cjs) cobre seleção NTV, isolamento da entrada, campos selecionados, supressão e preservação de URLs, datas civis, formatos, cobertura, órfãos e ordem. US2 verifica fim da captura, virada do dia em São Paulo, quatro estados e precedência da falha sem payload privado; regressões em [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) conferem GET/no-op preservando falha/horário e nova captura encerrando a falha. Resultados em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-Duas dívidas Minor da revisão permanecem explícitas: `registros` em `src/captura.cjs:81` normaliza null explícito para string vazia na entidade (o envelope privado conserva o original); `selecionarNtv`/`planejar` em `src/projecao.cjs:33–62` usam índice da coleção filtrada + 2 nos avisos, que pode diferir da linha física original após linhas vazias/outra marca. Impacto: diagnóstico de célula não deve ser tratado como localização física comprovada. Resolver no módulo de origem com regressão antes de mudar o contrato ou a UI.
+Duas dívidas Minor da revisão permanecem explícitas: `registros` em `src/captura.cjs:81` normaliza null explícito para string vazia na entidade (o envelope privado conserva o original); `selecionarNtv`/`planejar` em `src/projecao.cjs:33–62` usam índice da coleção filtrada + 2 nos avisos, que pode diferir da linha física original após linhas vazias/outra marca. Impacto: diagnóstico de célula não deve ser tratado como localização física comprovada. A correção da linha física (M3) está adiada para US3/US5, no módulo de origem e com regressão.
