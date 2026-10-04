@@ -166,6 +166,23 @@ summary:focus-visible{outline:3px solid #6aac91;outline-offset:3px}
 .refresh-button{padding:10px 16px;background:var(--green);color:white;border-radius:6px;font-weight:600}
 .refresh-button:disabled{opacity:.6;cursor:wait}
 #releitura-aviso{font-size:12px;color:var(--muted);margin-top:10px}
+.sheet-tabs{display:flex;gap:5px;overflow-x:auto;max-width:100%;padding:4px 2px 10px;margin:18px 0 10px}
+.sheet-tabs button{flex-shrink:0;padding:9px 13px;border:1px solid var(--line);border-radius:6px;background:white;font-size:12px;color:var(--muted)}
+.sheet-tabs button[aria-selected=true]{background:var(--green-light);color:var(--green-dark);border-color:#bddac7;font-weight:600}
+.sheet-panel{min-width:0;max-width:100%;margin-bottom:24px}
+.sheet-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;flex-wrap:wrap}
+.sheet-heading>div{min-width:0;flex:1;overflow-wrap:anywhere}
+.sheet-heading p{color:var(--muted);font-size:12px}
+.sheet-heading button{padding:7px 10px;border:1px solid var(--line);background:white;border-radius:6px;font-size:12px}
+.table-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:white}
+.table-scroll:focus-visible,.sheet-panel:focus-visible{outline:3px solid #6aac91;outline-offset:3px}
+.table-scroll table{border-collapse:collapse;width:max-content;min-width:100%;font-size:12px}
+.table-scroll th,.table-scroll td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);min-width:150px;max-width:330px;white-space:pre-wrap;overflow-wrap:anywhere}
+.table-scroll th{background:#edf4ef;font-weight:600;color:#4d6457}
+.table-scroll tbody tr:last-child td{border-bottom:0}
+.table-scroll tbody tr:nth-child(even){background:#fbfcfb}
+.data-warnings{border-top:2px solid #e8d7ad;padding-top:10px}
+.data-warnings th{background:#fff8e7}
 @media(max-width:1050px){main{padding:25px 20px}.day{padding:8px 5px}.post strong{font-size:11px}}
 @media(max-width:720px){
   :root{--sidebar:0px}
