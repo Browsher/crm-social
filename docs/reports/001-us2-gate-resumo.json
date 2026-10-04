@@ -1,4 +1,6 @@
 {
+  "estadoDaEvidencia": "histórica; primeiro aceite da US2, anterior às correções temporais e à US3",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
   "observadoEm": "2026-10-04",
   "local": {
     "exitCode": 0,

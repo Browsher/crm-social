@@ -2,7 +2,7 @@
 
 Data: 03/10/2026. Decidido com o autor sobre o [mockup v2](mockups/telas-v2.html), construído sobre o [protótipo aprovado](prototype/index.html). Visual, componentes e identidade (Social Studio) seguem o protótipo.
 
-Como uma agenda que começa pelas páginas do mês, a entrega atual implementa T001–T022/US1 e US2; revisão corrente e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Os requisitos abaixo continuam sendo a meta completa: detalhes/acordeões, quadro e seis tabelas/Histórico ainda são futuros; a captura operacional permanece pendente.
+Como uma agenda que começa pelas páginas do mês, a entrega atual implementa T001–T026/US1, US2 e US3; revisão corrente e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Os requisitos abaixo continuam sendo a meta completa: quadro e seis tabelas/Histórico ainda são futuros; a captura operacional permanece pendente.
 
 ## Princípios
 
@@ -42,7 +42,7 @@ O horário vem do fim da captura (envelope), não da maior data das linhas. Clic
 - Filtros: Todos, Imagem, Carrossel, Reels. Troca Calendário / Lista.
 - **Calendário com cartões** (protótipo): formato, título e estado registrado. Tema da semana no primeiro dia da semana.
 - Dia com mais de uma peça: primeiro cartão + "+N no dia".
-- Peças sem data válida: link discreto "N sem data" abaixo do calendário, abrindo a lista delas (nunca somem do total).
+- Peças sem data válida: link discreto "N sem data" abaixo do calendário quando N > 0, abrindo a lista delas (nunca somem do total); com zero, o link não aparece.
 - **Clicar num cartão ou no dia abre a gaveta do dia inteiro.**
 - Lista: agrupada por semana (tema + período), mesma informação.
 
@@ -104,7 +104,7 @@ Como no protótipo. Prévias só de arquivos liberados; referência não aparece
 
 ## 10. Aplicação destas decisões no repositório
 
-A [spec da 001](../../specs/001-consulta-local-producao/spec.md) é a especificação funcional canônica. Seu [plano](../../specs/001-consulta-local-producao/plan.md), [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) e [tarefas](../../specs/001-consulta-local-producao/tasks.md) traduzem estas decisões em requisitos verificáveis. O [roadmap](../../ROADMAP.md) define 002 Planilhas, 003 planejamento mensal, 004 revisões, 005 prévias/biblioteca e 006 Equipe/Workflow. A entrega parcial implementa US1/US2; as decisões completas abaixo permanecem requisitos das próximas tarefas, conforme a nota de estado acima.
+A [spec da 001](../../specs/001-consulta-local-producao/spec.md) é a especificação funcional canônica. Seu [plano](../../specs/001-consulta-local-producao/plan.md), [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) e [tarefas](../../specs/001-consulta-local-producao/tasks.md) traduzem estas decisões em requisitos verificáveis. O [roadmap](../../ROADMAP.md) define 002 Planilhas, 003 planejamento mensal, 004 revisões, 005 prévias/biblioteca e 006 Equipe/Workflow. A entrega parcial implementa US1/US2/US3; as decisões completas abaixo permanecem requisitos das próximas tarefas, conforme a nota de estado acima.
 
 - O cartão ou dia selecionado abre todas as peças NTV daquele dia, inclusive outros formatos que um filtro tenha escondido no calendário. O filtro serve para localizar; não recorta a gaveta. A gaveta de um dia vazio informa ausência e não cria peças. Sem data válida abre uma lista identificada; um cartão sem data no quadro leva ao conjunto sem data da semana.
 - O selo usa a data civil de `completedAt` em America/Sao_Paulo. Sem captura válida, mostra **Sem dados**, com eventual falha no Histórico. Com captura válida e tentativa posterior falha, prevalece **Atualização falhou**; uma releitura HTTP bem-sucedida não apaga a falha da importação. Uma tentativa nova aceita encerra o aviso. A Planilha conserva fonte, instante e período completos.

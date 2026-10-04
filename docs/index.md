@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página localiza decisões, módulos e evidências: T001–T022/US1 e US2 implementadas, com revisão corrente e pendências na [validação](../specs/001-consulta-local-producao/validacao.md).
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: T001–T026/US1, US2 e US3 implementadas, com revisão corrente e pendências na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 ## Ordem de leitura
 
@@ -31,9 +31,9 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
 | [Importador](modules/importador.md) | scripts/importar-captura.cjs; argumentos/saída e falhas de entrada |
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; classificação ainda futura |
-| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos e quatro estados de frescor; quadro/Planilha completos ainda futuros |
+| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor e detalhes por versão/relação; quadro/Planilha completos ainda futuros |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; quatro rotas fixas e Host/Origin |
-| [Web/Planejamento](modules/web.md) | src/web; calendário/lista/filtros, diálogo básico, selo comum e detalhes/releitura em Planilha |
+| [Web/Planejamento](modules/web.md) | src/web; calendário/lista/filtros, gaveta em acordeões por peça, revisão/unidades/arquivos e origem/releitura em Planilha |
 
 ## Feature 001 canônica
 
@@ -44,7 +44,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [research.md](../specs/001-consulta-local-producao/research.md) | Pesquisa histórica de 03/10 e justificativas; não é status atual da implementação |
 | [data-model.md](../specs/001-consulta-local-producao/data-model.md) | Modelo alvo completo, entidades e transições; estado parcial no início |
 | [Contrato captura/consulta](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) | Envelope e 66 mínimos, persistência e UI completas; pendências explícitas |
-| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T022 marcadas e T023–T041 pendentes; rastreabilidade |
+| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T026 marcadas e T027–T041 pendentes; rastreabilidade |
 | [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, sete suítes, demo TEMP e roteiro final futuro |
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
@@ -60,6 +60,8 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Selo anterior 1440](design/screenshots/001-us2-anterior-1440.png) / [390](design/screenshots/001-us2-anterior-390.png) | Âmbar para outro dia civil |
 | [Selo falha 1440](design/screenshots/001-us2-falha-1440.png) / [390](design/screenshots/001-us2-falha-390.png) | Vermelho conserva as peças da captura válida |
 | [Sem dados 1440](design/screenshots/001-us2-sem-dados-1440.png) / [390](design/screenshots/001-us2-sem-dados-390.png) | Cinza sem captura, mesmo com tentativa falha |
+| [Gaveta com uma peça 1440](design/screenshots/001-us3-uma-peca-1440.png) / [390](design/screenshots/001-us3-uma-peca-390.png) | Primeira seção aberta; arquivos são registros sintéticos |
+| [Gaveta com várias peças 1440](design/screenshots/001-us3-varias-pecas-1440.png) / [390](design/screenshots/001-us3-varias-pecas-390.png) | Carrossel com páginas e Reels com cenas, separados por versão |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |
 | [Desenho histórico](design/desenho.md) | Proposta de 02/10 com referência às decisões vigentes |
@@ -76,9 +78,13 @@ As evidências têm origem, estado e limites registrados somente na [validação
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
 
-## Evidência local e remota da US2
+## Evidência histórica da US2
 
-[Resumo do gate local e prova Linux](reports/001-us2-gate-resumo.json); interpretação e estado corrente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+[Resumo histórico do gate da US2](reports/001-us2-gate-resumo.json); origem, limites e estado corrente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+
+## Evidência local da US3
+
+[Resumo do gate da gaveta](reports/001-us3-gate-resumo.json); resultados, limites e estado corrente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 ## Referências de desenvolvimento preservadas
 
@@ -95,6 +101,6 @@ As evidências têm origem, estado e limites registrados somente na [validação
 | [Git feature](../.specify/extensions/git/commands/speckit.git.feature.md) / [validate](../.specify/extensions/git/commands/speckit.git.validate.md) / [commit](../.specify/extensions/git/commands/speckit.git.commit.md) | Referências oficiais; documentação não concede autorização de Git |
 | [Templates do Spec Kit](../.specify/templates/) | Fontes oficiais de scaffold, sem alteração |
 
-Este índice cobre os Markdown autorais de docs/specs, governança/regra curta e referências locais pertinentes, mais as três evidências sanitizadas acima. Templates e catálogos de skills são ferramentas preservadas, não uma segunda especificação. Dados privados de data/, dependências e demais relatórios temporários ficam fora do índice.
+Este índice cobre os Markdown autorais de docs/specs, governança/regra curta e referências locais pertinentes, além das evidências sanitizadas referenciadas acima. Templates e catálogos de skills são ferramentas preservadas, não uma segunda especificação. Dados privados de data/, dependências e demais relatórios temporários ficam fora do índice.
 
 Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; tabelas de campos/rotas/env; Mermaid de imports/persistência; PT-BR com acentos e caminhos relativos. Atualizar na mesma tarefa, separando planejado, implementado, testado e integrado.

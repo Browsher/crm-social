@@ -1,0 +1,62 @@
+{
+  "observadoEm": "2026-10-04",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
+  "escopo": "US1-US3; somente fixtures sintéticas",
+  "local": {
+    "exitCode": 0,
+    "tests": {
+      "pass": 99,
+      "fail": 0,
+      "skip": 0,
+      "interface": 26
+    },
+    "results": [
+      {
+        "name": "tests",
+        "state": "PASS",
+        "reason": "",
+        "count": 99
+      },
+      {
+        "name": "coverage",
+        "state": "PASS",
+        "reason": "",
+        "percent": 97.01086956521739,
+        "drop": 0
+      },
+      {
+        "name": "complexity",
+        "state": "PASS",
+        "reason": ""
+      },
+      {
+        "name": "semgrep",
+        "state": "SKIP",
+        "reason": "Semgrep ausente; instalar CE 1.179.0"
+      },
+      {
+        "name": "audit",
+        "state": "N/A",
+        "reason": "sem package.json/dependencias do app"
+      }
+    ],
+    "complexityMax": 13,
+    "avisosComplexidade": [
+      {
+        "file": "scripts/importar-captura.cjs",
+        "line": 5,
+        "value": 12
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 115,
+        "value": 13
+      }
+    ],
+    "baselineAtualizada": false
+  },
+  "linux": {
+    "estado": "aguardando execução do PR",
+    "limite": "Semgrep deve executar realmente no Linux; métricas numéricas acima são locais."
+  }
+}

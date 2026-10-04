@@ -1,6 +1,6 @@
 # Consulta local da produção — Implementation Plan
 
-Como um álbum montado por partes, o plano define o leitor completo e a sequência de entrega. A primeira parte já existe; o restante abaixo continua sendo a solução planejada para concluir a 001.
+Como um álbum montado por partes, o plano define o leitor completo e a sequência de entrega. As três primeiras histórias já existem; o restante abaixo continua sendo a solução planejada para concluir a 001.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: use `superpowers:subagent-driven-development` na execução desta feature, ou `superpowers:executing-plans` se ela for executada sequencialmente. Este documento é o plano canônico; não criar uma segunda cópia em `docs/superpowers/plans/`.
 
@@ -12,7 +12,7 @@ Como um álbum montado por partes, o plano define o leitor completo e a sequênc
 
 **Spec:** [spec.md](spec.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas aprovadas](../../docs/design/telas.md).
 
-T001–T022/fundação, US1 e US2 estão implementadas; revisão corrente e evidências na [validação](validacao.md). As interfaces reais estão na [arquitetura](../../docs/architecture.md); detalhes/acordeões, quadro, tabelas/Histórico e iniciador ainda são metas, sem captura operacional validada ou leitura real Google.
+T001–T026/fundação, US1, US2 e US3 estão implementadas; revisão corrente e evidências na [validação](validacao.md). As interfaces reais estão na [arquitetura](../../docs/architecture.md); quadro, tabelas/Histórico e iniciador ainda são metas, sem captura operacional validada ou leitura real Google.
 
 **Branch:** `001-consulta-local-producao`, criada da `main` no repositório `crm-social` e conferida nesta tarefa. Não executar novamente a criação da feature para atualizar estes documentos.
 
@@ -112,6 +112,7 @@ Interfaces internas propostas, com envelope e campos definidos somente pelo [con
 - O estado único `data/atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`; captura e última tentativa podem ser null, lista inicial vazia. Capturas e recibos imutáveis são preparados antes da substituição atômica no mesmo diretório. Essa substituição confirma os IDs do Histórico e a captura vigente juntos; arquivos órfãos/preparados não comprovam aceitação nem entram no Histórico. Falha confirmada conserva `capturaId`, acrescenta seu recibo e troca a última tentativa; `data/ultima-tentativa.json` é resumo derivado, sem autoridade concorrente. Falha ao gravar recibo/estado é erro explícito de persistência, nunca sucesso ou garantia de recibo durável.
 - `validarMapaQuadro(raw)` é função pura; `carregarMapaQuadro(configPath)` lê JSON real e valida antes de devolver o mapa. Schema/conteúdo inicial no contrato; rótulo repetido no mesmo campo ou coluna inexistente é erro claro. Não codificar os rótulos como tabela paralela no JavaScript.
 - `projetarVisao(estadoLocal, nowIso, mapaQuadro)` recebe o estado de `lerEstado`, inclusive captura ausente/falha, e o mapa validado, retornando o envelope local de `/api/visao`. Não enviar estado privado nem configuração bruta diretamente ao HTTP.
+- No recorte implementado até US3, cada produção contém `detalhes`: responsável/publicação registrados, páginas/cenas por versão, revisões vigentes/resolvidas/anteriores/ambíguas, arquivos e documentos da semana por ponteiro, com avisos localizados pela linha física. Os grupos de quadro e as tabelas de Planilha ainda são futuros. A UI usa os IDs completos do dia, primeiro acordeão aberto e links somente HTTPS Drive/Docs sem credenciais, por clique.
 - `criarServidor({dataDir, port, webDir, quadroConfigPath})` carrega o mapa antes de devolver servidor Node ainda não iniciado; erro impede início. O ponto de entrada escuta exclusivamente em `127.0.0.1`. `quadroConfigPath` padrão `config/quadro-etapas.json` e `webDir` padrão `src/web/` são argumentos confiáveis de teste, nunca entradas HTTP. T013 cria os três estáticos sintéticos em TEMP para testar a fundação antes de T018; a allowlist permanece fixa mesmo com diretório injetado.
 - Importador: `node scripts/importar-captura.cjs <caminho-local> [--data-dir <diretorio-local>]`; diretório padrão `data/`.
 - Iniciador: `Iniciar CRM.ps1 [-DataDir <diretorio-local>] [-Port <porta>] [-NodePath <exe>]`. Padrões locais; argumentos permitem teste real em diretório e porta isolados. Porta ocupada não encerra outro processo.

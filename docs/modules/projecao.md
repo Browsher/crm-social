@@ -1,8 +1,8 @@
-# Projeção de Planejamento
+# Projeção de Planejamento e detalhe do dia
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Estado em 04/10/2026: base T012, US1/T016 e US2/T020 implementadas e testadas localmente. Fonte: [src/projecao.cjs](../../src/projecao.cjs), `selecionar` (linha 6), `selecionarNtv` (26), `planejar` (47), `agruparDias` (67), `aplicarFrescor` (76) e `projetarVisao` (95).
+Projeção e detalhes implementados até T024/US3; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs), `selecionar` (linha 6), `selecionarNtv` (26), `planejar` (55), `agruparDias` (77), `aplicarFrescor` (86), `unidades` (143), `revisoes` (161), `avisarPublicacao` (200), `detalhar` (209) e `projetarVisao` (222).
 
 ## Interface, seleção e dados
 
@@ -16,12 +16,12 @@ Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro
 | `captura` | null sem captura; senão capturaId, completedAt, período e contagens NTV |
 | `estado` / `selo` | Quatro estados contratuais abaixo; destino planilha em todos eles |
 | `semanas` | Mínimos selecionados + período civil de sete dias, objetivo mensal indefinido e IDs ordinais |
-| `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null e formato por slot |
+| `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null, formato por slot e detalhes de cada produção |
 | `dias` | Grupos por data civil; sem data agrupado por semanaId, inclusive null |
 | `quadro` | Oito colunas fixas com IDs vazios; classificação futura |
 | `planilha` | Lista vazia; seis tabelas futuras em US5 |
 | `historico` / `ultimaTentativa` | Recibos confirmados selecionados, recentes primeiro; tela ainda pendente |
-| `avisos` | Data/semana inválidas, supressão localizada de conteúdo sensível e aviso curto de última importação falha quando há captura vigente |
+| `avisos` | Data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
 
 | Precedência | `estado` | Texto / cor |
 | --- | --- | --- |
@@ -32,7 +32,7 @@ Imports: `CAMPOS` de [captura](captura.md) e `COLUNAS` de [quadro-config](quadro
 
 Com captura vigente e `ultimaTentativa.resultado=falhou`, a projeção acrescenta **Última importação falhou; captura anterior preservada**, sem expor motivo bruto, caminho ou conteúdo privado. A UI apresenta motivos resumidos distintos em Planilha. GET/no-op não apagam a tentativa confirmada, não renovam `completedAt` e não encerram a falha; nova captura completa aceita encerra a falha na persistência. O cálculo não modifica a entrada ou o horário da captura.
 
-Semanas/produções exigem `marca_id=ntv`. Páginas, cenas e revisões são selecionadas pelo conjunto de produções; arquivos, pela produção ou semana quando não têm produção. Seus conjuntos contribuem às contagens, sem detalhamento público já implementado. Nenhum seletor de elegibilidade do n8n é reutilizado.
+Semanas/produções exigem `marca_id=ntv`. Páginas, cenas e revisões são selecionadas pelo conjunto de produções; arquivos, pela produção ou semana quando não têm produção. Seus registros mínimos selecionados alimentam contagens e detalhes; nenhum seletor de elegibilidade do n8n é reutilizado.
 
 Somente campos mínimos explícitos são considerados; envelope, metadados/hash de coleta, extras arbitrários e mapa bruto não são servidos. Recibo público contém apenas tentativaId, concluidaEm, resultado e motivoResumo.
 
@@ -53,10 +53,34 @@ Somente campos mínimos explícitos são considerados; envelope, metadados/hash 
 
 Dia válido agrupa todas as peças NTV na data, independente de formato. Sem data agrupa por semana. O contador global é realizado pela UI sobre todas as produções sem dataCivil.
 
+## Detalhes, versões e relações
+
+Como páginas numeradas de um álbum, unidades de versões diferentes permanecem em conjuntos distintos. `detalhar` acrescenta `detalhes` em cada produção, sem atualizar registros ou preencher lacunas por inferência:
+
+| Campo de `detalhes` | Regra real |
+| --- | --- |
+| `responsavelRegistrado` | `responsavel_atual` como registrado; vazio usa A confirmar |
+| `publicacaoRegistrada` | `publicado_em` preenchido; original preservado, com aviso para formato/fuso inválidos ou instante posterior à captura, sem conferência remota |
+| `paginas` / `cenas` | Todas as unidades da produção, ordenadas por versão positiva, índice positivo e ID ordinal; inválidos preservados com aviso e depois dos válidos |
+| Unidade `vigente` | Versão inteira positiva igual à versão registrada da produção; UI mostra essa versão primeiro e as demais recolhidas, com impacto a confirmar |
+| `designNovo` | A confirmar nas páginas; versão/template/arquivo não prova classificação de design |
+| `revisoes` | Grupos vigentes, resolvidas, anteriores e ambíguas, sem substituir responsável da peça por responsável da correção |
+| `arquivos` | Registros da produção ordenados por arquivo_id; nome de apresentação é tipo/papel ou Arquivo registrado, sem fabricar nome original |
+| `documentosSemana` | Ponteiros Plano/Redação/Visual da semana resolvidos por arquivo_id e semana_id; ausentes/incompatíveis a confirmar |
+| `avisos` | Avisos locais de detalhe também presentes no conjunto global, com origem física e motivo fixo |
+
+Revisões `resolvido`/`resolvida` vão ao histórico mesmo quando de outra versão. Nas demais, versão inválida ou ponteiro de página/cena/arquivo sem produção e versão compatíveis vai ao grupo ambíguas; versão válida diferente da produção vai a anteriores. Só revisão com vínculo e versão atual é vigente. Tratamento desconhecido não é encerramento: permanece vigente com aviso. Decisão, motivo, versão e `responsavel_correcao` conservam seus valores e aparecem separados de `responsavel_atual`; não se infere aguardando-de ou próxima ação.
+
+Os IDs de página/cena/arquivo de cada revisão também permanecem na API e na gaveta, para explicar o escopo avaliado sem inferir a unidade por posição. `avisarPublicacao` verifica o valor preenchido contra formato ISO com fuso explícito, data civil válida, instante reconhecido e `captura.completedAt`; inconsistência acrescenta aviso em Produções/linha física/`publicado_em`, mantendo o registro e o original.
+
+Cada ponteiro de mídia de página/cena procura o arquivo por ID, exigindo a mesma produção e versão positiva; se o arquivo registra página/cena, também exige a unidade esperada. Ponteiro vazio, ID ausente ou escopo incompatível produz ausência/aviso e não escolhe substituto. Os demais arquivos continuam aparecendo como registros, incluindo empates por papel/versão/página/cena: empate e origens JSON inválidas são avisos, sem escolha automática de vigente. Referência e registro não comprovam bytes, aprovação ou publicação.
+
+Versão/índice preenchidos exigem inteiros positivos; início/duração preenchidos exigem números finitos não negativos. Valores inválidos são mantidos com aviso, nunca coercidos a zero. A linha dos avisos vem do ID na matriz original e acompanha o registro selecionado em WeakMap; linhas vazias e marcas filtradas não deslocam a localização física. A API não envia a matriz bruta nem os mapas internos.
+
 ## Supressão, testes e dívidas
 
 A expressão `sensivel` (linha 5) procura formatos conhecidos de segredo/chave e caminhos pessoais indevidos; troca a célula por **[conteúdo suprimido]** e acrescenta aviso. É triagem conservadora, sem garantia de detectar todos os segredos. A regressão preserva HTTP/HTTPS comuns, inclusive como texto dentro de JSON; a regra de drive Windows não confunde o final do esquema com caminho.
 
-[tests/projecao.test.cjs](../../tests/projecao.test.cjs) cobre seleção NTV, isolamento da entrada, campos selecionados, supressão e preservação de URLs, datas civis, formatos, cobertura, órfãos e ordem. US2 verifica fim da captura, virada do dia em São Paulo, quatro estados e precedência da falha sem payload privado; regressões em [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) conferem GET/no-op preservando falha/horário e nova captura encerrando a falha. Resultados em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
+[tests/projecao.test.cjs](../../tests/projecao.test.cjs) cobre seleção NTV, isolamento da entrada, campos selecionados, supressão e preservação de URLs, datas civis, formatos, cobertura, órfãos e ordem. US2 verifica fim da captura, virada do dia em São Paulo, quatro estados e precedência da falha sem payload privado; US3 cobre responsáveis/revisões, ordenação e isolamento de versões, mídias ausentes/incompatíveis/empatadas, números/JSON inválidos e linha física dos avisos. Regressões em [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) conferem GET/no-op preservando falha/horário e nova captura encerrando a falha. Resultados em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-Duas dívidas Minor da revisão permanecem explícitas: `registros` em `src/captura.cjs:81` normaliza null explícito para string vazia na entidade (o envelope privado conserva o original); `selecionarNtv`/`planejar` em `src/projecao.cjs:33–62` usam índice da coleção filtrada + 2 nos avisos, que pode diferir da linha física original após linhas vazias/outra marca. Impacto: diagnóstico de célula não deve ser tratado como localização física comprovada. A correção da linha física (M3) está adiada para US3/US5, no módulo de origem e com regressão.
+Uma pegadinha permanece explícita: `registros` em `src/captura.cjs:81` normaliza null explícito para string vazia na entidade; o envelope privado conserva o original. A linha física dos avisos já é preservada, inclusive após linhas vazias ou de outra marca. A classificação de Produção e as seis tabelas de Planilha continuam futuras; detalhe e recibo não comprovam integração operacional.

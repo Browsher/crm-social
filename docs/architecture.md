@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-T001–T022 estão implementadas (fundação, US1 e US2); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; captura operacional e leitura Google permanecem pendentes.
+T001–T026 estão implementadas (fundação, US1, US2 e US3); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; captura operacional e leitura Google permanecem pendentes.
 
 ## Módulos e imports reais
 
@@ -32,9 +32,9 @@ flowchart LR
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
 | quadro-config | Validador genérico; JSON versionado atual tem nove etapas e duas listas vazias; distribuição dos cartões ainda futura | [Configuração](modules/quadro-config.md) |
-| projecao | Seleção NTV e campos permitidos, semanas/dias/formatos e quatro estados de frescor | [Projeção](modules/projecao.md) |
+| projecao | Seleção NTV e campos permitidos, semanas/dias/formatos, quatro estados de frescor e detalhes por versão/relação | [Projeção](modules/projecao.md) |
 | servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
-| web | Planejamento/calendário/lista/filtros, diálogo básico, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, gaveta com acordeões por peça, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -51,16 +51,25 @@ flowchart TD
   Falha --> Lock[Exclusividade por diretório]
   Promover --> Lock
   Lock --> Estado[Ler estado confirmado]
-  Estado --> Validar[Validar captura ou preservar anterior em falha]
-  Validar --> Preparar[Captura e recibo imutáveis preparados]
+  Estado --> Validar{Estrutura válida?}
+  Validar -->|não| Rejeitar[Recibo falhou preserva a vigente]
+  Validar -->|sim| Conflito{Mesmo ID com outros bytes?}
+  Conflito -->|sim| Rejeitar
+  Conflito -->|não| Aceita{ID e bytes já aceitos?}
+  Aceita -->|sim| NoOp[sem_alteracao sem novo recibo]
+  Aceita -->|não| Tempo{Futuro até 10 min e fim posterior se há vigente?}
+  Tempo -->|não| Rejeitar
+  Tempo -->|sim| Preparar[Captura e recibo imutáveis preparados]
+  Rejeitar --> Ponteiro
   Preparar --> Ponteiro[Ponteiro temporário no mesmo diretório]
   Ponteiro --> Confirmar[rename confirma atual.json]
   Ponteiro -->|gravação ou rename falhou| Limpeza[Remover temporário se possível e conservar erro original]
   Confirmar --> Cache[Resumo derivado e liberação da trava]
+  NoOp --> Liberar[Liberar somente a trava adquirida]
   Confirmar --> Ler[lerEstado consulta apenas IDs confirmados]
   Ler --> Projetar[projetarVisao seleciona registros permitidos]
   Projetar --> API[GET /api/visao]
-  API --> UI[Planejamento e origem/atualização no navegador]
+  API --> UI[Planejamento, gaveta do dia e origem/releitura no navegador]
 ```
 
 `atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`. Capturas e recibos são preparados com abertura exclusiva e fsync antes do rename. Falha na gravação/rename do ponteiro tenta remover somente seu temporário, preservando o erro original se a limpeza também falhar. Resumo `ultima-tentativa.json` é derivado; falha dele não muda o estado confirmado. Arquivo órfão de interrupção não comprova aceitação nem entra no Histórico.
@@ -74,6 +83,8 @@ flowchart TD
 | `ultima-tentativa.json` | Cache derivado, sem autoridade concorrente |
 
 Mesmo ID e serialização já aceitos devolvem `sem_alteracao`, sem novo recibo/frescor/rollback. Conteúdo diferente no mesmo ID é conflito. Falha confirmável preserva captura e acrescenta recibo saneado; impossibilidade de registrar gera erro explícito. Interrupção pode deixar trava: não há expiração/remoção automática; conferir proprietário/processo/estado antes de recuperação manual. Os detalhes de falha, órfãos e concorrência estão no [módulo snapshot](modules/snapshot.md).
+
+A validação temporal ocorre sob trava, depois de estrutura/conflito/no-op e antes de gravar a candidata: fim até 10 minutos no futuro é permitido, inclusive o limite; excedente é inválida, e ID novo com fim igual ou anterior ao vigente é desatualizada. Ambas confirmam motivo fixo no recibo e mantêm a vigente. GET/releitura/reinício validam estrutura sem reaplicar essa política relativa à importação.
 
 A liberação tenta close e unlink separadamente. Avisos transitórios de liberação acompanham o resultado/erro original, sem alterar o recibo confirmado; o CLI os imprime em stderr e preserva o exit do resultado. A projeção `(estadoLocal, nowIso, mapaQuadro)` usa `nowIso` e `captura.completedAt` para frescor em São Paulo. A classificação dos cartões pelo mapa permanece em US4.
 
@@ -112,13 +123,13 @@ Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-con
 
 ## O que já aparece e o que falta
 
-Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” global, objetivo indefinido e diálogo básico do dia inteiro. Peça remarcada segue sua data civil no mês e continua agrupada pela semana registrada. Seis status literais recebem rótulos legíveis só na UI; desconhecidos e API mantêm o original. Mês usa somente inicial maiúscula; calendário inclui apenas semanas com dia do mês e sidebar desktop acompanha a altura da página. Desktop usa calendário; 390 px começa em lista e menu recolhido. [Screenshots](design/screenshots/LEIA-ME.md) são da aplicação com dados fictícios.
+Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” global, objetivo indefinido e gaveta do dia inteiro em acordeões. Peça remarcada segue sua data civil no mês e continua agrupada pela semana registrada. Seis status literais recebem rótulos legíveis só na UI; desconhecidos e API mantêm o original. Mês usa somente inicial maiúscula; calendário inclui apenas semanas com dia do mês e sidebar desktop acompanha a altura da página. Desktop usa calendário; 390 px começa em lista e menu recolhido. [Screenshots](design/screenshots/LEIA-ME.md) são da aplicação com dados fictícios.
 
 US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
 
 Planilha mostra fonte, fim da captura, cobertura semanal e motivos resumidos distintos dos avisos, com `role=status`; tabelas/Histórico permanecem em US5. **Atualizar dados** desabilita apenas o próprio botão durante `GET /api/visao` com cache no-store. Sucesso atualiza a visão mantendo a tela; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
-Detalhes/relações/acordeões são US3/T023–T026; classificação/quadro são US4/T027–T030; seis tabelas/Histórico são US5/T031–T034. Produção conserva a mensagem de próxima entrega. Iniciador, escala e aceite completo são posteriores; 19 tarefas T023–T041 permanecem pendentes.
+US3/T023–T026 entrega o detalhe de todas as peças do dia, independentemente do filtro do resumo: primeira seção em acordeão aberta, versões de páginas/cenas separadas, revisão vigente e resolvidas em grupos próprios, IDs de escopo avaliados, arquivos como registros e avisos com aba/linha física/campo. Publicação preenchida inconsistente conserva o original com aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo fecha com Esc e devolve foco; no celular ocupa a tela inteira. Classificação/quadro são US4/T027–T030; seis tabelas/Histórico são US5/T031–T034. Produção mantém a mensagem de próxima entrega; iniciador, escala e aceite completo continuam posteriores, com 15 tarefas T027–T041 pendentes.
 
 ## Ferramentas de qualidade, evidência e dívidas
 
@@ -138,15 +149,15 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
 | null vira célula vazia na entidade | src/captura.cjs:81; envelope original preservado, mas projeção perde essa distinção |
-| Avisos usam índice filtrado (M3) | src/projecao.cjs:33–62; número pode diferir da linha física de origem; correção adiada para US3/US5 |
-| Classificação pelo mapa pendente | src/projecao.cjs:95; mapa recebido, distribuição dos cartões reservada a US4 |
+| Classificação pelo mapa pendente | src/projecao.cjs:222; mapa recebido, distribuição dos cartões reservada a US4 |
 | I/O síncrono e validação por consulta | src/snapshot.cjs:20 e src/servidor.cjs:25; escala final ainda não exercitada em T037 |
 | Trava sobrevivente à interrupção | src/snapshot.cjs:72; exige reconciliação manual; aviso de liberação preserva resultado/erro |
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Aviso de complexidade do CLI | scripts/importar-captura.cjs:5, valor 12; manutenção sem retirar validações |
+| Complexidade da montagem do acordeão | src/web/app.js:115; reúne as seções da peça; preservar testes de comportamento em futuras extrações, métricas na validação |
 | Fonte/hashes no envelope não são prova de coleta | src/captura.cjs:27–118; Central e captura real ainda devem ser conferidas |
 | Custo e limite do review | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
 | Aplicabilidade dos pulos de UI e UI fora do LCOV | tests/interface.test.cjs; pendência M8; CI/cobertura não substituem os testes locais da interface |
 
-As dívidas Minor não foram corrigidas nesta rodada. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.
+A projeção preserva a linha física dos avisos desde a matriz privada, por ID e WeakMap; não usa índice filtrado como localização. As demais dívidas acima continuam explícitas. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.

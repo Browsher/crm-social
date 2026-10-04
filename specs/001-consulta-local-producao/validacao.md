@@ -182,6 +182,8 @@ Inspeção das oito imagens: textos/cores coerentes, ausência de corte e cards 
 
 ### Pendências preservadas e aceite remoto
 
+**Retrato histórico do primeiro envio da US2.** As políticas antes sem decisão e a instrução de manter o PR aberto foram substituídas pela decisão do autor e pelo aceite/merge registrados nas seções seguintes. Contagens desta seção pertencem àquele envio.
+
 T001–T022 concluídas (**22/41**); T023–T041 pendentes (**19**). A próxima história é US3/gaveta do dia. A política para **ID novo com completedAt anterior/igual à captura vigente** continua sem decisão do autor; esta entrega não inventa rejeição cronológica nem consulta histórica explícita. Só fixtures sintéticas, sem captura operacional. M3/índice de linha permanece para os avisos da US3/US5; null explícito continua normalizado sem apagar o envelope original. M8: os **14 casos de interface** são locais e têm SKIP explícito no CI, fora do LCOV de Node; o CLI permanece incluído no LCOV, conforme a evidência histórica acima.
 
 O registro pré-push acima foi seguido pelo aceite de execução abaixo. **O PR da US2 deve permanecer aberto, sem merge.**
@@ -253,3 +255,108 @@ solicitado. Link zero na primeira carga 503 reproduzido em RED **17 PASS / 1 FAI
 HTML inicia `hidden` e render só exibe para N>0. Contagens antigas da interface
 foram retiradas dos documentos de entrada/módulos. A suíte e o gate foram repetidos
 após essa correção. Regra de estrutura: 37 linhas, não a contagem histórica anterior.
+
+## PR #8 — aceite das correções e integração da US2
+
+Head corrigido `d98f71958de26a54e8dd2e2b38dad0a5bdf99211`; diff final de **41 arquivos**
+contra a base `7e17e85`. Suite local **83 PASS / 0 FAIL / 0 SKIP** (18 de interface),
+gate exit 0, cobertura 96,2457%, complexidade PASS (máximo 12), Semgrep SKIP Windows,
+audit N/A; baseline inalterada. Documentos de estado apontam para este histórico.
+
+[Gate Linux SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37206544756/job/111448800900):
+tests, coverage, complexity e **Semgrep 1.179.0 real PASS**, audit N/A, exit 0.
+[Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37206544682/job/111448800441)
+publicou [novo comentário](https://github.com/Browsher/crm-social/pull/8#issuecomment-5980642217),
+sem Critical ou Important; oito Minor. Sem regressão ou achado de segurança bloqueante.
+
+O [PR #8 foi integrado](https://github.com/Browsher/crm-social/pull/8) por merge commit
+`869f0bdba61fd9e9a02133ed43ba8cecb3348598`, com pais `7e17e85` e `d98f719`, autoria
+`204295625+Browsher@users.noreply.github.com` e committer `noreply@github.com`.
+A branch 001 foi mantida e recebeu main localmente antes da US3. O PR #1 permanece aberto.
+
+| Minor do segundo review | Tratamento |
+| --- | --- |
+| m-1 histórico de política desatualizado | Retrato antigo identificado explicitamente acima; regra vigente é a decisão temporal do autor |
+| m-2 contagem antiga de interface no quickstart | Corrigida na sincronização da US3; contagem atual somente como estado local |
+| m-3 JSON de resumo antigo | Marcado como evidência histórica; a US3 tem resumo sanitizado próprio |
+| m-4 dois testes históricos com Date real/horário fixo | Dívida de determinismo registrada; passaram no relógio atual, sem afirmar que o tempo não importa |
+| m-5 números de linha web antigos | Referências atualizadas com o código da US3 |
+| m-6 Mermaid sem passo temporal | Fluxo sincronizado na US3 |
+| m-7 margem futura atravessando meia-noite | Estado âmbar de outro dia civil é coerente com contrato; não inferir política diferente |
+| m-8 require direto/helper no snapshot | Estilo sem regressão funcional; precedência de no-op/conflito preservada |
+
+## US3 — gaveta do dia inteiro (T023–T026)
+
+Base `869f0bd`; head de código observado `98a064b`. **26/41 tarefas concluídas**,
+15 pendentes (T027–T041). Quadro/US4, tabelas/Histórico/US5 e iniciador continuam
+futuros. Nenhuma captura real, dependência nova, alteração de gate/CI/baseline ou
+leitura/escrita de data/ privado. Todas as capturas da entrega são sintéticas em TEMP.
+
+| Tarefa / commit | RED observado | GREEN observado |
+| --- | --- | --- |
+| T023 `ed6cfb2` → T024 `41b0a7f` | Projeção: 16 PASS / 7 FAIL / 0 SKIP; detalhes/relacionamentos ausentes | 23 PASS / 0 FAIL / 0 SKIP; suíte então 90 PASS |
+| T025 `7970b26` → T026 `98a064b` | Interface: 18 PASS / 6 FAIL / 0 SKIP; faltavam acordeões/versões/links/foco | 24 PASS / 0 FAIL / 0 SKIP; suíte completa **96 PASS / 0 FAIL / 0 SKIP** em 14,83 s |
+
+Uma tentativa da suíte no sandbox produziu spawn EPERM antes dos casos; executada
+fora desse limite, passou. Isso foi impedimento do runner, sem alterar os testes.
+O [resumo sanitizado do gate](../../docs/reports/001-us3-gate-resumo.json) registra
+exit 0, cobertura **96,9697%**, complexidade/ESLint PASS (dois avisos, nenhum >=21),
+Semgrep SKIP por ausência no Windows, audit N/A. A interface passou localmente;
+CI conserva SKIP explícito para os casos locais, fora do LCOV, como pendência M8.
+
+Relações não inventam mídia, responsável, publicação ou design novo. As versões
+ficam separadas e revisões resolvidas/antigas/ambíguas não viram correção atual.
+Esc e fechamento por botão restauram o foco; o dia não é recortado pelo filtro.
+A linha física dos avisos considera vazios e outra marca; fecha a pendência M3
+da projeção. A gaveta também apresenta a localização junto ao motivo, sem perder o registro afetado.
+
+### Quatro screenshots da aplicação real
+
+Inspecionadas visualmente, sem corte horizontal, pageerror ou requisição externa.
+Uma peça em 01/10: imagem. Várias em 02/10: carrossel com páginas e Reels com cenas.
+Viewport normal **1440/390 × 1050** para uma peça; altura **4800** para registrar os
+dois acordeões abertos integralmente, sem montagem. A abertura padrão mantém só
+a primeira peça aberta; a segunda foi expandida por clique para as imagens.
+O teste mobile em 390 × 1050 confirmou a gaveta ocupando a tela e rolagem interna.
+
+![US3 uma peça, desktop 1440](../../docs/design/screenshots/001-us3-uma-peca-1440.png)
+
+![US3 uma peça, celular 390](../../docs/design/screenshots/001-us3-uma-peca-390.png)
+
+![US3 várias peças, desktop 1440](../../docs/design/screenshots/001-us3-varias-pecas-1440.png)
+
+![US3 várias peças, celular 390](../../docs/design/screenshots/001-us3-varias-pecas-390.png)
+
+[Procedência e limites](../../docs/design/screenshots/LEIA-ME.md). Fim sintético
+da captura visual: 04/10/2026 11:08 em São Paulo. Imagens não provam leitura Google,
+disponibilidade remota dos arquivos ou a feature completa.
+
+### Revisão independente e verificação final da US3
+
+Revisão estática somente leitura contra `869f0bd..98a064b`: zero Critical e três
+Important de completude/rastreabilidade, nenhum achado de segurança. Sem testes,
+scanners ou acesso a data/ por esse agente. Adaptação no Codex: leitura por comandos
+locais, pois as ferramentas Read/Grep/Glob não estão expostas nesta execução.
+
+Uma única passagem de correções, commit `450e780`, observou **47 PASS / 3 FAIL**
+em projeção/interface antes de implementar: a UI omitia página/cena/arquivo da
+revisão e aba/linha/campo dos avisos; publicação inconsistente não gerava aviso.
+GREEN completo final: **99 PASS / 0 FAIL / 0 SKIP**, incluindo **26 de interface**,
+em **15,97 s**. Registro preenchido de publicação continua visível, mesmo inválido;
+aviso cobre formato/fuso inválido, data impossível, tipo inesperado e instante
+posterior a completedAt. Não foi antecipada a classificação do quadro US4.
+
+Gate final local exit 0: tests PASS, coverage PASS **97.0109%**, complexity/
+ESLint PASS (máximo 13; avisos no CLI e acordeaoPeca), Semgrep SKIP Windows,
+audit N/A; baseline inalterada. Comando node tools/quality-gate.mjs, Node 24.19.0 e
+Playwright existente. Nenhuma dependência instalada. As quatro screenshots foram
+renovadas após as correções e continuam somente sintéticas. Regra de estrutura:
+40 linhas; links relativos/cercas balanceadas, varredura de dados privados limpa.
+O resumo da US2 foi marcado explicitamente como histórico; o atual está ligado acima.
+
+Head de código validado `450e780420a68d59c3df68715e524f149d52a500`; resultados remotos
+da US3 serão registrados depois da execução, sem antecipar SHA ou conclusão.
+Diff da US3 contra `869f0bd`: **30 arquivos**, incluindo os quatro PNG e o resumo
+sanitizado novo. O head de código acima é a referência testada; o commit documental
+seguinte mantém esse código. Todos os T001–T026 estão marcados; T027–T041 continuam
+desmarcados. Constituição, skills, gate/CI/baseline e bloco gerenciado intactos.

@@ -6,9 +6,9 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Feature Directory**: `specs/001-consulta-local-producao`
 
-**Created**: 2026-10-02 | **Updated**: 2026-10-04 (regra temporal aprovada e correções da US2)
+**Created**: 2026-10-02 | **Updated**: 2026-10-04 (US3/gaveta do dia e regra temporal aprovadas)
 
-**Status**: Fundação, US1 e US2 implementadas; demais histórias e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
+**Status**: Fundação, US1, US2 e US3 implementadas; demais histórias e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
@@ -220,7 +220,8 @@ preservando dados privados apenas neste computador.
 - **FR-005**: separar data prevista de publicação; classificar Publicada somente com
   `publicado_em` preenchido, avisando inconsistências de data sem verificar publicação remota.
   Manter "N sem data" acessível contando
-  todas as peças NTV sem data válida, sem desaparecer por filtro ou navegação de mês.
+  todas as peças NTV sem data válida, sem desaparecer por filtro ou navegação de mês;
+  quando não há peças sem data, ocultar o link.
 - **FR-006**: detalhar semana, textos, páginas/cenas, estados, responsável, revisões e
   documentos relacionados, mantendo suas versões e pendências de vínculo separadas.
 - **FR-007**: resolver arquivos por IDs internos, mostrar nome de apresentação, versão,

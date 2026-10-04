@@ -1,6 +1,6 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1 e US2 implementadas; detalhes e demais histórias continuam pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1, US2 e US3 implementadas; quadro, tabelas/Histórico e iniciador continuam pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
 Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura
@@ -253,7 +253,8 @@ Cada peça apresenta estado/formato, etapa, responsável, previsão, publicaçã
 textos, páginas/cenas, revisões e arquivos. Revisão mostra decisão, motivo, versão e
 quem corrige. `resolvido`/`resolvida` é histórico cinza; estado desconhecido não é
 resolução. Revisão antiga aberta não se aplica automaticamente à versão nova;
-sem vínculo inequívoco, informar impacto a confirmar.
+sem vínculo inequívoco, informar impacto a confirmar. Mostrar pagina_id, cena_id e
+arquivo_id registrados junto da versão avaliada, sem inferir escopo ausente.
 
 Ordenar páginas/cenas por índice dentro da produção e versão pertinente, sem misturar
 versões para preencher uma sequência. Página mostra versão e indicador de design
@@ -266,6 +267,49 @@ versão e rótulo "registro". Isso não promete nome original do Drive, ausente 
 nem download/conferência dos bytes. Resolver ponteiros por `arquivo_id` interno;
 Editor/Motion requerem produção, papel, versão e origens inequívocas, com aviso em empate.
 Mídia ausente e referência quebrada aparecem como tais; sem preview automática na 001.
+
+### Detalhes projetados da US3
+
+`producoes[].detalhes` é construído pelo servidor a partir dos mínimos selecionados,
+sem repassar o envelope privado. Como fichas dentro da mesma pasta, os registros
+conservam a produção, versão e ponteiro que os identifica; não preencher lacunas
+de uma versão com unidades de outra.
+
+| Campo adicional | Forma e origem |
+| --- | --- |
+| `responsavelRegistrado` | responsavel_atual preservado; vazio = A confirmar |
+| `publicacaoRegistrada` | booleano derivado somente de publicado_em preenchido; não é consulta remota |
+| `paginas` / `cenas` | mínimos preservados, `vigente` só com versão inteira positiva igual à da peça, `arquivos` ligados ou null; páginas também têm `designNovo:'A confirmar'` |
+| `revisoes` | `{vigentes,resolvidas,anteriores,ambiguas}`; mínimos selecionados, sem fabricar correção atual |
+| `arquivos` | registros da produção, com `nomeApresentacao` por tipo/papel e fallback Arquivo registrado; todas as versões continuam identificadas |
+| `documentosSemana` | `[{papel,arquivo}]` para Plano, Redação e Visual, ligados pelo ponteiro interno da semana; ausência = null |
+| `avisos` | avisos localizados da peça/unidades/vínculos, com aba/linha física/campo e motivo; conteúdo privado não é anexado |
+
+Ponteiro de página/cena exige arquivo da mesma produção e versão inteira positiva;
+se o arquivo declara pagina_id/cena_id, precisa coincidir com a unidade. Ponteiro
+semanal exige a mesma semana. Referência quebrada ou incompatível dá null e aviso,
+sem selecionar outra mídia. Arquivos empatados por papel/versão/unidade geram aviso
+e permanecem como registros separados; `origens_json` é texto preservado, validado
+somente quanto à sintaxe JSON, sem executar ou inferir equivalência das origens.
+
+Uma revisão não resolvida só é vigente com versão positiva igual à peça e todos os
+vínculos preenchidos identificados na mesma produção/versão. Outra versão fica
+em anteriores; vínculo inválido em ambiguas. Resolvido/resolvida fica separado,
+como histórico, mesmo quando avalia a versão atual. Estado desconhecido não prova
+resolução e produz aviso. `responsavel_correcao` não substitui o responsável da peça.
+
+Versões/índices preenchidos inválidos e tempos preenchidos não finitos/negativos
+geram aviso preservando o original; vazio continua desconhecido, nunca zero.
+As unidades são agrupadas por versão, ordenadas numericamente por índice e, no
+empate, pelo ID ordinal; valores inválidos ficam depois dos válidos. Na gaveta,
+versão vigente vem primeiro e outras versões ficam recolhidas, com impacto atual
+a confirmar. A marcação de design novo continua A confirmar por ausência de fonte.
+
+Os avisos da US3 usam a linha física do retângulo capturado, inclusive após linhas
+vazias ou registros de outra marca. O mapa de origem permanece privado em WeakMap,
+sem novo campo no envelope HTTP. Aviso global (por exemplo, última importação falhou)
+tem somente motivo: não inventar aba/linha/campo para ele. A gaveta exibe aba,
+linha física, campo e motivo dos avisos localizados; não descartar o vínculo da unidade.
 
 ## Projeção HTTP LOCAL de campos selecionados
 

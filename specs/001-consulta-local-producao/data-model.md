@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva identidades e relações: T001–T022/US1 e US2 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
+Como um índice de fotografias, o modelo conserva identidades e relações: T001–T026/US1, US2 e US3 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
@@ -56,7 +56,7 @@ Seu schema e conteúdo inicial estão no [contrato](contracts/captura-e-consulta
 | Projeção | Conteúdo |
 | --- | --- |
 | `semanas` | agrupamento NTV, tema, início/fim civil e objetivo semanal registrado |
-| `producoes` | resumos e detalhe selecionado com facetas separadas, unidades e avisos |
+| `producoes` | resumos e detalhes com facetas separadas, unidades por versão, quatro grupos de revisões, arquivos/documentos e avisos localizados |
 | `dias` | peças por data civil válida; grupos Sem data por semana e sem semana |
 | `quadro` | semana, oito colunas fixas, IDs por classificação prioritária; Outras tem quantidadeValoresNovos e título derivados de seus rótulos distintos |
 | `planilha` | seis abas com nomes, 66 cabeçalhos/valores mínimos e contagem de linhas NTV apresentadas |
@@ -85,7 +85,7 @@ textos/JSON como dados, sem instruções, HTML executável ou navegação arbitr
 - Dia reúne **todas** as peças NTV naquela data; filtro do resumo não recorta a gaveta.
   Ordem ordinal por `producao_id` estabiliza primeiro cartão e primeiro acordeão.
 - Link "N sem data" é total global das peças NTV sem data válida, independente de
-  filtro/mês; lista delas agrupada por semana. No quadro, peça abre Sem data da sua semana.
+  filtro/mês; oculto quando zero, lista delas agrupada por semana. No quadro, peça abre Sem data da sua semana.
 - Período coberto é mínimo início semanal válido até máximo fim civil semanal;
   sem datas semanais válidas, limites null e aviso. Semana cruzando mês mantém identidade.
 - `Semanas.objetivo` é semanal. Objetivo mensal mostra "Ainda não definido" na 001,
@@ -145,14 +145,31 @@ inferir responsável, aguarda-de, próxima ação, agente trabalhando ou elegibi
 - Páginas/cenas são ordenadas dentro da versão pertinente; não misturar versões para
   completar sequência. Design novo: A confirmar quando não há classificação explícita
   da página/versão; arquivo/template/estado presente não é prova. Não existe flag nos mínimos.
+- Na projeção implementada, `detalhes.paginas`/`cenas` conservam todas as versões:
+  ordenação por versão/índice positivos e ID, com inválidos preservados ao final e aviso.
+  `vigente` exige versão positiva igual à da produção; a UI exibe essa versão primeiro
+  e as demais recolhidas, com impacto atual a confirmar.
 - Revisão mostra decisão, tratamento, versão/unidade e motivo separados. Resolvido/resolvida
   é histórico cinza; desconhecido não é encerrado. Revisão antiga aberta não reprova
   automaticamente a versão nova; sem vínculo, impacto a confirmar.
+- `detalhes.revisoes` separa `vigentes`, `resolvidas`, `anteriores` e `ambiguas`.
+  Resolução explícita precede a classificação por versão; revisão sem versão/vínculo
+  inequívoco é ambígua, outra versão válida é anterior e a versão atual é vigente.
+  Tratamento desconhecido conserva a revisão vigente com aviso, sem fabricar encerramento.
+  IDs originais de página/cena/arquivo são exibidos no detalhe; vazio é Não informado,
+  sem descrição ou vínculo inventado. Avisos mostram aba/linha física/campo e motivo.
 - Arquivo é registro, não bytes conferidos/validado/agendamento. Nome de apresentação
   vem de tipo/papel, fallback Arquivo registrado; não promete nome original ausente nos mínimos.
   Sem mídia = ausente; referência quebrada = aviso, sem substituta ou miniatura.
 - URL selecionada interativa só HTTPS Drive/Docs exatos, sem userinfo e somente por clique;
   tabela guarda URL como texto. Nenhum download ou busca remota por renderização.
+
+Ponteiro de unidade exige arquivo da mesma produção/versão; página/cena preenchida
+no arquivo também precisa corresponder. Ausência, referência quebrada e escopo
+incompatível produzem aviso, sem substituta. Empates por papel/versão/página/cena e
+origens JSON inválidas mantêm os registros, sem selecionar vigente automático.
+Avisos públicos trazem aba, linha física e campo quando disponíveis; o vínculo de
+origem é mantido internamente por ID/WeakMap, sem enviar matriz bruta ou mapas privados.
 
 ## Estado local e transições
 
