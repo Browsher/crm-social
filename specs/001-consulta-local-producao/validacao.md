@@ -461,8 +461,8 @@ Interface continua fora do LCOV e com SKIP explícito no CI (M8); ela passou
 integralmente no computador. A citação anterior de 96,9697% é histórica,
 97,0109% pertence à revisão 450e780; 97,0430% é o primeiro GREEN compacto,
 e o resumo corrente traz **97,0549%** depois do teste/correção de URL malformada.
-Aceite Linux e revisão independente canônica serão registrados após o push,
-sem adaptação do reviewer a shell ou alegação de equivalência de ferramentas.
+Aceite Linux e revisão independente canônica foram conferidos após o push e
+estão registrados abaixo, sem adaptação do reviewer a shell nem alegação de equivalência de ferramentas.
 
 Revisão estática independente recebeu um pacote de trechos/diff e evidências,
 **sem usar ferramentas**, executar código ou ler o disco. Identificou um Important
@@ -498,3 +498,58 @@ carrossel e Reels é 02/10. Captura visual sintética terminada em
 Pendências anteriores m-2/m-3 (precisão/escopo de vínculo), m-6 (complexidade),
 m-7/T037 (escala), M8/CI local e captura operacional não são promovidas a
 resolvidas. Esta rodada corrige I-1, m-1, m-B, m-4, m-5 e m-A conforme autorizado.
+
+### Aceite remoto da revisão compacta
+
+Head observado no [PR #9](https://github.com/Browsher/crm-social/pull/9):
+`e39afd8b3bcbd0e91984da4dd5f80903f591e4e1`, **37 arquivos** contra `869f0bd`.
+O PR está **OPEN**, sem merge. Os commits de código são `48edc9a` e `ba77775`;
+`e39afd8` reúne documentação e screenshots, sem mudança adicional do código.
+Autor/committer dos três: noreply configurado, sem coautoria.
+
+| Check | Conclusão observada | Evidência |
+| --- | --- | --- |
+| quality-gate | **SUCCESS** | [Job 111466657156](https://github.com/Browsher/crm-social/actions/runs/37212606745/job/111466657156) |
+| review | **SUCCESS**, comentário publicado | [Job 111466657198](https://github.com/Browsher/crm-social/actions/runs/37212606805/job/111466657198) |
+| generate-tests | **SKIPPED**, sem rótulo gerar-testes | [Job](https://github.com/Browsher/crm-social/actions/runs/37212606805/job/111466657969) |
+| publish-tests | **SKIPPED**, sem geração | [Job](https://github.com/Browsher/crm-social/actions/runs/37212606805/job/111466658225) |
+
+Log do gate lido: instalação real de **Semgrep 1.179.0 no Linux**; tabela final
+tests/coverage/complexity/**semgrep PASS**, audit N/A, **exit 0** e baseline
+atualizada **false**. Isso fecha a pendência de evidência Linux do review neste
+head; não equivale a executar a interface no CI. O resumo sanitizado foi atualizado
+com os estados observados; métricas numéricas permanecem identificadas como locais.
+
+No head `e39afd8`, comando explícito no computador, com Playwright existente
+indicado por `CRM_PLAYWRIGHT_MODULE` e `CI` removido do ambiente:
+
+```powershell
+node --test tests/interface.test.cjs
+```
+
+Resultado **31 PASS / 0 FAIL / 0 SKIP**, **18,43 s**. Suíte completa anterior,
+`node --test`, **108 PASS / 0 FAIL / 0 SKIP**; gate local `node tools/quality-gate.mjs`
+exit 0, mesma árvore de código. Apenas documentação foi adicionada depois.
+
+[Comentário integral do Claude](https://github.com/Browsher/crm-social/pull/9#issuecomment-5981545248),
+publicado em 04/10/2026 15:23:35 UTC: **0 Critical, 0 Important, 7 Minor**.
+O reviewer registra leitura integral de reviewer.md, AGENTS, constituição e diff,
+usando o checkout; nenhum teste/scanner, data/ ou dependência lidos por ele.
+Trecho: “Não encontrei problema de segurança.” Nenhuma mensagem de falha falsa:
+passo Avisar falha do review **SKIPPED** após publicação bem-sucedida.
+
+| Minor desse novo comentário | Registro para próxima rodada, sem correção nova |
+| --- | --- |
+| m1 | A complexidade 13 atual é de documentosDoDia, app.js:145; a dívida textual ainda cita acordeaoPeca. O relatório numérico está correto; atualizar a referência documental futura |
+| m2 | Resumo usa revisão aberta também para estado de tratamento desconhecido; avaliar revisão vigente/a conferir com teste dedicado |
+| m3 | Singular das contagens: 1 avisos. Ajuste de apresentação pendente |
+| m4 | Precisão do campo do aviso de ausência/ambiguidade/empate; mantém a dívida anterior m-2 |
+| m5 | Arquivos apenas semanais não passam pelas mesmas validações numéricas/origens_json dos arquivos de produção; alinhar contrato/validação |
+| m6 | Link Planilha atualmente mostra motivos distintos, sem localização técnica e sem separar origem dos motivos; detalhamento continua na US5 |
+| m7 | Índices por produção/performance para T037; mantém a dívida anterior m-7 |
+
+Limites do reviewer: não inspecionou PNG, não reproduziu testes/cobertura ou
+desempenho. Informou modificação local do project-structure no checkout efêmero
+e avaliou o diff do PR; a cópia local do projeto foi verificada limpa após os
+commits, com 43 linhas. A evidência visual foi conferida pelo coordenador.
+Nenhum desses Minor foi convertido em nova implementação nesta rodada.

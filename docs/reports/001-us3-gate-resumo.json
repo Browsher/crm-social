@@ -56,7 +56,10 @@
     "baselineAtualizada": false
   },
   "linux": {
-    "estado": "Aguardando execução desta revisão; execução anterior é histórica na procedência",
-    "limite": "Não inferir Semgrep Linux ou interface a partir do resultado Windows"
+    "estado": "SUCCESS observado no log Linux desta revisão; execução, head e links na procedência",
+    "exitCode": 0,
+    "semgrepVersion": "1.179.0",
+    "results": {"tests": "PASS", "coverage": "PASS", "complexity": "PASS", "semgrep": "PASS", "audit": "N/A"},
+    "limite": "Estados conferidos no log Linux; métricas numéricas são locais. Interface tem SKIP explícito no CI e 31 PASS locais."
   }
 }
