@@ -135,6 +135,31 @@ function capturaQuadro() {
     responsavel_atual:'Equipe sintética',status:'publicado'});
   return raw;
 }
+function capturaPlanilha() {
+  const raw=capturaDetalhada();
+  mudarCelula(raw,'Semanas',1,'objetivo',0);
+  mudarCelula(raw,'Produções',2,'etapa_producao',null);
+  mudarCelula(raw,'Produções',2,'legenda',null);
+  mudarCelula(raw,'Produções',1,'legenda','  Texto de exemplo  ');
+  mudarCelula(raw,'Páginas',1,'corpo',false);
+  mudarCelula(raw,'Cenas',1,'texto_tela','   ');
+  mudarCelula(raw,'Arquivos',1,'id_drive','drive-ficticio-local');
+  mudarCelula(raw,'Arquivos',1,'sha256','a'.repeat(64));
+  mudarCelula(raw,'Arquivos',1,'origens_json','{"arquivo_id":"origem-sintetica","texto":"<script>conteúdo como dado</script>"}');
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-02',marca_id:'ntv',inicio_semana:'2026-10-05',tema:'Segunda semana sintética'});
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-outra',marca_id:'outra-marca-sintetica',inicio_semana:'2026-10-12',tema:'Não pertence à consulta'});
+  adicionarRegistro(raw,'Produções',{producao_id:'peca-6',marca_id:'ntv',semana_id:'semana-02',slot:'imagem_a',versao:1,titulo:'Nova peça sintética',data_prevista:'2026-10-05'});
+  adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-outra',producao_id:'peca-5',versao:1,indice:1,titulo:'Outra marca'});
+  adicionarRegistro(raw,'Cenas',{cena_id:'cena-outra',producao_id:'peca-5',versao:1,indice:1,texto:'Outra marca'});
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-outra',producao_id:'peca-5',semana_id:'semana-outra',versao:1});
+  adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-semana-02',semana_id:'semana-02',tipo:'documento',papel:'plano',versao:1});
+  adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-outra',producao_id:'peca-5',versao:1,decisao:'revisar'});
+  for(const table of Object.values(raw.tables)) {
+    table.values=table.values.map(row=>row.slice().reverse());
+    table.values.splice(1,0,[]);
+  }
+  return recalcularHashes(raw);
+}
 function temporario(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(),'crm001-test-'));
   t.after(() => fs.rmSync(dir,{recursive:true,force:true}));
@@ -145,4 +170,4 @@ function carregarModulo(relative, exports) {
   if (fs.existsSync(filename)) return require(filename);
   return Object.fromEntries(exports.map(name => [name, () => { throw new Error(name + ': comportamento ainda não implementado'); }]));
 }
-module.exports = {campos,capturaValida,capturaDetalhada,capturaQuadro,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};
+module.exports = {campos,capturaValida,capturaDetalhada,capturaQuadro,capturaPlanilha,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};

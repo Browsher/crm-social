@@ -7,6 +7,7 @@ const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
 const {projetarVisao}=carregarModulo('src/projecao.cjs',['projetarVisao']);
 const {capturaDetalhada,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
 const {capturaQuadro,mapaQuadroSintetico}=require('./fixtures.cjs');
+const {capturaPlanilha,campos}=require('./fixtures.cjs');
 const {carregarMapaQuadro}=require('../src/quadro-config.cjs');
 const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
@@ -809,4 +810,84 @@ test('P03 início semanal inválido deixa cobertura null e objetivo mensal indef
   assert.equal(view.semanas[0].objetivoMensal,'Ainda não definido');
   assert.equal(view.semanas[0].objetivo,'Objetivo semanal sintético');
   assert.ok(view.avisos.some(a=>a.campo==='inicio_semana'));
+});
+
+test('P11 Planilha seleciona seis tabelas e os 66 mínimos na ordem canônica, excluindo vazios e outra marca', t=>{
+  const view=projetarVisao(estado(capturaPlanilha(),t),NOW,mapaQuadroValido());
+  assert.equal(view.planilha.length,6);
+  assert.deepEqual(view.planilha.map(tab=>[tab.nome,tab.cabecalhos.length,tab.quantidadeLinhas]),[
+    ['Semanas',8,2],['Produções',17,5],['Páginas',8,3],['Cenas',11,2],['Arquivos',12,5],['Revisoes',10,5]
+  ]);
+  assert.equal(view.planilha.reduce((n,tab)=>n+tab.cabecalhos.length,0),66);
+  for(const tab of view.planilha) {
+    assert.deepEqual(Object.keys(tab).sort(),['nome','cabecalhos','quantidadeLinhas','linhas'].sort());
+    assert.deepEqual(tab.cabecalhos,campos[tab.nome]);
+    assert.equal(tab.quantidadeLinhas,tab.linhas.length);
+    for(const linha of tab.linhas) assert.deepEqual(Object.keys(linha),campos[tab.nome]);
+  }
+  assert.deepEqual(view.planilha.map(tab=>tab.linhas.map(r=>r[tab.cabecalhos[0]])),[
+    ['semana-01','semana-02'],['peca-1','peca-2','peca-3','peca-4','peca-6'],
+    ['pagina-01','pagina-02','pagina-antiga'],['cena-01','cena-02'],
+    ['arquivo-01','arquivo-pagina','arquivo-clipe','arquivo-plano','arquivo-semana-02'],
+    ['revisao-01','revisao-atual','revisao-resolvida','revisao-antiga','revisao-incerta']
+  ]);
+});
+
+test('P11 Planilha conserva valores mínimos como dados, sem copiar os enriquecimentos da visão', t=>{
+  const view=projetarVisao(estado(capturaPlanilha(),t),NOW,mapaQuadroValido());
+  assert.equal(view.planilha.length,6);
+  const [semanas,producoes,paginas,cenas,arquivos,revisoes]=view.planilha;
+  assert.equal(semanas.linhas[0].objetivo,0);
+  assert.equal(producoes.linhas[0].legenda,'  Texto de exemplo  ');
+  assert.equal(producoes.linhas[1].etapa_producao,null);
+  assert.equal(producoes.linhas[1].legenda,''); // normalização preexistente dos demais null
+  assert.equal(producoes.linhas[4].url_video_final,'');
+  assert.equal(paginas.linhas[0].corpo,false);
+  assert.equal(cenas.linhas[0].inicio_segundos,0);
+  assert.equal(cenas.linhas[0].texto_tela,'   ');
+  assert.equal(arquivos.linhas[0].id_drive,'drive-ficticio-local');
+  assert.equal(arquivos.linhas[0].sha256,'a'.repeat(64));
+  assert.equal(arquivos.linhas[0].origens_json,'{"arquivo_id":"origem-sintetica","texto":"<script>conteúdo como dado</script>"}');
+  assert.equal(revisoes.linhas[1].revisao_id,'revisao-atual');
+  for(const linha of producoes.linhas) {
+    for(const campo of ['dataCivil','semanaId','formato','detalhes','quadro']) assert.equal(Object.hasOwn(linha,campo),false);
+  }
+  for(const campo of ['periodo','objetivoMensal','ids']) assert.equal(Object.hasOwn(semanas.linhas[0],campo),false);
+  assert.deepEqual(view.captura.periodo,{inicio:'2026-09-28',fim:'2026-10-11'});
+});
+
+test('P12 Planilha redige mínimos sensíveis mantendo a coluna e um aviso localizado por célula', t=>{
+  const raw=capturaPlanilha(),user='pessoa-planilha-ficticia',password='senha-planilha-ficticia';
+  const url='https://'+user+':'+password+'@docs.google.com/x';
+  const alteracoes=[
+    ['Semanas','tema','sk-ant-'+'A'.repeat(24),'[conteúdo suprimido]'],
+    ['Produções','legenda','Antes '+url+' depois','Antes [conteúdo suprimido] depois'],
+    ['Produções','url_video_final',url,'[conteúdo suprimido]'],
+    ['Páginas','corpo','/home/usuario-ficticio/fonte','[conteúdo suprimido]'],
+    ['Cenas','texto','C:/usuario-ficticio/dados','[conteúdo suprimido]'],
+    ['Arquivos','origens_json',JSON.stringify({url,seguro:'texto de registro'}),JSON.stringify({url:'[conteúdo suprimido]',seguro:'texto de registro'})],
+    ['Revisoes','motivo','ghp_'+'B'.repeat(24),'[conteúdo suprimido]']
+  ];
+  for(const [nome,campo,valor] of alteracoes) mudarCelula(raw,nome,2,campo,valor);
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.equal(view.planilha.length,6);
+  for(const [nome,campo,,esperado] of alteracoes) {
+    const tab=view.planilha.find(tab=>tab.nome===nome);
+    assert.ok(tab.cabecalhos.includes(campo));
+    assert.equal(tab.linhas[0][campo],esperado);
+    assert.deepEqual(view.avisos.filter(a=>a.aba===nome && a.linha===3 && a.campo===campo && a.motivo==='conteúdo sensível suprimido'),[
+      {aba:nome,linha:3,campo,motivo:'conteúdo sensível suprimido'}
+    ]);
+  }
+  assert.doesNotMatch(JSON.stringify(view),/pessoa-planilha-ficticia|senha-planilha-ficticia|usuario-ficticio|sk-ant-A{24}|ghp_B{24}|sentinela-nao-publicar/);
+  assert.doesNotMatch(JSON.stringify(view.planilha),/metadataBefore|spreadsheetId|firstReadSha256|secondReadSha256|__extra_privado/);
+});
+
+test('P12 sem captura mantém Planilha vazia e orientação estruturada, sem inventar seis abas com zero', ()=>{
+  const view=projetarVisao({captura:null,historico:[],ultimaTentativa:null},NOW,mapaQuadroValido());
+  assert.deepEqual(view.planilha,[]);
+  assert.equal(view.captura,null);
+  assert.equal(view.estado,'sem_captura');
+  assert.deepEqual(view.selo,{texto:'Sem dados',cor:'cinza',destino:'planilha'});
+  assert.equal(view.fonte,'Captura pela Central');
 });
