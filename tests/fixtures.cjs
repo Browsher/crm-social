@@ -75,6 +75,11 @@ function mudarCelula(raw, nome, row, campo, value) {
   raw.tables[nome].values[row][raw.tables[nome].values[0].indexOf(campo)] = value;
   return recalcularHashes(raw);
 }
+function redefinirHorario(raw,startedAt,completedAt) {
+  raw.startedAt=startedAt;raw.completedAt=completedAt;
+  for(const table of Object.values(raw.tables)) table.readAt=completedAt;
+  return raw;
+}
 function temporario(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(),'crm001-test-'));
   t.after(() => fs.rmSync(dir,{recursive:true,force:true}));
@@ -85,4 +90,4 @@ function carregarModulo(relative, exports) {
   if (fs.existsSync(filename)) return require(filename);
   return Object.fromEntries(exports.map(name => [name, () => { throw new Error(name + ': comportamento ainda não implementado'); }]));
 }
-module.exports = {campos,capturaValida,mapaQuadroValido,recalcularHashes,mudarCelula,temporario,carregarModulo};
+module.exports = {campos,capturaValida,mapaQuadroValido,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};

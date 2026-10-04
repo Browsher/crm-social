@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const {capturaValida,temporario,carregarModulo} = require('./fixtures.cjs');
+const {capturaValida,temporario,carregarModulo,redefinirHorario} = require('./fixtures.cjs');
 const {promoverCaptura,lerEstado} = carregarModulo('src/snapshot.cjs',['promoverCaptura','lerEstado']);
 const clock='2026-10-02T14:00:00Z';
 function bytes(dir) {
@@ -14,6 +14,32 @@ test('S01 ausência é estruturada e leitura não escreve', t => {
   assert.equal(state.ultimaTentativa,null);
   assert.deepEqual(state.historico,[]);
   assert.deepEqual(fs.readdirSync(dir),[]);
+});
+test('S03-US2 mesmo conteúdo com novo ID/fim renova captura sem alterar recibos antigos', t => {
+  const dir=temporario(t),old=capturaValida();
+  promoverCaptura(old,dir);
+  const invalid=capturaValida();invalid.tables.Cenas.complete=false;
+  promoverCaptura(invalid,dir);
+  const failed=lerEstado(dir),pointer=bytes(dir);
+  const receiptPath=path.join(dir,'tentativas',failed.ultimaTentativa.tentativaId+'.json');
+  const receipt=fs.readFileSync(receiptPath,'utf8');
+  assert.equal(promoverCaptura(old,dir).resultado,'sem_alteracao');
+  for(let i=0;i<2;i++) {
+    const read=lerEstado(dir);
+    assert.equal(read.captura.envelope.completedAt,old.completedAt);
+    assert.equal(read.ultimaTentativa.resultado,'falhou');
+    assert.equal(bytes(dir),pointer);
+    assert.equal(fs.readFileSync(receiptPath,'utf8'),receipt);
+  }
+  const newer=capturaValida();newer.capturaId='captura-horario-novo';
+  redefinirHorario(newer,'2026-10-04T11:00:00Z','2026-10-04T11:05:00Z');
+  for(const name of Object.keys(old.tables)) assert.deepEqual(newer.tables[name].values,old.tables[name].values);
+  assert.equal(promoverCaptura(newer,dir).resultado,'completa');
+  const next=lerEstado(dir);
+  assert.equal(next.captura.envelope.completedAt,newer.completedAt);
+  assert.equal(next.ultimaTentativa.resultado,'completa');
+  assert.equal(next.historico.length,3);
+  assert.equal(fs.readFileSync(receiptPath,'utf8'),receipt);
 });
 test('S02 promove captura/recibo antes de confirmar; mesmos bytes não duplicam', t => {
   const dir=temporario(t), raw=capturaValida();

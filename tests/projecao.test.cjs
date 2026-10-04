@@ -1,19 +1,49 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {capturaValida,mapaQuadroValido,temporario,carregarModulo,mudarCelula}=require('./fixtures.cjs');
+const {capturaValida,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
 const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
 const {projetarVisao}=carregarModulo('src/projecao.cjs',['projetarVisao']);
 const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
 function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
 
-test('P-review I1 captura local usa estado provisório, sem afirmar frescor da US2', t => {
+test('P04 frescor usa o fim da captura, e não o horário da consulta', t => {
   const input=estado(capturaValida(),t);
-  for (const now of [NOW,'2026-11-15T14:00:00Z']) {
+  for (const [now,expected,texto,cor] of [[NOW,'atualizada_hoje','Atualizado hoje, 09:05','verde'],
+    ['2026-11-15T14:00:00Z','anterior_hoje','Dados de 02/10','âmbar']]) {
     const view=projetarVisao(input,now,mapaQuadroValido());
-    assert.equal(view.estado,'captura_local_provisoria');
-    assert.equal(view.selo.texto,'Captura local');
+    assert.equal(view.estado,expected);
+    assert.deepEqual(view.selo,{texto,cor,destino:'planilha'});
+    assert.equal(view.captura.completedAt,'2026-10-02T12:05:00.000Z');
     assert.equal(view.producoes[0].status,'em_planejamento');
+  }
+});
+test('P04 virada do dia em São Paulo muda só frescor, ignorando data das linhas', t => {
+  const raw=capturaValida();
+  redefinirHorario(raw,'2026-10-03T02:55:00Z','2026-10-03T02:59:30Z');
+  mudarCelula(raw,'Produções',1,'data_prevista','2099-12-31');
+  const input=estado(raw,t);
+  const before=projetarVisao(input,'2026-10-03T02:59:59Z',mapaQuadroValido());
+  assert.equal(before.estado,'atualizada_hoje');
+  assert.deepEqual(before.selo,{texto:'Atualizado hoje, 23:59',cor:'verde',destino:'planilha'});
+  const after=projetarVisao(input,'2026-10-03T03:00:00Z',mapaQuadroValido());
+  assert.equal(after.estado,'anterior_hoje');
+  assert.deepEqual(after.selo,{texto:'Dados de 02/10',cor:'âmbar',destino:'planilha'});
+  assert.deepEqual(after.producoes,before.producoes);
+});
+test('P04 falha ativa precede frescor de captura de hoje ou antiga', t => {
+  for (const [id,end] of [['hoje','2026-10-04T11:05:00Z'],['antiga','2026-10-02T12:05:00Z']]) {
+    const dir=temporario(t),raw=capturaValida();raw.capturaId=id;raw.completedAt=end;
+    promoverCaptura(raw,dir);
+    const invalid=capturaValida();invalid.tables.Cenas.complete=false;
+    promoverCaptura(invalid,dir);
+    const input=lerEstado(dir),before=JSON.stringify(input);
+    const view=projetarVisao(input,'2026-10-04T12:00:00Z',mapaQuadroValido());
+    assert.equal(view.estado,'falha_atualizacao');
+    assert.deepEqual(view.selo,{texto:'Atualização falhou',cor:'vermelho',destino:'planilha'});
+    assert.equal(view.captura.completedAt,end);
+    assert.equal(view.producoes.length,4);
+    assert.equal(JSON.stringify(input),before);
   }
 });
 test('P-review I1 falha posterior avisa sem apagar captura; nova completa encerra aviso', t => {
@@ -56,6 +86,7 @@ test('P-base sem captura não cria demonstração e conserva Histórico permitid
   promoverCaptura(raw,dir);
   const result=projetarVisao(lerEstado(dir,NOW),NOW,mapaQuadroValido());
   assert.equal(result.estado,'sem_captura');
+  assert.deepEqual(result.selo,{texto:'Sem dados',cor:'cinza',destino:'planilha'});
   assert.equal(result.captura,null);
   assert.deepEqual(result.producoes,[]);
   assert.deepEqual(result.semanas,[]);
