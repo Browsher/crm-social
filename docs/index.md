@@ -123,6 +123,8 @@ As evidências têm origem, estado e limites registrados somente na [validação
 
 [Resumo sanitizado do CI da fase final](reports/001-fase8-ci.json); reproduz os estados e a versão do scanner observados no log oficial, sem substituir o relatório local ou declarar captura operacional.
 
+[Resumo do CI do preflight](reports/001-fase8-preflight-ci.json); estados e scanner observados sobre o código corrigido, com procedência e limitações explícitas na [validação](../specs/001-consulta-local-producao/validacao.md).
+
 ## Referências de desenvolvimento preservadas
 
 | Documento / catálogo | Papel |

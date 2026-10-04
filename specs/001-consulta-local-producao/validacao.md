@@ -1,6 +1,6 @@
 # Validação — feature 001, US1–US5 e Fase 8 sintética
 
-Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 permanece aberto sem merge. A correção do Important de preflight tem gate local completo; seu aceite remoto está separado dos heads históricos abaixo. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
+Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 permanece aberto sem merge. A correção do Important de preflight tem gate local completo e gate Linux/review confirmados no head f916fd6; o registro final abaixo distingue as rodadas históricas. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
 
 ## Preparação T001
 
@@ -1201,6 +1201,49 @@ import de criação de processo no mapa; escala medida sem meta numérica de tem
 A nota de arquitetura diferencia criação de processo de require. Não inventar
 meta de desempenho ou versão obrigatória nova para resolver um Minor. Nenhum
 outro Important foi aceito como limite; T039–T041 continuam pendentes.
+
+## Aceite remoto do código final T035–T038 — PR #12 aberto
+
+Head **f916fd63e7067829047d6c6350b5d8af9430d365**, branch
+001-consulta-local-producao: [PR #12](https://github.com/Browsher/crm-social/pull/12)
+**OPEN, sem merge**. Esta evidência é do código corrigido, incluindo triagem e
+preflight; não usa o resultado dos heads anteriores como prova do novo módulo.
+
+| Check | Conclusão e link |
+| --- | --- |
+| quality-gate | [SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37241134322/job/111549921141), exit 0; tests, coverage, complexity e semgrep PASS; nove avisos, baseline inalterada; audit N/A |
+| Semgrep | CE **1.179.0** instalado e executado no Linux, **PASS**, sem SKIP |
+| review | [SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37241134304/job/111549921350); [comentário final](https://github.com/Browsher/crm-social/pull/12#issuecomment-5985289994) |
+| generate-tests / publish-tests | SKIPPED por ausência do rótulo gerar-testes; sem relação com os 240 testes locais |
+
+[Resumo sanitizado do log e 16 hashes](../../docs/reports/001-fase8-preflight-ci.json).
+Os hashes são dos arquivos da execução local Windows; não foram recalculados
+pelo job Linux e podem diferir por finais de linha. O vínculo da execução remota
+com o código é o head f916fd6 conferido no GitHub, não uma comparação de hashes
+entre sistemas.
+A API de artefatos confirmou **total_count: 0**: não existe JSON original do gate
+disponível para download. O resumo declara sua origem no log oficial; totais
+Linux não foram publicados e não se inventam a partir dos totais Windows.
+
+Trecho do comentário final: “O código está coerente com a constituição, o
+contrato e a arquitetura.” Não há Critical ou defeito Important confirmado.
+**P1 (Important de evidência)** pede gate/Semgrep do head f916fd6; a tabela e o
+log acima satisfazem o pedido, inclusive sourceSha256 com triagem. O reviewer não
+tinha esse CI entre seus arquivos de contexto; a afirmação de ausência de CI no
+comentário não substitui a execução real conferida pelo coordenador. Não houve
+teste RED artificial para anexar uma evidência já observada.
+
+| Minor final | Limite conhecido da 001 |
+| --- | --- |
+| M1 — erro genérico da triagem | O ramo de erro diferente de IDENTIDADE_SENSIVEL ainda propaga sua mensagem. Validação estrutural impede os caminhos atuais conhecidos; não foi identificado input que exponha célula. Mensagem estática e teste de injeção de falha ficam como endurecimento futuro, sem declarar o ramo coberto |
+| M2 — camada pura da triagem | Novo módulo é exercitado por snapshot, projeção, HTTP e CLI; faltam testes diretos isolados de seus exports e dos metadados de erro. Continua com oito suítes; não se declara uma nona suíte inexistente |
+| M3 — logDir em falha | Caminho dos logs só retorna no sucesso; diagnóstico de falha exige localizar a tentativa privada. Sem limpeza automática, conforme limite já documentado |
+| M4 — complexidade | lerRecibo e selecionar têm 12; máximo global 13 e nove avisos, sem FAIL/baseline nova. Extração de predicados é dívida de manutenção |
+
+Registro final feito **localmente depois dos checks**, em commit documental
+próprio: ele não é o head remoto medido nem será enviado novamente nesta rodada.
+Código/testes e seus 16 hashes permanecem os do head remoto acima. T039–T041
+continuam pendentes; nenhum merge do PR #12 ou captura operacional foi feito.
 
 ## Parada antes de T039 — preparo pela Central
 
