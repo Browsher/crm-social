@@ -141,8 +141,11 @@ CI/review do node-kit 0.4.8 foi aceito no [PR #5](https://github.com/Browsher/cr
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Aviso de complexidade do CLI | scripts/importar-captura.cjs:5, valor 12; manutenção sem retirar validações |
 | Fonte/hashes no envelope não são prova de coleta | src/captura.cjs:27–118; Central e captura real ainda devem ser conferidas |
-| Review consumiu 23 turnos no PR #1 | Limite 40 turnos/20 min na 0.4.8; custo/tempo e teto numérico de arquivos ainda a acompanhar |
+| Review consumiu 23 turnos no PR #1 | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
 | Aplicabilidade dos nove pulos de UI | tests/interface.test.cjs; pendência M8; CI verde não comprova interface local |
 
 As dívidas Minor não foram corrigidas nesta rodada. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.
+
+
+A 0.4.9 está instalada: review com 60 turnos e timeout de 20 minutos; geração de testes mantém 20 turnos. O autor aprovou o aumento porque a execução 37196385840 do PR #6 usou 42 turnos e excedeu 40. O primeiro [review da 0.4.9](https://github.com/Browsher/crm-social/pull/7#issuecomment-5979935664) e o [gate Linux](https://github.com/Browsher/crm-social/actions/runs/37202258556/job/111436189031) passaram no head 3dcd653; o job review durou 78 s, o que não comprova o tempo de todo review com 60 turnos. O aceite do head com esta documentação será reconferido antes do merge.
