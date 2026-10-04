@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página indica onde encontrar decisões, código explicado e evidências sem confundir uma fotografia de demonstração com a operação. Estado em 04/10/2026: T001–T022 implementadas/testadas localmente, cobrindo fundação, US1 e US2; 19 tarefas pendentes. PR #6 integrado; node-kit 0.4.9 aceito no PR #7. Suíte local 75 PASS, gate verde, quatro selos e releitura somente local. Aceite remoto da US2 e captura operacional aguardam; links atuais no registro de validação.
+Como o índice de um álbum, esta página indica onde encontrar decisões, código explicado e evidências sem confundir uma fotografia de demonstração com a operação. Estado em 04/10/2026: T001–T022 implementadas/testadas localmente, cobrindo fundação, US1 e US2; 19 tarefas pendentes. PR #6 integrado; node-kit 0.4.9 aceito no PR #7. Suíte local 75 PASS, gate verde, quatro selos e releitura somente local. Gate Linux e review da US2 conferidos no PR #8/head `7657d9e`, que permanece aberto; captura operacional aguarda. Links atuais no registro de validação.
 
 ## Ordem de leitura
 
@@ -31,7 +31,7 @@ Como o índice de um álbum, esta página indica onde encontrar decisões, códi
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
 | [Importador](modules/importador.md) | scripts/importar-captura.cjs; argumentos/saída e falhas de entrada |
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; classificação ainda futura |
-| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos e bases futuras |
+| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos e quatro estados de frescor; quadro/Planilha completos ainda futuros |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; quatro rotas fixas e Host/Origin |
 | [Web/Planejamento](modules/web.md) | src/web; calendário/lista/filtros, diálogo básico, selo comum e detalhes/releitura em Planilha |
 
@@ -75,6 +75,10 @@ Capturadas no head ab3b036, com fixtures fictícias e armazenamento temporário;
 - [node:test completo, 67 PASS e nove casos de UI](reports/001-pr6-node-test.txt).
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
+
+## Evidência local e remota da US2
+
+[Resumo do gate local e prova Linux](reports/001-us2-gate-resumo.json): métricas locais pelo código `3857816`; resultado remoto observado no head `7657d9e`, incluindo Semgrep real. [Validação](../specs/001-consulta-local-producao/validacao.md) registra os links, o comentário e as pendências do PR #8.
 
 ## Referências de desenvolvimento preservadas
 

@@ -8,7 +8,7 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Created**: 2026-10-02 | **Updated**: 2026-10-04 (estado de implementação; requisitos preservados)
 
-**Status**: T001–T022 implementadas e testadas localmente: fundação, US1 Planejamento e US2/frescor e releitura. T023–T041 (19 tarefas) permanecem pendentes. Quatro estados do selo, clique até Planilha, fonte/fim/cobertura/avisos e GET local já existem; abertura do dia continua básica, detalhes/acordeões, classificação/quadro, seis tabelas/Histórico e iniciador ainda aguardam. Correções do PR #6 integradas em `19e222a`; 0.4.9 aceita no PR #7, merge `7e17e85`. Novo aceite remoto da US2 e captura operacional estão pendentes; nenhuma leitura real Google. Evidência em [validacao.md](validacao.md).
+**Status**: T001–T022 implementadas e testadas localmente: fundação, US1 Planejamento e US2/frescor e releitura. T023–T041 (19 tarefas) permanecem pendentes. Quatro estados do selo, clique até Planilha, fonte/fim/cobertura/avisos e GET local já existem; abertura do dia continua básica, detalhes/acordeões, classificação/quadro, seis tabelas/Histórico e iniciador ainda aguardam. Correções do PR #6 integradas em `19e222a`; 0.4.9 aceita no PR #7, merge `7e17e85`. Gate Linux e review da US2 conferidos no PR #8/head `7657d9e`, sem merge; captura operacional pendente; nenhuma leitura real Google. Evidência em [validacao.md](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
