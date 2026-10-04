@@ -2,6 +2,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {randomUUID}=require('node:crypto');
 const {validarCaptura,validarTempoImportacao,idSeguro,instanteUtc}=require('./captura.cjs');
+const {validarIdentidadesNtv}=require('./triagem.cjs');
 
 function json(file) { return JSON.parse(fs.readFileSync(file,'utf8')); }
 function ponteiro(dataDir) {
@@ -123,7 +124,8 @@ function promoverComTrava(raw,dataDir) {
   try { prepararDiretorios(dataDir); before=lerEstado(dataDir); }
   catch { throw new Error('persistência: falha não pôde ser registrada'); }
   try {
-    validarCaptura(raw);
+    const candidata=validarCaptura(raw);
+    validarIdentidadesNtv(candidata);
     const file=path.join(dataDir,'capturas',raw.capturaId+'.json'),body=JSON.stringify(raw);
     if (fs.existsSync(file) && fs.readFileSync(file,'utf8')!==body) throw new Error('captura: conflito de conteúdo no mesmo ID');
     if (before.historico.some(r=>r.resultado==='completa' && r.capturaId===raw.capturaId)) {

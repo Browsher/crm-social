@@ -43,10 +43,14 @@ início/duração números finitos não negativos. Inválidos geram aviso locali
 vazio permanece desconhecido, nunca zero. JSON inválido gera aviso e fica preservado
 como célula na captura; não é executado.
 
-Se a triagem alterar identidade/vínculo interno em campo terminado em `_id`, a
-projeção inteira é recusada, sem criar chave de supressão compartilhada; HTTP
-responde 503 genérico e não escreve. Versão de produção vazia gera aviso de vigente
-não informada; vazia ou inválida não sustenta pendência categórica de mídia vigente ausente.
+O módulo compartilhado triagem seleciona NTV/66 mínimos e valida identidades da
+candidata após `validarCaptura`, antes de no-op, gravação ou promoção. Campo NTV
+terminado em `_id` alterável pela redação recusa a candidata; falha confirmável
+preserva a captura vigente e registra aba/linha física/campo sem o valor. Na consulta,
+bytes antigos/corrompidos continuam recusando a projeção inteira, sem criar chave de
+supressão compartilhada; HTTP responde 503 genérico e não escreve. Versão de produção
+vazia gera aviso de vigente não informada; vazia ou inválida não sustenta pendência
+categórica de mídia vigente ausente.
 
 ## Recortes de consulta
 
@@ -290,7 +294,7 @@ e preservar o estado anterior, sem fingir durabilidade do registro.
 | Primeira tentativa completa promovida | nova captura | completa persistida; hoje verde ou outro dia âmbar |
 | Nova tentativa falhou | anterior preservada | falhou persistida; vermelho se há válida, cinza se não há |
 | GET/Atualizar dados/reinício | mesma captura | lê histórico; não apaga erro nem renova fim de captura |
-| Mesmo capturaId e mesmos bytes, com aceitação anterior confirmada | sem alteração | sem duplicação/novo frescor nem retorno a captura antiga; falha posterior não é encerrada |
+| Mesmo capturaId e mesmos bytes, com aceitação anterior confirmada e estrutura/identidades NTV válidas | sem alteração | sem duplicação/novo frescor nem retorno a captura antiga; falha posterior não é encerrada |
 | Interrupção antes de confirmar o estado | anterior preservada | arquivos preparados excluídos do Histórico; mesmos bytes podem ser revalidados e promovidos numa nova tentativa |
 | Mesmo capturaId e bytes diferentes | anterior preservada | conflito/falhou |
 | Nova candidata mais de 10 minutos no futuro em relação ao relógio local | anterior preservada | falhou por captura inválida; motivo no recibo, candidata não gravada |

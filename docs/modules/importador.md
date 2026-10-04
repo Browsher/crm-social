@@ -41,6 +41,8 @@ Imports: `node:fs`, `node:path` e [snapshot](snapshot.md). O CLI exporta `main(a
 
 Estas falhas mantêm a captura/instante anteriores, registram capturaId null e não incluem nome de arquivo, caminho, células ou erro bruto. Sem captura aceita, a captura continua null. Se o armazenamento estiver indisponível, o erro informa que a falha não pôde ser registrada. Não inventar durabilidade a partir da saída de erro.
 
+Após parse válido, a [persistência](snapshot.md) valida estrutura e chama `validarIdentidadesNtv` de [triagem](triagem.md) antes de no-op ou gravação da candidata. Identidade/vínculo NTV que seria redigido gera `falhou` e exit 1, com aba/linha física/campo e motivo estático, sem ecoar a célula. A última captura permanece vigente e consultável; a candidata rejeitada não vira um sucesso seguido apenas de erro HTTP.
+
 Argumento inválido/URL é recusado antes da tentativa e não cria recibo. Diretório com importação em andamento recusa outra promoção ou falha de entrada, sem substituir o ponteiro. Recuperação de trava interrompida segue [persistência](snapshot.md); não há remoção automática.
 
 ## Testes, dívida e limites

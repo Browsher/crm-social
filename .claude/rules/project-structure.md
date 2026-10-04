@@ -9,7 +9,7 @@ T001–T038 implementadas/verificadas localmente (38/41); T039/T040/T041 pendent
 - docs/design/telas.md define telas; mockups/ e prototype/ são demonstrações históricas.
 - docs/design/screenshots/ mostra aplicação real com fixture fictícia, nunca produção.
 - docs/index.md é o índice; docs/architecture.md documenta o código e suas fronteiras.
-- docs/modules/ detalha captura, snapshot, importador, quadro-config, projeção, servidor, iniciador e web.
+- docs/modules/ detalha captura, triagem, snapshot, importador, quadro-config, projeção, servidor, iniciador e web.
 - EntryPoint real: scripts/importar-captura.cjs <arquivo-local> [--data-dir <diretorio>].
 - EntryPoint real: src/servidor.cjs [--data-dir <diretorio>] [--port <porta>].
 - EntryPoint Windows: Iniciar CRM.ps1 [-DataDir <diretorio>] [-Port <porta>] [-NodePath <exe>].
@@ -21,7 +21,8 @@ T001–T038 implementadas/verificadas localmente (38/41); T039/T040/T041 pendent
 - GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
 - lerRecibo valida objeto/tipos/IDs/data ISO real com fuso dos recibos confirmados; inválido recusa leitura sem escrever.
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
-- src/projecao.cjs seleciona NTV/datas/formatos, detalhes/quadro e seis cópias dos mínimos triados; quadro-config valida mapa.
+- src/triagem.cjs seleciona NTV/66 mínimos e redige; snapshot valida identidades antes do no-op/gravação, sem mapa do quadro.
+- src/projecao.cjs usa triagem para detalhes/quadro/tabelas; sem versão positiva, mídia vigente a confirmar.
 - config/quadro-etapas.json é aplicado na projeção; nove etapas e liberação/revisão vazias.
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas fixas: /, /app.js, /styles.css, /api/visao; GET/HEAD e Host/Origin locais.
@@ -37,7 +38,7 @@ T001–T038 implementadas/verificadas localmente (38/41); T039/T040/T041 pendent
 - JSON é dado: só strings alteradas são reserializadas, demais bytes intactos; original/validade privados.
 - Avisos globais relacionados entram no contador da peça; ligado sem link seguro é link não permitido.
 - Avisos conservam linha física por ID/WeakMap; valor sensível não acompanha motivo público.
-- Triagem que altera identidade/vínculo terminado em _id recusa projeção; sem versão positiva, mídia vigente a confirmar.
+- Triagem recusa candidata com _id alterável e preserva vigente; projeção mantém guarda para bytes antigos/corrompidos.
 - tools/quality-gate.mjs é o entrypoint do gate; seus módulos são gate-*.mjs.
 - tools/package.json e package-lock.json isolam ESLint, sem dependência da aplicação.
 - .github/workflows contém CI; o bootstrap instalou os templates do node-kit.

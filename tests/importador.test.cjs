@@ -3,13 +3,33 @@ const assert=require('node:assert/strict');
 const {spawnSync,spawn}=require('node:child_process');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,temporario,redefinirHorario}=require('./fixtures.cjs');
+const {capturaValida,temporario,redefinirHorario,mudarCelula}=require('./fixtures.cjs');
 const {lerEstado,promoverCaptura}=require('../src/snapshot.cjs');
 const cli=path.resolve(__dirname,'../scripts/importar-captura.cjs');
 function executar(args) {
   if (!fs.existsSync(cli)) return spawnSync(process.execPath,['-e',"process.stderr.write('CLI ainda não implementado'); process.exitCode=70;"],{encoding:'utf8'});
   return spawnSync(process.execPath,[cli,...args],{encoding:'utf8'});
 }
+
+test('C-fase8-preflight identidade sensível dá exit 1 sem substituir captura válida',t=>{
+  const dir=temporario(t),data=path.join(dir,'dados'),input=path.join(dir,'entrada.json'),vigente=capturaValida();
+  fs.writeFileSync(input,JSON.stringify(vigente));
+  assert.equal(executar([input,'--data-dir',data]).status,0);
+  const candidata=capturaValida();candidata.capturaId='captura-cli-preflight-recusada';
+  redefinirHorario(candidata,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
+  const sensivel='ghp_'+'identificador-ficticio-'.repeat(2);
+  mudarCelula(candidata,'Páginas',1,'arquivo_imagem_id',sensivel);
+  fs.writeFileSync(input,JSON.stringify(candidata));
+  const result=executar([input,'--data-dir',data]);
+  assert.equal(result.status,1);assert.equal(result.stdout,'');
+  assert.match(result.stderr,/Páginas.*arquivo_imagem_id.*sensível/);
+  assert.ok(!result.stderr.includes(sensivel) && !result.stderr.includes(dir));
+  const state=lerEstado(data);
+  assert.equal(state.captura.envelope.capturaId,vigente.capturaId);
+  assert.equal(state.captura.envelope.completedAt,vigente.completedAt);
+  assert.equal(state.ultimaTentativa.resultado,'falhou');
+  assert.equal(state.historico.length,2);
+});
 test('C01 argumento ausente e URL são recusados antes de qualquer I/O', t => {
   const dir=temporario(t);
   for (const args of [[],['https://exemplo.invalid/captura'],['arquivo','--opcao-inesperada'],['arquivo','--data-dir']]) {

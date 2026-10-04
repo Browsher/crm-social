@@ -11,10 +11,13 @@ flowchart LR
   Iniciador["Iniciar CRM.ps1"] -->|Node existente, processo oculto| Server
   CLI["scripts/importar-captura.cjs"] --> Snapshot["src/snapshot.cjs"]
   Snapshot --> Captura["src/captura.cjs"]
+  Snapshot --> Triagem["src/triagem.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
   Server --> Projecao["src/projecao.cjs"]
   Server --> Quadro["src/quadro-config.cjs"]
   Projecao --> Captura
+  Projecao --> Triagem
+  Triagem -->|CAMPOS| Captura
   Projecao --> Quadro
   Server -->|define caminho padrão| Config["config/quadro-etapas.json"]
   Quadro -.->|lê caminho recebido| Config
@@ -30,10 +33,11 @@ flowchart LR
 | Módulo | Responsabilidade atual | Documento |
 | --- | --- | --- |
 | captura | Seis abas/66 mínimos, identidades, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
+| triagem | Seleção NTV/66 mínimos, redação conservadora e validação de identidades antes da promoção; sem I/O ou mapa do quadro | [Triagem](modules/triagem.md) |
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
-| projecao | Seleção NTV e campos permitidos, supressão de URLs com credenciais, semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas | [Projeção](modules/projecao.md) |
+| projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas | [Projeção](modules/projecao.md) |
 | servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
 | web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Histórico e avisos detalhados | [Interface](modules/web.md) |
@@ -55,7 +59,9 @@ flowchart TD
   Lock --> Estado[Ler estado confirmado]
   Estado --> Validar{Estrutura válida?}
   Validar -->|não| Rejeitar[Recibo falhou preserva a vigente]
-  Validar -->|sim| Conflito{Mesmo ID com outros bytes?}
+  Validar -->|sim| Identidades{Identidades e vínculos NTV passam na triagem?}
+  Identidades -->|não| Rejeitar
+  Identidades -->|sim| Conflito{Mesmo ID com outros bytes?}
   Conflito -->|sim| Rejeitar
   Conflito -->|não| Aceita{ID e bytes já aceitos?}
   Aceita -->|sim| NoOp[sem_alteracao sem novo recibo]
@@ -84,9 +90,9 @@ flowchart TD
 | `atual.json` | Única confirmação de captura vigente e Histórico |
 | `ultima-tentativa.json` | Cache derivado, sem autoridade concorrente |
 
-Mesmo ID e serialização já aceitos devolvem `sem_alteracao`, sem novo recibo/frescor/rollback. Conteúdo diferente no mesmo ID é conflito. Falha confirmável preserva captura e acrescenta recibo saneado; impossibilidade de registrar gera erro explícito. Interrupção pode deixar trava: não há expiração/remoção automática; conferir proprietário/processo/estado antes de recuperação manual. Os detalhes de falha, órfãos e concorrência estão no [módulo snapshot](modules/snapshot.md).
+Após validar estrutura e identidades NTV da candidata, mesmo ID e serialização já aceitos devolvem `sem_alteracao`, sem novo recibo/frescor/rollback. Conteúdo diferente no mesmo ID é conflito. Falha confirmável preserva captura e acrescenta recibo saneado; impossibilidade de registrar gera erro explícito. Interrupção pode deixar trava: não há expiração/remoção automática; conferir proprietário/processo/estado antes de recuperação manual. Os detalhes de falha, órfãos e concorrência estão no [módulo snapshot](modules/snapshot.md).
 
-`lerRecibo` confere cada recibo confirmado antes da projeção: objeto, IDs compatíveis, tipos, resultado e data ISO real com fuso explícito; `completa` exige captura identificada. Recibo corrompido recusa a leitura, e `criarServidor` responde 503 genérico sem escrever ou reparar arquivos. `selecionar` também recusa a projeção se a triagem alterar campo terminado em `_id`, evitando que identidades/vínculos diferentes virem a mesma chave suprimida. `detalhar` avisa versão ausente; `pendenciasMidia` não afirma ausência de mídia vigente sem versão positiva da produção.
+`lerRecibo` confere cada recibo confirmado antes da projeção: objeto, IDs compatíveis, tipos, resultado e data ISO real com fuso explícito; `completa` exige captura identificada. Recibo corrompido recusa a leitura, e `criarServidor` responde 503 genérico sem escrever ou reparar arquivos. Após `validarCaptura(raw)`, `promoverComTrava` chama `validarIdentidadesNtv` de [triagem](modules/triagem.md), antes de no-op, gravação da candidata ou troca de captura vigente. Campo NTV terminado em `_id` que seria redigido recusa a candidata; falha confirmável registra somente aba/linha/campo e motivo estático, preservando a última captura. A projeção reutiliza a mesma seleção e continua recusando bytes antigos/corrompidos sem fundir identidades em marcadores; HTTP retorna 503 sem escrita. Snapshot não importa mapa ou regras do quadro. `detalhar` avisa versão ausente; `pendenciasMidia` não afirma ausência de mídia vigente sem versão positiva da produção.
 
 A validação temporal ocorre sob trava, depois de estrutura/conflito/no-op e antes de gravar a candidata: fim até 10 minutos no futuro é permitido, inclusive o limite; excedente é inválida, e ID novo com fim igual ou anterior ao vigente é desatualizada. Ambas confirmam motivo fixo no recibo e mantêm a vigente. GET/releitura/reinício validam estrutura sem reaplicar essa política relativa à importação.
 
@@ -167,7 +173,7 @@ triados antes dos enriquecimentos, evitando `quadro`, `detalhes`, envelope e ext
 Contagens são das linhas NTV, não da alocação no Google. Normalização null→string
 vazia permanece nos mínimos, exceto `etapa_producao`; o original fica privado.
 Histórico mostra todas as tentativas confirmadas, sem órfãos nem novo recibo por
-no-op. HTTP, imports e persistência permanecem os mesmos.
+no-op. As tabelas e o Histórico não criam rotas ou escritores adicionais; a triagem compartilhada está descrita acima.
 
 `renderPlanilha` em [src/web/app.js](../src/web/app.js) conserva a aba disponível; setas, Home e End
 mudam seleção e foco, e tabelas largas têm região própria de rolagem. Sem captura,

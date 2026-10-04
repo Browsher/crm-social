@@ -1,6 +1,6 @@
 # Validação — feature 001, US1–US5 e Fase 8 sintética
 
-Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 permanece aberto sem merge, com gate Linux e review publicados para o head de implementação registrado abaixo. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
+Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 permanece aberto sem merge. A correção do Important de preflight tem gate local completo; seu aceite remoto está separado dos heads históricos abaixo. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
 
 ## Preparação T001
 
@@ -1132,7 +1132,7 @@ identifica expressamente sua procedência no log.
 
 | Achado do comentário inicial | Destino nesta rodada |
 | --- | --- |
-| m-1 — identidade triada pode ser promovida e tornar a consulta indisponível sem diagnóstico localizado | Limite conhecido antes de T039: importador valida a captura, mas não faz preflight da projeção; HTTP retorna 503 genérico. Não enfraquecer triagem nem prometer visualização de captura não demonstrada. Diagnóstico fixo/saneado ou validação antes da promoção merece regressão dedicada futura |
+| m-1 — identidade triada promovida e consulta indisponível | Reclassificado como Important I1 no review seguinte; corrigido com RED/GREEN pelo preflight descrito abaixo. Não é mais limite aceito da importação atual |
 | m-2 — caminhos extras do iniciador sem teste | Limite explícito no módulo: timeout/saída precoce do filho, CRM_NODE_PATH, porta padrão e DataDir relativo foram lidos, não executados. Os seis casos reais não provam esses caminhos |
 | m-3 — cabeçalho de tasks antigo | Corrigido: US1–US5 integradas e T035–T038 em PR próprio; somente T039–T041 pendentes |
 | m-4 — complexidade | Registrada: lerRecibo 12, selecionar 12 e capturaEscala 12; nove avisos no total, máximo 13, sem reprovação ou baseline nova |
@@ -1143,6 +1143,64 @@ Trecho do comentário: “Não encontrei nada Critical. Há uma pendência Impor
 de evidência (o gate deste HEAD) e alguns Minor.” O comentário é revisão somente
 leitura, não execução de testes. As linhas mencionadas nele para o PowerShell
 não são números atuais do arquivo, que tem 71 linhas; localizar por função/ramo.
+
+## T038 — correção do Important I1 do segundo review remoto
+
+[Segundo review](https://github.com/Browsher/crm-social/pull/12#issuecomment-5985154350),
+head **4b4432058a7269e5716d5499b8e163b54cb7fef6**: o antigo m-1 foi
+reclassificado como Important. O importador aceitava/promovia uma identidade
+sensível e somente a consulta recusava a projeção, escondendo a vigente anterior.
+O gate desse head documental também foi [SUCCESS no Linux](https://github.com/Browsher/crm-social/actions/runs/37240074277/job/111546863076),
+incluindo Semgrep CE 1.179.0 PASS. Isso é evidência histórica anterior à correção
+abaixo; não se declara aceite remoto de código posterior com esse resultado.
+
+**RED observado:** 14 novos casos, **1 PASS / 13 FAIL / 0 SKIP**, 0,75 s,
+comparando completa indevida com falhou esperado. Abrangem identidades das seis
+abas, ponteiro documental de Semanas, vínculo de página, arquivo exclusivamente
+semanal, URL com userinfo e string JSON; com/sem captura anterior. Casos que devem
+continuar aceitos: identidade exclusivamente fora do recorte NTV, extras, texto
+livre e id_drive triáveis. Fixtures inteiramente sintéticas; nenhuma credencial
+real ou captura operacional.
+
+**GREEN direcionado:** **14 PASS / 0 FAIL / 0 SKIP**, 0,83 s. O importador/CLI
+confirma falhou com aba, linha física e campo, sem o valor recusado; não grava o
+candidato, não troca os bytes ou horário da vigente, atualiza Histórico e falha
+ativa. HTTP conserva **200** e as quatro peças válidas anteriores. Sem captura
+anterior, permanece ausência real e recibo confirmado de falha.
+
+A seleção NTV, os 66 mínimos, o parser de URL e a triagem foram extraídos para
+**src/triagem.cjs**, sem duplicar regex/filtro nem mudar apresentação. Snapshot
+e projeção reutilizam essa mesma seleção. Grafo: snapshot→triagem→captura e
+projeção→triagem→captura; persistência não importa o serviço de apresentação ou
+o mapa do quadro. O preflight ocorre antes de conflito/no-op/gravação/ponteiro.
+Motivo localizado usa aba/campo do esquema fixo e linha física; nenhum valor.
+A defesa de projeção continua recusando bytes antigos/corrompidos externamente.
+
+O primeiro gate completo falhou em dois testes P de defesa: preparavam a captura
+sensível pela importação, que agora a recusa corretamente. Mantivemos todos os
+asserts de recusa e de não fusão; a preparação passou a usar estado saudável e
+captura estruturalmente validada antiga. H simula corrupção externa de bytes
+privados depois de promoção saudável. Não afrouxamos produção ou asserts para
+aceitar captura perigosa. Integração das quatro suítes: **131 PASS / 0 FAIL /
+0 SKIP**, 6,23 s. O revisor independente conferiu os snippets, confirmou I1
+fechado e não apontou novo bloqueante; não executou testes nem presumiu aceite CI.
+
+**Gate local completo final:** exit **0**, **63,77 s**, **240 PASS / 0 FAIL /
+0 SKIP**, oito suítes/cinco camadas, incluindo 82 casos de interface e seis do
+iniciador; **97,96%** de cobertura LCOV, complexidade máxima **13**, nove avisos,
+baseline inalterada. Semgrep SKIP no Windows; audit N/A. [Resumo sanitizado e
+16 hashes atuais](../../docs/reports/001-fase8-preflight-local.json).
+Os resumos anteriores de 226 casos/14 hashes permanecem históricos dos respectivos
+heads, sem reescrever a evidência passada. Scanner real exige confirmação no CI
+do novo código antes de encerrar esta rodada.
+
+Demais Minor do segundo comentário ficam como limites conhecidos: caminhos extras
+do iniciador sem teste; versão do runtime conferida manualmente; logs sem retenção;
+centralização futura dos geradores sintéticos de padrões de segredo; distinguir
+import de criação de processo no mapa; escala medida sem meta numérica de tempo.
+A nota de arquitetura diferencia criação de processo de require. Não inventar
+meta de desempenho ou versão obrigatória nova para resolver um Minor. Nenhum
+outro Important foi aceito como limite; T039–T041 continuam pendentes.
 
 ## Parada antes de T039 — preparo pela Central
 

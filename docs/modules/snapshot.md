@@ -9,10 +9,10 @@ Persistência e validação dos recibos confirmados implementadas e verificadas 
 | Export | Responsabilidade |
 | --- | --- |
 | `lerEstado(dataDir)` | Valida ponteiro, cada recibo confirmado e captura; não escreve, repara ou reaplica a política temporal relativa |
-| `promoverCaptura(raw, dataDir)` | Adquire exclusividade, confere estrutura/identidade/tempo, prepara arquivos e promove ou confirma falha |
+| `promoverCaptura(raw, dataDir)` | Adquire exclusividade, confere estrutura e identidades NTV antes do no-op, depois identidade da captura/tempo; prepara arquivos e promove ou confirma falha |
 | `registrarFalhaEntrada(dataDir, codigo)` | Confirma falha de arquivo/JSON que não chegou à validação, preservando captura |
 
-Não há rota, variável de ambiente ou rede. Imports nativos: fs, path e randomUUID; import local: [validação](captura.md). `dataDir` é argumento do chamador confiável, não dado de uma requisição.
+Não há rota, variável de ambiente ou rede. Imports nativos: fs, path e randomUUID; imports locais: [validação](captura.md) e `validarIdentidadesNtv` de [triagem](triagem.md). Não importa configuração ou projeção do quadro. `dataDir` é argumento do chamador confiável, não dado de uma requisição.
 
 ## Arquivos e autoridade
 
@@ -38,7 +38,9 @@ flowchart TD
   Entrada[Promover captura ou registrar falha de entrada] --> Trava["Abrir .importacao.lock com wx"]
   Trava --> Estado[Ler estado confirmado]
   Estado --> Validar{Estrutura válida?}
-  Validar -->|sim| Conflito{Mesmo ID com outros bytes?}
+  Validar -->|sim| Identidades{Identidades e vínculos NTV passam na triagem?}
+  Identidades -->|não| Falha
+  Identidades -->|sim| Conflito{Mesmo ID com outros bytes?}
   Conflito -->|sim| Falha
   Conflito -->|não| Repetida{ID e serialização já aceitos?}
   Repetida -->|sim| NoOp[sem_alteracao sem novo recibo]
@@ -59,6 +61,8 @@ flowchart TD
   Rename --> Leitor[lerEstado consulta apenas IDs confirmados]
 ```
 
+`promoverComTrava` primeiro obtém `candidata=validarCaptura(raw)` e chama `validarIdentidadesNtv(candidata)`. Se um campo interno NTV terminado em `_id` seria redigido, a candidata é recusada antes de no-op, gravação de seus bytes ou mudança da captura vigente. A falha confirmável conserva a anterior e registra localização estática de aba/linha física/campo, sem incluir a célula. A mesma seleção/triagem usada na consulta valida esse recorte; campos sensíveis comuns continuam privados na captura e triados na projeção, conforme o contrato.
+
 As gravações duráveis usam abertura `wx`, write, fsync e close. Arquivo imutável existente só é reaproveitado se o conteúdo for igual. A substituição de `atual.json` confirma captura, última tentativa e Histórico juntos. Falha na gravação/rename do ponteiro tenta remover somente o `atual-<uuid>.tmp` preparado, sem trocar o erro original por uma falha de limpeza. Essa remoção é tentativa, não garantia de recuperação após interrupção do processo.
 
 O `finally` tenta fechar o descritor e remover sua própria trava separadamente: falha no close não impede a tentativa de unlink. O resultado da operação ou seu erro original é preservado; falha de liberação acrescenta `avisos` transitórios ao objeto devolvido/erro, sem mudar o recibo persistido. O [CLI](importador.md) escreve esses avisos em stderr e mantém o exit correspondente ao resultado original. Uma segunda instância, inclusive tentando registrar entrada inválida, falha com **importação em andamento**, antes de ler/mutar o estado. O teste usa dois processos reais e uma barreira antes da confirmação.
@@ -69,7 +73,8 @@ Se o processo for interrompido, a trava pode permanecer. **Não há expiração 
 
 | Situação | Resultado real |
 | --- | --- |
-| ID e serialização já aceitos em recibo confirmado | `sem_alteracao`; não cria recibo, volta a captura antiga ou encerra falha posterior |
+| ID e serialização já aceitos em recibo confirmado, após estrutura/identidades NTV válidas | `sem_alteracao`; não cria recibo, volta a captura antiga ou encerra falha posterior |
+| Identidade/vínculo NTV alterável pela redação | Recibo falhou localizado, sem valor sensível; candidata não é gravada e captura anterior permanece vigente |
 | Mesmo ID, serialização diferente | Recibo falhou por conflito; captura existente não é sobrescrita |
 | Candidata mais de 10 minutos à frente do relógio local | Recibo falhou por captura inválida; vigente preservada, sem gravar a candidata |
 | ID novo com fim igual ou anterior ao da vigente | Recibo falhou por captura desatualizada; vigente preservada, sem gravar a candidata |
@@ -89,5 +94,7 @@ O no-op previamente aceito precede o relógio, mantendo idempotência mesmo se o
 [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) prova ausência, imutabilidade, no-op, conflito, falha, órfãos e promoção após interrupção da confirmação. As regressões cobrem close/unlink separados, preservação do resultado/erro e remoção do temporário após falha de rename. [tests/importador.test.cjs](../../tests/importador.test.cjs) cobre os recibos de falha de leitura e duas instâncias reais concorrentes. Tudo fica em TEMP; evidência em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
 Regressões de estrutura/tipos e calendário/fuso de recibos confirmados, além do HTTP 503 sem escrita, estão em `tests/snapshot.test.cjs` e `tests/servidor.test.cjs`; execução e limites somente na validação.
+
+Regressões em snapshot, importador e servidor conferem rejeição de identidades/vínculos antes da promoção, recibo localizado sem célula, manutenção da captura anterior consultável e defesa da consulta contra bytes antigos/corrompidos. Resultados somente na validação.
 
 O nome “Histórico” aqui significa recibos persistidos/projetados; a US5 já os apresenta na aba final da Planilha, sem mudar esta persistência. A estrutura da captura é revalidada na leitura, sem a política temporal relativa exclusiva da importação. Falha de rename testada não comprova resistência a queda de energia. Capturas/recibos preparados sem confirmação permanecem preservados; temporários têm limpeza localizada por tentativa quando gravação/rename falham. Interrupção pode deixar arquivos/trava; não há varredura de limpeza automática nem restauração que fabrique aceitação.

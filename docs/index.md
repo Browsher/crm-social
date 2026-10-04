@@ -28,6 +28,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | Documento | Código explicado |
 | --- | --- |
 | [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, normalização e hash |
+| [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
 | [Importador](modules/importador.md) | scripts/importar-captura.cjs; argumentos/saída e falhas de entrada |
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
@@ -117,6 +118,8 @@ As evidências têm origem, estado e limites registrados somente na [validação
 ## Evidência local da fase final
 
 [Resumo sanitizado de T035–T038](reports/001-fase8-local.json); iniciador, escala e regressões locais. Histórico de verificações e aceite operacional pendente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+
+[Resumo da validação anterior à promoção](reports/001-fase8-preflight-local.json); triagem compartilhada e rejeição da candidata sem substituir a vigente. Execuções e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 [Resumo sanitizado do CI da fase final](reports/001-fase8-ci.json); reproduz os estados e a versão do scanner observados no log oficial, sem substituir o relatório local ou declarar captura operacional.
 

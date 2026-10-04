@@ -219,8 +219,10 @@ conforme os limites de normalização e apresentação de URL do contrato.
 
 - Recibo confirmado precisa ser objeto com tipos/IDs e data ISO real com fuso válidos;
   corrupção recusa a consulta com 503 genérico, sem escrever ou fabricar Histórico.
-- Se a triagem alterar identidade/vínculo terminado em `_id`, recusar a projeção inteira,
-  sem fundir registros numa chave de supressão compartilhada ou modificar a captura privada.
+- Se a triagem alteraria identidade/vínculo NTV terminado em `_id`, recusar a candidata
+  antes de no-op, gravação ou promoção; falha confirmável registra localização sem valor
+  e preserva a última captura. A consulta mantém recusa da projeção para bytes antigos ou
+  corrompidos, sem fundir registros numa chave compartilhada ou escrever arquivos privados.
 - Versão vigente ausente gera aviso; versão ausente/inválida não comprova ausência de
   mídia vigente no quadro. Registros e impacto atual continuam a confirmar.
 

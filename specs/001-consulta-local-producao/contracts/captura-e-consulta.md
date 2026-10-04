@@ -89,7 +89,14 @@ e `motivoResumo` é string. Completa exige capturaId não nulo. JSON parseável 
 Recibo confirmado inválido/ilegível recusa `lerEstado`; consulta responde 503 genérico,
 sem reescrever, reparar ou remover ponteiro/recibos/captura. Órfãos continuam fora do Histórico.
 
-Importação do mesmo ID e mesmos bytes retorna `sem_alteracao` somente se há recibo
+Antes de conflito/no-op, gravar a candidata ou promover seu ID, a importação chama
+`validarIdentidadesNtv(validarCaptura(raw))` sob trava. Usa a mesma seleção NTV/66
+mínimos da consulta, sem mapa do quadro. Campo selecionado terminado em `_id` que
+seria alterado por `redigirTexto` recusa a candidata. Quando a persistência permite,
+confirma recibo `falhou` mantendo a captura vigente, com aba/linha física/campo e
+motivo estático, sem incluir o valor da célula. A candidata rejeitada não é gravada.
+
+Após estrutura e identidades NTV válidas, importação do mesmo ID e mesmos bytes retorna `sem_alteracao` somente se há recibo
 completo dessa captura já confirmado em `historicoIds`. Não duplica recibo, renova
 horário nem volta a uma captura antiga. Mesmo ID com bytes diferentes é conflito e
 resulta em tentativa falha, sem sobrescrever o arquivo existente.
@@ -437,9 +444,10 @@ usam **—**, sem inventar a localização de um aviso global.
   local indevido, suprimir esse conteúdo com aviso localizado; conservar original só na
   captura privada. JSON de origem é texto, não instrução nem objeto que expande a whitelist.
 - Identidade/vínculo interno em campo terminado em `_id` que seria alterado por
-  `redigirTexto` recusa a projeção inteira. Não converter essas chaves em marcador
-  compartilhado nem fundir seus registros. Captura privada permanece intacta; o
-  servidor retorna 503 genérico sem escrever ou expor valor/erro bruto.
+  `redigirTexto` já recusa a candidata na importação, conforme a persistência acima.
+  A projeção mantém a mesma guarda para bytes antigos/corrompidos: não converter
+  essas chaves em marcador compartilhado nem fundir seus registros. Captura privada
+  permanece intacta; o servidor retorna 503 genérico sem escrever ou expor valor/erro bruto.
 - Nos campos dedicados `Arquivos.url` e `Produções.url_video_final`, após a redação
   de texto, os valores ainda inalterados são analisados com `new URL`:
   usuário ou senha preenchidos causam **[conteúdo suprimido]** no campo selecionado,

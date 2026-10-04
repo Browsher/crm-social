@@ -9,6 +9,7 @@ const {capturaDetalhada,adicionarRegistro,recalcularHashes}=require('./fixtures.
 const {capturaQuadro,mapaQuadroSintetico}=require('./fixtures.cjs');
 const {capturaPlanilha,capturaEscala,campos}=require('./fixtures.cjs');
 const {carregarMapaQuadro}=require('../src/quadro-config.cjs');
+const {validarCaptura}=require('../src/captura.cjs');
 const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
 function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
@@ -947,12 +948,14 @@ test('P-fase8 identidades sensíveis distintas não se fundem após a triagem',t
   for(const table of Object.values(raw.tables)) {
     table.values=table.values.map(row=>row.map(cell=>cell==='peca-1'?ids[0]:cell==='peca-2'?ids[1]:cell));
   }
-  const local=estado(recalcularHashes(raw),t);
+  // Projeção pura protege também capturas antigas: a importação agora as recusa.
+  const local={...estado(capturaValida(),t),captura:validarCaptura(recalcularHashes(raw))};
   assert.equal(local.captura.producoes.length,5);
   assert.throws(()=>projetarVisao(local,NOW,mapaQuadroValido()),{message:'Identidade ou vínculo sensível não pode ser projetado'});
 });
 
 test('P-fase8 ponteiro interno sensível não cria uma relação a partir do marcador',t=>{
   const raw=capturaValida();mudarCelula(raw,'Páginas',1,'arquivo_imagem_id','ghp_'+'C'.repeat(30));
-  assert.throws(()=>projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),{message:'Identidade ou vínculo sensível não pode ser projetado'});
+  const local={...estado(capturaValida(),t),captura:validarCaptura(raw)};
+  assert.throws(()=>projetarVisao(local,NOW,mapaQuadroValido()),{message:'Identidade ou vínculo sensível não pode ser projetado'});
 });

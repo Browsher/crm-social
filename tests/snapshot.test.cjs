@@ -2,12 +2,67 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const {capturaValida,temporario,carregarModulo,redefinirHorario} = require('./fixtures.cjs');
+const {capturaValida,temporario,carregarModulo,redefinirHorario,mudarCelula} = require('./fixtures.cjs');
 const {promoverCaptura,lerEstado} = carregarModulo('src/snapshot.cjs',['promoverCaptura','lerEstado']);
 const clock='2026-10-02T14:00:00Z';
 function bytes(dir) {
   return fs.readFileSync(path.join(dir,'atual.json'),'utf8');
 }
+
+for(const [aba,campo] of [
+  ['Semanas','semana_id'],['Produções','producao_id'],['Páginas','pagina_id'],
+  ['Cenas','cena_id'],['Arquivos','arquivo_id'],['Revisoes','revisao_id'],['Páginas','arquivo_imagem_id'],
+  ['Semanas','plano_json_arquivo_id']
+]) test(`S-fase8-preflight ${aba}.${campo} sensível recusa promoção e conserva vigente`,t=>{
+  const dir=temporario(t),vigente=capturaValida();
+  assert.equal(promoverCaptura(vigente,dir).resultado,'completa');
+  const antiga=path.join(dir,'capturas',vigente.capturaId+'.json'),antes=fs.readFileSync(antiga);
+  const candidata=capturaValida();candidata.capturaId='captura-preflight-recusada';
+  redefinirHorario(candidata,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
+  // Identificador inteiramente sintético, só para exercitar a triagem compartilhada.
+  const sensivel='ghp_'+'identificador-ficticio-'.repeat(2);
+  mudarCelula(candidata,aba,1,campo,sensivel);
+  const receipt=promoverCaptura(candidata,dir),estado=lerEstado(dir);
+  assert.equal(receipt.resultado,'falhou');
+  assert.ok(receipt.motivoResumo.includes(aba) && receipt.motivoResumo.includes(campo));
+  assert.equal(estado.captura.envelope.capturaId,vigente.capturaId);
+  assert.equal(estado.captura.envelope.completedAt,vigente.completedAt);
+  assert.equal(estado.historico.length,2);
+  assert.equal(estado.ultimaTentativa.resultado,'falhou');
+  assert.deepEqual(fs.readFileSync(antiga),antes);
+  assert.equal(fs.existsSync(path.join(dir,'capturas',candidata.capturaId+'.json')),false);
+  assert.ok(!receipt.motivoResumo.includes(sensivel));
+});
+
+test('S-fase8-preflight respeita escopo NTV, mínimos e texto livre triável',t=>{
+  const raw=capturaValida(),dir=temporario(t),sensivel='ghp_'+'identificador-ficticio-'.repeat(2);
+  mudarCelula(raw,'Produções',5,'producao_id',sensivel);
+  mudarCelula(raw,'Produções',1,'legenda',sensivel);
+  mudarCelula(raw,'Produções',1,'__extra_privado',sensivel);
+  mudarCelula(raw,'Arquivos',1,'id_drive',sensivel);
+  assert.equal(promoverCaptura(raw,dir).resultado,'completa');
+  assert.equal(lerEstado(dir).captura.envelope.capturaId,raw.capturaId);
+});
+
+for(const [nome,value] of [
+  ['URL com userinfo','https://usuario-preflight:senha-preflight@exemplo.invalid/item'],
+  ['string JSON',JSON.stringify({origem:'ghp_'+'identificador-ficticio-'.repeat(2)})]
+]) test(`S-fase8-preflight ${nome} em vínculo também é recusado antes da promoção`,t=>{
+  const dir=temporario(t),raw=capturaValida();
+  mudarCelula(raw,'Páginas',1,'arquivo_imagem_id',value);
+  assert.equal(promoverCaptura(raw,dir).resultado,'falhou');
+  const state=lerEstado(dir);
+  assert.equal(state.captura,null);assert.equal(state.ultimaTentativa.resultado,'falhou');
+  assert.ok(!state.ultimaTentativa.motivoResumo.includes(value));
+});
+
+test('S-fase8-preflight arquivo exclusivamente semanal sensível não escapa do recorte',t=>{
+  const dir=temporario(t),raw=capturaValida();
+  mudarCelula(raw,'Arquivos',1,'producao_id','');
+  mudarCelula(raw,'Arquivos',1,'arquivo_id','ghp_'+'identificador-ficticio-'.repeat(2));
+  assert.equal(promoverCaptura(raw,dir).resultado,'falhou');
+  assert.equal(lerEstado(dir).captura,null);
+});
 
 for(const [nome,alteracao] of [
   ['motivo objeto',{motivoResumo:{dado:'/home/usuario-sintetico-recibo/privado'}}],

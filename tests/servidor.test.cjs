@@ -58,13 +58,30 @@ test('H-fase8 recibo aninhado inválido retorna 503 genérico sem segredo e sem 
 
 test('H-fase8 identidade sensível recusa projeção sem valor nem mistura de registros',async t=>{
   const {port,dataDir}=await ambiente(t,false),raw=capturaValida();
+  assert.equal(promoverCaptura(raw,dataDir).resultado,'completa');
   const ids=['sk-ant-'+'A'.repeat(30),'sk-ant-'+'B'.repeat(30)];
   for(const table of Object.values(raw.tables)) table.values=table.values.map(row=>row.map(cell=>cell==='peca-1'?ids[0]:cell==='peca-2'?ids[1]:cell));
-  recalcularHashes(raw);assert.equal(promoverCaptura(raw,dataDir).resultado,'completa');
+  // Defesa de leitura para corrupção externa de bytes privados, não promoção aceita.
+  recalcularHashes(raw);fs.writeFileSync(path.join(dataDir,'capturas',raw.capturaId+'.json'),JSON.stringify(raw));
   const pointer=path.join(dataDir,'atual.json'),before=fs.readFileSync(pointer,'utf8');
   const response=await request(port,'/api/visao');
   assert.equal(response.status,503);assert.doesNotMatch(response.body,/sk-ant-|conteúdo suprimido|Arquivos|Revisoes/);
   assert.equal(fs.readFileSync(pointer,'utf8'),before);
+});
+
+test('H-fase8-preflight captura recusada mantém HTTP 200 e falha ativa sobre os dados válidos',async t=>{
+  const {port,dataDir}=await ambiente(t),vigente=capturaValida(),candidata=capturaValida();
+  candidata.capturaId='captura-http-preflight-recusada';
+  redefinirHorario(candidata,'2026-10-02T12:01:00Z','2026-10-02T12:06:00Z');
+  const sensivel='ghp_'+'identificador-ficticio-'.repeat(2);
+  mudarCelula(candidata,'Páginas',1,'arquivo_imagem_id',sensivel);
+  assert.equal(promoverCaptura(candidata,dataDir).resultado,'falhou');
+  const response=await request(port,'/api/visao'),view=JSON.parse(response.body);
+  assert.equal(response.status,200);assert.equal(view.estado,'falha_atualizacao');
+  assert.equal(view.captura.capturaId,vigente.capturaId);
+  assert.equal(view.captura.completedAt,vigente.completedAt);
+  assert.deepEqual(view.producoes.map(p=>p.producao_id),['peca-1','peca-2','peca-3','peca-4']);
+  assert.ok(!response.body.includes(sensivel));
 });
 
 test('H-review I1 JSON de /api/visao não entrega credenciais em URLs registradas', async t=>{
