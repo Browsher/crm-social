@@ -2,7 +2,7 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
-Estado em 04/10/2026: evidência visual local de T001–T030/US1, US2, US3 e US4. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
+Estado em 04/10/2026: evidência visual local de T001–T034/US1–US5; sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
 
 | Arquivo | O que mostra |
 | --- | --- |
@@ -21,7 +21,7 @@ Aplicação em execução, dados fictícios — lista semanal mobile da primeira
 
 ## Limites da evidência
 
-As imagens originais comprovam a aparência histórica do Planejamento da US1, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** dessas duas imagens era provisório e foi substituído na US2. US4/quadro implementada localmente, com PR/aceite corrente pendentes; US5/abas completas e Histórico e iniciador pendentes. Produção mostra quadro por semana; Planilha já mostra detalhes da captura e releitura local, sem as tabelas futuras.
+As imagens originais comprovam a aparência histórica do Planejamento da US1, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** dessas duas imagens era provisório e foi substituído na US2. US4/quadro e US5/abas, avisos e Histórico estão implementadas localmente; iniciador, captura operacional e aceite completo permanecem pendentes. Produção mostra quadro por semana; Planilha mostra captura/releitura, seis tabelas e Histórico. Revisão/integração corrente fica somente na validação.
 
 Não substituir essas imagens por screenshots com dados privados. [Telas decididas](../telas.md) e [spec canônica](../../../specs/001-consulta-local-producao/spec.md) mantêm os requisitos completos; resultados de testes ficam no registro de validação, não deduzidos da imagem.
 
@@ -144,5 +144,45 @@ e nas [telas](../telas.md#3-produção-001).
 Aplicação real em loopback, captura e mapa exclusivamente sintéticos; conferência
 sem corte horizontal, erro de página ou requisição externa. Os arquivos anteriores
 permanecem como evidência da apresentação anterior. As imagens não comprovam
-captura Google, bytes de mídia ou integração operacional; revisão/aceite corrente
-continuam pendentes na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+captura Google, bytes de mídia ou integração operacional; revisão/integração
+corrente fica na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+
+## US5 — Planilha, avisos e Histórico
+
+As seis capturas novas de 04/10/2026 mostram a aplicação executável com captura
+exclusivamente sintética e estado em TEMP. Seis abas apresentam mínimos triados,
+contagens de linhas NTV e regiões próprias de rolagem; Histórico é a aba final.
+O atalho da gaveta abre Produções e os avisos da peça em Aba/Linha/Campo/Motivo,
+sem reduzir os dados NTV das seis tabelas. O Histórico reúne tentativas completas
+e falhas confirmadas, recentes primeiro.
+
+| Vista | Desktop | Celular |
+| --- | --- | --- |
+| Dados NTV | [1440 × 1565](001-us5-dados-1440.png) | [390 × 1892](001-us5-dados-390.png) |
+| Avisos da peça | [1440 × 1332](001-us5-avisos-1440.png) | [390 × 1641](001-us5-avisos-390.png) |
+| Histórico confirmado | [1440 × 1200](001-us5-historico-1440.png) | [390 × 1179](001-us5-historico-390.png) |
+
+Servidor loopback e dados fictícios, sem corte horizontal, erro de página ou
+requisição externa na conferência. Células dedicadas recusadas usam **link não
+permitido**, com marcador de supressão preservado e texto livre legítimo mantido;
+nenhuma célula navega ou carrega mídia. As interações de teclado/foco, releitura e
+avisos são verificadas nos testes, com resultados na [validação](../../../specs/001-consulta-local-producao/validacao.md)
+e [resumo sanitizado](../../reports/001-us5-local.json), sem deduzi-los só das imagens.
+
+As capturas anteriores permanecem históricas. Estes arquivos não comprovam coleta
+Google, captura operacional, bytes de mídia, integração ou aceite completo da 001;
+T035–T041 continuam pendentes. As regras de apresentação ficam nas [telas](../telas.md#4-planilha-001)
+e no [contrato](../../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md#apresentação-de-planilha-e-alcance-das-urls).
+
+## Planilha com origem compacta e motivos legíveis
+
+Novas vistas sintéticas da apresentação, mantendo as anteriores como referência.
+Origem resume falha e quantidade; a lista completa aparece somente na tabela.
+
+| Vista | Desktop 1440 | Celular 390 |
+| --- | --- | --- |
+| Dados | [Abrir](001-us5-ajuste-dados-1440.png) | [Abrir](001-us5-ajuste-dados-390.png) |
+| Avisos da peça | [Abrir](001-us5-ajuste-avisos-1440.png) | [Abrir](001-us5-ajuste-avisos-390.png) |
+| Histórico | [Abrir](001-us5-ajuste-historico-1440.png) | [Abrir](001-us5-ajuste-historico-390.png) |
+
+Evidências e limites permanecem na [validação](../../../specs/001-consulta-local-producao/validacao.md).

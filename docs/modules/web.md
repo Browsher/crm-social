@@ -1,8 +1,8 @@
-# Interface de Planejamento, gaveta do dia e Produção
+# Interface de Planejamento, gaveta do dia, Produção e Planilha
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura, gaveta e Produção implementados até T030/US4; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 21), `plural` (33), `fatosPeca` (39), `urlAutorizada` (52), `arquivosDaUnidade` (72), `secaoUnidades` (99), `secaoRevisoes` (115), `revisaoLinha` (128), `textosRegistrados` (140), `documentosDoDia` (150), `resumoPeca` (165), `avisosPeca` (172), `acordeaoPeca` (179), `cartao` (196), `calendario` (211), `abrirDiaDaPeca` (245), `semanasQuadro` (249), `semanaDoQuadro` (253), `pendenciaQuadro` (261), `cartaoQuadro` (271), `colunaQuadro` (282), `renderProducao` (289), `trocarSemana` (302), `lista` (313), `render` (326), `controles` (349) e `detalhesCaptura` (366).
+Planejamento, frescor/releitura, gaveta, Produção e Planilha implementados até T034/US5; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Fontes em app.js: `abrirDia` (linha 22), `plural` (34), `fatosPeca` (40), `urlAutorizada` (53), `arquivosDaUnidade` (73), `secaoUnidades` (100), `secaoRevisoes` (116), `revisaoLinha` (129), `textosRegistrados` (141), `documentosDoDia` (151), `resumoPeca` (166), `avisosPeca` (173), `acordeaoPeca` (184), `cartao` (201), `calendario` (216), `abrirDiaDaPeca` (250), `semanasQuadro` (254), `semanaDoQuadro` (258), `pendenciaQuadro` (266), `cartaoQuadro` (276), `colunaQuadro` (287), `renderProducao` (294), `trocarSemana` (307), `lista` (318), `render` (331), `navegar` (347), `controles` (360), `tabelaLocal` (378), `horarioLocal` (390), `historicoPlanilha` (396), `motivoHistorico` (405), `motivoAviso` (417), `renderAvisosPlanilha` (427), `escolherAba` (439), `tabPlanilha` (444), `renderPlanilha` (456), `celulaPlanilha` (470) e `detalhesCaptura` (475).
 
 ## Inicialização e navegação
 
@@ -17,7 +17,7 @@ O HTML importa somente `/styles.css` e `/app.js`; o JavaScript busca apenas `/ap
 | Até 720 px | Lista inicial, menu recolhido; seletor visual Calendário/Lista fica oculto |
 | Menu | Exatamente Planejamento, Produção e Planilha |
 | Produção | Quadro por semana/tema, setas, oito colunas/vazias, pendências e Outras com título/contador da API |
-| Planilha | Fonte, fim em São Paulo, cobertura semanal, motivos resumidos dos avisos e botão de releitura; seis tabelas/Histórico futuros |
+| Planilha | Fonte, fim em São Paulo, cobertura, releitura, seis abas de mínimos NTV, Histórico final e painel detalhado de avisos |
 | Filtros | Todos, Imagem, Carrossel e Reels, com aria-pressed |
 | Mês anterior/próximo | Troca somente o mês apresentado |
 | Selo | Quatro textos/cores contratuais da API em todas as telas; clique abre Planilha |
@@ -28,7 +28,7 @@ O HTML importa somente `/styles.css` e `/app.js`; o JavaScript busca apenas `/ap
 
 Os handlers são instalados uma vez antes da primeira consulta, com Planejamento como tela inicial. `reler` consulta a API, atualiza `state.view` após uma resposta bem-sucedida e renderiza sem trocar a tela escolhida. O botão é liberado em `finally`, inclusive após 503, permitindo nova tentativa. Sem visão anterior, `render` retorna sem acessar dados: filtros continuam seguros após a primeira falha e `#erro` fica visível junto a **Consulta indisponível**. Abrir ou reler não grava/importa captura nem consulta Google.
 
-Em Planilha, `detalhesCaptura` mostra **Captura pela Central**, fim da captura formatado em `America/Sao_Paulo` e período civil das semanas; sem esses dados usa **Sem captura disponível** e **Cobertura não disponível**. Motivos dos avisos são deduplicados e aplicados como texto em `role=status`. O aviso de última importação falha permanece junto aos dados da última captura válida. O selo segue ausência, falha ativa, hoje ou outro dia calculados na projeção; GET/no-op não renovam horário nem encerram a falha.
+Em Planilha, `detalhesCaptura` mostra **Captura pela Central**, fim da captura formatado em `America/Sao_Paulo` e período civil das semanas; sem esses dados usa **Sem captura disponível** e **Cobertura não disponível**. **Origem e atualização** contém somente a linha **Última importação falhou; captura anterior preservada** quando a última tentativa falhou e há captura; sem captura, usa **Última importação falhou; nenhuma captura válida disponível**. Quando há avisos gerais, mostra o link **N avisos de dados**, com singular para um. A lista de motivos fica somente no painel Aba/Linha/Campo/Motivo. O selo segue ausência, falha ativa, hoje ou outro dia calculados na projeção; GET/no-op não renovam horário nem encerram a falha.
 
 ## Calendário, lista e Sem data
 
@@ -55,11 +55,66 @@ A lista agrupa pelo tema/período da semana de origem. `pecaVisivel` considera a
 
 `semanasQuadro` ordena por início civil/identidade, sem período ao final. A seleção conserva escolha; na primeira carga prefere semana de hoje em São Paulo, senão última datada ou primeira disponível. Setas ficam desabilitadas nos limites; tema/período/total são da semana escolhida, sem filtro de mês/formato do Planejamento. O browser usa colunas/título/IDs/contador da API, sem recalcular mapas. Vazia mostra **Sem peças**; sem captura pede primeira leitura à Central.
 
-Cartão apresenta formato, data/**Sem data**, título, status informativo e **Com quem está** registrado (vazio **A confirmar**); Outras conserva etapa original (vazio **Não informada**). `pendenciaQuadro` (`src/web/app.js:261`) filtra somente as pendências de mídia na apresentação do cartão: **Mídia ausente** aparece em Mídia, Revisão, Pronta, Publicada e Outras; fica oculta em Planejamento, Redação e Visual. Revisões vigentes que pedem correção continuam no resumo em qualquer coluna.
+Cartão apresenta formato, data/**Sem data**, título, status informativo e **Com quem está** registrado (vazio **A confirmar**); Outras conserva etapa original (vazio **Não informada**). `pendenciaQuadro` (`src/web/app.js:266`) filtra somente as pendências de mídia na apresentação do cartão: **Mídia ausente** aparece em Mídia, Revisão, Pronta, Publicada e Outras; fica oculta em Planejamento, Redação e Visual. Revisões vigentes que pedem correção continuam no resumo em qualquer coluna. `semanaId` está declarada no estado inicial junto aos estados da Planilha, sem redefinir a regra de seleção semanal.
 
 Após esse filtro, a primeira pendência visível mostra **Revisão: motivo** ou o texto curto **Mídia ausente**, com **Corrige** separado quando a revisão tem responsável registrado. **+N pendências** conta somente as demais visíveis, com singular quando N=1; nenhuma visível omite o resumo inteiro. API e gaveta conservam os detalhes de mídia e revisão. Registro de arquivo na versão atual com URL vazia/recusada não vira mídia ausente. Assim, um cartão em Planejamento com revisão e mídia ausente mostra a revisão sem contar a mídia no +N; em Mídia, ambas entram no resumo e na contagem.
 
 Grid preserva oito colunas em ordem: quatro em 1440 px, duas até 1100 px e uma até 720 px. Cartões são botões com foco/teclado; clique abre o dia inteiro ou Sem data da semana, sem arrastar/editar. [tests/interface.test.cjs](../../tests/interface.test.cjs) cobre semana/tema, vazias, Outras/contador, responsáveis/pendências, teclado e clique em 390/1440; resultados somente na validação.
+
+## Planilha, Histórico e avisos
+
+Como folhas de consulta do mesmo álbum, seis abas mantêm o conjunto NTV completo.
+O atalho da gaveta localiza somente os avisos relacionados à peça, sem reduzir as
+tabelas. A tela usa `planilha`, `historico`, `avisos` e `detalhes.avisos` da API
+existente; não há nova consulta remota nem escrita.
+
+| Seção / controle | Apresentação atual |
+| --- | --- |
+| Subtítulo | Dados capturados da planilha, por aba; ao voltar às demais telas, Peças registradas, semana a semana. |
+| Origem e atualização | Fonte, fim e cobertura; falha ativa em uma linha e contador de avisos gerais como link, sem repetir os motivos |
+| Abas de dados | Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes; contagem de linhas NTV e 66 mínimos triados, sem campos calculados de quadro/gaveta |
+| Histórico final | Todas as tentativas confirmadas, recentes primeiro; horário em São Paulo, Completa/Falhou e motivo em linguagem de tela; vazio = Nenhuma tentativa confirmada |
+| Teclado de abas | Setas esquerda/direita com retorno nas pontas, Home/End; seleção e foco juntos, somente aba selecionada no Tab |
+| Tabela larga | Região de rolagem horizontal própria com nome/foco; conteúdo como texto e cabeçalhos de coluna |
+| Sem captura | Orientação para pedir captura completa à Central; somente Histórico, sem seis tabelas fictícias |
+| Avisos de dados | Aba/Linha/Campo/Motivo; — quando não há localização; oculto em Histórico ou sem avisos |
+| Releitura | Conserva a aba disponível e filtro da peça ainda existente; erro HTTP conserva a visão anterior |
+
+`tabelaLocal` (378) cria a região focável e tabela por `textContent`;
+`historicoPlanilha` (396) usa toda a lista confirmada, sem inferir novas tentativas
+de GET/no-op nem mostrar órfãos. `renderPlanilha` (456) acrescenta Histórico após
+as seis abas; `tabPlanilha` (444) e `escolherAba` (439) sincronizam seleção, foco,
+`aria-selected` e `aria-labelledby`, com rolagem da aba até a área visível. Se a
+aba deixa de existir, a primeira disponível é selecionada.
+
+`avisosPeca` (173) fecha a gaveta, chama `navegar` (347) com a produção, abre
+Produções e dá rolagem/foco a `#avisos-dados`. `renderAvisosPlanilha` (427) usa os
+avisos relacionados da peça; as seis tabelas permanecem globais à captura NTV.
+Menu e selo entram sem filtro; **Todos os avisos** restaura os gerais no painel.
+O link **N avisos de dados** de Origem também restaura os gerais, seleciona Produções
+e dá foco/rolagem ao painel, inclusive ao sair de Histórico. O contador usa a
+quantidade global de avisos, sem deduplicar linhas ou acompanhar o filtro da peça.
+
+`motivoAviso` (417) consolida o texto de mídia de cada aviso apenas na apresentação:
+**Imagens e vídeo ausentes**, **Imagem final ausente**, **Nenhum arquivo da produção
+registrado** e **Imagem ausente** para páginas são exemplos. Retira a repetição
+do prefixo e reúne causas distintas em uma célula; conserva a quantidade de linhas
+e Aba/Linha/Campo. Outros motivos permanecem como recebidos; a API não é alterada.
+
+`motivoHistorico` (405) traduz falhas para linguagem de tela: **Cenas complete:
+inválido** vira **Aba Cenas incompleta**; outras validações de aba usam **Aba X
+inválida**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
+inválido recebem rótulos próprios; motivo desconhecido usa **Captura não pôde ser
+importada**, vazio permanece vazio. Resultado desconhecido usa **Resultado
+desconhecido**. Os motivos originais do recibo continuam na API e na persistência.
+
+`celulaPlanilha` (470) aplica a allowlist somente a `url`/`url_video_final`:
+valor dedicado preenchido recusado por `urlAutorizada` vira **link não permitido**;
+o marcador exato **[conteúdo suprimido]** permanece. A API conserva seus valores
+triados, incluindo URL dedicada válida fora da allowlist visual. Texto livre
+legítimo mantém suas URLs como texto, conforme a redação do contrato. Células não
+criam links, navegação ou carga automática. A garantia de não ecoar URL recusada
+refere-se aos campos dedicados e links de arquivos; não varre todas as frases.
 
 ## Gaveta do dia, texto e acessibilidade
 
@@ -80,7 +135,7 @@ O diálogo nativo recebe título de data/sem data, quantidade e **todas** as pe�
 | Avisos da peça | Quantidade de aviso(s) de dados nesta peça e link ver na Planilha, com plural correto e sem separador pendurado; aba/linha/campo permanecem na API |
 | Documentos da semana | Uma seção no fim do dia; cada semana representada tem Plano/Redação/Visual uma vez, com — para ausentes, inclusive sem semana identificada |
 
-O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. O link dos avisos fecha a gaveta, abre Planilha e conserva um destino de foco no selo; a página atual apresenta motivos resumidos, com tabelas detalhadas reservadas à US5.
+O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. O link dos avisos fecha a gaveta, abre Produções na Planilha e dá rolagem/foco ao painel detalhado da peça; Origem conserva a falha ativa e o contador geral, com os motivos somente no painel.
 
 Publicação preenchida permanece como registro explícito e conserva o valor original. Quando formato/fuso são inválidos ou o instante excede o fim da captura, a projeção acrescenta um aviso localizado em `publicado_em`; a gaveta conserva o registro e resume a quantidade de avisos, sem verificar publicação remotamente. Campo vazio omite a linha, sem comprovar publicação. IDs de escopo/revisão e seus valores completos continuam na API, sem rótulos técnicos na linha visual. A API ainda conserva `detalhes.responsavelRegistrado='A confirmar'` quando vazio, mas a faixa usa `responsavel_atual` e omite esse campo vazio.
 
@@ -102,7 +157,9 @@ As regressões também cobrem primeira carga falhando com filtros seguros, botã
 
 Com `CI=true`, os casos de interface declaram SKIP antes de carregar Playwright; fora do CI, ferramenta ausente falha. A aplicabilidade dos pulos e a UI fora do LCOV permanecem pendência M8. Estado e evidências somente na [validação](../../specs/001-consulta-local-producao/validacao.md); as [screenshots](../design/screenshots/LEIA-ME.md) usam apenas fixtures fictícias.
 
-Pegadinhas: trocar o tamanho da janela depois de iniciar não recalcula o modo inicial; a escolha é feita por matchMedia no carregamento. Busca por ID usa a coleção em memória e sem paginação; cenário final de 500 peças ainda não foi executado. Testes locais de US1/US2/US3/US4 não comprovam tabelas/Histórico, escala final ou integração operacional.
+As verificações da US5 cobrem as seis abas, cabeçalhos/contagens, Histórico confirmado com motivo legível, teclado/foco, releitura com seleção preservada, avisos por peça e restauração dos gerais, Origem com falha/contador e atalho desde Histórico, consolidação de mídia no painel, subtítulo próprio, rolagem em 390/1440 e células de URL dedicada recusadas sem navegação. Estado, resultados e limites ficam somente na validação.
+
+Pegadinhas: trocar o tamanho da janela depois de iniciar não recalcula o modo inicial; a escolha é feita por matchMedia no carregamento. Busca por ID usa a coleção em memória e sem paginação; cenário final de 500 peças ainda não foi executado. A Planilha herda a normalização null→string vazia dos mínimos, exceto etapa_producao; o envelope privado mantém o original. Testes locais de US1–US5 não comprovam escala final, captura operacional ou aceite completo da feature.
 
 ## Pegadinha de uso prolongado
 

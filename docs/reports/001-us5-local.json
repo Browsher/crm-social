@@ -1,0 +1,98 @@
+{
+  "observadoEm": "2026-10-04",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
+  "escopo": "US5 T031–T034, Planilha/Histórico; somente fixtures sintéticas",
+  "local": {
+    "exitCode": 0,
+    "tests": {
+      "pass": 194,
+      "fail": 0,
+      "skip": 0,
+      "interface": 76
+    },
+    "suiteSeconds": 65.06,
+    "results": [
+      {
+        "name": "tests",
+        "state": "PASS",
+        "reason": "",
+        "count": 194
+      },
+      {
+        "name": "coverage",
+        "state": "PASS",
+        "reason": "",
+        "percent": 97.6267529665588,
+        "drop": 0
+      },
+      {
+        "name": "complexity",
+        "state": "PASS",
+        "reason": ""
+      },
+      {
+        "name": "semgrep",
+        "state": "SKIP",
+        "reason": "Semgrep ausente; instalar CE 1.179.0"
+      },
+      {
+        "name": "audit",
+        "state": "N/A",
+        "reason": "sem package.json/dependencias do app"
+      }
+    ],
+    "complexityMax": 13,
+    "avisosComplexidade": [
+      {
+        "file": "scripts/importar-captura.cjs",
+        "line": 5,
+        "value": 12
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 73,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 85,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 151,
+        "value": 13
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 294,
+        "value": 11
+      }
+    ],
+    "baselineAtualizada": false,
+    "gateSeconds": 58.92
+  },
+  "semgrepLocalLinux": {
+    "version": "1.179.0",
+    "state": "PASS",
+    "findings": 0,
+    "errors": 0,
+    "scanned": 9,
+    "limite": "Reprodução autorizada com ferramenta só em TEMP; o check remoto deve ser conferido separadamente na procedência."
+  },
+  "linux": {
+    "estado": "Conferir na procedência o job do head publicado; a reprodução local não substitui o check remoto",
+    "limite": "Semgrep Windows SKIP não comprova aceite Linux. Interface tem SKIP explícito no CI, fora do LCOV."
+  },
+  "medicao": {
+    "estado": "Código final medido antes da publicação; heads/execuções somente na procedência",
+    "fontesSha256": {
+      "src/projecao.cjs": "99939461e91c27d5887cfa3e45d8ddb57dbd3edaa29ba6a970bd49556bcbc78d",
+      "src/servidor.cjs": "ee4dc6c897265e96a9a7f3542f7599ef65fdcd54a0bb3b884e9ea8236b2a2456",
+      "src/web/app.js": "82d9b8b85b48fb486f4af8dd14e519e181b7b014331d7233fabf484c2fd2d7e9",
+      "src/web/index.html": "b7871601db1c8e024ca0441f29223a1f1b76fb1933a0e07f366086806623fa99",
+      "src/web/styles.css": "0865d15dee9733ca56e207d5e93357b16978670e14966f0f69a122b38b86d19b",
+      "tests/fixtures.cjs": "67b0c6b22b5f825caf951b16191334a8895bdbd908252924b451ed2f1b33113f"
+    }
+  }
+}

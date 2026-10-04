@@ -6,9 +6,9 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Feature Directory**: `specs/001-consulta-local-producao`
 
-**Created**: 2026-10-02 | **Updated**: 2026-10-04 (US4/quadro implementado localmente)
+**Created**: 2026-10-02 | **Updated**: 2026-10-04 (US5/Planilha e Histórico implementados localmente)
 
-**Status**: Fundação, US1, US2, US3 e US4 implementadas; PR da US4, US5/entrega completa e captura operacional pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md).
+**Status**: Fundação e US1–US5 implementadas localmente até T034 (34 de 41 tarefas); sete tarefas finais, iniciador, captura operacional e aceite completo pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md). A sincronização deste incremento não conclui T041.
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
@@ -128,8 +128,9 @@ com Escape, conferindo as versões e o foco restaurado.
 8. **Given** avisos localizados, **When** abro a peça,
    **Then** vejo somente a quantidade de **aviso(s) de dados nesta peça** e link **ver
    na Planilha**, com plural correto e sem separador pendurado; o link
-   abre Planilha; aba/linha/campo permanecem na API, fora da gaveta, com tabelas
-   detalhadas futuras na US5. Aviso semanal não se repete no conjunto global por peça.
+   fecha a gaveta, abre Produções na Planilha e foca o painel Aba/Linha/Campo/Motivo
+   filtrado pelos avisos da peça; as seis tabelas conservam todas as linhas NTV.
+   Aviso semanal não se repete no conjunto global por peça.
 
 ### User Story 4 - Localizar peças no quadro de Produção (Priority: P2)
 
@@ -180,14 +181,17 @@ preservando dados privados apenas neste computador.
 **Why this priority**: concentra fonte, cobertura e erros numa tela de consulta verificável.
 
 **Independent Test**: abrir as seis abas e Histórico, conferir contagens e nomes dos
-66 cabeçalhos mínimos, com todos os seus valores registrados renderizados como dados seguros.
+66 cabeçalhos mínimos, com seus valores triados renderizados como dados seguros,
+conforme os limites de normalização e apresentação de URL do contrato.
 
 **Acceptance Scenarios**:
 
 1. **Given** captura completa aceita, **When** abro Planilha,
    **Then** vejo horário de fim e período coberto, Atualizar dados, seis abas Semanas,
    Produções, Páginas, Cenas, Arquivos e Revisoes com contagem de linhas e os 66 cabeçalhos
-   mínimos com seus valores registrados, inclusive IDs, hashes e origens, como texto/dados.
+   mínimos com seus valores triados, inclusive IDs, hashes e origens, como texto/dados.
+   Contagens correspondem às linhas NTV selecionadas; linhas de tabelas são cópias
+   com somente os mínimos, sem quadro/detalhes/envelope.
 2. **Given** colunas extras na captura, **When** consulto as tabelas,
    **Then** elas são preservadas somente na captura privada; não aparecem automaticamente
    no HTTP nem criam exigência de coluna na planilha operacional.
@@ -197,6 +201,19 @@ preservando dados privados apenas neste computador.
    Arquivo preparado sem confirmação não aparece como conclusão aceita.
 4. **Given** uma tabela larga em 390 px, **When** consulto,
    **Then** a própria tabela tem rolagem horizontal; a página não corta conteúdo nem rola lateralmente.
+5. **Given** abas disponíveis, **When** uso setas esquerda/direita, Home ou End,
+   **Then** seleção e foco acompanham a aba; a releitura conserva a seleção disponível.
+6. **Given** nenhuma captura válida, **When** abro Planilha,
+   **Then** vejo orientação à Central e somente Histórico, com as tentativas confirmadas
+   ou ausência explícita delas, sem tabelas fictícias.
+7. **Given** aviso de uma peça, **When** sigo ver na Planilha da gaveta,
+   **Then** a gaveta fecha, Produções abre e o painel da peça recebe rolagem/foco;
+   as seis tabelas mantêm o conjunto NTV. Menu, selo e Todos os avisos restauram
+   avisos gerais, sem operação remota.
+8. **Given** célula dedicada url/url_video_final recusada pela allowlist visual,
+   **When** consulto a tabela, **Then** vejo link não permitido, sem URL bruta;
+   o marcador de supressão permanece. Texto livre legítimo conserva suas URLs
+   como texto, segundo o contrato, e nenhuma célula navega ou carrega mídia.
 
 ### Edge Cases
 
@@ -237,7 +254,7 @@ preservando dados privados apenas neste computador.
   da peça afetada, sem duplicar o conjunto global. Arquivo ligado sem link seguro
   mostra link não permitido; Texto registrado usa Página/Cena número e versão,
   mantendo IDs completos somente na API.
-- No cartão futuro de Produção, responsável vazio aparece "A confirmar" e etapa
+- No cartão de Produção, responsável vazio aparece "A confirmar" e etapa
   vazia "Não informada", com original preservado. Na faixa compacta da gaveta,
   campos vazios são omitidos; `detalhes.responsavelRegistrado` mantém o fallback na API.
 - Dados de outra marca não aparecem como produção ou exemplos NTV.
@@ -308,9 +325,13 @@ preservando dados privados apenas neste computador.
   vigentes ficam em +N. Documentos semanais aparecem uma vez no fim do dia com três
   papéis/— na ausência; aviso técnico só na API, quantidade/link para Planilha na gaveta.
 - **FR-016**: Planilha reúne horário/cobertura, releitura local, seis abas com contagens e
-  os 66 cabeçalhos mínimos e valores registrados, mais Histórico de tentativas completas/falhas,
+  os 66 cabeçalhos mínimos e valores triados, mais Histórico de tentativas completas/falhas,
   resumidas, imutáveis, persistidas privadamente e confirmadas no estado local;
   arquivos preparados/órfãos não são conclusões. Extras ficam somente na captura privada.
+  As tabelas usam cópias dos mínimos e contagens NTV; avisos detalhados podem ser
+  filtrados pela peça sem recortar dados. Abas têm teclado/foco e rolagem própria;
+  URLs dedicadas recusadas mostram link não permitido, conforme o contrato, com
+  textos livres legítimos preservados e nenhuma navegação automática.
 
 ### Key Entities
 

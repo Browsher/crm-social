@@ -1,6 +1,6 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação, US1, US2, US3 e US4 implementadas; quadro por semana implementado; revisão/aceite corrente da US4, tabelas/Histórico e iniciador pendentes. Estado e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação e US1–US5 implementadas localmente até T034 (34 de 41 tarefas); iniciador, sete tarefas da fase final, captura operacional e aceite completo pendentes. Estado, revisão e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
 Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura
@@ -243,7 +243,7 @@ revisão vigente e aparece separado. Sem inferir aguarda-de, próxima ação, ag
 capacidade, elegibilidade ou monitoramento.
 
 O resumo de pendências do cartão aplica a regra de apresentação abaixo, implementada
-em `src/web/app.js:261` (`pendenciaQuadro`). A coluna continua definida pelas
+em `pendenciaQuadro`, de `src/web/app.js`. A coluna continua definida pelas
 prioridades e pelo mapa; este filtro não altera a projeção nem os detalhes da gaveta.
 
 | Coluna do cartão | Mídia ausente | Revisão vigente que pede correção |
@@ -389,8 +389,11 @@ tem somente motivo: não inventar aba/linha/campo para ele. A API conserva aba,
 linha física, campo e motivo localizados, sem descartar o vínculo da unidade. A gaveta
 nunca mostra esses detalhes técnicos: quantidade de **aviso(s) de dados nesta peça**
 e link **ver na Planilha**, com plural correto e sem separador pendurado. O link
-fecha a gaveta e abre Planilha. As tabelas detalhadas dos
-avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
+fecha a gaveta, abre a aba Produções da Planilha e filtra o painel pelos avisos
+relacionados à peça, com rolagem e foco nesse painel. As seis tabelas continuam
+com todas as linhas NTV; somente os avisos recebem o filtro. Menu, selo e
+**Todos os avisos** restauram os avisos gerais. Sem origem localizada, Aba/Linha/Campo
+usam **—**, sem inventar a localização de um aviso global.
 
 ## Projeção HTTP LOCAL de campos selecionados
 
@@ -407,10 +410,15 @@ avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
   `quadro.colunas:[{nome}]` mantém a ordem contratual; `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` contém oito colunas e IDs ordinais por semana, inclusive semanaId null das peças sem vínculo inequívoco. Sem captura, semanas vazias com nomes canônicos mantidos. Cada produção acrescenta `quadro:{coluna,pendencias}`.
   Coluna Outras deriva título/contador só dos seus cartões daquela semana;
   não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. O cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
-- `planilha`: seis abas na ordem dos mínimos, cada uma `{nome, cabecalhos,
-  quantidadeLinhas, linhas}`. `cabecalhos` é a lista literal mínima; `linhas` conserva
-  os valores mínimos e sua identidade, exclui linhas vazias e registros de outra marca.
-  Contagem é das linhas NTV apresentadas, não das linhas alocadas na planilha inteira.
+- `planilha`: seis abas na ordem Semanas, Produções, Páginas, Cenas, Arquivos e
+  Revisoes, cada uma `{nome, cabecalhos, quantidadeLinhas, linhas}`. `cabecalhos`
+  é cópia da lista literal de `CAMPOS`; `linhas` contém objetos novos com somente
+  as chaves mínimas daquela aba e os valores já triados. Exclui linhas vazias e
+  registros de outra marca; não recebe `quadro`, `detalhes`, períodos calculados,
+  envelope ou extras. Contagem é das linhas NTV apresentadas, não das linhas
+  alocadas na planilha inteira. A normalização preexistente null→string vazia
+  continua nos mínimos, exceto `etapa_producao`, cujo null é recuperado antes da
+  triagem e preservado. A tabela não promete uma cópia literal da matriz privada.
 - A Planilha local inclui todos os 66 mínimos e valores como dados de consulta,
   inclusive `id_drive`, `sha256` e `origens_json` como registro/texto seguro. Não confundir
   esta consulta privada local com mockup compartilhável, que usa somente dados fictícios.
@@ -453,10 +461,57 @@ avisos permanecem na US5; a tela atual mostra apenas motivos resumidos.
   JSON originalmente inválido conserva seu aviso. Não expor o original para
   explicar a supressão nem usar JSON decodificado como instrução.
 - Textos renderizam com `textContent`; não executar HTML/scripts, instruções ou comandos
-  das células, inclusive JSON. URL recusada nunca aparece como texto bruto na tela; link interativo só
+  das células, inclusive JSON. URL dedicada recusada não aparece como texto bruto na tela; link interativo só
   se selecionado/validado e acionado por clique: HTTPS, host exato `drive.google.com` ou
   `docs.google.com`, sem usuário/senha, `rel="noopener noreferrer"`. Sem carga, mídia,
   thumbnail ou download remoto automático.
+
+### Apresentação de Planilha e alcance das URLs
+
+Como páginas de consulta do mesmo álbum, as abas mantêm os dados NTV completos;
+um atalho da gaveta localiza somente os avisos da peça. Não há nova rota, importação
+ou escrita por trocar aba, filtrar avisos ou reler a captura.
+
+| Controle / estado | Comportamento implementado na US5 |
+| --- | --- |
+| Subtítulo | Dados capturados da planilha, por aba |
+| Origem e atualização | Fonte, fim e cobertura; somente a linha da falha ativa e o link N avisos de dados, com singular para um; motivos detalhados somente no painel |
+| Seis abas de dados | Ordem dos mínimos, contagem de linhas NTV, cabeçalhos literais e valores triados como texto |
+| Histórico final | Todas as tentativas confirmadas, recentes primeiro; horário em São Paulo, Completa/Falhou e motivo em linguagem de tela; sem órfãos ou duplicação por no-op |
+| Teclado | Setas esquerda/direita alternam com retorno nas pontas; Home/End selecionam primeira/última; seleção e foco ficam na mesma aba |
+| Tabelas largas | Região própria de rolagem horizontal, acessível por teclado; página sem rolagem lateral em 390 px |
+| Releitura | Conserva aba selecionada se ela continua disponível; sem captura, somente Histórico fica disponível |
+| Captura ausente | Orientação para pedir captura completa à Central; Histórico vazio informa que não há tentativa confirmada |
+| Avisos de dados | Painel Aba/Linha/Campo/Motivo, filtrado pela peça quando vindo da gaveta; oculto em Histórico ou sem avisos |
+| Menu / selo / Todos os avisos | Restauram avisos gerais; o filtro da peça nunca reduz as linhas das seis tabelas |
+
+O contador de Origem usa todos os avisos da API e não segue o filtro da peça. Seu
+link restaura os gerais, seleciona Produções e dá foco/rolagem ao painel, inclusive
+ao sair de Histórico. Sem avisos, o link é omitido. Quando `ultimaTentativa.resultado`
+é `falhou`, Origem mostra **Última importação falhou; captura anterior preservada**
+se há captura; sem ela, **Última importação falhou; nenhuma captura válida
+disponível**. Esse último caso conserva o selo **Sem dados** e somente Histórico.
+
+Na célula Motivo, a interface consolida o texto de mídia de cada aviso: **Imagens
+e vídeo ausentes**, **Imagem final ausente**, **Nenhum arquivo da produção
+registrado** e **Imagem ausente** para páginas são exemplos. Aba/Linha/Campo,
+quantidade de avisos e motivos originais permanecem na API; isso não muda os
+três slots nem `avisoMidia` definidos acima. No Histórico, **Cenas complete:
+inválido** recebe o rótulo **Aba Cenas incompleta**; outras falhas conhecidas usam
+linguagem de tela e desconhecidas usam **Captura não pôde ser importada**. Motivo
+vazio permanece vazio. Recibos e `historico[].motivoResumo` conservam o original
+saneado; esses rótulos não mudam a validação, persistência ou contrato HTTP.
+
+O alcance de **URL recusada não é texto bruto** se refere aos campos dedicados
+`Arquivos.url` e `Produções.url_video_final` e aos links de arquivos na gaveta.
+Na tabela, valor dedicado preenchido que a allowlist da interface recusa vira
+**link não permitido**; o marcador exato **[conteúdo suprimido]** permanece visível.
+Valor dedicado válido fora de HTTPS/Drive/Docs pode continuar triado na API:
+a recusa visual não altera a projeção. URLs legítimas em texto livre continuam
+como texto, conforme a redação parcial definida acima; não são varridas nem
+substituídas apenas por não pertencerem à allowlist de links. As células nunca
+criam links interativos nem navegação/carregamento automático. Essa distinção
+não promete detectar todos os segredos possíveis nem comprova acesso a mídia.
 
 ## HTTP e inicialização local
 

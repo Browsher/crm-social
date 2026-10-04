@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-T001–T030/US1, US2, US3 e US4 implementadas; estado, evidências e pendências na [validação](../../specs/001-consulta-local-producao/validacao.md).
+T001–T034/US1–US5 implementadas localmente (34/41); sete tarefas finais pendentes; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local não versionado; remoto usa branch/specs da 001.
@@ -17,18 +17,18 @@ T001–T030/US1, US2, US3 e US4 implementadas; estado, evidências e pendências
 - Falha temporal confirma recibo e mantém vigente; no-op de ID aceito precede essa regra.
 - GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
-- src/projecao.cjs seleciona NTV/datas/formatos, frescor e detalhes por versão/relação; quadro-config valida mapa.
+- src/projecao.cjs seleciona NTV/datas/formatos, detalhes/quadro e seis cópias dos mínimos triados; quadro-config valida mapa.
 - config/quadro-etapas.json é aplicado na projeção; nove etapas e liberação/revisão vazias.
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas fixas: /, /app.js, /styles.css, /api/visao; GET/HEAD e Host/Origin locais.
-- src/web/ entrega Planejamento, selo/releitura, gaveta e Produção por semana; tabelas futuras.
+- src/web/ entrega Planejamento, selo/releitura, gaveta, Produção e seis abas/Histórico em Planilha.
 - Gaveta compacta: primeira aberta, dados preenchidos, versões/texto/Histórico recolhidos; Esc devolve foco.
 - Resumo distingue revisão vigente/a confirmar/ausência; IDs técnicos da revisão só na API.
 - Cena: três slots inicial/final/vídeo; aviso de mídia agregado, validações numéricas independentes.
 - Documentos semanais uma vez no fim do dia; três papéis com — na ausência, inclusive órfãos.
-- Avisos técnicos na API; gaveta só quantidade/link Planilha; tabelas detalhadas ainda futuras.
+- Avisos técnicos na API/Planilha; gaveta só quantidade/link aos avisos da peça, sem recortar tabelas NTV.
 - Arquivos são registros; link por clique só HTTPS Drive/Docs sem credenciais; sem prévia remota.
-- Campos de URL dedicados têm guarda new URL para userinfo/malformada; recusada não vira texto bruto.
+- URL dedicada tem guarda de userinfo/malformada na API; célula recusada na UI vira link não permitido.
 - Texto livre/recibo redige só pedaço HTTP(S) com userinfo; preserva frase/espaços; demais formas fora do escopo.
 - JSON é dado: só strings alteradas são reserializadas, demais bytes intactos; original/validade privados.
 - Avisos globais relacionados entram no contador da peça; ligado sem link seguro é link não permitido.
@@ -44,6 +44,7 @@ T001–T030/US1, US2, US3 e US4 implementadas; estado, evidências e pendências
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
 - Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
 - CI=true pula os testes de UI, fora do LCOV (M8); aceite local exige zero pulos.
-- US4 local: prioridade/Outras por semana e primeira pendência/+N; PR pendente.
-- Tabelas/Histórico/iniciador/escala continuam tarefas futuras.
+- US4: primeira pendência/+N visíveis; mídia oculta no cartão de Planejamento/Redação/Visual; semanaId declarada no estado.
+- US5: abas por teclado/foco, rolagem própria e Histórico confirmado; releitura conserva aba disponível.
+- T035–T041/iniciador/escala/captura operacional/revisão final pendentes; doc-sync do incremento não conclui T041.
 - Não alterar constituição, ferramentas/gate, agentes oficiais ou operação n8n.

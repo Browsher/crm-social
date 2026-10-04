@@ -3,6 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {capturaValida,capturaDetalhada,capturaQuadro,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,temporario,recalcularHashes,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
+const {campos,capturaPlanilha}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const CI=process.env.CI==='true';
@@ -25,9 +26,12 @@ async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixtu
   depois(dataDir);
   const server=criarServidor({dataDir,quadroConfigPath,port:0});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
-  t.after(()=>new Promise(resolve=>server.close(resolve)));
-  const browser=await chromium.launch();
-  t.after(()=>browser.close());
+  let browser;
+  t.after(async()=>{
+    try {if(browser) await browser.close();}
+    finally {await new Promise(resolve=>server.close(resolve));}
+  });
+  browser=await chromium.launch();
   const page=await browser.newPage({viewport:{width,height:1050}});
   page.setDefaultTimeout(3000);
   await page.clock.setFixedTime(new Date('2026-10-04T12:00:00Z'));
@@ -736,4 +740,224 @@ test('U08 revisão m1 mantém revisão e conta somente as pendências exibidas',
   const revisao=page.locator('#quadro [data-producao-id="peca-7"] .board-pending');
   assert.match(await revisao.textContent(),/Revisão: Ajustar texto de exemplo/);
   assert.match(await revisao.textContent(),/\+1 pendência/);
+});
+
+async function consultarPlanilha(page) {
+  await page.waitForFunction(()=>document.querySelector('#fonte-captura').textContent==='Captura pela Central');
+  const view=await page.evaluate(async()=>await (await fetch('/api/visao')).json());
+  await page.locator('#selo').click();return view;
+}
+function celulaPorId(raw,aba,id,campo,value) {
+  const table=raw.tables[aba],key=table.values[0].indexOf(campos[aba][0]);
+  mudarCelula(raw,aba,table.values.findIndex((row,i)=>i>0 && row[key]===id),campo,value);
+}
+for(const width of [1440,390]) {
+  test('U09 seis abas/66 campos e valores literais em '+width+' sem cortar a página', {skip},async t=>{
+    const page=await abrir(t,width,true,()=>{},()=>{},capturaPlanilha,mapaQuadroValido(),false);
+    const view=await consultarPlanilha(page),tabs=page.locator('#abas-planilha [role="tab"]');
+    assert.equal(await tabs.count(),7);
+    assert.deepEqual(await tabs.evaluateAll(ns=>ns.map(n=>n.dataset.aba)),[...Object.keys(campos),'Histórico']);
+    assert.match(await page.locator('#fim-captura').textContent(),/02\/10\/2026.*09:05/);
+    assert.equal(await page.locator('#periodo-captura').textContent(),'28/09/2026 a 11/10/2026');
+    let total=0;
+    for(const aba of view.planilha) {
+      const tab=page.locator('#abas-planilha [data-aba="'+aba.nome+'"]');await tab.click();
+      assert.equal(await tab.getAttribute('aria-selected'),'true');
+      assert.equal(await tab.textContent(),aba.nome+' · '+aba.quantidadeLinhas);
+      const table=page.locator('#dados-planilha table');
+      assert.deepEqual(await table.locator('thead th').allTextContents(),campos[aba.nome]);
+      total+=await table.locator('thead th').count();
+      assert.deepEqual(await table.locator('tbody tr').evaluateAll(ns=>ns.map(n=>[...n.cells].map(c=>c.textContent))),
+        aba.linhas.map(r=>aba.cabecalhos.map(h=>String(r[h] ?? ''))));
+      const region=page.locator('#dados-planilha .table-scroll');
+      assert.equal(await region.getAttribute('role'),'region');
+      assert.equal(await region.getAttribute('tabindex'),'0');
+      assert.equal(await region.evaluate(n=>getComputedStyle(n).overflowX),'auto');
+      assert.ok(await region.evaluate(n=>n.scrollWidth>n.clientWidth));
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    }
+    assert.equal(total,66);
+    await page.locator('#abas-planilha [data-aba="Arquivos"]').click();
+    assert.match(await page.locator('#dados-planilha').textContent(),/drive-ficticio-local/);
+    assert.ok((await page.locator('#dados-planilha').textContent()).includes('a'.repeat(64)));
+    assert.ok((await page.locator('#dados-planilha').textContent()).includes('<script>conteúdo como dado</script>'));
+    assert.equal(await page.locator('#dados-planilha script, #dados-planilha img, #dados-planilha iframe, #dados-planilha a').count(),0);
+    assert.equal(await page.locator('#planilha input, #planilha textarea, #planilha [contenteditable="true"]').count(),0);
+  });
+  test('U09 abas com setas/Home/End mantêm foco e seleção em '+width, {skip},async t=>{
+    const page=await abrir(t,width,true,()=>{},()=>{},capturaPlanilha,mapaQuadroValido(),false);
+    await consultarPlanilha(page);assert.equal(await page.locator('#abas-planilha [role="tab"]').count(),7);
+    await page.locator('#abas-planilha [data-aba="Semanas"]').focus();
+    for(const [key,nome] of [['ArrowRight','Produções'],['End','Histórico'],['ArrowRight','Semanas'],
+      ['ArrowLeft','Histórico'],['Home','Semanas']]) {
+      await page.keyboard.press(key);
+      const selected=page.locator('#abas-planilha [aria-selected="true"]');
+      assert.equal(await selected.getAttribute('data-aba'),nome);
+      assert.equal(await selected.evaluate(n=>n===document.activeElement),true);
+      assert.equal(await page.locator('#abas-planilha [tabindex="0"]').count(),1);
+      assert.equal(await page.locator('#dados-planilha').getAttribute('aria-labelledby'),await selected.getAttribute('id'));
+    }
+  });
+  test('U10 avisos localizados e link da gaveta filtram só a peça em '+width, {skip},async t=>{
+    const page=await abrir(t,width,true,raw=>{
+      celulaPorId(raw,'Produções','peca-3','legenda','Antes https://usuario-sintetico-us5:senha-sintetica-us5@exemplo.invalid depois');
+      celulaPorId(raw,'Produções','peca-3','url_video_final','https://usuario-sintetico-us5:senha-sintetica-us5@exemplo.invalid');
+    },()=>{},capturaPlanilha,mapaQuadroValido(),false);
+    const view=await consultarPlanilha(page),p=view.producoes.find(p=>p.producao_id==='peca-3');
+    assert.equal(await page.locator('#avisos-dados').count(),1);
+    if(width===390) {await page.locator('#menu').click();}
+    await page.locator('[data-tela="planejamento"]').click();
+    const cards=width===390?'#lista':'#calendario';await page.locator(cards+' [data-producao-id="peca-3"]').click();
+    await page.locator('#dia [data-peca="peca-3"] .data-notice a').click();
+    assert.equal(await page.locator('#dia').isVisible(),false);
+    assert.equal(await page.locator('#planilha').isVisible(),true);
+    assert.equal(await page.locator('#avisos-dados').getAttribute('data-producao-id'),'peca-3');
+    assert.match(await page.locator('#avisos-filtro').textContent(),/Carrossel sintético/);
+    assert.deepEqual(await page.locator('#avisos-dados thead th').allTextContents(),['Aba','Linha','Campo','Motivo']);
+    assert.deepEqual(await page.locator('#avisos-dados tbody tr').evaluateAll(ns=>ns.map(n=>[...n.cells].map(c=>c.textContent))),
+      p.detalhes.avisos.map(a=>[a.aba ?? '—',String(a.linha ?? '—'),a.campo ?? '—',
+        a.motivo==='Mídia ausente: nenhum arquivo registrado neste ponteiro'?'Imagem ausente':a.motivo]));
+    assert.equal(await page.locator('#avisos-dados').evaluate(n=>n.getBoundingClientRect().top<innerHeight),true);
+    assert.doesNotMatch(JSON.stringify(view),/usuario-sintetico-us5|senha-sintetica-us5/);
+    assert.doesNotMatch(await page.locator('#planilha').textContent(),/usuario-sintetico-us5|senha-sintetica-us5/);
+    await page.getByRole('button',{name:'Todos os avisos',exact:true}).click();
+    assert.equal(await page.locator('#avisos-dados tbody tr').count(),view.avisos.length);
+    assert.equal(await page.locator('#avisos-dados').getAttribute('data-producao-id'),'');
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  });
+  test('U10 Histórico conserva completa/falhou e releitura local em '+width, {skip},async t=>{
+    let dataDir;
+    const page=await abrir(t,width,true,()=>{},dir=>{
+      dataDir=dir;const invalid=capturaValida();invalid.tables.Cenas.complete=false;promoverCaptura(invalid,dir);
+    },capturaPlanilha,mapaQuadroValido(),false);
+    const view=await consultarPlanilha(page);
+    assert.equal(await page.locator('#abas-planilha [role="tab"]').count(),7);
+    await page.locator('#abas-planilha [data-aba="Histórico"]').click();
+    assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['falhou','completa']);
+    assert.match(await page.locator('#dados-planilha').textContent(),/Falhou.*Completa/s);
+    assert.equal(view.historico[0].motivoResumo,'Cenas complete: inválido');
+    assert.match(await page.locator('#dados-planilha').textContent(),/Aba Cenas incompleta/);
+    assert.doesNotMatch(await page.locator('#dados-planilha').textContent(),/complete:|completedAt|readAt/);
+    assert.match(await page.locator('#dados-planilha').textContent(),/04\/10\/2026.*09:00/);
+    const pointer=path.join(dataDir,'atual.json'),before=fs.readFileSync(pointer,'utf8'),seen=[];
+    page.on('request',req=>seen.push({url:new URL(req.url()).pathname,method:req.method()}));
+    const response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
+    await page.getByRole('button',{name:'Atualizar dados',exact:true}).click();await response;
+    await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+    assert.equal(await page.locator('#abas-planilha [data-aba="Histórico"]').getAttribute('aria-selected'),'true');
+    assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['falhou','completa']);
+    assert.equal(fs.readFileSync(pointer,'utf8'),before);
+    assert.deepEqual(seen,[{url:'/api/visao',method:'GET'}]);
+    assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  });
+  test('U10 sem captura orienta a Central e Histórico vazio em '+width, {skip},async t=>{
+    const page=await abrir(t,width,false),view=await consultarPlanilha(page);
+    assert.deepEqual(view.planilha,[]);
+    assert.equal(await page.locator('#planilha-vazia').count(),1);
+    assert.equal(await page.locator('#planilha-vazia').isVisible(),true);
+    assert.match(await page.locator('#planilha-vazia').textContent(),/primeira.*captura.*Central/i);
+    assert.deepEqual(await page.locator('#abas-planilha [role="tab"]').allTextContents(),['Histórico · 0']);
+    assert.match(await page.locator('#dados-planilha').textContent(),/Nenhuma tentativa confirmada/);
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  });
+}
+test('U10 primeira importação falha sem inventar captura; motivo aparece no Histórico', {skip},async t=>{
+  const page=await abrir(t,390,false,()=>{},dir=>{
+    const invalid=capturaValida();invalid.tables.Cenas.complete=false;promoverCaptura(invalid,dir);
+  });
+  const view=await consultarPlanilha(page);
+  assert.equal(await page.locator('#planilha-vazia').count(),1);
+  assert.equal(await page.locator('#planilha-vazia').isVisible(),true);
+  assert.deepEqual(await page.locator('#abas-planilha [role="tab"]').allTextContents(),['Histórico · 1']);
+  assert.match(await page.locator('#dados-planilha').textContent(),/Falhou/);
+  assert.equal(view.historico[0].motivoResumo,'Cenas complete: inválido');
+  assert.match(await page.locator('#dados-planilha').textContent(),/Aba Cenas incompleta/);
+  assert.equal(await page.locator('#selo').textContent(),'Sem dados');
+  assert.equal(await page.locator('#avisos-captura p').textContent(),'Última importação falhou; nenhuma captura válida disponível');
+});
+test('U10 releitura de uma nova captura atualiza tabela e Histórico sem consultar Google', {skip},async t=>{
+  let dataDir;
+  const page=await abrir(t,390,true,()=>{},dir=>{dataDir=dir;},capturaPlanilha,mapaQuadroValido(),false);
+  await consultarPlanilha(page);await page.locator('#abas-planilha [data-aba="Produções"]').click();
+  assert.equal(await page.locator('#dados-planilha tbody tr').count(),5);
+  const raw=capturaPlanilha();raw.capturaId='captura-us5-releitura';
+  redefinirHorario(raw,'2026-10-04T11:20:00Z','2026-10-04T11:30:00Z');
+  adicionarRegistro(raw,'Produções',{producao_id:'peca-releitura-local',marca_id:'ntv',semana_id:'semana-02',
+    slot:'imagem_a',versao:1,titulo:'Peça da nova captura sintética',data_prevista:'2026-10-06'});
+  promoverCaptura(raw,dataDir);
+  const seen=[];page.on('request',req=>seen.push({url:new URL(req.url()).pathname,method:req.method()}));
+  const response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
+  await page.getByRole('button',{name:'Atualizar dados',exact:true}).click();await response;
+  await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+  assert.equal(await page.locator('#abas-planilha [data-aba="Produções"]').getAttribute('aria-selected'),'true');
+  assert.equal(await page.locator('#dados-planilha tbody tr').count(),6);
+  assert.match(await page.locator('#dados-planilha').textContent(),/Peça da nova captura sintética/);
+  assert.match(await page.locator('#fim-captura').textContent(),/04\/10\/2026.*08:30/);
+  await page.locator('#abas-planilha [data-aba="Histórico"]').click();
+  assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['completa','completa']);
+  assert.deepEqual(seen,[{url:'/api/visao',method:'GET'}]);
+});
+test('U10 título longo no filtro de avisos não provoca corte no celular', {skip},async t=>{
+  const page=await abrir(t,390,true,raw=>celulaPorId(raw,'Produções','peca-3','titulo','TituloSintetico'.repeat(35)),
+    ()=>{},capturaPlanilha,mapaQuadroValido(),false);
+  await page.waitForFunction(()=>document.querySelector('#fonte-captura').textContent==='Captura pela Central');
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
+  await page.locator('#dia [data-peca="peca-3"] .data-notice a').click();
+  assert.match(await page.locator('#avisos-filtro').textContent(),/^TituloSintetico/);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+});
+test('U10 URL dedicada recusada é link não permitido; texto livre e API preservam URLs legítimas', {skip},async t=>{
+  const url='https://exemplo.invalid/arquivo-sintetico';
+  const page=await abrir(t,390,true,raw=>{
+    celulaPorId(raw,'Arquivos','arquivo-01','url',url);
+    celulaPorId(raw,'Produções','peca-3','url_video_final',url);
+    celulaPorId(raw,'Produções','peca-3','legenda','Saiba mais em https://exemplo.invalid e siga @perfil');
+  },()=>{},capturaPlanilha,mapaQuadroValido(),false);
+  const view=await consultarPlanilha(page);
+  assert.equal(view.planilha.find(a=>a.nome==='Arquivos').linhas.find(r=>r.arquivo_id==='arquivo-01').url,url);
+  for(const nome of ['Arquivos','Produções']) {
+    await page.locator('#abas-planilha [data-aba="'+nome+'"]').click();
+    assert.doesNotMatch(await page.locator('#dados-planilha').textContent(),/arquivo-sintetico/);
+    assert.match(await page.locator('#dados-planilha').textContent(),/link não permitido/);
+  }
+  assert.ok((await page.locator('#dados-planilha').textContent()).includes('Saiba mais em https://exemplo.invalid e siga @perfil'));
+});
+
+test('U10 origem mostra só falha ativa e contador que leva à única lista de avisos', {skip},async t=>{
+  const page=await abrir(t,390,true,()=>{},dir=>{
+    const invalid=capturaValida();invalid.tables.Cenas.complete=false;promoverCaptura(invalid,dir);
+  },capturaPlanilha,mapaQuadroValido(),false);
+  const view=await consultarPlanilha(page),notice=page.locator('#avisos-captura');
+  assert.deepEqual(await notice.locator('p').allTextContents(),['Última importação falhou; captura anterior preservada']);
+  const link=notice.getByRole('link',{name:view.avisos.length+' avisos de dados',exact:true});
+  assert.equal(await link.count(),1);
+  await page.locator('#abas-planilha [data-aba="Histórico"]').click();await link.click();
+  assert.equal(await page.locator('#avisos-dados').isVisible(),true);
+  assert.equal(await page.locator('#avisos-dados').evaluate(n=>n===document.activeElement),true);
+  assert.equal(await page.locator('#avisos-dados tbody tr').count(),view.avisos.length);
+  assert.equal(await page.locator('#avisos-captura').getByText('Nenhum arquivo da produção registrado',{exact:true}).count(),0);
+});
+
+test('U10 motivo de mídia é consolidado uma vez por aviso, sem repetir ausência', {skip},async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    adicionarRegistro(raw,'Arquivos',{arquivo_id:'arquivo-inicio-sintetico',producao_id:'peca-4',cena_id:'cena-02',versao:1});
+    celulaPorId(raw,'Cenas','cena-02','arquivo_imagem_inicio_id','arquivo-inicio-sintetico');
+  },()=>{},capturaPlanilha,mapaQuadroValido(),false);
+  const view=await consultarPlanilha(page);
+  const motivos=await page.locator('#avisos-dados tbody tr td:last-child').allTextContents();
+  assert.ok(motivos.includes('Imagens e vídeo ausentes'));
+  assert.ok(motivos.includes('Imagem final ausente'));
+  assert.ok(motivos.includes('Nenhum arquivo da produção registrado'));
+  assert.ok(motivos.includes('Imagem ausente'));
+  assert.equal(motivos.length,view.avisos.length);
+  assert.ok(motivos.every(m=>!m.includes('Mídia ausente:') && !m.includes('neste ponteiro')));
+});
+
+test('U10 Planilha tem subtítulo próprio, inclusive ao navegar de volta', {skip},async t=>{
+  const page=await abrir(t,1440);await consultarPlanilha(page);
+  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Dados capturados da planilha, por aba');
+  await page.locator('[data-tela="planejamento"]').click();
+  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Peças registradas, semana a semana.');
+  await page.locator('[data-tela="planilha"]').click();
+  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Dados capturados da planilha, por aba');
 });

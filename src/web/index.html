@@ -60,7 +60,13 @@
         <button type="button" id="atualizar" class="refresh-button">Atualizar dados</button>
         <p id="releitura-aviso">Reler captura local; não consulta o Google</p>
       </section>
-      <p class="empty">As abas e o Histórico estarão disponíveis em uma próxima entrega.</p>
+      <p id="planilha-vazia" class="empty" hidden>Sem captura disponível. Peça a primeira captura completa à Central.</p>
+      <div id="abas-planilha" class="sheet-tabs" role="tablist" aria-label="Tabelas capturadas e Histórico"></div>
+      <section id="dados-planilha" class="sheet-panel" role="tabpanel" tabindex="0"></section>
+      <section id="avisos-dados" class="sheet-panel data-warnings" aria-labelledby="avisos-titulo" tabindex="-1" hidden>
+        <header class="sheet-heading"><div><h2 id="avisos-titulo">Avisos de dados</h2><p id="avisos-filtro"></p></div><button type="button" id="todos-avisos">Todos os avisos</button></header>
+        <div id="avisos-tabela"></div>
+      </section>
     </section>
   </main>
   <dialog id="dia" aria-labelledby="dia-titulo" aria-describedby="dia-quantidade"><header class="drawer-top"><div><small>NTV · Consulta do dia</small><h2 id="dia-titulo"></h2><p id="dia-quantidade"></p></div><button type="button" id="fechar-dia" aria-label="Fechar dia">×</button></header><div id="dia-pecas" class="drawer-body"></div></dialog>

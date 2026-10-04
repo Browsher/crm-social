@@ -1,6 +1,6 @@
 # Consulta local da produção — Implementation Plan
 
-Como um álbum montado por partes, o plano define o leitor completo e a sequência de entrega. As três primeiras histórias já existem; o restante abaixo continua sendo a solução planejada para concluir a 001.
+Como um álbum montado por partes, o plano define o leitor completo e a sequência de entrega. As cinco histórias de consulta já existem localmente; a fase final abaixo continua sendo a solução planejada para concluir a 001.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: use `superpowers:subagent-driven-development` na execução desta feature, ou `superpowers:executing-plans` se ela for executada sequencialmente. Este documento é o plano canônico; não criar uma segunda cópia em `docs/superpowers/plans/`.
 
@@ -12,7 +12,7 @@ Como um álbum montado por partes, o plano define o leitor completo e a sequênc
 
 **Spec:** [spec.md](spec.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas aprovadas](../../docs/design/telas.md).
 
-T001–T030/fundação, US1, US2, US3 e US4 estão implementadas; revisão corrente e evidências na [validação](validacao.md). As interfaces reais estão na [arquitetura](../../docs/architecture.md); tabelas/Histórico e iniciador ainda são metas; PR da US4 pendente, sem captura operacional validada ou leitura real Google.
+T001–T034/fundação e US1–US5 estão implementadas localmente (34 de 41 tarefas); revisão corrente e evidências na [validação](validacao.md). As interfaces reais estão na [arquitetura](../../docs/architecture.md); sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes, sem leitura real Google. Esta sincronização não conclui T041.
 
 **Branch:** `001-consulta-local-producao`, criada da `main` no repositório `crm-social` e conferida nesta tarefa. Não executar novamente a criação da feature para atualizar estes documentos.
 
@@ -112,7 +112,7 @@ Interfaces internas propostas, com envelope e campos definidos somente pelo [con
 - O estado único `data/atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`; captura e última tentativa podem ser null, lista inicial vazia. Capturas e recibos imutáveis são preparados antes da substituição atômica no mesmo diretório. Essa substituição confirma os IDs do Histórico e a captura vigente juntos; arquivos órfãos/preparados não comprovam aceitação nem entram no Histórico. Falha confirmada conserva `capturaId`, acrescenta seu recibo e troca a última tentativa; `data/ultima-tentativa.json` é resumo derivado, sem autoridade concorrente. Falha ao gravar recibo/estado é erro explícito de persistência, nunca sucesso ou garantia de recibo durável.
 - `validarMapaQuadro(raw)` é função pura; `carregarMapaQuadro(configPath)` lê JSON real e valida antes de devolver o mapa. Schema/conteúdo inicial no contrato; rótulo repetido no mesmo campo ou coluna inexistente é erro claro. Não codificar os rótulos como tabela paralela no JavaScript.
 - `projetarVisao(estadoLocal, nowIso, mapaQuadro)` recebe o estado de `lerEstado`, inclusive captura ausente/falha, e o mapa validado, retornando o envelope local de `/api/visao`. Não enviar estado privado nem configuração bruta diretamente ao HTTP.
-- No recorte implementado até US3, cada produção contém `detalhes`: responsável/publicação registrados, páginas/cenas por versão, revisões vigentes/resolvidas/anteriores/ambíguas, arquivos e documentos da semana por ponteiro, com avisos localizados pela linha física. Três papéis documentais permanecem mesmo sem semana identificada; resolução por consulta/semana não duplica aviso global e conserva o aviso local de cada peça. Grupos do quadro por semana implementados na US4; tabelas de Planilha ainda futuras. A UI compacta usa os IDs completos do dia, primeiro acordeão aberto, demais resumidos, dados preenchidos e registros/versões/Histórico recolhidos. Documentos aparecem uma vez no fim do dia; avisos técnicos ficam na API, quantidade e link para Planilha na gaveta.
+- Cada produção contém `detalhes`: responsável/publicação registrados, páginas/cenas por versão, revisões vigentes/resolvidas/anteriores/ambíguas, arquivos e documentos da semana por ponteiro, com avisos localizados pela linha física. Três papéis documentais permanecem mesmo sem semana identificada; resolução por consulta/semana não duplica aviso global e conserva o aviso local de cada peça. Grupos do quadro por semana implementados na US4; seis tabelas/Histórico implementados na US5. A UI compacta usa os IDs completos do dia, primeiro acordeão aberto, demais resumidos, dados preenchidos e registros/versões/Histórico recolhidos. Documentos aparecem uma vez no fim do dia; avisos técnicos ficam na API/Planilha, quantidade e link para os avisos da peça na gaveta.
 - Na seleção de `Arquivos.url` e `Produções.url_video_final`, `new URL` detecta usuário ou senha e causa **[conteúdo suprimido]**, com aviso localizado fixo sem o valor. Original permanece privado. UI só cria links HTTPS Drive/Docs sem credenciais, por clique, e nunca ecoa URL recusada como texto bruto.
 - String de URL não vazia que o construtor recusa também é suprimida com motivo fixo **URL inválida suprimida**, sem devolver possível userinfo malformado ao HTTP; vazio/somente espaços é preservado, sem esse aviso.
 - Por decisão do autor, texto livre mínimo/recibo público preserva frase e espaços: só pedaço HTTP(S) separado por espaços em branco e identificado com usuário/senha por `new URL` vira marcador, mantendo pontuação de contorno. Não promete detectar outros esquemas, URL relativa, espaços em userinfo ou forma fora desse pedaço; o guarda dos campos de URL dedicados permanece. Segredo/caminho conhecido continua suprimindo o texto reconhecido inteiro. JSON é dado: só tokens de string alterados são reserializados, conservando demais bytes, números, ordem, espaços e escapes legítimos. WeakMap privado conserva a validade original de origens_json para não produzir falso aviso de JSON inválido após supressão. Avisos globais relacionados são associados à peça por origem física, sem novas cópias globais. UI distingue arquivo ausente de link não permitido e usa Página/Cena número/versão em Texto registrado, mantendo IDs na API.
@@ -131,9 +131,29 @@ O quadro implementado usa `quadro.colunas:[{nome}]`, `quadro.semanas:[{semanaId,
 | Planejamento | Mês, cartões por data, tema no início da semana, filtros Todos/Imagem/Carrossel/Reels e lista semanal; dia múltiplo mostra primeiro cartão e “+N no dia”; “N sem data” conta as peças NTV sem data válida e abre sua lista |
 | Dia inteiro | Gaveta compacta de 520 px/tela cheia mobile: primeira peça aberta, demais resumidas; faixa de quatro dados preenchidos, publicação registrada em uma linha, revisão inicial/adicionais +N, unidades compactas, registros/versões/Histórico recolhidos; documentos semanais únicos e quantidade de avisos com link para Planilha |
 | Produção | Semana anterior/próxima e tema; agrupamento pelo mapa do contrato, valor original preservado em Outras, responsável registrado e pendência sustentada por registro; sem drag-and-drop |
-| Planilha | Seis abas com contagens e todos os 66 campos mínimos com valores; cada tabela rola horizontalmente dentro de sua região; Histórico final com tentativas/resultados/motivo resumido |
+| Planilha | Seis abas com contagens NTV e 66 mínimos triados; regiões de rolagem própria, teclado/foco nas abas, Histórico final confirmado e painel Aba/Linha/Campo/Motivo; filtro da peça vale só para avisos |
 
 O formato é derivado dos slots confirmados (`imagem_a`/`imagem_b`, `carrossel`, `reels`), preservando `tipo_producao` separadamente. Outro slot permanece Outro em Todos. Ordem ordinal por `producao_id` estabiliza o primeiro cartão e o primeiro acordeão. Sem semana inequívoca, a peça permanece em “Semana não identificada”. “N sem data” é global à captura NTV, independente de filtro/mês. Contagens de Planilha são das linhas NTV apresentadas; cobertura vem de inícios/fins civis de semanas válidas, ou limites null com aviso.
+
+`montarPlanilha` copia objetos com somente as chaves de `CAMPOS`, depois da triagem,
+antes dos enriquecimentos de Planejamento/quadro/detalhes; não compartilha objetos
+de linha ou listas de cabeçalhos com essas projeções. A normalização preexistente
+null→string vazia continua, exceto `etapa_producao`; o envelope privado preserva
+as células originais. Não há nova rota, import ou escrita de persistência na US5.
+
+Na interface, seis abas de dados precedem Histórico. Setas esquerda/direita, Home
+e End mudam seleção/foco; releitura conserva uma aba que continua disponível.
+Sem captura, só Histórico e orientação à Central. O link da gaveta fecha o dia,
+abre Produções e dá rolagem/foco ao painel de avisos da peça; menu/selo/Todos os
+avisos restauram os gerais, sem reduzir as seis tabelas NTV. Histórico mostra
+todas as tentativas confirmadas, sem órfãos ou novo recibo por no-op. Painel de
+avisos fica oculto em Histórico ou sem avisos.
+
+A recusa visual de URL vale para células dedicadas `url`/`url_video_final` e
+links de arquivos: fora da allowlist HTTPS Drive/Docs aparece **link não permitido**,
+mantendo o marcador exato de supressão. O valor já triado pode permanecer na API;
+texto livre legítimo não é varrido pela allowlist. Células são somente texto,
+sem links interativos, navegação ou carregamento automático; limites no contrato.
 
 O mapa de Produção é carregado de `config/quadro-etapas.json`: publicação preenchida
 vence liberação/prontidão configurada, que vence revisão em andamento configurada,

@@ -1,6 +1,6 @@
-# Validação — feature 001, US1 e US2
+# Validação — feature 001, US1–US5
 
-Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T022, fundação, US1 Planejamento e US2/frescor e releitura local; T023–T041 continuam pendentes. Os registros anteriores à seção **US2 — T019–T022** abaixo são históricos da US1/PR #6: seus selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado atual.
+Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T034, fundação e US1–US5 implementadas; US4 integrada e US5 aguardando aceite do novo PR. T035–T041/Fase 8 permanecem pendentes. As seções anteriores a **US5 — Planilha e Histórico** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
 
 ## Preparação T001
 
@@ -20,7 +20,7 @@ Responsável único de implementação: coordenador Codex, em todos os arquivos 
 | T012/T016 -> T014/T018 | Projeção permitida sem envelope/extras |
 | T014 -> T017 | Servidor real e dados TEMP; estáticos só surgem em T018 |
 
-Dados, I/O, CLI, configuração, projeção e HTTP rodam Windows/Linux. Interface usa Playwright local; CI=true registra pulo explícito dos nove casos atuais antes de carregar a ferramenta. Não há iniciador neste recorte (T035–T036 posteriores). Aceite local deste PR exige todos os casos aplicáveis verdes, sem pulos.
+Dados, I/O, CLI, configuração, projeção e HTTP rodam Windows/Linux. Interface usa Playwright local; CI=true registra pulo explícito dos casos antes de carregar a ferramenta. As contagens de cada rodada estão nos respectivos registros abaixo. Não há iniciador neste recorte (T035–T036 posteriores). Aceite local exige todos os casos aplicáveis verdes, sem pulos.
 
 ## Registro RED/GREEN
 
@@ -646,6 +646,20 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #10, review 5983234638, m-1 | Decisão do autor aplicada nesta revisão: somente o cartão omite mídia em Planejamento/Redação/Visual e mostra Mídia ausente em Mídia/Revisão/Pronta/Publicada/Outras. API conserva pendências completas. Localização por unidade e distinção de versão/vínculo inválidos continuam nos itens anteriores da Fase 8 |
 | PR #10, review 5983234638, m-2 | Índices fixos agora consultam cabeçalhos e caso sem captura usa prefixo U07-vazio. Resta reduzir os oito parâmetros posicionais do helper de interface para opções nomeadas na revisão dos testes; refatoração mais ampla segue na Fase 8 |
 | PR #10, review 5983234638, m-3 | Comentário corrigido: recuperação da célula de etapa ocorre em todas as linhas antes da triagem e depende da normalização por registros. Sem mudança de comportamento; otimização/índice de cabeçalho do m-6 continua pendente |
+| PR #10, review 5983509175, m-1 | Resumo novo do ajuste em docs/reports/001-us4-ajuste-local.json, com hashes das fontes web e 174/62 testes. Resumo anterior continua histórico, com identificação no índice |
+| PR #10, review 5983509175, m-2 | Lista de colunas de apresentação repetida no browser. Considerar indicador derivado sem duplicação na revisão final, conservando a regra do cartão e as oito colunas canônicas |
+| PR #10, review 5983509175, m-3/m-4 | Corrigidos na US5: referências normativas a pendenciaQuadro usam o nome da função, e semanaId está declarada no estado inicial. Ajustes triviais de documentação/clareza, sem mudar a regra do cartão |
+| PR #11, review 5983965195, m-1 | Conferir chave própria ao traduzir resultado do Histórico; o recibo confirmado já valida o resultado e a saída usa textContent. Ajuste defensivo sem criar estados de captura |
+| PR #11, review 5983965195, m-2 | Evitar duas paradas consecutivas de Tab no painel e na região de rolagem, preservando foco no estado vazio; cobrir navegação por teclado na revisão final |
+| PR #11, review 5983965195, m-3 | Cobrir releitura com avisos filtrados e remoção da peça da captura nova; a documentação descreve o comportamento atual, mas esses dois casos ainda não têm assert dedicado |
+| PR #11, review 5983965195, m-4 | Corrigida a linha Entrada de tasks.md: US4 integrada, US5 implementada localmente e aceite corrente pendente |
+| PR #11, review 5983965195, m-5 | Consolidar foco do link da gaveta e do evento close assíncrono para evitar um segundo ajuste cosmético de rolagem |
+| PR #11, review 5983965195, m-6 | Incluir troca de abas e recomposição do painel de avisos na medição sintética de escala T037 |
+| PR #11, review 5984151670, m-1 | Corrigida a leitura histórica das medições: primeiro resumo tinha cinco hashes; atual tem seis, incluindo fixture. A afirmação de fontes inalteradas aplica-se somente até a9cb8ef; a refatoração posterior e a nova medição são explícitas |
+| PR #11, review 5984151670, m-2 | Completar os asserts de restauração de avisos gerais via menu e selo, junto aos casos de releitura/peça removida já registrados no m-3 anterior |
+| PR #11, review 5984151670, m-3 | Separar erro HTTP de erro de renderização e preservar uma visão consistente caso chegue resposta com forma inesperada; testar a fronteira de erro na Fase 8, sem alterar a rota/contrato válido desta entrega |
+| PR #11, review 5984151670, m-4 | Consolidar a associação posicional entre CAMPOS e chaves numa lista reutilizada; P11 já protege a ordem atual, mas a manutenção futura deve evitar duplicação |
+| PR #11, review 5984151670, m-5 | Reitera lookup de rótulo e duas paradas de Tab; permanecem rastreados como m-1/m-2 do primeiro review, sem nova correção nesta rodada |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -830,3 +844,129 @@ Screenshots novas, servidor real e captura/mapa exclusivamente sintéticos em TE
 
 ![Produção ajustada — 1440 × 1200](../../docs/design/screenshots/001-us4-ajuste-producao-1440.png)
 ![Produção ajustada — 390 × 2456](../../docs/design/screenshots/001-us4-ajuste-producao-390.png)
+
+### Aceite do ajuste e integração da US4
+
+Head `764cb25fcdfa508af18d13f04515d20a8b2368dd`, incluindo `d8d79c1` no push. [Gate Linux 37227704196](https://github.com/Browsher/crm-social/actions/runs/37227704196/job/111510676514) **SUCCESS**: tests/coverage/complexity/**Semgrep PASS**, audit N/A, exit 0, baseline atualizada false. O Semgrep CE 1.179.0 foi instalado e executado no Linux. [Review 37227704200](https://github.com/Browsher/crm-social/actions/runs/37227704200/job/111510676631) **SUCCESS**, [comentário 5983509175](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983509175): sem Critical, segurança ou regressão. P-1 é respondido pelo job desse head; interface local 174/62 registrada acima, com [resumo sanitizado do ajuste](../../docs/reports/001-us4-ajuste-local.json). Minor restantes estão na Fase 8, sem prometer resolução ampla.
+
+[Merge do PR #10](https://github.com/Browsher/crm-social/commit/bc835e440b7834ad6f21dd8f56d01b6cef5f7197), dois pais `b24b25e` e `764cb25`, autoria `204295625+Browsher@users.noreply.github.com`, committer `noreply@github.com`. Sem squash ou exclusão da branch 001; main recebida localmente nela por fast-forward. generate-tests/publish-tests SKIPPED sem rótulo. US5 começa somente depois desta integração; captura operacional e Fase 8 continuam pendentes.
+
+## US5 — Planilha e Histórico (T031–T034)
+
+Implementação local com fixtures sintéticas em TEMP. Sem coleta operacional, dependência nova, nova rota ou mudança em CI/gate/baseline/constituição. As seis abas apresentam os 66 mínimos já selecionados e triados, na ordem canônica; o Histórico aproveita os recibos confirmados existentes. Cabeçalho mostra completedAt e cobertura; Atualizar dados continua sendo somente GET/releitura local. Link da gaveta filtra o painel de avisos pela peça, mantendo as seis tabelas NTV completas; menu/selo e Todos os avisos permitem a consulta geral.
+
+### RED/GREEN observado e limites
+
+| Etapa | Resultado observado |
+| --- | --- |
+| T031, P11/P12/H05 RED | 2 PASS / 4 FAIL / 0 SKIP, exit 1, 0,81 s. Falhas por planilha vazia (0 em vez de 6); ausência e Histórico já implementados passaram desde o início |
+| T032 GREEN | 6 PASS / 0 FAIL / 0 SKIP, exit 0, 0,83 s; seis suítes backend completas 118/0/0, 5,66 s |
+| T033, U09/U10 RED | 0 PASS / 11 FAIL / 0 SKIP, exit 1, 5,98 s, por falta de abas/painéis/estado vazio |
+| T034 GREEN | 12 PASS / 0 FAIL / 0 SKIP, exit 0, 8,55 s. Inclui caracterização da releitura de uma captura nova, sem RED artificial para integração existente |
+| Revisão local RED | 0 PASS / 3 FAIL / 0 SKIP, exit 1, 2,19 s: marcação fictícia sem captura, título longo em 390 e URL dedicada recusada como texto bruto |
+| Revisão local GREEN | 15 PASS / 0 FAIL / 0 SKIP, exit 0, 10,30 s; U02 anterior e U09/U10 incluindo as duas regressões novas |
+| Suíte completa final | **194 PASS / 0 FAIL / 0 SKIP**, exit 0, **47,84 s**, sete suítes e **76 casos de interface** |
+
+Uma primeira tentativa GREEN da interface tinha 10 PASS/1 FAIL por expectativa incorreta do teste novo: o recibo existente resume a flag inválida como Cenas complete: inválido, não como leitura incompleta. A asserção passou a comparar o motivo real selecionado do recibo, sem alterar importador/produção. A primeira suíte completa teve 191 PASS/1 FAIL: o painel sem captura adicionava data-producao-id vazio; a correção remove essa marcação sem inventar peça, preservando U02. Um gate iniciado antes dos ajustes ficou preso nos testes e foi encerrado graciosamente, sem resultado de aceite; somente a execução final é usada como prova.
+
+A revisão independente do diff conferiu o checklist Node, imports/arquitetura, seleção explícita, triagem e ausência de execução/carga automática de células. O corte de título longo e o alcance de URL dedicada foram reproduzidos e corrigidos; segunda leitura não encontrou Critical, segurança ou regressão. URLs dedicadas recusadas mostram link não permitido na tabela; marcador de conteúdo suprimido permanece visível. Texto livre com URL legítima seguido de @perfil continua literal. API mantém a seleção completa triada. Não há edição/importação pelo navegador.
+
+A conferência textual de caminhos encontrou um exemplo deliberadamente fictício no teste negativo P12 (tests/projecao.test.cjs), que verifica a supressão de caminho antes do HTTP. Essa ocorrência é dado sintético do teste, não um caminho pessoal real; não é copiada para os documentos ou telas. Nenhum arquivo de data/ foi lido, alterado ou versionado.
+
+As contagens da fixture Planilha são **2/5/3/2/5/5**; inclui cabeçalhos invertidos, linha física vazia, outra marca, zero/false/espaços, IDs/Drive/hash/origens apenas fictícios. Nulos fora de etapa_producao conservam a normalização preexistente para string vazia, dívida já registrada; não se declara fidelidade literal de null para todos os campos. H05 caracteriza 14 tentativas confirmadas recentes primeiro, no-op sem duplicação, recibos imutáveis, falha preservando vigente e órfãos excluídos. Os avisos mantêm aba/linha física/campo/motivo sem o valor sensível; o filtro da UI não recalcula origem física.
+
+### Conferência visual da US5
+
+Seis screenshots produzidos pelo servidor HTTP real em porta efêmera com captura/mapa sintéticos, incluindo uma tentativa falha deliberada. **Sete abas, cinco produções NTV, oito avisos gerais ou três da peça selecionada e duas tentativas confirmadas**. Em todas, scrollWidth igual à largura, zero pageerror e zero requisição externa. Conferidas visualmente: identidade Social Studio preservada, tabelas rolam na própria região e o Histórico final conserva falha/sucesso sem apagar dados. As imagens não demonstram captura operacional.
+
+| Cenário | Desktop | Celular |
+| --- | --- | --- |
+| Aba Produções | [1440](../../docs/design/screenshots/001-us5-dados-1440.png) | [390](../../docs/design/screenshots/001-us5-dados-390.png) |
+| Avisos filtrados pela gaveta | [1440](../../docs/design/screenshots/001-us5-avisos-1440.png) | [390](../../docs/design/screenshots/001-us5-avisos-390.png) |
+| Histórico completa/falhou | [1440](../../docs/design/screenshots/001-us5-historico-1440.png) | [390](../../docs/design/screenshots/001-us5-historico-390.png) |
+
+![Planilha — dados 1440](../../docs/design/screenshots/001-us5-dados-1440.png)
+![Planilha — dados 390](../../docs/design/screenshots/001-us5-dados-390.png)
+![Planilha — avisos 1440](../../docs/design/screenshots/001-us5-avisos-1440.png)
+![Planilha — avisos 390](../../docs/design/screenshots/001-us5-avisos-390.png)
+![Planilha — Histórico 1440](../../docs/design/screenshots/001-us5-historico-1440.png)
+![Planilha — Histórico 390](../../docs/design/screenshots/001-us5-historico-390.png)
+
+Gate local do primeiro head **exit 0**, **49,23 s**: tests/coverage/complexity PASS, cobertura **97,62%**, complexidade máxima **13**, cinco avisos (11–13), Semgrep SKIP no Windows por ferramenta ausente, audit N/A por ausência de dependências da aplicação, **baseline atualizada false**. O resumo daquele estágio registrava cinco hashes das fontes medidas; o [resumo sanitizado atual](../../docs/reports/001-us5-local.json) foi atualizado após a refatoração da fixture e registra seis. Configuração, ferramentas e CI permanecem intactos. Essa execução precedeu a sincronização documental do primeiro head; a medição posterior está na seção do diagnóstico.
+
+Código registrado em `768ba90` (T031/T032) e `7c563c9` (T033/T034 e screenshots), com autor/committer noreply. Entre essa medição e a publicação de `a9cb8ef`, src/tests ficaram inalterados; a sincronização desse estágio modificou somente documentação e resumos sanitizados. A mudança posterior em tests/fixtures.cjs e suas novas execuções estão registradas abaixo. Não se atribui aceite Linux a essas execuções Windows.
+
+A regra `.claude/rules/project-structure.md` tem **50 linhas** nesta entrega, dentro do limite de 60. Conferência documental: links relativos existentes, cercas balanceadas e nenhum caminho pessoal real nos arquivos alterados. As contagens de linhas das seções anteriores pertencem às entregas históricas que elas descrevem.
+
+T031–T034 concluídas; total **34/41**, sete tarefas da Fase 8 pendentes. Aceite Linux/review do novo PR será registrado somente depois de observado. A US5 não será integrada nesta rodada.
+
+### Primeiro head remoto da US5 e diagnóstico do Semgrep
+
+[PR #11](https://github.com/Browsher/crm-social/pull/11), head `a9cb8ef9d8730a8d80d460f4e8291d126897666f`. [Review 37231201986](https://github.com/Browsher/crm-social/actions/runs/37231201986/job/111521015076) **SUCCESS**, [comentário 5983965195](https://github.com/Browsher/crm-social/pull/11#issuecomment-5983965195): sem Critical ou Important; seis Minor registrados na seção da Fase 8. O texto desatualizado da linha Entrada de tasks.md foi corrigido. generate-tests/publish-tests SKIPPED sem rótulo.
+
+[Gate Linux 37231201975](https://github.com/Browsher/crm-social/actions/runs/37231201975/job/111521014579) **FAILURE**, exit 1: tests/coverage/complexity PASS, Semgrep FAIL com motivo **achado de seguranca media ou superior**, audit N/A, baseline atualizada false. O job não conserva o JSON detalhado em artefato; não se declara aceite Linux a partir do gate Windows.
+
+O autor autorizou instalar Semgrep CE 1.179.0 somente numa subpasta de TEMP, usando o Ubuntu já existente, sem Docker, instalação global ou mudança do PATH. A reprodução mantém configurações, logs, cache e instalação na pasta temporária; nenhuma dependência da aplicação, regra, exclusão ou workflow é alterada para obter verde. A pasta da ferramenta será apagada depois da conferência final.
+
+### Reprodução RED e correção do falso positivo da fixture
+
+Semgrep CE **1.179.0**, mesmos packs `p/javascript`, `p/security-audit` e `p/secrets`, métricas/version check desligados. Foram analisados os **nove arquivos do escopo**, inclusive tests/fixtures.cjs e o verificador histórico do protótipo. RED: um WARNING, regra `javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag`, tests/fixtures.cjs:148 no head inicial; zero erros de análise. O CLI scan retorna 0 sem --error, mas esse WARNING é medium para o gate e explica seu exit 1.
+
+A [regra oficial](https://github.com/semgrep/semgrep-rules/blob/develop/javascript/lang/security/audit/unknown-value-with-script-tag.yaml) é de auditoria com confiança LOW: associa uma variável retornada por função a uma chamada posterior contendo um literal script. Aqui raw é a captura sintética e mudarCelula só preenche a matriz de teste; a interface usa textContent. É falso positivo desse payload, sem entrada externa ou execução de HTML.
+
+A fixture agora serializa o objeto de origens por `JSON.stringify` antes de preencher a célula. O literal script continua presente e todos os asserts P11/H05/U09 permanecem intactos. Comparação antes/depois da capturaPlanilha serializada: **bytes idênticos**, SHA-256 `fed514c2f64c23c9694abf73e1baec7028e9926a8b0880b3b9a9cec613a11c45`, inclusive hashes da captura. Não houve nosemgrep, exclusão, mudança de limite, regra ou configuração para silenciar o achado.
+
+GREEN Semgrep: **zero achados, zero erros, nove paths.scanned**, 27,61 s de scan. Suíte completa repetida **194 PASS / 0 FAIL / 0 SKIP**, **76 de interface**, exit 0, **65,06 s**. Gate local repetido **exit 0**, **58,92 s**, cobertura **97,63%**, complexidade máxima **13**, cinco avisos, Semgrep SKIP no processo Windows, audit N/A, **baseline atualizada false**. A reprodução separada no Ubuntu não é apresentada como execução do scanner pelo processo Windows nem como aceite remoto.
+
+Screenshots permanecem válidos: aplicação e captura sintética têm os mesmos bytes. O resumo local foi atualizado com a medição posterior e o hash da fixture. Doc-sync final conferiu que o módulo web já descreve o payload como dado sem execução; não exigiu nova edição de arquitetura ou contrato. Aceite do novo head Linux/review permanece a conferir, sem merge da US5.
+
+### Aceite remoto da US5 — parada sem merge
+
+Head publicado e conferido `86d2fb4f79a3d655214990ad913727dec5a6f156`. [Quality-gate Linux 37232628807](https://github.com/Browsher/crm-social/actions/runs/37232628807/job/111525364067) **SUCCESS**: tests/coverage/complexity/**Semgrep PASS**, audit N/A, **exit 0**, **baseline atualizada false**. O log confirma a instalação de **Semgrep CE 1.179.0** e a execução da checagem; não houve SKIP da ferramenta no Linux. Interface conserva seu SKIP explícito de CI/M8, com os **194/0/0 e 76 casos de interface locais** registrados na repetição posterior da fixture.
+
+[Review 37232628888](https://github.com/Browsher/crm-social/actions/runs/37232628888/job/111525364506) **SUCCESS**, [novo comentário 5984151670](https://github.com/Browsher/crm-social/pull/11#issuecomment-5984151670). Não há Critical ou achado de segurança/regressão. I-1 é uma pendência de evidência: o reviewer não consulta Actions, e a prova é o job do mesmo head ligado acima. Os cinco Minor estão rastreados na Fase 8; m-1 documental foi corrigido distinguindo a medição histórica da atual, sem reescrever resultados. Nenhum código da aplicação mudou depois de 7c563c9; somente a fixture byte a byte equivalente foi refatorada e verificada novamente.
+
+generate-tests/publish-tests **SKIPPED**, sem rótulo gerar-testes. [PR #11](https://github.com/Browsher/crm-social/pull/11) **OPEN**, mergeStateStatus consultado CLEAN; esse estado não foi usado para tentar merge. T031–T034 concluídas, **34/41**, sete tarefas da Fase 8 e captura operacional pendentes. A branch 001 continua preservada.
+
+Ferramenta temporária removida por operação nativa, após verificar o caminho dentro de TEMP: **Pasta Semgrep existe: False**. Instalação, cache, configurações e logs próprios da ferramenta foram apagados; sem instalação global, Docker ou mudança do PATH. Evidências sanitizadas permanecem neste registro e no resumo local.
+
+Este recibo do comentário recebido depois do push fica em commit **local de documentação**, para acompanhar a próxima rodada. O PR permanece no head `86d2fb4`, já verificado; não se declara CI para o registro posterior. Nada foi integrado da US5, e nenhum código, teste ou screenshot mudou após esse head publicado.
+
+### Ajustes de apresentação da US5 — PR #11
+
+RED observado: seis falhas nas expectativas de Histórico legível, origem sem lista,
+motivo consolidado e subtítulo próprio. GREEN e regressões: **197 PASS / 0 FAIL /
+0 SKIP**, **79 testes de interface**, **59,12 s**, Node 24.19.0. Gate local **exit 0**,
+**62,17 s**, cobertura **97,63%**, complexidade máxima **13**, cinco avisos;
+Semgrep **SKIP** no Windows, audit **N/A**, baseline inalterada. O
+[resumo sanitizado](../../docs/reports/001-us5-ajuste-local.json) guarda os hashes.
+
+Origem exibe somente falha ativa e contador com link para a tabela única. O link
+restaura os avisos gerais e sai de Histórico para localizar a tabela. Motivos de
+mídia são consolidados na apresentação; API e recibos conservam os textos originais.
+O Histórico traduz `Cenas complete: inválido` para **Aba Cenas incompleta**, sem
+reescrever evidência armazenada. A Planilha tem subtítulo próprio.
+
+| Cena sintética | 1440 | 390 |
+| --- | --- | --- |
+| Aba Produções e origem compacta | [Desktop](../../docs/design/screenshots/001-us5-ajuste-dados-1440.png) | [Celular](../../docs/design/screenshots/001-us5-ajuste-dados-390.png) |
+| Avisos filtrados da peça | [Desktop](../../docs/design/screenshots/001-us5-ajuste-avisos-1440.png) | [Celular](../../docs/design/screenshots/001-us5-ajuste-avisos-390.png) |
+| Histórico legível | [Desktop](../../docs/design/screenshots/001-us5-ajuste-historico-1440.png) | [Celular](../../docs/design/screenshots/001-us5-ajuste-historico-390.png) |
+
+Seis screenshots conferidos: zero pageerror/requisição externa/rolagem lateral da
+página; tabelas têm rolagem própria. Fixture sintética e falha intencional, sem
+leitura operacional. Commit local `725cb55` acompanha o próximo push. Aceite Linux,
+review e merge autorizado serão registrados após conferir o head novo.
+
+Regressão adicional: primeira importação falha mostrou RED pela ausência da linha
+em Origem; GREEN completo **197/0/0**, **97,95 s**. Durante a repetição do gate,
+o cleanup da fixture aguardou conexão do navegador depois de fechar a escuta.
+Foi liberado somente o navegador com PID/parent e perfil TEMP confirmados. Essa
+execução destravada (389,44 s) **não é usada como aceite**. Cleanup agora fecha o
+navegador antes do servidor, em try/finally; gate repetido sem intervenção abaixo.
+
+Repetição final sem intervenção: **gate exit 0, 49,23 s**, **197 testes PASS**,
+cobertura **97,63%**, complexidade máxima **13** e **seis avisos 11–13**. Semgrep
+SKIP Windows, audit N/A, baseline atualizada false. Este resultado e os hashes
+finais substituem a tentativa interrompida para o aceite deste código; a suíte
+completa anterior preserva seu resultado observado de 197/0/0 e 79 de interface.

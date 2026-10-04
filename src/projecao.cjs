@@ -342,12 +342,19 @@ function montarQuadro(result,mapaQuadro) {
   result.quadro.semanas=result.semanas.map(s=>({semanaId:s.semana_id,
     colunas:COLUNAS.map(nome=>colunaSemana(nome,result.producoes.filter(p=>p.semanaId===s.semana_id)))}));
 }
+function montarPlanilha(ntv) {
+  return Object.entries(CAMPOS).map(([nome,cabecalhos],i)=>{
+    const linhas=ntv[chaves[i]].map(record=>Object.fromEntries(cabecalhos.map(campo=>[campo,record[campo]])));
+    return {nome,cabecalhos:[...cabecalhos],quantidadeLinhas:linhas.length,linhas};
+  });
+}
 function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   const result=base(estadoLocal), captura=estadoLocal.captura;
   if (!captura) return result;
   const origens=new WeakMap(),validadeJson=new WeakMap(),ntv=selecionarNtv(captura,result.avisos,origens,validadeJson);
   result.semanas=ntv.semanas;
   result.producoes=ntv.producoes;
+  result.planilha=montarPlanilha(ntv);
   result.captura={capturaId:captura.envelope.capturaId,completedAt:captura.envelope.completedAt,
     periodo:{inicio:null,fim:null},contagens:Object.fromEntries(chaves.map(k=>[k,ntv[k].length]))};
   planejar(result,origens);

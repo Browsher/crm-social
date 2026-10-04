@@ -1,0 +1,77 @@
+{
+  "observadoEm": "2026-10-04",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
+  "escopo": "US5 ajustes PR #11; gate final 49.23s sem intervencao; suite 197/0/0 e 79UI",
+  "local": {
+    "exitCode": 0,
+    "results": [
+      {
+        "name": "tests",
+        "state": "PASS",
+        "reason": "",
+        "count": 197
+      },
+      {
+        "name": "coverage",
+        "state": "PASS",
+        "reason": "",
+        "percent": 97.6267529665588,
+        "drop": 0
+      },
+      {
+        "name": "complexity",
+        "state": "PASS",
+        "reason": ""
+      },
+      {
+        "name": "semgrep",
+        "state": "SKIP",
+        "reason": "Semgrep ausente; instalar CE 1.179.0"
+      },
+      {
+        "name": "audit",
+        "state": "N/A",
+        "reason": "sem package.json/dependencias do app"
+      }
+    ],
+    "complexityMax": 13,
+    "avisosComplexidade": [
+      {
+        "file": "scripts/importar-captura.cjs",
+        "line": 5,
+        "value": 12
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 73,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 85,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 151,
+        "value": 13
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 294,
+        "value": 11
+      },
+      {
+        "file": "src/web/app.js",
+        "line": 475,
+        "value": 11
+      }
+    ],
+    "baselineAtualizada": false
+  },
+  "sha256": {
+    "src/web/app.js": "138da044104912d5771164e0c3ab52bc9ccfd97e2b5c581318cc9c406dd13d36",
+    "tests/interface.test.cjs": "b2a7de403512c03da82aa591965561d373d3a3e28e6e712798f7042717dff089",
+    "tests/fixtures.cjs": "67b0c6b22b5f825caf951b16191334a8895bdbd908252924b451ed2f1b33113f"
+  }
+}

@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva identidades e relações: T001–T030/US1, US2, US3 e US4 implementadas, com revisão corrente e evidências na [validação](validacao.md). O modelo completo ainda é a meta; interfaces atuais na [arquitetura](../../docs/architecture.md), sem captura operacional validada ou leitura Google.
+Como um índice de fotografias, o modelo conserva identidades e relações: T001–T034/US1–US5 implementadas localmente (34 de 41 tarefas), com revisão corrente e evidências na [validação](validacao.md). Sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes; interfaces atuais na [arquitetura](../../docs/architecture.md), sem leitura Google.
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
@@ -203,9 +203,9 @@ correção/tratamento abaixo; adicionais em +N revisão aberta/revisões abertas
 registrado, versões anteriores e Histórico ficam recolhidos por clique; páginas/cenas
 em linhas compactas têm no máximo um aviso de ausência por linha. Campo vazio na
 faixa é omitido, preservando o original/fallback de responsável na API e a regra
-separada do cartão futuro de Produção. Etapa conhecida usa rótulo legível só na UI;
+separada do cartão de Produção. Etapa conhecida usa rótulo legível só na UI;
 desconhecida mantém o original. Detalhes técnicos dos avisos continuam na projeção,
-com tabelas detalhadas de Planilha futuras na US5.
+com painel detalhado de Planilha implementado na US5, filtrável pelos avisos da peça.
 
 Resumo da peça diferencia **revisão aberta** (há vigente), **revisão a confirmar**
 (sem vigente, há ambígua ou anterior não resolvida) e **sem revisão** (nenhuma ou
@@ -234,6 +234,34 @@ técnico de mídia por cena reúne causas distintas no primeiro ponteiro falho;
 resolvida, o aviso aponta ao primeiro pagina_id/cena_id/arquivo_id falho; versao
 é usado quando a versão da revisão/produção é inválida. Escopos completos permanecem
 na API, sem exposição técnica na linha visual.
+
+## Tabelas e avisos da Planilha
+
+Como folhas de consulta do mesmo álbum, `planilha` mantém as seis tabelas NTV
+inteiras; o filtro do atalho da gaveta recorta somente avisos.
+
+| Campo / estado | Forma e regra implementada |
+| --- | --- |
+| Aba | `{nome,cabecalhos,quantidadeLinhas,linhas}`, na ordem dos seis mínimos |
+| Cabeçalhos | Cópia literal da lista daquela aba em `CAMPOS`, 66 campos no total |
+| Linhas | Objetos novos com somente chaves mínimas e valores triados; sem `quadro`, `detalhes`, envelope ou extras |
+| Contagem | Linhas NTV selecionadas; não é a quantidade alocada na planilha |
+| Normalização | null→string vazia preexistente, exceto `etapa_producao` null recuperada; original só no envelope privado |
+| Avisos gerais / da peça | Coleção global ou `detalhes.avisos`, com Aba/Linha/Campo/Motivo e — quando não há localização |
+| Histórico | Recibos públicos confirmados, recentes primeiro; não recebe órfãos, recibo novo por no-op ou coleta por GET |
+| Estado da interface | `semanaId` declarada, `abaPlanilha` e `avisosProducaoId`; releitura conserva aba disponível, sem mutar a API |
+
+Sem captura, a projeção mantém `planilha=[]` e Histórico confirmado; a interface
+apresenta somente Histórico e orientação à Central. Setas, Home e End alternam abas
+com foco e cada tabela tem rolagem própria. O link da gaveta fecha o dia, abre
+Produções e dá foco ao painel da peça; menu/selo/Todos os avisos restauram os avisos
+gerais, com as seis tabelas sempre NTV completas. O painel fica oculto em Histórico.
+
+Na célula dedicada `url`/`url_video_final`, recusa pela allowlist visual mostra
+**link não permitido**, mantendo **[conteúdo suprimido]** quando já é o marcador
+exato. A API conserva o valor triado permitido pelo contrato, sem aplicar essa
+recusa de apresentação. Texto livre legítimo conserva suas URLs como texto;
+nenhuma célula cria navegação ou carregamento automático.
 
 ## Estado local e transições
 

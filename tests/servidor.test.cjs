@@ -3,8 +3,8 @@ const assert=require('node:assert/strict');
 const http=require('node:http');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,mapaQuadroValido,temporario,carregarModulo,mudarCelula}=require('./fixtures.cjs');
-const {promoverCaptura}=require('../src/snapshot.cjs');
+const {capturaValida,capturaPlanilha,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario,campos}=require('./fixtures.cjs');
+const {promoverCaptura,registrarFalhaEntrada,lerEstado}=require('../src/snapshot.cjs');
 const {criarServidor}=carregarModulo('src/servidor.cjs',['criarServidor']);
 async function ambiente(t,captura=true) {
   const root=temporario(t), webDir=path.join(root,'web'), dataDir=path.join(root,'privado'), quadroConfigPath=path.join(root,'mapa.json');
@@ -127,4 +127,66 @@ test('H04 mapa inválido impede criar servidor; query nunca seleciona configura�
   const {port}=await ambiente(t);
   const r=await request(port,'/api/visao?quadroConfigPath='+encodeURIComponent(map));
   assert.equal(r.status,200);
+});
+
+test('H05 HTTP entrega seis tabelas mínimas com valores permitidos e suprime célula sensível', async t=>{
+  const {port,dataDir}=await ambiente(t,false),raw=capturaPlanilha();
+  mudarCelula(raw,'Produções',2,'legenda','Antes https://usuario-http-ficticio:senha-http-ficticia@docs.google.com/x depois');
+  promoverCaptura(raw,dataDir);
+  const before=fs.readFileSync(path.join(dataDir,'atual.json'),'utf8');
+  const response=await request(port,'/api/visao');
+  assert.equal(response.status,200);
+  const view=JSON.parse(response.body);
+  assert.equal(view.planilha.length,6);
+  assert.deepEqual(view.planilha.map(tab=>[tab.nome,tab.quantidadeLinhas]),[
+    ['Semanas',2],['Produções',5],['Páginas',3],['Cenas',2],['Arquivos',5],['Revisoes',5]
+  ]);
+  for(const tab of view.planilha) {
+    assert.deepEqual(tab.cabecalhos,campos[tab.nome]);
+    for(const linha of tab.linhas) assert.deepEqual(Object.keys(linha),campos[tab.nome]);
+  }
+  const p=view.planilha[1].linhas[0];
+  assert.equal(p.legenda,'Antes [conteúdo suprimido] depois');
+  assert.equal(view.planilha[4].linhas[0].id_drive,'drive-ficticio-local');
+  assert.equal(view.planilha[4].linhas[0].sha256,'a'.repeat(64));
+  assert.equal(view.planilha[4].linhas[0].origens_json,'{"arquivo_id":"origem-sintetica","texto":"<script>conteúdo como dado</script>"}');
+  assert.ok(view.avisos.some(a=>a.aba==='Produções' && a.linha===3 && a.campo==='legenda'));
+  assert.doesNotMatch(response.body,/usuario-http-ficticio|senha-http-ficticia|sentinela-nao-publicar|__extra_privado|metadataBefore|metadataAfter|spreadsheetId|firstReadSha256|secondReadSha256|tables|stack/);
+  assert.equal(fs.readFileSync(path.join(dataDir,'atual.json'),'utf8'),before);
+});
+
+test('H05 Histórico HTTP lista todas as confirmadas recentes primeiro, preserva sucesso e ignora órfãos e no-op', async t=>{
+  const {port,dataDir}=await ambiente(t,false),raw=capturaPlanilha();
+  promoverCaptura(raw,dataDir);
+  const receiptsDir=path.join(dataDir,'tentativas');
+  const first=lerEstado(dataDir).historico[0];
+  const firstBytes=fs.readFileSync(path.join(receiptsDir,first.tentativaId+'.json'),'utf8');
+  for(let i=0;i<11;i++) registrarFalhaEntrada(dataDir,'ENTRADA_JSON');
+  const latest=structuredClone(raw);latest.capturaId='captura-planilha-sintetica-02';
+  redefinirHorario(latest,'2026-10-03T12:00:00.000Z','2026-10-03T12:05:00.000Z');
+  promoverCaptura(latest,dataDir);
+  const lastFailure=registrarFalhaEntrada(dataDir,'ENTRADA_ARQUIVO');
+  const confirmed=lerEstado(dataDir), before=fs.readFileSync(path.join(dataDir,'atual.json'),'utf8');
+  const prepared={tentativaId:'tentativa-preparada-sintetica',capturaId:'captura-orfa-sintetica',concluidaEm:'2026-10-04T12:00:00Z',resultado:'completa',motivoResumo:'não confirmada',erroBruto:'C:/usuario-ficticio/dados'};
+  fs.writeFileSync(path.join(receiptsDir,prepared.tentativaId+'.json'),JSON.stringify(prepared));
+  fs.writeFileSync(path.join(dataDir,'ultima-tentativa.json'),JSON.stringify(prepared));
+  fs.writeFileSync(path.join(dataDir,'capturas',prepared.capturaId+'.json'),JSON.stringify(raw));
+  assert.equal(promoverCaptura(latest,dataDir).resultado,'sem_alteracao');
+  const response=await request(port,'/api/visao'),view=JSON.parse(response.body);
+  assert.equal(response.status,200);
+  assert.equal(view.historico.length,14);
+  assert.deepEqual(view.historico.map(r=>r.tentativaId),confirmed.historico.map(r=>r.tentativaId).reverse());
+  assert.equal(view.historico[0].tentativaId,lastFailure.tentativaId);
+  assert.equal(view.historico[0].resultado,'falhou');
+  assert.equal(view.historico[0].motivoResumo,'arquivo local ausente ou ilegível');
+  assert.equal(view.historico.at(-1).tentativaId,first.tentativaId);
+  assert.equal(view.historico.at(-1).resultado,'completa');
+  assert.equal(view.ultimaTentativa.tentativaId,lastFailure.tentativaId);
+  assert.equal(view.captura.capturaId,latest.capturaId);
+  assert.equal(view.captura.completedAt,'2026-10-03T12:05:00.000Z');
+  assert.equal(view.estado,'falha_atualizacao');
+  for(const r of view.historico) assert.deepEqual(Object.keys(r).sort(),['tentativaId','concluidaEm','resultado','motivoResumo'].sort());
+  assert.doesNotMatch(response.body,/tentativa-preparada-sintetica|captura-orfa-sintetica|erroBruto|usuario-ficticio/);
+  assert.equal(fs.readFileSync(path.join(dataDir,'atual.json'),'utf8'),before);
+  assert.equal(fs.readFileSync(path.join(receiptsDir,first.tentativaId+'.json'),'utf8'),firstBytes);
 });
