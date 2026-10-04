@@ -34,7 +34,7 @@ flowchart LR
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
 | projecao | Seleção NTV e campos permitidos, supressão de URLs com credenciais, semanas/dias/formatos, frescor e detalhes por versão/relação | [Projeção](modules/projecao.md) |
 | servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
-| web | Planejamento/calendário/lista/filtros, gaveta compacta com acordeões por peça, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, Produção por semana e etapa, gaveta compacta com acordeões por peça, selo comum e origem/releitura em Planilha | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -69,7 +69,7 @@ flowchart TD
   Confirmar --> Ler[lerEstado consulta apenas IDs confirmados]
   Ler --> Projetar[projetarVisao seleciona registros permitidos]
   Projetar --> API[GET /api/visao]
-  API --> UI[Planejamento, gaveta do dia e origem/releitura no navegador]
+  API --> UI[Planejamento, Produção por etapa, gaveta do dia e origem/releitura no navegador]
 ```
 
 `atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`. Capturas e recibos são preparados com abertura exclusiva e fsync antes do rename. Falha na gravação/rename do ponteiro tenta remover somente seu temporário, preservando o erro original se a limpeza também falhar. Resumo `ultima-tentativa.json` é derivado; falha dele não muda o estado confirmado. Arquivo órfão de interrupção não comprova aceitação nem entra no Histórico.

@@ -633,6 +633,11 @@ no PR #9 originou os itens abaixo. Eles não recebem correção nesta rodada:
 | PR #9, review 5982320198, m-2 | Referência da classificação pendente em architecture.md aponta projecao.cjs:253, enquanto projetarVisao passou a :313; reconciliar com a implementação do quadro. A parte da dívida de complexidade já está no m-5 anterior |
 | PR #9, review 5982320198, m-3 | Reitera tratamento de revisão desconhecido chamado aberto; mesma pendência m-2 anterior, sem novo comportamento nesta rodada |
 | PR #9, review 5982320198, m-4 | Indentação do loop HTTP e consolidação dos imports de fixtures; estilo sem efeito funcional. Adiado porque a regressão I-1 interrompeu a rodada antes de novas alterações de código |
+| PR #10, review 5983077547, m-1 | Localizar a pendência resumida do cartão com Página/Cena e número. A API já conserva unidade/unidadeId e a gaveta localiza; definir a representação e cobrir a projeção na Fase 8, sem inferir mídia concluída |
+| PR #10, review 5983077547, m-2 | Consolidar a abertura do dia no cartão de Planejamento e no quadro em abrirDiaDaPeca; ambos os caminhos já têm teste real de interface. Refatoração de manutenção agrupada na revisão final |
+| PR #10, review 5983077547, m-3 | Acrescentar teste HTTP dedicado de quadro.semanas/producoes[].quadro e ausência do mapa bruto em /api/visao. Projeção cobre o contrato e interface real cobre a rota local; ampliar a camada HTTP no CI na Fase 8 |
+| PR #10, review 5983077547, m-4 | Explicitamente decidir igualdade de rótulos não-string e contagem após triagem. Contador atual usa valor já saneado, preservando privacidade; rótulos distintos suprimidos podem formar uma única chave. Cobrir a regra na revisão final |
+| PR #10, review 5983077547, m-6 | Calcular o índice de etapa_producao uma vez por tabela e documentar a dependência de IDs únicos/não vazios validados por registros. A recuperação ocorre antes da triagem e os testes P10 protegem essa fronteira; otimização segue com T037 |
 
 ## Última rodada da US3 — avisos e textos projetados
 
@@ -772,3 +777,15 @@ Servidor real em loopback/porta efêmera, persistência e mapa JSON dentro de TE
 | [Produção celular](../../docs/design/screenshots/001-us4-producao-390.png) | 390 × 2488, página completa | mesmas 8 colunas/10 cartões em lista vertical, scrollWidth=390, zero pageerror/requisição externa |
 
 Imagens conferidas visualmente: identidade Social Studio do protótipo, grade de quatro colunas no desktop e uma no celular, selo comum, tema/período e contagem de Outras. Usam somente registros fictícios, sem prévias/entregas reais. Gate Linux e review do novo PR dependem da publicação desta entrega; nenhuma evidência anterior é declarada aceite do novo head.
+
+### Aceite remoto inicial da US4 e revisão
+
+Código publicado: `cc35ff15589612a5aa47f5de149e302bb4a59515`, autor e committer Alexandre Melo com o noreply configurado. [PR #10](https://github.com/Browsher/crm-social/pull/10) aberto para a US4; sem autorização de merge nesta rodada. O push também preserva o merge da US3 e o commit local `fd4ce50` incluído no push anterior.
+
+[Quality-gate Linux 37224502513](https://github.com/Browsher/crm-social/actions/runs/37224502513/job/111501249215): **SUCCESS** sobre esse head. Tabela real do gate estrito: tests/coverage/complexity/**Semgrep PASS**, audit N/A por ausência de dependências, **exit code 0**, **baseline atualizada false**. O job instalou Semgrep CE **1.179.0** e o executou; não é SKIP local. Os cinco avisos de complexidade não foram ocultados.
+
+[Review 37224502480](https://github.com/Browsher/crm-social/actions/runs/37224502480/job/111501248992): **SUCCESS**, [comentário 5983077547](https://github.com/Browsher/crm-social/pull/10#issuecomment-5983077547). Leu o diff completo de 28 arquivos, o reviewer, AGENTS, constituição e contrato. Não aponta Critical, segurança ou regressão. I-1 é pendência de evidência, suprida pelo job Linux acima e pela repetição local abaixo. generate-tests/publish-tests ficaram **SKIPPED**, sem rótulo gerar-testes; isso não é ausência do Semgrep.
+
+Para vincular a interface ao commit, executei novamente **tests/interface.test.cjs** com HEAD `cc35ff1`: **60 PASS / 0 FAIL / 0 SKIP**, **exit 0**, **34,55 s**, incluindo U07/U08 em 1440/390 e regressões de URL. O diff do código e desse teste contra `cc35ff1` estava vazio, e os quatro SHA-256 do resumo local coincidem com os arquivos medidos. A suíte completa e o gate local anteriores mediram esse mesmo código. Não se atribui o aceite local ao Linux: Playwright permanece SKIP no CI, dívida M8 da Fase 8. `.claude/rules/project-structure.md` está versionado no head publicado; a árvore local estava limpa ao iniciar esta repetição.
+
+m-5 textual foi corrigido: Produção consta da tabela web e do fluxo Mermaid da arquitetura; o documento de projeção volta a enumerar as funções anteriores com linhas atuais; a duplicação de "versionado" no contrato foi removida. Nenhum comportamento, mapa, teste, CI ou baseline mudou após `cc35ff1`. m-1/m-2/m-3/m-4/m-6 estão nas pendências da Fase 8, conforme a regra do autor. O PR continua aberto, com 30/41 tarefas concluídas; US5 e a revisão final não começaram.

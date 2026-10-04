@@ -183,8 +183,8 @@ silenciosamente à regra da etapa. Status, aprovação ou arquivo sem `publicado
 preenchido não colocam a peça em Publicada. Esse critério substitui a exigência
 anterior de timestamp válido/coerente para classificar a coluna.
 
-O servidor lê `config/quadro-etapas.json` na inicialização. Arquivo versionado na
-implementação, versionado e separado da captura privada. Conteúdo inicial aprovado:
+O servidor lê `config/quadro-etapas.json` na inicialização. Arquivo versionado e
+separado da captura privada. Conteúdo inicial aprovado:
 
 ```json
 {

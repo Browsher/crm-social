@@ -2,7 +2,9 @@
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Projeção, detalhes e quadro implementados até T028/US4; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs), seleção/redação, datas/frescor, detalhes e helpers `colunaProducao` (linha 305), `pendenciasRevisao` (311), `pendenciasMidia` (318), `colunaSemana` (330), `montarQuadro` (336) e `projetarVisao` (345).
+Projeção, detalhes e quadro implementados até T028/US4; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs).
+
+Funções conferidas na fonte: `redigirPedacoUrl` (linha 6), `redigirTexto` (17), `jsonValido` (29), `motivoUrl` (32), `selecionar` (37), `reciboPublico` (50), `selecionarNtv` (62), `planejar` (95), `agruparDias` (117), `aplicarFrescor` (126), `midiasCena` (191), `unidades` (202), `vinculoRevisao` (211), `revisoes` (220), `documentosSemana` (251), `avisosRelacionados` (282), `detalhar` (291), `colunaProducao` (305), `pendenciasRevisao` (311), `pendenciasMidia` (318), `colunaSemana` (330), `montarQuadro` (336) e `projetarVisao` (345).
 
 ## Interface, seleção e dados
 
