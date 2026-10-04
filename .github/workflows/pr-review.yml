@@ -76,12 +76,16 @@ jobs:
             para comentar, editar arquivos ou gerar commits; não aprove nem bloqueie merge.
             Não exponha segredos. Descreva mecanismos de detecção sem transcrever
             padrões ou exemplos de credenciais.
+          # --restricted confina ferramentas de arquivo ao checkout e ignora settings locais.
+          # mcp__* nega todos os MCP; o nome de commit explícito é defesa redundante.
+          # Fontes: https://code.claude.com/docs/en/cli-reference
+          # https://code.claude.com/docs/en/permissions
           claude_args: >-
             --restricted
             --model claude-opus-5-5
             --max-turns 20 --tools Read,Grep,Glob
             --allowedTools "Read,Grep,Glob"
-            --disallowedTools "Bash,Write,Edit,mcp__*"
+            --disallowedTools "Bash,Write,Edit,mcp__*,mcp__github_file_ops__commit_files"
             --json-schema '{"type":"object","properties":{"body":{"type":"string","minLength":1}},"required":["body"],"additionalProperties":false}'
       - name: Publicar comentário como dado
         id: publish_review
@@ -110,7 +114,15 @@ jobs:
               raise SystemExit('Comentário ausente, vazio ou maior que 60000 bytes UTF-8')
           target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'node-kit-review-comment.md'
           run_url = os.environ['GITHUB_SERVER_URL'] + '/' + os.environ['REPO'] + '/actions/runs/' + os.environ['GITHUB_RUN_ID']
-          secret = r'sk-ant-|gh[opsu]_|github_pat_|\bey[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b|-----BEGIN(?: [A-Z0-9]+)* (?:PRIVATE|PUBLIC) KEY-----'
+          # Triagem heurística por prefixo e comprimento, sem limite de palavra.
+          # Corpo mínimo: 20 caracteres permitidos; não substitui o secret scanning do GitHub.
+          # n8n: JWT atual (detector abaixo) e prefixo legado; formatos opacos sem
+          # prefixo reconhecível não são detectáveis de forma confiável.
+          secret = (r'(?:sk-ant-|gh[oprsu]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}'
+                    r'|AIza[A-Za-z0-9_-]{20,}|ya29\.[A-Za-z0-9._-]{20,}'
+                    r'|1//?[A-Za-z0-9_-]{20,}'
+                    r'|\bey[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b'
+                    r'|-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----')
           jwt = False
           for match in re.finditer(r'(?<![\w-])([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]*)(?![\w-])', body):
               try:
@@ -133,21 +145,35 @@ jobs:
           reads, completed = {}, set()
           for message in messages:
               if not isinstance(message, dict): continue
-              content = message.get('message', {}).get('content', [])
+              payload = message.get('message', {})
+              if not isinstance(payload, dict):
+                  raise SystemExit('Formato das leituras do checkout inválido')
+              content = payload.get('content', [])
               if not isinstance(content, list): continue
               for block in content:
                   if not isinstance(block, dict): continue
                   if block.get('type') == 'tool_use' and block.get('name') == 'Read':
-                      name = block.get('input', {}).get('file_path')
-                      if isinstance(name, str):
+                      inputs, identifier = block.get('input'), block.get('id')
+                      if not isinstance(inputs, dict) or not isinstance(identifier, str) or not identifier:
+                          raise SystemExit('Formato das leituras do checkout inválido')
+                      name = inputs.get('file_path')
+                      if not isinstance(name, str) or not name:
+                          raise SystemExit('Formato das leituras do checkout inválido')
+                      try:
                           file = pathlib.Path(name)
                           file = (file if file.is_absolute() else root / file).resolve()
-                          if file.is_relative_to(root):
-                              relative = file.relative_to(root).as_posix()
-                              if relative in required: reads[block.get('id')] = relative
-                  if block.get('type') == 'tool_result' and block.get('is_error') is not True:
-                      name = reads.get(block.get('tool_use_id'))
-                      if name: completed.add(name)
+                      except (OSError, ValueError, RuntimeError):
+                          raise SystemExit('Formato das leituras do checkout inválido')
+                      if file.is_relative_to(root):
+                          relative = file.relative_to(root).as_posix()
+                          if relative in required: reads[identifier] = relative
+                  if block.get('type') == 'tool_result':
+                      identifier, error = block.get('tool_use_id'), block.get('is_error')
+                      if not isinstance(identifier, str) or not identifier or (error is not None and not isinstance(error, bool)):
+                          raise SystemExit('Formato das leituras do checkout inválido')
+                      if block.get('is_error') is not True:
+                          name = reads.get(identifier)
+                          if name: completed.add(name)
           if completed != required:
               raise SystemExit('Leituras obrigatórias do checkout não confirmadas')
           for name in sorted(completed):
@@ -158,7 +184,7 @@ jobs:
           PY
 
       - name: Avisar falha do review
-        if: ${{ always() && !success() && steps.publish_review.outputs.retained != 'true' }}
+        if: ${{ failure() && !cancelled() && steps.publish_review.outputs.retained != 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -176,13 +202,14 @@ jobs:
 
   generate-tests:
     if: >-
+      (github.event.action != 'labeled' || github.event.label.name == 'gerar-testes') &&
       !github.event.pull_request.draft &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association) &&
       contains(github.event.pull_request.labels.*.name, 'gerar-testes')
     concurrency:
       group: pr-review-${{ github.event.pull_request.number }}-generate-tests
-      cancel-in-progress: true
+      cancel-in-progress: ${{ github.event.action != 'labeled' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
@@ -285,13 +312,14 @@ jobs:
   publish-tests:
     needs: generate-tests
     if: >-
+      (github.event.action != 'labeled' || github.event.label.name == 'gerar-testes') &&
       !github.event.pull_request.draft &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association) &&
       contains(github.event.pull_request.labels.*.name, 'gerar-testes')
     concurrency:
       group: pr-review-${{ github.event.pull_request.number }}-publish-tests
-      cancel-in-progress: true
+      cancel-in-progress: ${{ github.event.action != 'labeled' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
