@@ -12,7 +12,7 @@ Como um álbum montado por partes, o plano define o leitor completo e a sequênc
 
 **Spec:** [spec.md](spec.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas aprovadas](../../docs/design/telas.md).
 
-T001–T034/fundação e US1–US5 estão implementadas localmente (34 de 41 tarefas); revisão corrente e evidências na [validação](validacao.md). As interfaces reais estão na [arquitetura](../../docs/architecture.md); sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes, sem leitura real Google. Esta sincronização não conclui T041.
+T001–T038 estão implementadas e verificadas localmente (38 de 41 tarefas); evidências na [validação](validacao.md) e interfaces reais na [arquitetura](../../docs/architecture.md). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; não há aceite operacional da 001. Esta sincronização não conclui T041.
 
 **Branch:** `001-consulta-local-producao`, criada da `main` no repositório `crm-social` e conferida nesta tarefa. Não executar novamente a criação da feature para atualizar estes documentos.
 
@@ -48,7 +48,7 @@ O retrato de 02/10 mostrou quatro peças em uma semana; esse número não fica f
 | Datas | Datas editoriais civis preservadas; frescor e horários por `captura.completedAt` em `America/Sao_Paulo` |
 | Celular | Em 390 px, lista semanal inicial, menu recolhido e gaveta em tela cheia; tabelas com rolagem horizontal própria |
 | Testes | Funções puras, I/O temporário real, serviços/projeções, HTTP real em porta efêmera e interface Playwright local |
-| Escala | Fixture sintética de 500 peças; medir filtros/navegação durante a implementação, sem promessa antecipada |
+| Escala | Cenário sintético de 500 peças verificado localmente; resultados/limites somente na validação, sem comprovar captura oficial |
 | Dependências | Node e Playwright existentes; sem framework, banco ou infraestrutura copiados de outro projeto |
 
 O quality gate existente usa Node 24.19.0 e `testCommand: ["node", "--test"]`. ESLint 10.12.0 e seu lock ficam isolados em `tools/`; `npm ci --prefix tools` é preparação de ferramenta, não dependência do aplicativo. Semgrep é ferramenta do gate. A atualização documental não altera configuração, relatórios ou ferramentas do gate.
@@ -59,7 +59,7 @@ por `CRM_NODE_PATH`, validar a versão no quickstart e passá-lo por `-NodePath`
 iniciador. Não versionar caminho pessoal. Os testes CLI usam `process.execPath`; o
 gate existente também usa o próprio executável para os testes e o ESLint.
 
-Antes da implementação, atender ao pré-requisito `.claude/rules/project-structure.md` pela skill `doc-init`, conforme o AGENTS local. Resolver o Playwright já instalado sem instalar outra cópia. Os comandos de aplicativo do quickstart só passam a existir após as tarefas correspondentes.
+A regra `.claude/rules/project-structure.md` está preparada e sincronizada. Aplicativo, importador e iniciador têm comandos reais no quickstart; o Playwright existente permanece sem nova instalação. Captura operacional e aceite completo continuam pendentes.
 
 ## Constitution Check
 
@@ -109,6 +109,8 @@ Interfaces internas propostas, com envelope e campos definidos somente pelo [con
 - `validarTempoImportacao(completedAt, nowIso, completedAtVigente=null)` confere a candidata já validada: até 10 minutos no futuro é permitido, inclusive o limite; mais que isso é captura inválida, e fim igual/anterior ao vigente é captura desatualizada. Motivos fixos são registrados no recibo, sem células privadas.
 - `promoverCaptura(raw, dataDir)` valida e promove conforme identidade e tempo, mantendo a trava durante as comparações. Estrutura, conflito de ID e no-op previamente confirmado vêm antes da regra temporal; esta vem antes de gravar a candidata. Falha preserva a última válida e registra tentativa resumida quando a persistência permite. Mesmo ID e bytes já aceitos é `sem_alteracao`; mesmo ID com outros bytes é conflito. Bytes preparados sem confirmação podem ser revalidados e promovidos numa nova tentativa, desde que satisfaçam a política temporal vigente.
 - `lerEstado(dataDir)` lê captura e tentativas, inclusive ausência; valida a estrutura, sem rede ou reaplicação da política temporal relativa à importação. GET/releitura/reinício não alteram captura, instante ou falha ativa.
+- `lerRecibo` valida objeto/tipos/IDs e data ISO real com fuso dos recibos confirmados; inválido recusa estado sem escrever, e HTTP responde 503 genérico.
+- `selecionar` recusa a projeção se triagem alterar identidade/vínculo terminado em `_id`, evitando colisões de marcadores. `detalhar` avisa versão ausente; `pendenciasMidia` não afirma ausência de mídia vigente sem versão positiva da produção.
 - O estado único `data/atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`; captura e última tentativa podem ser null, lista inicial vazia. Capturas e recibos imutáveis são preparados antes da substituição atômica no mesmo diretório. Essa substituição confirma os IDs do Histórico e a captura vigente juntos; arquivos órfãos/preparados não comprovam aceitação nem entram no Histórico. Falha confirmada conserva `capturaId`, acrescenta seu recibo e troca a última tentativa; `data/ultima-tentativa.json` é resumo derivado, sem autoridade concorrente. Falha ao gravar recibo/estado é erro explícito de persistência, nunca sucesso ou garantia de recibo durável.
 - `validarMapaQuadro(raw)` é função pura; `carregarMapaQuadro(configPath)` lê JSON real e valida antes de devolver o mapa. Schema/conteúdo inicial no contrato; rótulo repetido no mesmo campo ou coluna inexistente é erro claro. Não codificar os rótulos como tabela paralela no JavaScript.
 - `projetarVisao(estadoLocal, nowIso, mapaQuadro)` recebe o estado de `lerEstado`, inclusive captura ausente/falha, e o mapa validado, retornando o envelope local de `/api/visao`. Não enviar estado privado nem configuração bruta diretamente ao HTTP.
@@ -120,7 +122,7 @@ Interfaces internas propostas, com envelope e campos definidos somente pelo [con
 - Resumo da peça distingue revisão aberta (vigente), a confirmar (ambígua/anterior não resolvida sem vigente) e ausência (nenhuma/somente resolvidas), contando somente unidades vigentes. A linha visual apresenta decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API; adicionais usam +N revisão aberta/revisões abertas. Helpers de plural evitam rótulos incorretos e a faixa de avisos não deixa separador pendurado.
 - `criarServidor({dataDir, port, webDir, quadroConfigPath})` carrega o mapa antes de devolver servidor Node ainda não iniciado; erro impede início. O ponto de entrada escuta exclusivamente em `127.0.0.1`. `quadroConfigPath` padrão `config/quadro-etapas.json` e `webDir` padrão `src/web/` são argumentos confiáveis de teste, nunca entradas HTTP. T013 cria os três estáticos sintéticos em TEMP para testar a fundação antes de T018; a allowlist permanece fixa mesmo com diretório injetado.
 - Importador: `node scripts/importar-captura.cjs <caminho-local> [--data-dir <diretorio-local>]`; diretório padrão `data/`.
-- Iniciador: `Iniciar CRM.ps1 [-DataDir <diretorio-local>] [-Port <porta>] [-NodePath <exe>]`. Padrões locais; argumentos permitem teste real em diretório e porta isolados. Porta ocupada não encerra outro processo.
+- Iniciador implementado: `Iniciar CRM.ps1 [-DataDir <diretorio-local>] [-Port <porta>] [-NodePath <exe>]`, Windows PowerShell 5.1. Resolve Node explícito/CRM_NODE_PATH/PATH; defaults data/ e 4318, porta 0–65535. Processo oculto e logs privados em DataDir/runtime; confirmação de stdout em até dez segundos, retorno `{processId,url,logDir,encerrar}`. Operador confere PID antes de encerrar; erro encerra somente o filho criado, nunca o ocupante. Testes usam TEMP/porta isolada.
 
 O quadro implementado usa `quadro.colunas:[{nome}]`, `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` e `producoes[].quadro:{coluna,pendencias}`. A projeção aplica prioridade e contador distinto por semana; o browser resume primeira pendência/+N e abre dia inteiro/Sem data, sem recalcular mapas. Arquivo registrado na versão atual com URL vazia/recusada não é mídia ausente. A configuração versionada mantém nove etapas e liberação/revisão vazias; mapa/captura completos da demonstração são fixtures TEMP.
 

@@ -9,6 +9,32 @@ function bytes(dir) {
   return fs.readFileSync(path.join(dir,'atual.json'),'utf8');
 }
 
+for(const [nome,alteracao] of [
+  ['motivo objeto',{motivoResumo:{dado:'/home/usuario-sintetico-recibo/privado'}}],
+  ['motivo array',{motivoResumo:['dado-sintetico']}],
+  ['motivo null',{motivoResumo:null}],
+  ['resultado objeto',{resultado:{dado:'sintetico'}}],
+  ['resultado não confirmado',{resultado:'sem_alteracao'}],
+  ['horário objeto',{concluidaEm:{dado:'sintetico'}}],
+  ['horário impossível',{concluidaEm:'2026-02-30T12:00:00Z'}],
+  ['identidade diferente',{tentativaId:'tentativa-diferente'}],
+  ['captura objeto',{capturaId:{dado:'sintetico'}}],
+  ['completa sem captura',{capturaId:null}],
+]) test('S-fase8 recibo confirmado recusa '+nome+' sem reescrever o estado',t=>{
+  const dir=temporario(t),r=promoverCaptura(capturaValida(),dir);
+  const file=path.join(dir,'tentativas',r.tentativaId+'.json'),original=bytes(dir);
+  const alterado=JSON.stringify({...r,...alteracao});fs.writeFileSync(file,alterado);
+  assert.throws(()=>lerEstado(dir),{message:'persistência: captura ou recibo confirmado ilegível'});
+  assert.equal(fs.readFileSync(file,'utf8'),alterado);
+  assert.equal(bytes(dir),original);
+});
+
+test('S-fase8 recibo confirmado aceita instante com fuso e motivo textual',t=>{
+  const dir=temporario(t),r=promoverCaptura(capturaValida(),dir),file=path.join(dir,'tentativas',r.tentativaId+'.json');
+  const before={...r,concluidaEm:'2026-10-04T09:00:00-03:00'};fs.writeFileSync(file,JSON.stringify(before));
+  assert.deepEqual(lerEstado(dir).ultimaTentativa,before);
+});
+
 test('S-review m4 futuro excessivo, empate e captura antiga confirmam falha sem trocar a vigente', t=>{
   t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
   const dir=temporario(t),old=capturaValida();

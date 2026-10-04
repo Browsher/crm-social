@@ -38,6 +38,8 @@ function selecionar(record,fields,nome,linha,avisos) {
   return Object.fromEntries(fields.map(field=>{
     const value=field==='etapa_producao' && record[field]===null?null:record[field] ?? '';
     const redigido=typeof value==='string'?redigirTexto(value):value;
+    // Identidades e vínculos não podem virar uma chave compartilhada de redação.
+    if(redigido!==value && field.endsWith('_id')) throw new Error('Identidade ou vínculo sensível não pode ser projetado');
     const motivo=redigido!==value?'conteúdo sensível suprimido':
       (typeof value==='string' && ['url','url_video_final'].includes(field)?motivoUrl(value):null);
     if (motivo) {
@@ -295,6 +297,7 @@ function detalhar(result,ntv,origens,validadeJson) {
   for(const p of result.producoes) {
     const ctx={...ctxBase,locais:avisosRelacionados(p,ntv,origens,indice)};
     validarNumeros(p,['versao'],[],ctx);
+    if(!preenchido(p.versao)) avisoRegistro(p,'versao','Versão vigente não informada; mídia a confirmar',ctx);
     p.detalhes={responsavelRegistrado:preenchido(p.responsavel_atual)?p.responsavel_atual:'A confirmar',
       publicacaoRegistrada:preenchido(p.publicado_em),paginas:unidades(p,ntv.paginas,'paginas',ctx),cenas:unidades(p,ntv.cenas,'cenas',ctx),
       revisoes:revisoes(p,ntv.revisoes,ctx),arquivos:arquivosRegistrados(p,ntv.arquivos,ctx),documentosSemana:documentosSemana(p,ntv,ctx),avisos:ctx.locais};
@@ -316,6 +319,7 @@ function pendenciasRevisao(p) {
   }));
 }
 function pendenciasMidia(p) {
+  if(!inteiroPositivo(p.versao)) return [];
   const paginas=p.detalhes.paginas.filter(u=>u.vigente),cenas=p.detalhes.cenas.filter(u=>u.vigente);
   const pendencias=[
     ...paginas.filter(u=>!u.arquivos[0]).map(u=>({tipo:'midia',texto:'Imagem ausente',unidade:'pagina',unidadeId:u.pagina_id})),

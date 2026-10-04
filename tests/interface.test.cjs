@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {capturaValida,capturaDetalhada,capturaQuadro,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,temporario,recalcularHashes,mudarCelula,redefinirHorario}=require('./fixtures.cjs');
-const {campos,capturaPlanilha}=require('./fixtures.cjs');
+const {campos,capturaPlanilha,capturaEscala}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const CI=process.env.CI==='true';
@@ -960,4 +960,84 @@ test('U10 Planilha tem subtítulo próprio, inclusive ao navegar de volta', {ski
   assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Peças registradas, semana a semana.');
   await page.locator('[data-tela="planilha"]').click();
   assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Dados capturados da planilha, por aba');
+});
+
+for(const width of [1440,390]) test('U11 escala de 500 peças: navegação, avisos e releitura em '+width, {skip},async t=>{
+  let dataDir;
+  const inicio=performance.now();
+  const page=await abrir(t,width,true,()=>{},dir=>{dataDir=dir;},capturaEscala,mapaQuadroSintetico(),false);
+  page.setDefaultTimeout(10000);
+  await page.waitForFunction(()=>document.querySelector('#fonte-captura').textContent==='Captura pela Central');
+  const cargaMs=performance.now()-inicio,apiInicio=performance.now();
+  const view=await page.evaluate(async()=>fetch('/api/visao').then(r=>r.json()));
+  const apiMs=performance.now()-apiInicio;
+  assert.equal(view.producoes.length,500);
+  assert.equal(await page.locator('#total').textContent(),'500 peças registradas');
+  assert.equal(await page.locator('#abrir-sem-data').textContent(),'46 sem data');
+  if(width===1440) await page.getByRole('button',{name:'Lista',exact:true}).click();
+  assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
+    view.producoes.map(p=>p.producao_id).sort());
+  await page.locator('#abrir-sem-data').click();
+  assert.deepEqual((await page.locator('#lista-sem-data [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
+    view.producoes.filter(p=>p.dataCivil===null).map(p=>p.producao_id).sort());
+  await page.locator('#fechar-sem-data').click();
+  const naveInicio=performance.now();
+  await page.getByRole('button',{name:'Reels',exact:true}).click();
+  assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
+    view.producoes.filter(p=>p.formato==='Reels').map(p=>p.producao_id).sort());
+  const trigger=page.locator('#lista [data-producao-id="peca-4"]');await trigger.click();
+  assert.deepEqual((await page.locator('#dia .peca-acordeao').evaluateAll(ns=>ns.map(n=>n.dataset.peca))).sort(),
+    view.dias.find(d=>d.data==='2026-10-04').ids.slice().sort());
+  await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(n=>document.activeElement===n),true);
+  if(width===390) await page.locator('#menu').click();
+  await page.locator('[data-tela="producao"]').click();
+  const semana=view.quadro.semanas.find(s=>s.semanaId==='semana-01');
+  assert.deepEqual((await page.locator('#quadro [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
+    semana.colunas.flatMap(c=>c.ids).sort());
+  for(const coluna of semana.colunas) assert.equal(await page.locator('#quadro [data-coluna="'+coluna.nome+'"] .quadro-card').count(),coluna.ids.length);
+  const navegacaoMs=performance.now()-naveInicio;
+  await page.locator('#selo').click();
+  const abasInicio=performance.now();
+  let camposExibidos=0;
+  for(const tab of view.planilha) {
+    await page.locator('#abas-planilha [data-aba="'+tab.nome+'"]').click();
+    assert.equal(await page.locator('#dados-planilha tbody tr').count(),tab.quantidadeLinhas);
+    assert.deepEqual(await page.locator('#dados-planilha thead th').allTextContents(),campos[tab.nome]);
+    camposExibidos+=await page.locator('#dados-planilha thead th').count();
+  }
+  assert.equal(camposExibidos,66);
+  const abasMs=performance.now()-abasInicio,avisosInicio=performance.now();
+  await page.locator('#avisos-captura a').click();
+  assert.equal(await page.locator('#avisos-dados tbody tr').count(),view.avisos.length);
+  const avisosMs=performance.now()-avisosInicio;
+  const pointer=path.join(dataDir,'atual.json'),original=fs.readFileSync(pointer,'utf8');
+  const parcial=capturaEscala();parcial.tables.Cenas.complete=false;promoverCaptura(parcial,dataDir);
+  const aposFalha=fs.readFileSync(pointer,'utf8');
+  assert.equal(JSON.parse(aposFalha).capturaId,JSON.parse(original).capturaId);
+  const releituraInicio=performance.now(),response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
+  await page.locator('#atualizar').click();await response;
+  await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+  const releituraMs=performance.now()-releituraInicio;
+  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.equal(fs.readFileSync(pointer,'utf8'),aposFalha);
+  await page.locator('#abas-planilha [data-aba="Produções"]').click();
+  assert.equal(await page.locator('#dados-planilha tbody tr').count(),500);
+  await page.locator('#abas-planilha [data-aba="Histórico"]').click();
+  assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['falhou','completa']);
+  assert.match(await page.locator('#dados-planilha').textContent(),/Aba Cenas incompleta/);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  t.diagnostic(JSON.stringify({cenario:'500 sintéticas',width,cargaMs,apiMs,navegacaoMs,abasMs,avisosMs,releituraMs,avisos:view.avisos.length}));
+});
+
+test('U-fase8 cartão com versão inválida não afirma mídia ausente nem perde registro', {skip},async t=>{
+  const page=await abrir(t,1440,true,raw=>{
+    mudarCelula(raw,'Produções',1,'versao','inválida');mudarCelula(raw,'Produções',1,'etapa_producao','imagens_em_producao');
+  });
+  await page.locator('[data-tela="producao"]').click();
+  const card=page.locator('#quadro [data-producao-id="peca-1"]');
+  assert.equal(await card.count(),1);assert.doesNotMatch(await card.textContent(),/Mídia ausente/);
+  await card.click();
+  assert.match(await page.locator('#dia [data-peca="peca-1"] .data-notice').textContent(),/aviso/);
+  await page.locator('#dia [data-peca="peca-1"] .data-notice a').click();
+  assert.match(await page.locator('#avisos-dados').textContent(),/versao.*Inteiro positivo inválido/s);
 });

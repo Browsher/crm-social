@@ -2,7 +2,7 @@
 
 Como alguém que recebe uma fotografia pronta para colocá-la no álbum, o CLI lê um JSON local e entrega a tentativa à persistência. A coleta pela Central é anterior e independente.
 
-Estado em 04/10/2026: T008 implementada e corrigida após revisão para registrar falhas anteriores ao parse e preservar resultado/erro ao avisar sobre liberação de trava. Fonte: [scripts/importar-captura.cjs](../../scripts/importar-captura.cjs), `argumentos` (linha 5), `lerEntrada` (12), `importarArquivo` (17), `avisar` (23) e `main` (26).
+Importador implementado e verificado localmente; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [scripts/importar-captura.cjs](../../scripts/importar-captura.cjs), funções `argumentos`, `lerEntrada`, `importarArquivo`, `avisar` e `main`.
 
 ## Comando, argumentos e saída
 
@@ -47,4 +47,4 @@ Argumento inválido/URL é recusado antes da tentativa e não cria recibo. Diret
 
 [tests/importador.test.cjs](../../tests/importador.test.cjs) chama processo CLI real por `process.execPath`, com arquivos e diretórios TEMP. Cobre argumentos, arquivo ausente, JSON quebrado, mensagens saneadas, promoção/no-op/conflito, impossibilidade de persistência e dois processos reais concorrentes. Evidência de RED/regressão/GREEN em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-O gate passou com um aviso de complexidade 12 em `argumentos` (linha 5); é dívida de manutenção registrada, não falha do gate nem autorização para simplificar retirando validações. Parse de JSON inteiro e I/O síncrono são o desenho local atual. Importação sintética não comprova coleta completa da Central: demonstrar com arquivo operacional fica em T039.
+Complexidade de `argumentos`, cobertura e resultados do gate ficam somente na [validação](../../specs/001-consulta-local-producao/validacao.md); manutenção não deve retirar validações. CLI está coberta e é obrigatória no Linux/Windows; M8 refere-se à UI fora do LCOV e aos pulos UI/PowerShell no Linux. Parse de JSON inteiro e I/O síncrono são o desenho local atual. Importação sintética não comprova coleta completa da Central: a captura operacional continua em T039.

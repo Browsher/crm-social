@@ -7,7 +7,7 @@ const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
 const {projetarVisao}=carregarModulo('src/projecao.cjs',['projetarVisao']);
 const {capturaDetalhada,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
 const {capturaQuadro,mapaQuadroSintetico}=require('./fixtures.cjs');
-const {capturaPlanilha,campos}=require('./fixtures.cjs');
+const {capturaPlanilha,capturaEscala,campos}=require('./fixtures.cjs');
 const {carregarMapaQuadro}=require('../src/quadro-config.cjs');
 const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
@@ -890,4 +890,69 @@ test('P12 sem captura mantém Planilha vazia e orientação estruturada, sem inv
   assert.equal(view.estado,'sem_captura');
   assert.deepEqual(view.selo,{texto:'Sem dados',cor:'cinza',destino:'planilha'});
   assert.equal(view.fonte,'Captura pela Central');
+});
+
+test('P13 escala conserva 500 peças sintéticas nas cinco histórias e nos 66 mínimos', t=>{
+  const raw=capturaEscala(),dir=temporario(t),inicio=performance.now();
+  const resultado=promoverCaptura(raw,dir);
+  assert.equal(resultado.resultado,'completa');
+  const importacaoMs=performance.now()-inicio,projecaoInicio=performance.now();
+  const view=projetarVisao(lerEstado(dir,NOW),NOW,mapaTemp(t,mapaQuadroSintetico()));
+  const projecaoMs=performance.now()-projecaoInicio;
+  const ids=['peca-1','peca-2','peca-3','peca-4',...Array.from({length:496},(_,i)=>'escala-'+String(i+5).padStart(3,'0'))];
+  assert.deepEqual(view.producoes.map(p=>p.producao_id).sort(),ids.slice().sort());
+  const semData=view.producoes.filter(p=>p.dataCivil===null).map(p=>p.producao_id);
+  assert.equal(semData.length,46);
+  assert.equal(view.producoes.filter(p=>p.semanaId===null).length,14);
+  assert.deepEqual(view.dias.flatMap(d=>d.ids).sort(),ids.slice().sort());
+  assert.deepEqual(view.semanas.flatMap(s=>s.ids).sort(),ids.slice().sort());
+  assert.deepEqual(view.quadro.semanas.flatMap(s=>s.colunas.flatMap(c=>c.ids)).sort(),ids.slice().sort());
+  for(const slot of ['imagem_a','imagem_b','carrossel','reels']) {
+    assert.equal(view.producoes.filter(p=>p.slot===slot).length,125);
+  }
+  const totalColunas=view.quadro.colunas.map(c=>[c.nome,view.producoes.filter(p=>p.quadro.coluna===c.nome).length]);
+  assert.deepEqual(totalColunas,[['Planejamento',63],['Redação',63],['Visual',63],['Mídia',63],
+    ['Revisão',62],['Pronta',62],['Publicada',62],['Outras',62]]);
+  const tabs=view.planilha;
+  assert.equal(tabs.reduce((n,tab)=>n+tab.cabecalhos.length,0),66);
+  assert.equal(tabs.find(tab=>tab.nome==='Produções').quantidadeLinhas,500);
+  for(const tab of tabs) {
+    assert.deepEqual(tab.cabecalhos,campos[tab.nome]);
+    for(const row of tab.linhas) assert.deepEqual(Object.keys(row),campos[tab.nome]);
+  }
+  const dia=view.dias.find(d=>d.data==='2026-10-04');
+  assert.ok(dia.ids.includes('peca-4'));
+  assert.ok(dia.ids.some(id=>view.producoes.find(p=>p.producao_id===id).formato==='Carrossel'));
+  const paginas=view.producoes.find(p=>p.producao_id==='peca-3').detalhes.paginas;
+  assert.equal(paginas.filter(p=>p.versao===2).length,2);
+  assert.equal(paginas.filter(p=>p.versao===1).length,1);
+  assert.equal(view.producoes.find(p=>p.producao_id==='peca-4').detalhes.cenas.length,2);
+  assert.doesNotMatch(JSON.stringify(view),/spreadsheetId|metadataBefore|firstReadSha256|secondReadSha256|__extra_privado/);
+  assert.equal(view.historico.length,1);
+  t.diagnostic(JSON.stringify({cenario:'500 sintéticas',importacaoMs,projecaoMs,pecas:500,semData:46,avisos:view.avisos.length}));
+});
+
+for(const versao of ['inválida','',null,0]) test('P-fase8 versão vigente '+JSON.stringify(versao)+' não afirma mídia ausente',t=>{
+  const raw=capturaValida();mudarCelula(raw,'Produções',1,'versao',versao);
+  mudarCelula(raw,'Produções',1,'etapa_producao','imagens_em_producao');
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),p=view.producoes.find(p=>p.producao_id==='peca-1');
+  assert.equal(p.quadro.coluna,'Mídia');
+  assert.deepEqual(p.quadro.pendencias.filter(r=>r.tipo==='midia'),[]);
+  assert.equal(p.detalhes.arquivos.length,1);
+  assert.ok(p.detalhes.avisos.some(a=>a.campo==='versao'));
+});
+
+test('P-fase8 identidades sensíveis distintas não se fundem após a triagem',t=>{
+  const raw=capturaValida(),ids=['sk-ant-'+'A'.repeat(30),'sk-ant-'+'B'.repeat(30)];
+  for(const table of Object.values(raw.tables)) {
+    table.values=table.values.map(row=>row.map(cell=>cell==='peca-1'?ids[0]:cell==='peca-2'?ids[1]:cell));
+  }
+  const local=estado(recalcularHashes(raw),t);
+  assert.equal(local.captura.producoes.length,5);
+  assert.throws(()=>projetarVisao(local,NOW,mapaQuadroValido()),{message:'Identidade ou vínculo sensível não pode ser projetado'});
+});
+
+test('P-fase8 ponteiro interno sensível não cria uma relação a partir do marcador',t=>{
+  const raw=capturaValida();mudarCelula(raw,'Páginas',1,'arquivo_imagem_id','ghp_'+'C'.repeat(30));
+  assert.throws(()=>projetarVisao(estado(raw,t),NOW,mapaQuadroValido()),{message:'Identidade ou vínculo sensível não pode ser projetado'});
 });

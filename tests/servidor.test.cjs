@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const http=require('node:http');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaValida,capturaPlanilha,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario,campos}=require('./fixtures.cjs');
+const {capturaValida,capturaPlanilha,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario,campos,recalcularHashes}=require('./fixtures.cjs');
 const {promoverCaptura,registrarFalhaEntrada,lerEstado}=require('../src/snapshot.cjs');
 const {criarServidor}=carregarModulo('src/servidor.cjs',['criarServidor']);
 async function ambiente(t,captura=true) {
@@ -41,6 +41,30 @@ test('H01 ausência estruturada não vira dados de demonstração', async t => {
   const {port}=await ambiente(t,false);
   const body=JSON.parse((await request(port,'/api/visao')).body);
   assert.equal(body.estado,'sem_captura');assert.deepEqual(body.producoes,[]);
+});
+
+test('H-fase8 recibo aninhado inválido retorna 503 genérico sem segredo e sem escrita',async t=>{
+  const {port,dataDir}=await ambiente(t),pointer=path.join(dataDir,'atual.json');
+  const before=fs.readFileSync(pointer,'utf8'),state=JSON.parse(before);
+  const file=path.join(dataDir,'tentativas',state.ultimaTentativaId+'.json'),receipt=JSON.parse(fs.readFileSync(file,'utf8'));
+  receipt.motivoResumo={dado:'sk-ant-'+'S'.repeat(25),caminho:'/home/usuario-sintetico-recibo/privado'};
+  const privado=JSON.stringify(receipt);fs.writeFileSync(file,privado);
+  const response=await request(port,'/api/visao');
+  assert.equal(response.status,503);
+  assert.deepEqual(JSON.parse(response.body),{erro:'Estado local indisponível; última captura não foi alterada'});
+  assert.doesNotMatch(response.body,/sk-ant-|usuario-sintetico-recibo|motivoResumo|stack/);
+  assert.equal(fs.readFileSync(file,'utf8'),privado);assert.equal(fs.readFileSync(pointer,'utf8'),before);
+});
+
+test('H-fase8 identidade sensível recusa projeção sem valor nem mistura de registros',async t=>{
+  const {port,dataDir}=await ambiente(t,false),raw=capturaValida();
+  const ids=['sk-ant-'+'A'.repeat(30),'sk-ant-'+'B'.repeat(30)];
+  for(const table of Object.values(raw.tables)) table.values=table.values.map(row=>row.map(cell=>cell==='peca-1'?ids[0]:cell==='peca-2'?ids[1]:cell));
+  recalcularHashes(raw);assert.equal(promoverCaptura(raw,dataDir).resultado,'completa');
+  const pointer=path.join(dataDir,'atual.json'),before=fs.readFileSync(pointer,'utf8');
+  const response=await request(port,'/api/visao');
+  assert.equal(response.status,503);assert.doesNotMatch(response.body,/sk-ant-|conteúdo suprimido|Arquivos|Revisoes/);
+  assert.equal(fs.readFileSync(pointer,'utf8'),before);
 });
 
 test('H-review I1 JSON de /api/visao não entrega credenciais em URLs registradas', async t=>{

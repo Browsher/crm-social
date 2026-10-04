@@ -2,7 +2,7 @@
 
 Data: 03/10/2026. Decidido com o autor sobre o [mockup v2](mockups/telas-v2.html), construído sobre o [protótipo aprovado](prototype/index.html). Visual, componentes e identidade (Social Studio) seguem o protótipo.
 
-Como uma agenda que começa pelas páginas do mês, a entrega atual implementa T001–T034/US1–US5 localmente (34 de 41 tarefas); revisão corrente e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Quadro por semana e Planilha com seis tabelas/Histórico já existem; sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes.
+Como uma agenda que começa pelas páginas do mês, a entrega atual tem T001–T038 implementadas e verificadas localmente (38 de 41 tarefas), incluindo iniciador e escala sintética. T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes, sem aceite operacional da 001. Evidências na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 ## Princípios
 
@@ -116,7 +116,7 @@ Como no protótipo. Prévias só de arquivos liberados; referência não aparece
 
 ## 10. Aplicação destas decisões no repositório
 
-A [spec da 001](../../specs/001-consulta-local-producao/spec.md) é a especificação funcional canônica. Seu [plano](../../specs/001-consulta-local-producao/plan.md), [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) e [tarefas](../../specs/001-consulta-local-producao/tasks.md) traduzem estas decisões em requisitos verificáveis. O [roadmap](../../ROADMAP.md) define 002 Planilhas, 003 planejamento mensal, 004 revisões, 005 prévias/biblioteca e 006 Equipe/Workflow. A entrega parcial implementa US1–US5; demonstração operacional, iniciador e aceite completo continuam pendentes, conforme a nota de estado acima.
+A [spec da 001](../../specs/001-consulta-local-producao/spec.md) é a especificação funcional canônica. Seu [plano](../../specs/001-consulta-local-producao/plan.md), [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) e [tarefas](../../specs/001-consulta-local-producao/tasks.md) traduzem estas decisões em requisitos verificáveis. O [roadmap](../../ROADMAP.md) define 002 Planilhas, 003 planejamento mensal, 004 revisões, 005 prévias/biblioteca e 006 Equipe/Workflow. A entrega local implementa US1–US5 e o iniciador; captura operacional e aceite completo continuam pendentes, conforme a nota de estado acima.
 
 - O cartão ou dia selecionado abre todas as peças NTV daquele dia, inclusive outros formatos que um filtro tenha escondido no calendário. O filtro serve para localizar; não recorta a gaveta. A gaveta de um dia vazio informa ausência e não cria peças. Sem data válida abre uma lista identificada; um cartão sem data no quadro leva ao conjunto sem data da semana.
 - O selo usa a data civil de `completedAt` em America/Sao_Paulo. Sem captura válida, mostra **Sem dados**, com eventual falha no Histórico. Com captura válida e tentativa posterior falha, prevalece **Atualização falhou**; uma releitura HTTP bem-sucedida não apaga a falha da importação. Uma tentativa nova aceita encerra o aviso. A Planilha conserva fonte, instante e período completos.

@@ -1,6 +1,6 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. Fundação e US1–US5 implementadas localmente até T034 (34 de 41 tarefas); iniciador, sete tarefas da fase final, captura operacional e aceite completo pendentes. Estado, revisão e evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. T001–T038 implementadas e verificadas localmente (38 de 41 tarefas); T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes, sem aceite operacional da 001. Evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
 Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura
@@ -81,6 +81,14 @@ Recibo mínimo privado: `{tentativaId, capturaId, concluidaEm, resultado, motivo
 não a produção. `capturaId` é null quando não pôde ser identificado. `concluidaEm` é
 instante ISO com fuso; `resultado` é exatamente `completa` ou `falhou`. Motivo é curto e
 saneado: aba/campo/regra, sem payload, segredo, stack, URL de serviço ou caminho local.
+
+Na leitura, `lerRecibo` valida todos os recibos confirmados: deve ser objeto (não
+null/array), `tentativaId` corresponde ao ID referenciado, `capturaId` é seguro ou null,
+`concluidaEm` tem data real ISO com `Z`/offset explícito, `resultado` é completa/falhou
+e `motivoResumo` é string. Completa exige capturaId não nulo. JSON parseável não basta.
+Recibo confirmado inválido/ilegível recusa `lerEstado`; consulta responde 503 genérico,
+sem reescrever, reparar ou remover ponteiro/recibos/captura. Órfãos continuam fora do Histórico.
+
 Importação do mesmo ID e mesmos bytes retorna `sem_alteracao` somente se há recibo
 completo dessa captura já confirmado em `historicoIds`. Não duplica recibo, renova
 horário nem volta a uma captura antiga. Mesmo ID com bytes diferentes é conflito e
@@ -409,7 +417,7 @@ usam **—**, sem inventar a localização de um aviso global.
   não recebem extras arbitrários. `dias`: grupos por data ou Sem data/semana e IDs de peças.
   `quadro.colunas:[{nome}]` mantém a ordem contratual; `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` contém oito colunas e IDs ordinais por semana, inclusive semanaId null das peças sem vínculo inequívoco. Sem captura, semanas vazias com nomes canônicos mantidos. Cada produção acrescenta `quadro:{coluna,pendencias}`.
   Coluna Outras deriva título/contador só dos seus cartões daquela semana;
-  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. O cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
+  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. Produção sem versão recebe aviso de versão vigente não informada; versão ausente ou inválida não sustenta afirmação categórica de ausência de mídia vigente. O cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
 - `planilha`: seis abas na ordem Semanas, Produções, Páginas, Cenas, Arquivos e
   Revisoes, cada uma `{nome, cabecalhos, quantidadeLinhas, linhas}`. `cabecalhos`
   é cópia da lista literal de `CAMPOS`; `linhas` contém objetos novos com somente
@@ -428,6 +436,10 @@ usam **—**, sem inventar a localização de um aviso global.
   credenciais/tokens ou caminhos de filesystem. Se célula mínima contém segredo/caminho
   local indevido, suprimir esse conteúdo com aviso localizado; conservar original só na
   captura privada. JSON de origem é texto, não instrução nem objeto que expande a whitelist.
+- Identidade/vínculo interno em campo terminado em `_id` que seria alterado por
+  `redigirTexto` recusa a projeção inteira. Não converter essas chaves em marcador
+  compartilhado nem fundir seus registros. Captura privada permanece intacta; o
+  servidor retorna 503 genérico sem escrever ou expor valor/erro bruto.
 - Nos campos dedicados `Arquivos.url` e `Produções.url_video_final`, após a redação
   de texto, os valores ainda inalterados são analisados com `new URL`:
   usuário ou senha preenchidos causam **[conteúdo suprimido]** no campo selecionado,
@@ -528,9 +540,15 @@ não promete detectar todos os segredos possíveis nem comprova acesso a mídia.
   loopback/porta configurados; Origin, se presente, é a própria origem. Sem CORS externo.
   Bloquear traversal inclusive codificado; nunca servir `data/`, `.specify/`, `.agents/`
   ou arquivos/diretórios arbitrários. Servidor não consulta Google nem dispara agentes.
-- Iniciador planejado `Iniciar CRM.ps1 [-DataDir <diretorio-local>] [-Port <porta>]
-  [-NodePath <exe>]`; defaults locais do plano. Teste usa runtime, porta e diretório
-  temporário explícitos, sem tocar dados privados reais nem porta de produção.
+- Iniciador `Iniciar CRM.ps1 [-DataDir <diretorio-local>] [-Port <porta>]
+  [-NodePath <exe>]` está implementado para Windows PowerShell 5.1; data/ e 4318
+  padrão, porta inteira 0–65535. Resolve Node explícito, CRM_NODE_PATH ou node.exe
+  no PATH, sem instalar runtime. Start-Process oculto redireciona stdout/stderr
+  para `<DataDir>/runtime/iniciador-<id>/`; confirma linha de início por leitura
+  compartilhada em até dez segundos e retorna `{processId,url,logDir,encerrar}`.
+  Operador confere propriedade do PID antes de encerrar; erro encerra somente o
+  filho criado por essa chamada, nunca ocupante da porta. Testes usam TEMP e
+  porta/runtime explícitos; fora de win32 têm SKIP por plataforma.
 
 Planilha concentra fonte, cobertura, Histórico e a explicação curta "Reler captura local;
 não consulta o Google" junto a Atualizar dados. Nas demais telas só o selo curto.

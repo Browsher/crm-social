@@ -1,6 +1,6 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T034/US1–US5 implementadas localmente (34 de 41 tarefas), com revisão corrente e evidências na [validação](validacao.md). Sete tarefas finais T035–T041, iniciador, captura operacional e aceite completo permanecem pendentes; sem leitura real Google. Branch da feature `001-consulta-local-producao`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T038 implementadas e verificadas localmente (38 de 41 tarefas), com evidências na [validação](validacao.md). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; a feature não está aceita operacionalmente. Esta sincronização incremental não conclui T041. Branch da feature `001-consulta-local-producao`.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). Os mockups de [telas](../../docs/design/mockups/telas-v2.html) e [gaveta compacta](../../docs/design/mockups/gaveta-v2.html) servem como referência visual; não validam backend ou persistência.
 
@@ -10,10 +10,12 @@ Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright exis
 
 | Variável | Consumidor / efeito |
 | --- | --- |
-| `CRM_NODE_PATH` | PowerShell seleciona o executável existente; a aplicação não lê esta variável |
+| `CRM_NODE_PATH` | O iniciador seleciona o executável existente quando `-NodePath` não foi informado; os módulos Node não leem esta variável |
 | `PATH` | Colocar o diretório do Node selecionado à frente para subprocessos do gate com `testCommand: ["node", "--test"]` |
 | `CRM_PLAYWRIGHT_MODULE` | `tests/interface.test.cjs` resolve o Playwright existente; sem ela tenta `playwright`; não versionar seu caminho |
 | `CI=true` | Testes locais de interface registram SKIP explícito antes de carregar Playwright; não usar para aceite Windows |
+
+Os testes do iniciador requerem Windows PowerShell 5.1 e registram SKIP fora de `win32`. A fronteira UI/PowerShell no Linux e a UI fora do LCOV são a pendência M8; a CLI já está coberta.
 
 Não há variáveis Google, chave de serviço ou URL remota no runtime da 001. Configure as variáveis de ferramenta somente no ambiente local; nenhum caminho pessoal é necessário na documentação.
 
@@ -41,19 +43,17 @@ $crmTestFiles = @(
   'tests/projecao.test.cjs'
   'tests/servidor.test.cjs'
   'tests/interface.test.cjs'
+  'tests/iniciador.test.cjs'
 )
 & $crmNode --test @crmTestFiles
 & $crmNode --test
 ```
 
-No recorte atual: versão 24.19.0, sete suítes descobertas, inclusive interface, sem pulos locais. Cobrem a fundação, US1, US2, US3 e US4 nas camadas puras, I/O, serviços, HTTP e interface; não comprovam as histórias futuras. Ao concluir T035–T036, acrescentar `tests/iniciador.test.cjs`: o aceite completo da 001 exigirá oito suítes e os cenários finais verdes. O `node --test` deve incluir a suíte de interface; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
+As oito suítes existentes cobrem validação pura, I/O real em TEMP, projeção de serviços, HTTP real em porta efêmera e interface, além da CLI e do iniciador. Resultados e limites da verificação local ficam na [validação](validacao.md). O `node --test` deve incluir `tests/interface.test.cjs`; não usar `tests/interface.cjs` nem execução direta como substituto do runner do gate.
 
-Na conferência de 03/10, o PATH encontrava Node 24.14.0, mas o runtime 24.19.0 já
-existia na máquina. Defina `CRM_NODE_PATH` com o caminho desse executável somente no
-ambiente local, sem versionar caminho pessoal. O bloco também põe seu diretório à frente do PATH: selecionar apenas `$crmNode` não garante o mesmo runtime nos subprocessos do gate. CLI e gate usam o executável selecionado;
-o iniciador futuro o receberá por `-NodePath`.
+Defina `CRM_NODE_PATH` somente no ambiente local, sem versionar caminho pessoal. O bloco põe o diretório do executável à frente do PATH: selecionar apenas `$crmNode` não garante o mesmo runtime nos subprocessos do gate. CLI e gate usam o executável selecionado; o iniciador recebe-o por `-NodePath`.
 
-O CI usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e HTTP são obrigatórios; os casos de interface declaram SKIP com `CI=true` antes de carregar Playwright. Aplicabilidade desses pulos e UI fora do LCOV são a pendência M8, detalhada na [validação](validacao.md). Iniciador/Windows PowerShell e seus pulos serão implementados em T035–T036. Aceite local atual exige sete suítes sem pulos; o completo exigirá oito. Não alterar workflows/configuração nem instalar dependências para contornar a fronteira. SKIP de ferramenta do gate continua regido por `--strict`, independente dos pulos de testes por plataforma.
+O CI usa Linux sem Playwright local: dados, snapshot, importador, configuração do quadro, projeção e HTTP são obrigatórios; interface registra SKIP com `CI=true` e iniciador fora de `win32`. Esses pulos não substituem a execução local Windows das oito suítes. Não alterar workflows/configuração nem instalar dependências para contornar a fronteira. SKIP de ferramenta do gate continua regido por `--strict`, independente dos pulos de testes por plataforma.
 
 Durante implementação, executar o arquivo pertinente **antes** do código e registrar RED pelo comportamento ausente; depois registrar GREEN. Suítes ignoradas no aceite local, zero testes ou gate anterior à criação do aplicativo não comprovam aceite. Resultados e contagens vêm da execução real, sem número antecipado.
 
@@ -69,6 +69,28 @@ $crmDataDir = Join-Path $crmDemoRoot 'dados'
 ```
 
 Abrir `http://127.0.0.1:4318`: deve aparecer **Nenhuma captura disponível** e **Sem dados**, sem peças demonstrativas. O processo permanece nesse terminal; Ctrl+C encerra somente essa instância. Se a porta estiver ocupada, identificar a instância ou escolher outra porta; não encerrar processo alheio. `localhost` é recusado pelo controle de Host.
+
+Como alternativa, depois de encerrar a instância de terminal, o [iniciador Windows](../../docs/modules/iniciador.md) usa o mesmo diretório TEMP, porta efêmera e processo oculto. Confirma a linha de início em até dez segundos e mantém logs privados no diretório escolhido:
+
+```powershell
+$crmSession = & './Iniciar CRM.ps1' -NodePath $crmNode -DataDir $crmDataDir -Port 0
+$crmOwnedProcess = Get-Process -Id $crmSession.processId -ErrorAction Stop
+$crmOwnedStart = $crmOwnedProcess.StartTime
+$crmOwnedPath = $crmOwnedProcess.Path
+Start-Process $crmSession.url
+```
+
+O retorno contém `processId`, `url`, `logDir` e `encerrar`. A orientação textual de encerramento não substitui a conferência de propriedade: antes de parar, compare o PID com o processo observado na criação, pois um PID pode ser reutilizado. Use este bloco ao terminar a demonstração, antes de iniciar outra instância:
+
+```powershell
+$crmCurrentProcess = Get-Process -Id $crmSession.processId -ErrorAction Stop
+if ($crmCurrentProcess.StartTime -ne $crmOwnedStart -or $crmCurrentProcess.Path -ne $crmOwnedPath) {
+  throw 'O PID não pertence mais à instância criada; confira o processo antes de encerrar.'
+}
+Stop-Process -InputObject $crmCurrentProcess
+```
+
+Os padrões são `data/` e porta 4318; para demonstração sintética mantenha `-DataDir` em TEMP. Porta aceita inteiros de 0 a 65535. Runtime ausente, ocupação ou falha/tempo de início geram erro; o iniciador encerra somente o filho que criou e nunca o ocupante da porta. Ele confirma stdout e processo vivo, sem comprovar captura operacional ou resposta HTTP.
 
 Depois de encerrar a instância, é possível demonstrar a captura **sintética** existente em `tests/fixtures.cjs`, mantendo os mesmos diretórios TEMP:
 
@@ -116,7 +138,7 @@ A importação adquire `.importacao.lock` no diretório escolhido. Segunda inst�
 
 ## Cenários sintéticos obrigatórios
 
-Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T034 e suas regressões têm evidência em `validacao.md`; iniciador, escala, captura operacional e revisão final permanecem futuros. Executar os cenários finais somente quando suas tarefas existirem; não transformar o roteiro em resultado testado nem concluir T041 pelo doc-sync deste incremento.
+Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T038, incluindo iniciador, escala sintética e regressões, têm evidência na [validação](validacao.md). A captura operacional e as etapas finais T039–T041 permanecem pendentes; o roteiro não equivale a resultado real nem conclui T041 pelo doc-sync deste incremento.
 
 | Caso | Ação | Resultado a conferir |
 | --- | --- | --- |
@@ -124,6 +146,9 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T034 e suas
 | Persistência/CLI | Importar arquivo em diretório temporário, repetir ID/bytes e tentar mesmo ID/outros bytes; caminho ausente/URL | Sucesso resumido, no-op sem duplicar captura/recibo e conflito; erro diferente de zero, sem dump de células ou rede |
 | Política temporal | Relógio controlado: fim até 10 minutos no futuro, logo além do limite, e ID novo com fim igual/anterior ao vigente; repetir ID/bytes já aceitos após recuo do relógio | Limite inclusivo aceito; excedente inválida e fim não posterior desatualizada, com motivo no recibo e vigente preservada; no-op precede o relógio e GET não reavalia a política relativa |
 | Falha/interrupção | Falhar coleta/importação, interromper antes da confirmação e repetir bytes preparados ainda não aceitos | Última captura/horário preservados, arquivos órfãos fora do Histórico; nova tentativa pode promover sem no-op falso. Erro de persistência é explícito, sem prometer recibo gravado quando o armazenamento não permite |
+| Recibo confirmado inválido | Em TEMP, alterar estrutura, tipos, identidade ou data civil/fuso de um recibo apontado pelo estado | Leitura recusada e HTTP 503 genérico, sem reparar/escrever o estado ou expor erro bruto |
+| Identidade/vínculo sensível | Em fixture TEMP, colocar conteúdo que seria redigido em um campo interno terminado em `_id` | Projeção inteira recusada, HTTP 503 genérico; registros não colidem em um marcador compartilhado e persistência permanece intacta |
+| Versão não comprovada | Produção com versão ausente ou inválida na fixture | Ausente gera aviso; nenhuma dessas versões sustenta afirmação categórica de ausência de mídia vigente |
 | Planejamento | Navegar mês/semana, filtros Todos/Imagem/Carrossel/Reels, calendário/lista e dia múltiplo | IDs/datas concordam, slots definem formatos e tipo original permanece separado; imagem B visível, semana vazia sem peça inventada; primeiro cartão + “+N no dia”, ordem ordinal por ID |
 | Objetivo/menu | Abrir as três telas | Apenas Planejamento/Produção/Planilha; “Ainda não definido” no objetivo, sem Plano do mês/Conteúdos/Equipe/Workflow |
 | Sem data | Data ausente/inválida, inclusive peça no quadro, sem semana inequívoca e após trocar filtro/mês | Contagem global “N sem data” e lista; clique na peça abre Sem data da sua semana; órfã fica em Semana não identificada; ninguém some do total |
@@ -141,34 +166,38 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T034 e suas
 | HTTP/segurança | Três estáticos sintéticos em TEMP via webDir confiável; métodos/HEAD, Host/Origin externos, traversal/privados, extras sentinela, célula mínima com conteúdo sensível indevido e texto malicioso | Rotas/status/bytes do contrato antes da criação da interface, allowlist fixa mesmo com webDir; zero escrita HTTP, sem captura bruta/envelope/extras arbitrários/credenciais/caminhos; sensível suprimido com aviso sem retirar coluna; texto não executa |
 | Interface/links | Navegar por teclado/Escape; links Drive/Docs, recusados, URLs dedicadas com userinfo sintético e malformadas/vazias; frase/JSON legítimos e pedaço HTTP(S) credenciado | Escape fecha e devolve foco; somente HTTPS/hosts autorizados por clique, sem carga automática; recusada não é texto bruto. Nos campos dedicados, userinfo não aparece no JSON nem no dia; malformada não vazia é suprimida com motivo fixo, vazio é preservado sem aviso de URL inválida. Texto livre conserva frase/espaços e só redige o pedaço HTTP(S) credenciado; conferir limites no contrato |
 | Mobile | 390 px e 1440 px nas três telas/gaveta/tabelas | 390: lista semanal, menu recolhido, gaveta cheia; sem corte da página; rolagem horizontal própria de cada tabela |
-| Iniciador | Script real com diretório/porta isolados, porta ocupada e runtime ausente | Processo oculto, bind loopback, orientação em erro sem encerrar ocupante; cleanup só do PID criado |
+| Iniciador | Script real com diretório/porta isolados, porta 0/limites, caminhos com espaços, runtime ausente/selecionado e porta ocupada | Processo oculto, bind loopback, stdout compartilhado, retorno das quatro propriedades e erro sem encerrar ocupante; cleanup só do PID criado |
 | Escala | Fixture sintética de 500 peças | Contagens/filtros/navegação coerentes; registrar tempo observado, sem confundir teste com produção |
 
 Os arquivos de cada cenário e pares RED/GREEN estão em [tasks.md](tasks.md), com mapeamento de FR-001–016 e SC-001–009. SC-007 confere o mapa literal do quadro; SC-008, todas as seis tabelas/66 mínimos e tentativas; SC-009, teclado e 390/1440 nos cinco fluxos. Testes da interface bloqueiam e registram requisições externas; resultado esperado: zero. Dados mínimos registrados permitidos aparecem somente na consulta local; artefatos compartilháveis usam dados sintéticos.
 
 ## Primeira leitura real e demonstração futura
 
-Executar somente após implementação e revisão, conforme T039. O dicionário não substitui a captura. Nenhum desses passos foi executado nesta atualização documental.
+Procedimento preparado para a Central em T039; **não executado nesta sincronização**. O dicionário não substitui a captura. Os comandos de importação e início já existem, mas a primeira leitura real e sua comparação ainda estão pendentes.
 
-1. Central relê metadados e as seis abas completas pelo conector autenticado, por cabeçalho real e dentro dos limites de chamada do contrato. Duas observações canônicas e metadados estáveis precisam concordar; coleta parcial/conflitante não é promovida.
-2. Salvar a captura íntegra em `data/entrada/`, privado/ignorado. Atribuir a `$crmCapturePath` o caminho local real da coleta; não copiar fixtures nem um nome fictício para esse lugar. Importar pelo comando futuro:
+1. Central prepara o JSON `schemaVersion: 1` conforme o [contrato](contracts/captura-e-consulta.md): `metadataBefore`/`metadataAfter`, seis abas completas e todos os 66 cabeçalhos mínimos reais. Ler até 50.000 células por chamada, repetir a leitura completa e guardar os valores da segunda; `firstReadSha256`/`secondReadSha256` e metadados estáveis precisam concordar. Coleta parcial/conflitante não é promovida.
+2. Salvar a captura íntegra em `data/entrada/<capturaId>.json`, privado/ignorado. Atribuir a `$crmCapturePath` o caminho local real da coleta; não copiar fixtures nem fabricar um exemplo operacional. Com `$crmNode` selecionado pelo bloco de ambiente, importar:
 
    ```powershell
    & $crmNode scripts/importar-captura.cjs $crmCapturePath
    ```
 
-3. Iniciar pelo comando futuro e abrir `http://127.0.0.1:4318`. Se a porta estiver ocupada, verificar a instância; não encerrar processo alheio.
+3. Iniciar e abrir a URL retornada. Os padrões são `data/` e porta 4318. Se a porta estiver ocupada, verificar a instância; não encerrar processo alheio. Guardar a identidade do processo para o encerramento final:
 
    ```powershell
-   & './Iniciar CRM.ps1' -NodePath $crmNode
+   $crmSession = & './Iniciar CRM.ps1' -NodePath $crmNode
+   $crmOwnedProcess = Get-Process -Id $crmSession.processId -ErrorAction Stop
+   $crmOwnedStart = $crmOwnedProcess.StartTime
+   $crmOwnedPath = $crmOwnedProcess.Path
+   Start-Process $crmSession.url
    ```
 
-4. Confirmar somente os três itens de menu; Planejamento com objetivo ainda não definido, calendário/lista/filtros e “N sem data”. Comparar os IDs de todas as peças NTV com a **mesma captura**, inclusive imagem B e registros concluídos/bloqueados. Não usar filtros da fila n8n para essa comparação.
+4. Confirmar somente os três itens de menu; Planejamento com objetivo ainda não definido, calendário/lista/filtros e “N sem data”. Comparar IDs, datas civis e vínculos de todas as peças NTV com a **mesma captura**, inclusive imagem B, registros concluídos/bloqueados e sem data. Não usar filtros da fila n8n para essa comparação.
 5. Clicar um dia com várias peças: conferir todas no acordeão e só a primeira aberta, resumo das demais, faixa de quatro dados preenchidos, publicação registrada em uma linha e etapa conhecida legível/desconhecida original. Conferir revisão inicial, adicionais em +N, páginas/cenas compactas com no máximo um aviso de ausência por linha e Texto registrado/versões/Histórico recolhidos abrindo por clique. Documentos Plano/Redação/Visual aparecem uma vez por semana representada no fim do dia, com — na ausência. Avisos técnicos ficam na API; a gaveta só conta e oferece link funcional ao painel de avisos da peça já implementado na Planilha, sem recortar as seis tabelas NTV. Roteiro não aparece como vídeo disponível. “Design novo” sem evidência é “A confirmar”. Links só HTTPS Drive/Docs permitidos; URL recusada não aparece como texto bruto; os campos de URL dedicados têm guarda de userinfo/malformada. Texto livre conserva a frase e redige somente o pedaço HTTP(S) credenciado, nos limites do contrato. Escape fecha e devolve foco.
 6. Conferir Produção por semana: mapa carregado do JSON, prioridade publicação > liberação > revisão > etapa, arte_aprovada em Visual e oito etapas de mídia preservadas quando não há prioridade superior. Status é informativo; Outras preserva original e conta distintos da semana, não cartões. Publicada vem de publicado_em preenchido, com aviso em dado inconsistente. Clique abre dia inteiro ou Sem data; sem arrastar/editar/encaminhamento inferido.
-7. Clicar o selo para Planilha. Comparar contagens/valores mínimos nas seis tabelas e Histórico com a captura/recibos privados; conferir período/horário e rolagem própria. “Atualizar dados” relê a última captura salva, sem buscar Google, importar pelo navegador ou criar nova coleta.
+7. Clicar o selo para Planilha. Comparar as seis tabelas, todos os 66 mínimos/valores e contagens NTV, Histórico confirmado e avisos com a captura/recibos privados; conferir período/horário em São Paulo e rolagem própria. Frescor vem de `captura.completedAt`, com falha ativa prevalecendo sobre hoje/antiga. “Atualizar dados” relê a última captura salva, sem buscar Google, importar pelo navegador ou criar nova coleta.
 8. Conferir teclado e 390/1440. Não compartilhar screenshot de dados operacionais privados; usar fixture sintética para evidência visual compartilhável. Falhas/importações destrutivas de teste permanecem no diretório temporário, não em `data/` real.
-9. Encerrar apenas a instância/PID criada pelo procedimento documentado. Registrar evidência e limitações em `validacao.md`; zero escrita remota, geração ou publicação.
+9. Encerrar somente o PID criado após a comparação de `StartTime` e `Path` do bloco de encerramento acima. Registrar evidência e limitações em `validacao.md`; zero escrita remota, geração ou publicação.
 
 Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editoriais ou células da planilha durante esses passos. Busca direta é a futura 002 — Planilhas, com contrato próprio; não executá-la para demonstrar 001.
 
@@ -178,7 +207,7 @@ Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editori
 & './.specify/scripts/powershell/check-prerequisites.ps1' -Json -RequireSpec -RequireTasks -IncludeTasks
 ```
 
-Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T034 já foram marcadas na implementação; esta sincronização não altera checks nem as sete tarefas finais.
+Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T038 estão implementadas/verificadas; esta sincronização não altera os checks de T039–T041.
 
 ## Quality gate e sincronização final da implementação
 
@@ -190,4 +219,4 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 
 T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
-Não tratar comandos futuros como executados nem aprovação do mockup como aceite da feature. As evidências das cinco histórias implementadas estão na [validação](validacao.md); o aceite completo da 001 continua dependendo do iniciador, cenários finais e captura oficial ainda pendentes.
+Não tratar o procedimento preparado como executado nem aprovação do mockup como aceite da feature. As evidências locais ficam na [validação](validacao.md); o aceite completo da 001 continua dependendo da captura oficial, gate após demonstração e onboarding final de T039–T041.

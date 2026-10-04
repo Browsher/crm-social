@@ -2,13 +2,13 @@
 
 Como um álbum que só troca a capa depois de guardar as novas páginas, este módulo prepara arquivos e confirma o estado por um único ponteiro. Uma captura rejeitada não substitui a última válida.
 
-Persistência implementada com rejeição temporal antes da promoção; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/snapshot.cjs](../../src/snapshot.cjs), `ponteiro` (linha 7), `lerEstado` (20), `confirmar` (43), `exclusiva` (72), `registrarFalhaEntrada` (97), `promoverComTrava` (108) e `promoverCaptura` (129).
+Persistência e validação dos recibos confirmados implementadas e verificadas localmente; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/snapshot.cjs](../../src/snapshot.cjs); funções `ponteiro`, `instanteRecibo`, `lerRecibo`, `lerEstado`, `confirmar`, `exclusiva`, `registrarFalhaEntrada`, `promoverComTrava` e `promoverCaptura`.
 
 ## Interfaces
 
 | Export | Responsabilidade |
 | --- | --- |
-| `lerEstado(dataDir)` | Lê ponteiro, recibos confirmados e captura estruturalmente validada; não escreve nem reaplica a política temporal relativa |
+| `lerEstado(dataDir)` | Valida ponteiro, cada recibo confirmado e captura; não escreve, repara ou reaplica a política temporal relativa |
 | `promoverCaptura(raw, dataDir)` | Adquire exclusividade, confere estrutura/identidade/tempo, prepara arquivos e promove ou confirma falha |
 | `registrarFalhaEntrada(dataDir, codigo)` | Confirma falha de arquivo/JSON que não chegou à validação, preservando captura |
 
@@ -26,6 +26,10 @@ Não há rota, variável de ambiente ou rede. Imports nativos: fs, path e random
 | `ultima-tentativa.json` | Resumo derivado; falha deste cache não desfaz confirmação |
 
 Recibo privado: `{tentativaId, capturaId, concluidaEm, resultado, motivoResumo}`. Resultado é `completa` ou `falhou`; ID de captura pode ser null. Apenas IDs em `historicoIds` são tentativas confirmadas; `ultimaTentativaId` deve corresponder ao último ID, ou null com lista vazia. Diretório sem ponteiro retorna ausência estruturada.
+
+`lerRecibo` exige um objeto, recusando null e array. Confere tentativaId igual ao ID referenciado, capturaId seguro ou null, concluidaEm como ISO de data real com `Z`/offset explícito, resultado `completa`/`falhou` e motivoResumo string. Recibo `completa` exige capturaId não nulo. Essa validação ocorre em toda leitura dos IDs confirmados, sem tratar texto válido de JSON como recibo válido.
+
+Se um recibo confirmado for inválido ou ilegível, `lerEstado` recusa o estado. O [servidor](servidor.md) devolve 503 genérico; não reescreve recibos, ponteiro ou captura para reparar o incidente. Recibos órfãos continuam fora da leitura confirmada e do Histórico.
 
 ## Fluxo de escrita e leitura
 
@@ -83,5 +87,7 @@ O no-op previamente aceito precede o relógio, mantendo idempotência mesmo se o
 ## Verificação e pegadinhas
 
 [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) prova ausência, imutabilidade, no-op, conflito, falha, órfãos e promoção após interrupção da confirmação. As regressões cobrem close/unlink separados, preservação do resultado/erro e remoção do temporário após falha de rename. [tests/importador.test.cjs](../../tests/importador.test.cjs) cobre os recibos de falha de leitura e duas instâncias reais concorrentes. Tudo fica em TEMP; evidência em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
+
+Regressões de estrutura/tipos e calendário/fuso de recibos confirmados, além do HTTP 503 sem escrita, estão em `tests/snapshot.test.cjs` e `tests/servidor.test.cjs`; execução e limites somente na validação.
 
 O nome “Histórico” aqui significa recibos persistidos/projetados; a US5 já os apresenta na aba final da Planilha, sem mudar esta persistência. A estrutura da captura é revalidada na leitura, sem a política temporal relativa exclusiva da importação. Falha de rename testada não comprova resistência a queda de energia. Capturas/recibos preparados sem confirmação permanecem preservados; temporários têm limpeza localizada por tentativa quando gravação/rename falham. Interrupção pode deixar arquivos/trava; não há varredura de limpeza automática nem restauração que fabrique aceitação.

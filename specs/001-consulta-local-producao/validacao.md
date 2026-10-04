@@ -1,6 +1,6 @@
-# Validação — feature 001, US1–US5
+# Validação — feature 001, US1–US5 e Fase 8 sintética
 
-Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T034, fundação e US1–US5 implementadas; US4 integrada e US5 aguardando aceite do novo PR. T035–T041/Fase 8 permanecem pendentes. As seções anteriores a **US5 — Planilha e Histórico** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
+Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 aguarda os checks remotos deste código. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
 
 ## Preparação T001
 
@@ -970,3 +970,174 @@ cobertura **97,63%**, complexidade máxima **13** e **seis avisos 11–13**. Sem
 SKIP Windows, audit N/A, baseline atualizada false. Este resultado e os hashes
 finais substituem a tentativa interrompida para o aceite deste código; a suíte
 completa anterior preserva seu resultado observado de 197/0/0 e 79 de interface.
+
+### Aceite e integração final da US5
+
+Head `02d06f431fdb7d924fa1a3fbee6a9b1fb4d2fefb`: [gate Linux SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37235206951/job/111532819722),
+tests/coverage/complexity/Semgrep PASS (CE 1.179.0), audit N/A, exit 0, baseline
+atualizada false. [Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37235206910/job/111532819478),
+[comentário 5984460226](https://github.com/Browsher/crm-social/pull/11#issuecomment-5984460226),
+sem Critical, segurança ou regressão. I-1 de evidência Linux fechado pela leitura
+do log desse mesmo head. Minor: referências/frase na arquitetura, tradução por
+texto, complexidade 11 de detalhesCaptura e link na live region serão avaliados
+em T038 com as pendências anteriores.
+
+[PR #11 integrado](https://github.com/Browsher/crm-social/pull/11) por merge commit
+`88082c42fe53be20d92e4e16d955201fc463aeef`, pais `bc835e4` e `02d06f4`, autoria
+`204295625+Browsher@users.noreply.github.com`, committer `noreply@github.com`.
+Branch 001 preservada e recebeu main por fast-forward local. A partir daqui,
+executar somente T035–T038; T039 continua aguardando captura e autorização.
+
+## Fase 8 — iniciador e verificação sintética (T035–T037)
+
+Base: merge `88082c4` da US5. Nenhuma captura operacional foi lida ou preparada.
+Windows PowerShell 5.1, Node 24.19.0 e Playwright existentes; sem nova dependência.
+
+**T035 RED observado:** seis testes reais falharam porque `Iniciar CRM.ps1`
+ainda não existia: **0 PASS / 6 FAIL / 0 SKIP**, exit 1. **T036 GREEN:**
+**6 PASS / 0 FAIL / 0 SKIP**, 12,22 s, incluindo processo oculto, escuta só em
+127.0.0.1, ausência de Node/NodePath, faixa da porta e ocupante HTTP preservado.
+Os caminhos de teste têm espaços; cleanup confere executável, entrypoint, TEMP e
+instante de criação antes de encerrar somente o PID criado. `.ps1` em ASCII.
+
+A primeira implementação encontrou compartilhamento exclusivo do stdout; o
+leitor passou a usar FileShare.ReadWrite. A tentativa seguinte ficou aguardando
+pipes herdados pelo Node após o PowerShell terminar: 4 passaram, 2 foram
+cancelados. Foram encerrados somente os dois filhos com proprietário confirmado;
+essa execução não é aceite. O helper espera `exit`, recolhe saída já emitida e
+fecha seus próprios pipes. Os asserts de comportamento foram preservados, e o
+GREEN final ocorreu sem intervenção. Logs do iniciador ficam privados no
+DataDir/runtime; a saída informa URL, PID e encerramento dessa instância.
+
+**T037:** oito arquivos de suíte, cinco camadas, Windows local sem CI=true:
+**206 PASS / 0 FAIL / 0 SKIP**, exit 0, **59,47 s**. Inclui **81 testes de
+interface** e seis do iniciador. A fixture contém 500 peças NTV fictícias,
+46 sem data, 14 em semana não identificada, todas as oito colunas, versões
+anteriores, páginas/cenas e 562 avisos. Todos os IDs aparecem exatamente uma vez
+na lista, nos grupos de dias e no quadro; as seis abas conservam os 66 mínimos.
+Releitura após tentativa incompleta mantém as 500 peças, a captura e seu horário,
+além de registrar a falha no Histórico. Requisições externas e pageerror: zero.
+
+Os metadados/range da fixture foram ajustados à sua matriz de 502 linhas antes
+de usar o cenário como evidência. As primeiras caracterizações também corrigiram
+expectativas para as estruturas já contratadas: dias/lista incluem Sem data,
+paginas inclui histórico e atual.json confirma o recibo da tentativa recusada.
+Não houve alteração de produção para legitimar esses resultados; não se declara
+esse acerto do ensaio como RED/GREEN de uma funcionalidade nova.
+
+Ensaio dedicado, sem limite artificial de tempo; milissegundos observados:
+
+| Medição | 1440 | 390 |
+| --- | ---: | ---: |
+| Carga, incluindo abertura de navegador | 854 | 521 |
+| GET local /api/visao | 495 | 489 |
+| Filtro, gaveta e quadro | 357 | 453 |
+| Troca das seis abas | 567 | 551 |
+| Recomposição dos 562 avisos | 181 | 155 |
+| Releitura local após falha | 334 | 361 |
+
+Importação/projeção isoladas: **38/122 ms**. Tempos variam com a máquina e a
+instrumentação; não são promessa de latência nem prova de sincronização Google.
+Gate pré-revisão: **exit 0, 71,28 s**, tests/coverage/complexity PASS, sete avisos
+de complexidade 11–13, Semgrep SKIP local por ausência no Windows, npm audit N/A,
+baseline atualizada false. Gate final será repetido depois das correções de T038.
+Linux aceita regras/I/O/serviços/HTTP, mas tem SKIP explícito de Playwright e
+PowerShell; o CI não substitui o aceite local dessas duas ferramentas.
+
+## T038 — revisão independente e correções
+
+Revisor da execução atual, somente leitura, distinto dos implementadores; fontes
+de produção do merge `88082c4`, contrato/constituição/plano, pendências completas
+acima, diff local do iniciador/testes e evidência do gate. Sem ler `data/`, rodar
+scanners, fazer alterações ou delegar a revisão. Os cinco riscos do plano foram
+conferidos; nenhum Critical foi encontrado. Três Important exigiram correção:
+
+| ID | Achado / reprodução sintética | RED observado | GREEN / correção |
+| --- | --- | --- | --- |
+| I-01, segurança | Um campo não escalar de recibo confirmado podia atravessar o Histórico sem triagem; identidade/resultado/data também não eram conferidos | 11 FAIL, 1 PASS de caracterização válida, exit 1 | Persistência + HTTP: 38/0/0. lerRecibo valida objeto, identidade confirmada, captura, resultado, motivo textual e instante ISO real com fuso; inválido causa 503 genérico sem valor ou escrita |
+| I-02, inferência | Versão vigente inválida/ausente fazia a API/cartão afirmar ausência de mídia nesta versão | Quatro casos de projeção e um de interface FAIL | Omitir só a pendência categórica quando a versão não é inteiro positivo; conservar arquivos e aviso localizado, inclusive versão vazia |
+| I-03, segurança/identidade | IDs sensíveis distintos viravam o mesmo marcador; relações e cartões podiam unir peças diferentes | Dois casos de projeção e um HTTP FAIL | Se a triagem alterar qualquer identidade/vínculo interno terminado em _id, recusar a projeção antes de construir relações; API 503 genérica, captura privada intacta |
+
+I-02/I-03 juntos: **0 PASS / 8 FAIL / 0 SKIP** antes da produção; depois
+**8 PASS / 0 FAIL / 0 SKIP**, 1,14 s. O primeiro ensaio HTTP tinha import do
+helper ausente; isso foi acertado e o RED foi repetido, observando **200 em vez
+de 503**, antes de alterar a projeção. Nenhum teste foi flexibilizado para aceitar
+mistura de identidades ou ausência inferida. O revisor conferiu os snippets e
+considerou os três achados fechados após o GREEN; gate completo repetido abaixo.
+
+### Destino das pendências e limites conhecidos da 001
+
+Todas as entradas da seção histórica de pendências foram triadas. Manter o
+histórico acima; a classificação e o estado correntes são os desta tabela:
+
+| Grupo / origem | Estado após T038 |
+| --- | --- |
+| Datas, prioridades do mapa, publicação explícita, manutenção após falha, versões/revisões e mínimos seguros — cinco riscos | Conferidos com testes existentes + 500 peças e regressões acima; nenhuma coleta/ação remota. IDs/vínculos redigidos e recibos inválidos agora falham com 503, conservando o estado privado |
+| Versão inválida em mídia — PR #10, 5983143402 m-1 | Fechado por I-02 com RED/GREEN |
+| Escala, abas e avisos — PR #9 5982320198 m-1 e PR #11 5983965195 m-6 | Medidos em T037; nenhuma otimização ou mudança da triagem foi necessária |
+| CLI/LCOV — PR #6 M8 | A anotação antiga CLI fora do LCOV está superada: o importador já tem cobertura. Limite remanescente é web fora do LCOV, Playwright SKIP no CI e iniciador SKIP fora de Windows; aceite dessas ferramentas é local |
+| Precisão da mídia — PR #10 5983186287 m-1 | Minor conhecido: ponteiro preenchido quebrado/incompatível pode resumir mídia ausente, embora API, gaveta e Planilha conservem vínculo e causa a confirmar; não seleciona arquivo nem infere aprovação |
+| Revisão desconhecida — PR #9 m-2 reiterado | Minor conhecido: tratamento desconhecido tem aviso e resolução não comprovada, mas resumo vigente/+N ainda chama revisão aberta. Estados originais permanecem na API |
+| Coluna causadora/arquivos semanais — PR #9 m-3 e revisões anteriores | Minor conhecido: empate/ausência usa versao/origens_json; arquivos apenas semanais têm triagem, mas faltam validações extras de versão/origens_json. Não se escolhe substituto |
+| URL dedicada com dois pedaços — PR #9 m-1 | Minor conhecido: pode formar link estranho dentro da allowlist; userinfo não é exposto. Extensão de delimitadores no texto livre fora da regra aprovada é dívida, não decisão adotada nesta entrega |
+| Resumo/localização e acessibilidade — PR #10 m-1/m-3; PR #11 m-2/m-5; review final US5 m-5 | Minor conhecido: falta número da unidade no cartão; contador da coluna pode ganhar rótulo contextual; duas paradas Tab no painel/rolagem; close/foco assíncrono e link em live region podem causar ajuste cosmético. Teclado/Esc/foco básico passam |
+| Resposta HTTP 200 fora do contrato | Minor defensivo conhecido: JSON malformado estruturalmente pode substituir estado antes de renderizar e deixar a UI parcial. O servidor atual não produz essa forma; erro HTTP/503 preserva a visão. Ainda falta validação do candidato na UI |
+| Cobertura HTTP/navegação — PR #10 m-3 e PR #11 m-3/revisão 5984151670 m-2 | Minor conhecido: quadro HTTP dedicado, releitura filtrada/peça removida e reset de avisos via menu/selo merecem asserts adicionais. Projeção/HTTP real/interface cobrem os fluxos atuais; não se declara esses casos extras exercitados |
+| Refatorações/decisões futuras — PR #10 m-2/m-4/m-6 e revisões da US5 | Limites de manutenção: helper posicional, abertura duplicada, CAMPOS/chaves por posição, índice de etapa calculado repetidamente, lista de colunas repetida, definição normativa repetida. Contador usa valor triado, podendo reunir rótulos sensíveis; revisão ambígua no cartão não ganha inferência de correção |
+| Tradução de motivo por texto e complexidade 11 — review final US5 m-3/m-4 | Minor conhecido: acoplamento às mensagens atuais e branches de tradução sem assert dedicado completo. Preservar texto seguro/fallback; não alterar limite do gate |
+| Âncoras/arquitetura/cabeçalho e procedência — revisões PR #9–#11 | Sincronizar funções/frase atuais e mapa do iniciador nesta entrega; medições históricas continuam históricas. Históricos de SHA/head/check ficam somente neste arquivo; relatórios atuais incluem hashes, sem inventar SHA medido para os recibos antigos |
+
+Os Minor e limites acima não recebem correção de produto por conveniência nesta
+rodada. A revisão não transformou decisão futura em regra atual. Não há mudança
+em tools/, quality-gate.config.json, .quality-gate/, .github/, dependências ou
+constituição. A captura operacional e seu aceite continuam pendentes.
+
+### Gate final do código T035–T038
+
+**exit 0, 60,28 s**, oito arquivos de suíte: **226 PASS / 0 FAIL / 0 SKIP**
+no Windows sem CI=true; **82 de interface, seis do iniciador**. Cobertura LCOV
+**97,93%**; complexidade máxima **13**, nove avisos **11–13**, nenhum FAIL.
+Semgrep SKIP local por ausência no Windows; audit N/A sem dependências do app;
+baseline atualizada false. [Resumo sanitizado e 14 hashes das fontes](../../docs/reports/001-fase8-local.json).
+O iniciador PowerShell e o browser ficam fora do LCOV JavaScript; os testes reais
+locais demonstram seus comportamentos. O aceite Linux desta entrega será anexado
+depois do push, com Semgrep CE 1.179.0 de verdade e sem SKIP do scanner.
+
+## Parada antes de T039 — preparo pela Central
+
+**38 de 41 tarefas concluídas. T039, T040 e T041 continuam desmarcadas.** Esta
+rodada verificou apenas dados sintéticos em TEMP; não houve captura real da
+planilha, alteração de data/ operacional, escrita Google ou disparo editorial.
+Sincronizar a documentação deste incremento não conclui o onboarding final T041.
+
+1. A Central, com seu conector autenticado, gera um JSON de **schemaVersion: 1**
+   conforme o [contrato](contracts/captura-e-consulta.md): seis abas completas
+   Semanas, Produções, Páginas, Cenas, Arquivos, Revisoes, cabeçalhos reais e os
+   66 mínimos. Envelope inclui capturaId seguro/único, spreadsheetId privado,
+   brandId ntv, source google-drive-connector, startedAt/completedAt UTC,
+   metadataBefore/After, firstReadSha256/secondReadSha256 e tables. Conferir
+   metadados estáveis, duas leituras completas equivalentes e hash canônico;
+   complete:true nunca é inferido de leitura parcial. completedAt não pode
+   exceder 10 minutos no futuro nem ser igual/anterior ao da captura vigente.
+2. Salvar privadamente em **data/entrada/<capturaId>.json**, ignorado por Git.
+   Não copiar linhas, IDs operacionais, URLs privadas ou arquivo para fixtures,
+   documentação, screenshots públicos ou PR. Autor precisa autorizar T039.
+3. Na raiz do repositório, selecionar Node 24.19.0 existente e importar o arquivo:
+
+   ```powershell
+   $crmCapturePath = Join-Path (Get-Location) 'data/entrada/<capturaId>.json'
+   & $crmNode scripts/importar-captura.cjs $crmCapturePath
+   $crmInstancia = & '.\Iniciar CRM.ps1' -NodePath $crmNode
+   $crmInstancia
+   ```
+
+   Substituir o capturaId pelo arquivo preparado. Abrir a URL loopback retornada;
+   ao encerrar, conferir propriedade/PID da instância e usar o comando encerrar
+   retornado, nunca encerrar todos os processos Node. Importação recusada conserva
+   a captura vigente e registra o motivo; não reparar dados reais para obter verde.
+4. A demonstração compara, **com essa mesma captura**, o conjunto/contagem de
+   IDs NTV, datas civis/Sem data, dia inteiro, páginas/cenas e versões, revisão
+   vigente separada das históricas, responsável registrado, prioridades/Outras
+   do mapa, publicação somente explícita, selo pelo completedAt, seis abas/66
+   mínimos, avisos e Histórico confirmado. Registrar só evidência compartilhável
+   e limites. T040/T041 finais vêm depois dessa demonstração autorizada.

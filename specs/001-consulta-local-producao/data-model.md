@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva identidades e relações: T001–T034/US1–US5 implementadas localmente (34 de 41 tarefas), com revisão corrente e evidências na [validação](validacao.md). Sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes; interfaces atuais na [arquitetura](../../docs/architecture.md), sem leitura Google.
+Como um índice de fotografias, o modelo conserva identidades e relações: T001–T038 implementadas e verificadas localmente (38 de 41 tarefas). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; a 001 não tem aceite operacional. Evidências na [validação](validacao.md) e interfaces atuais na [arquitetura](../../docs/architecture.md).
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
@@ -42,6 +42,11 @@ de todas as demais. Versão/índice preenchidos devem ser inteiros positivos;
 início/duração números finitos não negativos. Inválidos geram aviso localizado,
 vazio permanece desconhecido, nunca zero. JSON inválido gera aviso e fica preservado
 como célula na captura; não é executado.
+
+Se a triagem alterar identidade/vínculo interno em campo terminado em `_id`, a
+projeção inteira é recusada, sem criar chave de supressão compartilhada; HTTP
+responde 503 genérico e não escreve. Versão de produção vazia gera aviso de vigente
+não informada; vazia ou inválida não sustenta pendência categórica de mídia vigente ausente.
 
 ## Recortes de consulta
 
@@ -264,6 +269,11 @@ recusa de apresentação. Texto livre legítimo conserva suas URLs como texto;
 nenhuma célula cria navegação ou carregamento automático.
 
 ## Estado local e transições
+
+Cada recibo confirmado é validado na leitura: objeto, tentativaId correspondente,
+capturaId seguro ou null, concluidaEm ISO de data real com fuso, resultado conhecido
+e motivoResumo string. Completa exige capturaId não nulo. Recibo inválido/ilegível
+recusa o estado e produz 503 genérico sem reparar ou alterar arquivos privados.
 
 `atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`. Capturas e recibos
 imutáveis são preparados antes da substituição atômica desse estado no mesmo diretório.

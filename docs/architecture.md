@@ -2,12 +2,13 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-T001–T034 estão implementadas localmente (fundação e US1–US5, 34 de 41 tarefas); revisão corrente e evidências na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes. Leitura Google pertence à 002.
+T001–T038 estão implementadas e verificadas localmente (38 de 41 tarefas); evidências na [validação](../specs/001-consulta-local-producao/validacao.md). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes, sem aceite operacional da 001. A [spec](../specs/001-consulta-local-producao/spec.md) define a meta completa; leitura Google pertence à 002.
 
 ## Módulos e imports reais
 
 ```mermaid
 flowchart LR
+  Iniciador["Iniciar CRM.ps1"] -->|Node existente, processo oculto| Server
   CLI["scripts/importar-captura.cjs"] --> Snapshot["src/snapshot.cjs"]
   Snapshot --> Captura["src/captura.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
@@ -34,6 +35,7 @@ flowchart LR
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
 | projecao | Seleção NTV e campos permitidos, supressão de URLs com credenciais, semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas | [Projeção](modules/projecao.md) |
 | servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
+| iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
 | web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Histórico e avisos detalhados | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
@@ -84,6 +86,8 @@ flowchart TD
 
 Mesmo ID e serialização já aceitos devolvem `sem_alteracao`, sem novo recibo/frescor/rollback. Conteúdo diferente no mesmo ID é conflito. Falha confirmável preserva captura e acrescenta recibo saneado; impossibilidade de registrar gera erro explícito. Interrupção pode deixar trava: não há expiração/remoção automática; conferir proprietário/processo/estado antes de recuperação manual. Os detalhes de falha, órfãos e concorrência estão no [módulo snapshot](modules/snapshot.md).
 
+`lerRecibo` confere cada recibo confirmado antes da projeção: objeto, IDs compatíveis, tipos, resultado e data ISO real com fuso explícito; `completa` exige captura identificada. Recibo corrompido recusa a leitura, e `criarServidor` responde 503 genérico sem escrever ou reparar arquivos. `selecionar` também recusa a projeção se a triagem alterar campo terminado em `_id`, evitando que identidades/vínculos diferentes virem a mesma chave suprimida. `detalhar` avisa versão ausente; `pendenciasMidia` não afirma ausência de mídia vigente sem versão positiva da produção.
+
 A validação temporal ocorre sob trava, depois de estrutura/conflito/no-op e antes de gravar a candidata: fim até 10 minutos no futuro é permitido, inclusive o limite; excedente é inválida, e ID novo com fim igual ou anterior ao vigente é desatualizada. Ambas confirmam motivo fixo no recibo e mantêm a vigente. GET/releitura/reinício validam estrutura sem reaplicar essa política relativa à importação.
 
 A liberação tenta close e unlink separadamente. Avisos transitórios de liberação acompanham o resultado/erro original, sem alterar o recibo confirmado; o CLI os imprime em stderr e preserva o exit do resultado. A projeção `(estadoLocal, nowIso, mapaQuadro)` usa `nowIso` e `captura.completedAt` para frescor em São Paulo. US4 aplica mapa validado: publicação > liberação > revisão > etapa, status informativo e fallback Outras por semana.
@@ -116,12 +120,13 @@ Por decisão do autor, a triagem em texto livre e recibo substitui somente peda�
 | `--data-dir <diretorio>` | CLI/servidor; diretório privado padrão data/; testes sempre TEMP |
 | `--port <inteiro>` | Servidor; 4318 padrão, 0 para porta efêmera de teste |
 | `quadroConfigPath` / `webDir` | Argumentos internos confiáveis de criarServidor, sem controle HTTP |
-| `CRM_NODE_PATH` | PowerShell seleciona Node existente; aplicação não lê variável |
+| `-DataDir` / `-Port` / `-NodePath` | Iniciador; diretório privado, porta 0–65535 e runtime explícito; defaults data/ e 4318 |
+| `CRM_NODE_PATH` | Iniciador usa se -NodePath estiver vazio; fallback node.exe no PATH; módulos Node não leem essa variável |
 | `PATH` | Diretório do Node 24.19.0 à frente para subprocessos do gate; ver quickstart |
 | `CRM_PLAYWRIGHT_MODULE` | Teste de interface resolve Playwright existente; sem ela tenta playwright |
-| `CI=true` | Testes de interface fazem SKIP explícito; pendência M8 de aplicabilidade, sem substituir aceite local |
+| `CI=true` / plataforma Linux | Interface faz SKIP com CI=true; iniciador faz SKIP fora de win32. M8: UI fora do LCOV e fronteira UI/PowerShell no Linux, sem substituir aceite Windows |
 
-Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). Não existe iniciador PowerShell neste recorte. A primeira captura oficial é futura e deve preservar os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); os hashes coerentes do JSON não comprovam coleta real.
+Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). O [iniciador](modules/iniciador.md) confirma a linha de início do Node em até dez segundos, retorna PID/URL/logDir/orientação de encerramento e mantém logs em `<DataDir>/runtime/`. Em erro encerra somente o filho criado por sua chamada; nunca o ocupante da porta. A primeira captura oficial continua pendente e deve preservar os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); hashes coerentes de fixture não comprovam coleta real.
 
 ## O que já aparece e o que falta
 
@@ -129,11 +134,11 @@ Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” glo
 
 US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
 
-Planilha mostra fonte, fim da captura, cobertura semanal, motivos resumidos distintos dos avisos com `role=status`, seis abas de dados e Histórico final. **Atualizar dados** desabilita apenas o próprio botão durante `GET /api/visao` com cache no-store. Sucesso atualiza a visão mantendo a tela e uma aba que continua disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
+Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas de dados e Histórico final. **Atualizar dados** desabilita apenas o próprio botão durante `GET /api/visao` com cache no-store. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
-A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta somente nos cartões de Planejamento/Redação/Visual; detalhes continuam na API/gaveta. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico; iniciador, escala, captura operacional e aceite completo continuam posteriores, com sete tarefas T035–T041 pendentes. Revisão/integração corrente fica somente na validação.
+A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta somente nos cartões de Planejamento/Redação/Visual; detalhes continuam na API/gaveta. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico. Iniciador, escala sintética e regressões de T035–T038 foram verificados localmente; captura real, gate após demonstração e onboarding final (T039–T041) permanecem pendentes. Evidências e limites ficam somente na validação.
 
 ## Planilha: mínimos, avisos e Histórico
 
@@ -157,20 +162,20 @@ flowchart TD
   Avisos -->|menu, selo ou Todos os avisos| Painel
 ```
 
-`src/projecao.cjs:345` (`montarPlanilha`) copia cabeçalhos e objetos de linha já
+`montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
 triados antes dos enriquecimentos, evitando `quadro`, `detalhes`, envelope e extras.
 Contagens são das linhas NTV, não da alocação no Google. Normalização null→string
 vazia permanece nos mínimos, exceto `etapa_producao`; o original fica privado.
 Histórico mostra todas as tentativas confirmadas, sem órfãos nem novo recibo por
 no-op. HTTP, imports e persistência permanecem os mesmos.
 
-`src/web/app.js:433` (`renderPlanilha`) conserva a aba disponível; setas, Home e End
+`renderPlanilha` em [src/web/app.js](../src/web/app.js) conserva a aba disponível; setas, Home e End
 mudam seleção e foco, e tabelas largas têm região própria de rolagem. Sem captura,
 somente Histórico e orientação à Central. O link da gaveta abre Produções e dá
 rolagem/foco ao painel da peça, sem recortar as seis tabelas; menu/selo/Todos os
 avisos restauram os avisos gerais. Painel fica oculto em Histórico ou sem avisos.
 
-`src/web/app.js:447` (`celulaPlanilha`) troca somente URL dedicada recusada por
+`celulaPlanilha` no mesmo [app.js](../src/web/app.js) troca somente URL dedicada recusada por
 **link não permitido**, mantendo o marcador exato de supressão. A API pode conservar
 URL já triada fora da allowlist visual; textos livres legítimos mantêm suas URLs
 como texto segundo o contrato. Células não criam links ou navegação automática.
@@ -188,20 +193,20 @@ flowchart LR
 
 O gate e seus imports estão em `tools/`; ESLint/lock são isolados da aplicação. `quality-gate.config.json` define Node 24.19.0, runner node --test e modo full. A UI fica fora do LCOV (pendência M8) e seus testes continuam obrigatórios no computador. Os resultados do gate estão somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
-CI ativo com quality-gate obrigatório e review por comentário; histórico e estado corrente na [validação](../specs/001-consulta-local-producao/validacao.md). Dados, I/O, CLI, projeção e HTTP são obrigatórios no Linux; pulos de UI não comprovam aceite remoto da interface.
+CI ativo com quality-gate obrigatório e review por comentário; histórico e estado corrente na [validação](../specs/001-consulta-local-producao/validacao.md). Dados, I/O, CLI, projeção e HTTP são obrigatórios no Linux; UI/PowerShell têm pulos explícitos e não comprovam aceite remoto dessas camadas. CLI está coberta; M8 refere-se à UI fora do LCOV e à fronteira UI/PowerShell no Linux.
 
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
 | null vira célula vazia na entidade e na tabela projetada | função registros em src/captura.cjs; envelope preservado; projeção recupera null de etapa_producao antes da triagem; demais mínimos da US5 conservam a normalização, sem prometer reprodução literal da matriz |
 | Mapa restrito aos rótulos aprovados | config/quadro-etapas.json; nove etapas e liberação/revisão vazias; testes/demonstrações usam mapa sintético em TEMP |
-| I/O síncrono e validação por consulta | src/snapshot.cjs:20 e src/servidor.cjs:25; escala final ainda não exercitada em T037 |
-| Trava sobrevivente à interrupção | src/snapshot.cjs:72; exige reconciliação manual; aviso de liberação preserva resultado/erro |
+| I/O síncrono e validação por consulta | lerEstado em src/snapshot.cjs e handler de criarServidor em src/servidor.cjs; cenário sintético de escala verificado, limites na validação |
+| Trava sobrevivente à interrupção | exclusiva em src/snapshot.cjs; exige reconciliação manual; aviso de liberação preserva resultado/erro |
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
-| Aviso de complexidade do CLI | scripts/importar-captura.cjs:5, valor 12; manutenção sem retirar validações |
-| Manutenção da montagem do acordeão | src/web/app.js:184; reúne as seções da peça com helpers compactos; preservar testes de comportamento em futuras extrações, métricas na validação |
-| Fonte/hashes no envelope não são prova de coleta | src/captura.cjs:27–118; Central e captura real ainda devem ser conferidas |
+| Avisos de complexidade | Funções do CLI, snapshot, projeção e web; medições atuais somente na validação, manutenção sem retirar validações |
+| Manutenção da montagem do acordeão | acordeaoPeca em src/web/app.js; reúne seções com helpers compactos; preservar testes em futuras extrações, métricas na validação |
+| Fonte/hashes no envelope não são prova de coleta | validarCaptura em src/captura.cjs; Central e captura real ainda devem ser conferidas |
 | Custo e limite do review | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
-| Aplicabilidade dos pulos de UI e UI fora do LCOV | tests/interface.test.cjs; pendência M8; CI/cobertura não substituem os testes locais da interface |
+| UI fora do LCOV e pulos UI/PowerShell no Linux | tests/interface.test.cjs e tests/iniciador.test.cjs; M8; CI/cobertura não substituem execução Windows local |
 
 A projeção preserva a linha física dos avisos desde a matriz privada, por ID e WeakMap; não usa índice filtrado como localização. As demais dívidas acima continuam explícitas. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.

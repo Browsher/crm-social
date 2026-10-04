@@ -162,6 +162,30 @@ function capturaPlanilha() {
   }
   return recalcularHashes(raw);
 }
+function capturaEscala() {
+  const raw=capturaDetalhada(),table=raw.tables.Produções,headers=table.values[0];
+  const bases=table.values.slice(1).map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]])));
+  raw.capturaId='captura-escala-500-sintetica';
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-02',marca_id:'ntv',inicio_semana:'2026-10-05',tema:'Semana sintética da escala'});
+  const slots=['imagem_a','imagem_b','carrossel','reels'];
+  const etapas=['planejada-sintetica','texto-sintetico','arte_aprovada','prompts_imagem_prontos'];
+  const rows=Array.from({length:500},(_,i)=>{
+    const record={...(i<4?bases[i]:{}),producao_id:i<4?'peca-'+(i+1):'escala-'+String(i+1).padStart(3,'0'),
+      marca_id:'ntv',semana_id:i%37===0?'semana-desconhecida-sintetica':i%5===0?'semana-02':'semana-01',
+      slot:slots[i%4],tipo_producao:'tipo-sintetico-'+slots[i%4],titulo:'Peça sintética de escala '+(i+1),
+      versao:i<4?bases[i].versao:1,data_prevista:i%11===0?'':'2026-10-'+String(i%27+1).padStart(2,'0'),
+      etapa_producao:i%8<4?etapas[i%8]:'etapa-escala-'+i%3,
+      estado_revisao:i%8===4?'em-revisao-sintetica':'',estado_liberacao:i%8===5?'liberada-sintetica':'',
+      publicado_em:i%8===6?'2026-10-01T12:00:00Z':'',status:i%8===7?'publicado':'em_planejamento',
+      responsavel_atual:'Equipe sintética'};
+    return headers.map(h=>record[h] ?? '');
+  });
+  table.values=[headers,...rows,...bases.filter(r=>r.marca_id!=='ntv').map(r=>headers.map(h=>r[h] ?? ''))];
+  raw.metadataBefore.Produções.rowCount=table.values.length;
+  raw.metadataAfter.Produções.rowCount=table.values.length;
+  table.range='A1:'+coluna(headers.length)+table.values.length;
+  return recalcularHashes(raw);
+}
 function temporario(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(),'crm001-test-'));
   t.after(() => fs.rmSync(dir,{recursive:true,force:true}));
@@ -172,4 +196,4 @@ function carregarModulo(relative, exports) {
   if (fs.existsSync(filename)) return require(filename);
   return Object.fromEntries(exports.map(name => [name, () => { throw new Error(name + ': comportamento ainda não implementado'); }]));
 }
-module.exports = {campos,capturaValida,capturaDetalhada,capturaQuadro,capturaPlanilha,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};
+module.exports = {campos,capturaValida,capturaDetalhada,capturaQuadro,capturaPlanilha,capturaEscala,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};

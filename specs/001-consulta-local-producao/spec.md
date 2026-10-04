@@ -6,9 +6,9 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Feature Directory**: `specs/001-consulta-local-producao`
 
-**Created**: 2026-10-02 | **Updated**: 2026-10-04 (US5/Planilha e Histórico implementados localmente)
+**Created**: 2026-10-02 | **Updated**: 2026-10-04 (T035–T038 e regressões locais)
 
-**Status**: Fundação e US1–US5 implementadas localmente até T034 (34 de 41 tarefas); sete tarefas finais, iniciador, captura operacional e aceite completo pendentes. Estado, revisão corrente e evidências em [validacao.md](validacao.md). A sincronização deste incremento não conclui T041.
+**Status**: T001–T038 implementadas e verificadas localmente (38 de 41 tarefas). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; a 001 não tem aceite operacional. Evidências em [validacao.md](validacao.md). A sincronização deste incremento não conclui T041.
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
@@ -216,6 +216,13 @@ conforme os limites de normalização e apresentação de URL do contrato.
    como texto, segundo o contrato, e nenhuma célula navega ou carrega mídia.
 
 ### Edge Cases
+
+- Recibo confirmado precisa ser objeto com tipos/IDs e data ISO real com fuso válidos;
+  corrupção recusa a consulta com 503 genérico, sem escrever ou fabricar Histórico.
+- Se a triagem alterar identidade/vínculo terminado em `_id`, recusar a projeção inteira,
+  sem fundir registros numa chave de supressão compartilhada ou modificar a captura privada.
+- Versão vigente ausente gera aviso; versão ausente/inválida não comprova ausência de
+  mídia vigente no quadro. Registros e impacto atual continuam a confirmar.
 
 - Na importação, `completedAt` até 10 minutos à frente do relógio local é aceito; mais que isso recusa a captura como inválida. Captura nova com fim igual ou anterior ao da vigente é desatualizada e recusada. Ambos confirmam recibo com motivo e preservam a vigente. Repetição do mesmo ID/bytes já aceitos continua sem alteração; GET não revalida essa política temporal.
 

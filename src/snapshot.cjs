@@ -1,7 +1,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const {randomUUID}=require('node:crypto');
-const {validarCaptura,validarTempoImportacao,idSeguro}=require('./captura.cjs');
+const {validarCaptura,validarTempoImportacao,idSeguro,instanteUtc}=require('./captura.cjs');
 
 function json(file) { return JSON.parse(fs.readFileSync(file,'utf8')); }
 function ponteiro(dataDir) {
@@ -17,10 +17,23 @@ function ponteiro(dataDir) {
     throw new Error('persistência: estado local inválido ou ilegível');
   }
 }
+function instanteRecibo(value) {
+  return typeof value==='string' && /(?:Z|[+-]\d\d:\d\d)$/.test(value) &&
+    Number.isFinite(Date.parse(value)) && instanteUtc(value.replace(/(?:Z|[+-]\d\d:\d\d)$/,'Z'));
+}
+function lerRecibo(dataDir,id) {
+  const r=json(path.join(dataDir,'tentativas',id+'.json'));
+  if(r===null || typeof r!=='object' || Array.isArray(r)) throw new Error('recibo inválido');
+  const captura=r.capturaId===null || idSeguro(r.capturaId);
+  if(r.tentativaId!==id || !captura || !instanteRecibo(r.concluidaEm) ||
+    !['completa','falhou'].includes(r.resultado) || typeof r.motivoResumo!=='string') throw new Error('recibo inválido');
+  if(r.resultado==='completa' && r.capturaId===null) throw new Error('recibo inválido');
+  return r;
+}
 function lerEstado(dataDir) {
   const state=ponteiro(dataDir);
   try {
-    const historico=state.historicoIds.map(id=>json(path.join(dataDir,'tentativas',id+'.json')));
+    const historico=state.historicoIds.map(id=>lerRecibo(dataDir,id));
     const ultimaTentativa=historico.at(-1) ?? null;
     const captura=state.capturaId===null ? null : validarCaptura(json(path.join(dataDir,'capturas',state.capturaId+'.json')));
     return {estado:state,captura,ultimaTentativa,historico};
