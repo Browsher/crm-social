@@ -68,3 +68,5 @@ Stop-Process -InputObject $crmCurrentProcess
 Runtime ausente, porta inválida ou ocupada geram erro útil. A conferência da porta solta somente seu próprio listener; uma corrida posterior pode impedir o filho de iniciar, mas nunca encerra o ocupante. Em falha de início/timeout, o script encerra apenas seu filho ainda vivo. Não procurar ou parar processos por nome global.
 
 [tests/iniciador.test.cjs](../../tests/iniciador.test.cjs) usa o script real com PowerShell 5.1, Node existente, diretórios temporários e portas isoladas. Fora de `win32`, os casos declaram SKIP por plataforma; no Windows local devem executar. Resultados e fronteira M8 ficam somente na [validação](../../specs/001-consulta-local-producao/validacao.md).
+
+Os seis casos executados não exercitam timeout/saída precoce depois da criação do filho, seleção por `CRM_NODE_PATH`, porta padrão ou `DataDir` relativo. Esses caminhos foram conferidos por leitura, sem prova de execução; são limites conhecidos. Em falha, a mensagem também não indica o diretório dos logs, e não existe política automática de limpeza.

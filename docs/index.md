@@ -118,6 +118,8 @@ As evidências têm origem, estado e limites registrados somente na [validação
 
 [Resumo sanitizado de T035–T038](reports/001-fase8-local.json); iniciador, escala e regressões locais. Histórico de verificações e aceite operacional pendente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
+[Resumo sanitizado do CI da fase final](reports/001-fase8-ci.json); reproduz os estados e a versão do scanner observados no log oficial, sem substituir o relatório local ou declarar captura operacional.
+
 ## Referências de desenvolvimento preservadas
 
 | Documento / catálogo | Papel |

@@ -1,6 +1,6 @@
 # Validação — feature 001, US1–US5 e Fase 8 sintética
 
-Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 aguarda os checks remotos deste código. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
+Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 permanece aberto sem merge, com gate Linux e review publicados para o head de implementação registrado abaixo. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
 
 ## Preparação T001
 
@@ -1100,8 +1100,49 @@ no Windows sem CI=true; **82 de interface, seis do iniciador**. Cobertura LCOV
 Semgrep SKIP local por ausência no Windows; audit N/A sem dependências do app;
 baseline atualizada false. [Resumo sanitizado e 14 hashes das fontes](../../docs/reports/001-fase8-local.json).
 O iniciador PowerShell e o browser ficam fora do LCOV JavaScript; os testes reais
-locais demonstram seus comportamentos. O aceite Linux desta entrega será anexado
-depois do push, com Semgrep CE 1.179.0 de verdade e sem SKIP do scanner.
+locais demonstram seus comportamentos. O aceite Linux deste código está registrado abaixo, com Semgrep CE 1.179.0 de verdade e sem SKIP do scanner.
+
+## PR da Fase 8 — evidência remota e limites do review
+
+[PR #12](https://github.com/Browsher/crm-social/pull/12) aberto, **sem merge**.
+Head de implementação **1a58d1a3c3d6f53d99d3f6b7b881095b4f78883a**, base
+**88082c42fe53be20d92e4e16d955201fc463aeef**; 30 arquivos no review inicial.
+T039–T041 permanecem pendentes. O commit posterior de evidências altera somente
+documentação; os 14 hashes de código/testes continuam iguais ao gate local.
+
+| Check do head de implementação | Resultado e evidência |
+| --- | --- |
+| quality-gate | [SUCCESS no Linux](https://github.com/Browsher/crm-social/actions/runs/37239672740/job/111545662897), exit 0; tests, coverage, complexity e semgrep PASS, audit N/A; nove avisos de complexidade, baseline inalterada |
+| Semgrep do gate | CE **1.179.0** instalado e executado de verdade; PASS, nenhum SKIP do scanner |
+| review | [SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37239672631/job/111545662854), [comentário publicado](https://github.com/Browsher/crm-social/pull/12#issuecomment-5985114776) |
+| generate-tests / publish-tests | SKIPPED: não houve rótulo gerar-testes; não são testes do aplicativo |
+
+[Resumo sanitizado reproduzido do log oficial](../../docs/reports/001-fase8-ci.json).
+O workflow não conservou artefato com o **quality-gate-report.json original** nem
+publicou o stdout individual do runner. Não se atribuem números Windows ao CI:
+UI/PowerShell têm aplicabilidade local explícita. O relatório local completo
+mantém os percentuais/complexidade/hashes; o log oficial comprova os estados do
+mesmo código no Linux. Não foi alterado workflow para coletar evidência extra.
+
+O reviewer não encontrou Critical, segurança ou regressão. Seu **I-1** é uma
+pendência de evidência: pedia gate deste head e Semgrep real, agora registrados
+acima. Isso não exigiu mudança de código ou teste RED artificial. A sugestão de
+anexar o JSON original permanece limitada pela ausência do artefato; o resumo
+identifica expressamente sua procedência no log.
+
+| Achado do comentário inicial | Destino nesta rodada |
+| --- | --- |
+| m-1 — identidade triada pode ser promovida e tornar a consulta indisponível sem diagnóstico localizado | Limite conhecido antes de T039: importador valida a captura, mas não faz preflight da projeção; HTTP retorna 503 genérico. Não enfraquecer triagem nem prometer visualização de captura não demonstrada. Diagnóstico fixo/saneado ou validação antes da promoção merece regressão dedicada futura |
+| m-2 — caminhos extras do iniciador sem teste | Limite explícito no módulo: timeout/saída precoce do filho, CRM_NODE_PATH, porta padrão e DataDir relativo foram lidos, não executados. Os seis casos reais não provam esses caminhos |
+| m-3 — cabeçalho de tasks antigo | Corrigido: US1–US5 integradas e T035–T038 em PR próprio; somente T039–T041 pendentes |
+| m-4 — complexidade | Registrada: lerRecibo 12, selecionar 12 e capturaEscala 12; nove avisos no total, máximo 13, sem reprovação ou baseline nova |
+| m-5 — negativos com offset | Limite de cobertura: offset válido tem caso positivo; data impossível e offset inválido nesse ramo ainda não têm negativos dedicados |
+| m-6 — logs do iniciador | Limite conhecido: acumulam-se privadamente e o erro não inclui logDir; documentação deixa explícita a ausência de limpeza automática |
+
+Trecho do comentário: “Não encontrei nada Critical. Há uma pendência Important
+de evidência (o gate deste HEAD) e alguns Minor.” O comentário é revisão somente
+leitura, não execução de testes. As linhas mencionadas nele para o PowerShell
+não são números atuais do arquivo, que tem 71 linhas; localizar por função/ramo.
 
 ## Parada antes de T039 — preparo pela Central
 

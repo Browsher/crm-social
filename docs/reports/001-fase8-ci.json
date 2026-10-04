@@ -1,0 +1,47 @@
+{
+  "observadoEm": "2026-10-04",
+  "procedencia": "../../specs/001-consulta-local-producao/validacao.md",
+  "head": "1a58d1a3c3d6f53d99d3f6b7b881095b4f78883a",
+  "pr": "https://github.com/Browsher/crm-social/pull/12",
+  "scope": "CI Linux T035-T038; sem captura real e sem merge",
+  "source": "log oficial do job; resumo sanitizado, nao quality-gate-report.json original",
+  "gate": {
+    "url": "https://github.com/Browsher/crm-social/actions/runs/37239672740/job/111545662897",
+    "conclusion": "SUCCESS",
+    "exitCode": 0,
+    "baselineAtualizada": false,
+    "results": {
+      "tests": "PASS",
+      "coverage": "PASS",
+      "complexity": "PASS",
+      "semgrep": "PASS",
+      "audit": "N/A"
+    },
+    "complexityWarnings": 9,
+    "semgrepVersion": "1.179.0",
+    "semgrepSkip": false
+  },
+  "testCounts": null,
+  "testCountsReason": "O job nao publica stdout individual dos testes nem o quality-gate-report.json como artefato; nao inferir totais Linux dos totais Windows.",
+  "review": {
+    "url": "https://github.com/Browsher/crm-social/actions/runs/37239672631/job/111545662854",
+    "conclusion": "SUCCESS",
+    "comment": "https://github.com/Browsher/crm-social/pull/12#issuecomment-5985114776"
+  },
+  "sourceSha256": {
+    "Iniciar CRM.ps1": "164703fea9b02b536d5d016850dc1aae1fc892a8ccf7d1b132264f7cea42abe6",
+    "src/captura.cjs": "a4b63323aca3602307f77d316fc4090a56b03964834cf3c63bab9eb6699373bb",
+    "src/snapshot.cjs": "b1f29e7063bf7188fd82425e63eae2feb28e1558e9cf5f9b50dee04030296d68",
+    "src/projecao.cjs": "d3b6b91f2bba9f124eee26c5766b5f578c43908fe9cb065474062a62c2618a63",
+    "src/servidor.cjs": "ee4dc6c897265e96a9a7f3542f7599ef65fdcd54a0bb3b884e9ea8236b2a2456",
+    "src/web/app.js": "138da044104912d5771164e0c3ab52bc9ccfd97e2b5c581318cc9c406dd13d36",
+    "src/web/index.html": "b7871601db1c8e024ca0441f29223a1f1b76fb1933a0e07f366086806623fa99",
+    "src/web/styles.css": "0865d15dee9733ca56e207d5e93357b16978670e14966f0f69a122b38b86d19b",
+    "tests/iniciador.test.cjs": "f93d11bfdbf8e172748966cd61c196c39d0487fbc0d2e6821801dcfd21319c9c",
+    "tests/fixtures.cjs": "34f537f95eddcfb1253fd4a32a364ebb3c69ce24a4e22d5311474c760c9e9a5e",
+    "tests/projecao.test.cjs": "a2bb92cad67651a605b9cefb63e0e10af687adf35b4f47d30293fe2f6833a450",
+    "tests/interface.test.cjs": "14ec41154f3473e16fdaa09a5cd3fdd2b9d9651a67742f7600706e112dea51dc",
+    "tests/snapshot.test.cjs": "72747e3465c24d18fe2b85b71885623fa20e56a30846489d564e603b7fe7eb9b",
+    "tests/servidor.test.cjs": "1cb071717f2734b528bb156876da523248543b5dcc4bdfc2ed2a4dd000c01f62"
+  }
+}
