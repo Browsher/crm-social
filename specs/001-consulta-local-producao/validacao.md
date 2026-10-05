@@ -1372,6 +1372,26 @@ localmente; Google direto, escrita editorial e ciclo de mídia fora da 001.
 
 Sem mudança de arquitetura, contrato efetivo, constituição, código, gate,
 baseline, workflows, agentes oficiais ou regras do workspace pai. As pendências
-da revisão final permanecem limites conhecidos. Aceite Linux, comentário do
-review e merge do PR final serão registrados somente depois da conferência real.
-A branch 001 será mantida.
+da revisão final permanecem limites conhecidos. O aceite remoto observado está
+registrado abaixo; o merge depende dos checks do head final. A branch 001 será mantida.
+
+
+### Aceite remoto e review do PR final #13
+
+Head conferido: **1239ac2a974106ff757e1d10e582e8c111f34d8a**.
+[Quality gate Linux](https://github.com/Browsher/crm-social/actions/runs/37250427735/job/111576747781): **SUCCESS**. A tabela do gate estrito confirmou tests, coverage, complexity e **Semgrep CE 1.179.0 real PASS, sem SKIP**; audit N/A sem dependências de aplicação. **Exit 0; baseline atualizada: false**. Esse CI não comprova a interface ou o iniciador Windows: limites M8 permanecem.
+
+[Review do Claude](https://github.com/Browsher/crm-social/pull/13#issuecomment-5986436671), [execução SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37250427742/job/111576747658): nenhum Critical; dois Important e quatro Minor documentais. Não houve achado de segurança ou regressão.
+
+| Achado | Tratamento |
+| --- | --- |
+| I1, prova Linux do fechamento | Resultado, head, links, Semgrep real, exit e baseline registrados acima. |
+| I2, tipagem/vigência da captura | Limite visível no README e ROADMAP; decisão pendente do autor/Central registrada abaixo, sem converter a captura nem mudar contrato/código. |
+| M1, capturaId/contagens públicos | Publicação expressamente autorizada no pedido da T039; valores de células permanecem privados. |
+| M2, quickstart pendente no índice | Descrição corrigida para executado e repetível. |
+| M3, título futuro do quickstart | Título e link/âncora do README corrigidos. |
+| M4, credencial amarrada ao chat | Regra permanente com credencial própria fora do repositório. |
+
+**Decisão em aberto — tipagem da coleta:** autor e Central precisam decidir entre uma próxima captura que preserve números no formato previsto ou uma mudança explícita/aprovada do contrato. Até essa decisão, a captura demonstrada mantém vínculos/vigência a confirmar. Nenhuma célula foi corrigida, nenhuma coerção nova foi implementada e nenhuma validação foi relaxada.
+
+A rodada deste registro altera somente documentação. Os checks do novo head e a condição de merge serão conferidos após o push; as provas acima pertencem ao head indicado, sem antecipar resultado futuro.

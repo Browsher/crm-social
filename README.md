@@ -15,7 +15,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 - **Planejado:** 002 Planilhas; acesso somente leitura pelo servidor, credencial fora do repositório e emenda da constituição ainda por definir.
 - **Implementado:** importação/persistência privadas, API local, Planejamento, Produção, Planilha/Histórico e iniciador.
 - **Testado:** cinco camadas locais e comparação com captura real, conforme a [validação](specs/001-consulta-local-producao/validacao.md).
-- **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Runtime sem Google, escrita editorial ou comprovação de mídia/publicação.
+- **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Runtime sem Google, escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
 
 ## Onde começar
 
@@ -63,7 +63,7 @@ Start-Process $crmSession.url
 
 Se `CRM_NODE_PATH` não estiver definido, o iniciador resolve `node.exe` pelo PATH; confirmar Node 24.19.0 antes de iniciar. O retorno informa `processId`, `url`, `logDir` privado e uma orientação `encerrar`. Antes de encerrar, conferir que o PID ainda pertence à instância criada; parar somente esse processo. Porta ocupada não é encerrada pelo script.
 
-Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consulta-local-producao/quickstart.md#primeira-leitura-real-e-demonstração-futura): preparar JSON esquema 1, seis abas/66 mínimos, duas leituras completas com metadados e hashes concordantes, salvar privadamente em `data/entrada/<capturaId>.json`, importar com `& $crmNode scripts/importar-captura.cjs $crmCapturePath` e comparar os registros no CRM com essa mesma captura. Esse roteiro foi executado com captura real; novas capturas repetem a validação. Nenhuma fixture comprova coleta oficial.
+Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consulta-local-producao/quickstart.md#leitura-real-e-demonstração-local): preparar JSON esquema 1, seis abas/66 mínimos, duas leituras completas com metadados e hashes concordantes, salvar privadamente em `data/entrada/<capturaId>.json`, importar com `& $crmNode scripts/importar-captura.cjs $crmCapturePath` e comparar os registros no CRM com essa mesma captura. Esse roteiro foi executado com captura real; novas capturas repetem a validação. Nenhuma fixture comprova coleta oficial.
 
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 

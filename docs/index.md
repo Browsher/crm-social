@@ -47,7 +47,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [data-model.md](../specs/001-consulta-local-producao/data-model.md) | Modelo atual, entidades, guardas de leitura/projeção e transições; demonstração concluída, limites na validação |
 | [Contrato captura/consulta](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) | Envelope e 66 mínimos, persistência e UI completas; pendências explícitas |
 | [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T041 concluídas; rastreabilidade |
-| [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, oito suítes, iniciador, demo TEMP e roteiro da captura real pendente |
+| [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, oito suítes, iniciador, demo TEMP e roteiro da captura real executado em T039 e repetível |
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
 

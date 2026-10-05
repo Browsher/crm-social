@@ -171,7 +171,7 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T038, inclu
 
 Os arquivos de cada cenário e pares RED/GREEN estão em [tasks.md](tasks.md), com mapeamento de FR-001–016 e SC-001–009. SC-007 confere o mapa literal do quadro; SC-008, todas as seis tabelas/66 mínimos e tentativas; SC-009, teclado e 390/1440 nos cinco fluxos. Testes da interface bloqueiam e registram requisições externas; resultado esperado: zero. Dados mínimos registrados permitidos aparecem somente na consulta local; artefatos compartilháveis usam dados sintéticos.
 
-## Primeira leitura real e demonstração futura
+## Leitura real e demonstração local
 
 Procedimento executado com captura real em T039; resultados e limites na [validação](validacao.md). O dicionário não substitui a captura. Os comandos abaixo permitem repetir com nova captura privada; nunca editar à mão o arquivo coletado.
 

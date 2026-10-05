@@ -18,7 +18,7 @@ As seis features abaixo serão construídas em sequência. Somente a 001 recebe 
 
 **Implementação final local:** o [iniciador](docs/modules/iniciador.md) usa Node existente, processo oculto e logs privados. Leitura valida os recibos confirmados; projeção recusa identidade/vínculo alterado pela triagem e mantém mídia vigente a confirmar quando falta versão válida. Revisão e cenário sintético de escala têm evidência na [validação](specs/001-consulta-local-producao/validacao.md).
 
-**Entregue na 001:** T039 demonstrada com captura real, T040 aprovado localmente e T041 sincronizado. Limites e aceite remoto estão na [validação](specs/001-consulta-local-producao/validacao.md); leitura direta Google permanece planejada na 002.
+**Entregue na 001:** T039 demonstrada com captura real, T040 aprovado localmente e no Linux e T041 sincronizado. Vínculos/vigência da captura demonstrada ficam a confirmar por tipagem; limites e aceite remoto estão na [validação](specs/001-consulta-local-producao/validacao.md). Leitura direta Google permanece planejada na 002.
 
 **Resultado visível:** menu com Planejamento, Produção e Planilha. Planejamento mostra calendário com cartões, lista semanal, objetivo **Ainda não definido** e **N sem data**. Clicar no cartão ou no dia abre a gaveta do dia inteiro, com acordeões por peça. Produção organiza as peças em quadro por etapa, com **Outras** preservando valores desconhecidos. Planilha apresenta as seis abas capturadas e Histórico. O selo de status tem quatro estados; no celular, Planejamento usa lista e a gaveta ocupa a tela.
 
@@ -30,11 +30,13 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## 002 — Planilhas
 
-**Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço com chave configurada fora do repositório e nunca enviada ao navegador. Não herdar autenticação deste chat.
+**Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço com chave configurada fora do repositório e nunca enviada ao navegador. Credencial própria, fora do repositório.
 
 **Dependências:** concluir a 001 e aprovar uma emenda explícita da constituição antes de implementar a leitura direta. Definir contrato de acesso mínimo, erros, cobertura e integridade; ampliar a captura para **Agentes, Controle e Execucoes**, além das seis abas da 001. A identidade real de Agentes é `Coluna 1`. Não renomear cabeçalhos remotos nem colocar chave/captura em fixtures.
 
 **Aceite:** leitura sem escritas em Google/Drive, credenciais fora da interface e do Git, falha preservando a última captura válida e sua data. As três abas novas mantêm fonte/horário e servem à 006; cadastro ou flag não prova agenda ativa ou integração. A 002 não cria fonte de objetivo mensal: **Ainda não definido** permanece até o contrato da 003. Esta rodada registra a emenda como futura e conserva a constituição vigente.
+
+**Decisão pendente da demonstração:** autor e Central precisam decidir a tipagem da próxima coleta e, se necessária, uma mudança explícita do contrato. O acompanhamento e o efeito sobre vínculos/vigência estão na [validação](specs/001-consulta-local-producao/validacao.md). Não converter a captura existente nem relaxar validação silenciosamente.
 
 ## 003 — Planejamento mensal e repasse ao Diretor
 
