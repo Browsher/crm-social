@@ -6,6 +6,28 @@ const path=require('node:path');
 const {capturaValida,capturaPlanilha,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario,campos,recalcularHashes}=require('./fixtures.cjs');
 const {promoverCaptura,registrarFalhaEntrada,lerEstado,atualizarCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=carregarModulo('src/servidor.cjs',['criarServidor']);
+const {capturaMeses}=require('./fixtures.cjs');
+const {coletarCaptura}=require('../src/coleta.cjs');
+test('H003 POST coleta Meses, GET não busca rede e falha conserva bytes/horário',async t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-05T12:00:00Z')});
+  let dataDir,calls=0,invalid=false;
+  const raw=capturaMeses(),client={spreadsheetId:raw.spreadsheetId,
+    async getMetadata(){calls++;return {spreadsheetId:raw.spreadsheetId,properties:{timeZone:'America/Sao_Paulo'},sheets:Object.entries(raw.metadataBefore).map(([title,m])=>({properties:{title,sheetId:m.sheetId,gridProperties:m}}))};},
+    async batchGet(ranges){calls++;return {spreadsheetId:raw.spreadsheetId,valueRanges:Object.values(raw.tables).map((tab,i)=>({range:invalid&&i===6?"'Meses'!A1:D19":ranges[i],majorDimension:'ROWS',values:tab.values}))};}
+  };
+  const a=await ambiente(t,true,{atualizar:()=>atualizarCaptura(dataDir,()=>coletarCaptura(client,{capturaId:invalid?'mensal-http-invalida':'mensal-http'}))});dataDir=a.dataDir;
+  const post=()=>request(a.port,'/api/atualizar','POST',{Origin:'http://127.0.0.1:'+a.port,'Content-Type':'application/json'},'{}');
+  assert.equal((await post()).status,200);
+  const view=JSON.parse((await request(a.port,'/api/visao')).body);
+  assert.equal(view.planilha.at(-1).nome,'Meses');assert.equal(view.planilha.at(-1).linhas[0].objetivo,'Organizar conteúdo sintético');
+  assert.equal(calls,4);
+  const file=path.join(dataDir,'capturas','mensal-http.json'),before=fs.readFileSync(file);invalid=true;
+  const failed=await post();assert.equal(failed.status,422);assert.equal(JSON.parse(failed.body).categoria,'dados');
+  assert.deepEqual(fs.readFileSync(file),before);
+  const confirmed=JSON.parse((await request(a.port,'/api/visao')).body);
+  assert.deepEqual(confirmed.captura,view.captura);assert.deepEqual(confirmed.planilha,view.planilha);
+  assert.equal(lerEstado(dataDir).ultimaTentativa.resultado,'falhou');
+});
 async function ambiente(t,captura=true,options={}) {
   const root=temporario(t), webDir=path.join(root,'web'), dataDir=path.join(root,'privado'), quadroConfigPath=path.join(root,'mapa.json');
   fs.mkdirSync(webDir); fs.mkdirSync(dataDir);

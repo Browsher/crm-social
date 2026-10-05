@@ -26,7 +26,8 @@ function metadata(body,id){
   const timeZone=body.properties?.timeZone;
   formatador(timeZone);exigir(typeof timeZone==='string');
   const result={};
-  for(const nome of nomes){
+  const capturados=body.sheets.some(s=>s?.properties?.title==='Meses')?[...nomes,'Meses']:nomes;
+  for(const nome of capturados){
     const matches=body.sheets.filter(s=>s?.properties?.title===nome);exigir(matches.length===1);
     const p=matches[0].properties,g=p.gridProperties;
     exigir(Number.isInteger(p.sheetId)&&p.sheetId>=0&&g&&Number.isInteger(g.rowCount)&&g.rowCount>0&&Number.isInteger(g.columnCount)&&g.columnCount>0);
@@ -40,9 +41,10 @@ function converter(values,nome,timeZone){
   return values.map((row,i)=>row.map((value,j)=>i>0&&campos.includes(values[0][j])&&typeof value==='number'?dataSerial(value,timeZone,values[0][j]==='publicado_em'):value));
 }
 function tabelas(body,id,before,readAt){
-  exigir(body&&body.spreadsheetId===id&&Array.isArray(body.valueRanges)&&body.valueRanges.length===nomes.length);
+  const capturados=Object.keys(before.meta);
+  exigir(body&&body.spreadsheetId===id&&Array.isArray(body.valueRanges)&&body.valueRanges.length===capturados.length);
   const result={};
-  nomes.forEach((nome,i)=>{
+  capturados.forEach((nome,i)=>{
     const m=before.meta[nome],range='A1:'+letraColuna(m.columnCount)+m.rowCount,r=body.valueRanges[i];
     exigir(r&&r.majorDimension==='ROWS'&&[`${nome}!${range}`,`'${nome}'!${range}`].includes(r.range));
     result[nome]={sheetId:m.sheetId,range,readAt,complete:true,values:converter(r.values,nome,before.timeZone)};
@@ -53,7 +55,7 @@ async function coletarCaptura(client,{now=()=>new Date(),capturaId=randomUUID()}
   const stamp=()=>new Date(now()).toISOString(),startedAt=stamp();
   try{
     const before=metadata(await client.getMetadata(),client.spreadsheetId);
-    const ranges=nomes.map(nome=>`'${nome}'!A1:${letraColuna(before.meta[nome].columnCount)}${before.meta[nome].rowCount}`);
+    const ranges=Object.keys(before.meta).map(nome=>`'${nome}'!A1:${letraColuna(before.meta[nome].columnCount)}${before.meta[nome].rowCount}`);
     const first=tabelas(await client.batchGet(ranges),client.spreadsheetId,before,stamp());
     const firstReadSha256=hashCelulas(first);
     const second=tabelas(await client.batchGet(ranges),client.spreadsheetId,before,stamp());

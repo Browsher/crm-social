@@ -10,9 +10,30 @@ function fake(raw=capturaValida(),mutate=()=>{}) {
   return {calls,spreadsheetId:raw.spreadsheetId,
     async getMetadata(){calls.push('meta');const result={spreadsheetId:raw.spreadsheetId,properties:{timeZone:'UTC'},
       sheets:Object.entries(raw.metadataBefore).map(([title,m])=>({properties:{title,sheetId:m.sheetId,gridProperties:{rowCount:m.rowCount,columnCount:m.columnCount}}}))};mutate(result,'meta',++metas);return result;},
-    async batchGet(ranges){calls.push('batch');assert.equal(ranges.length,6);const result={spreadsheetId:raw.spreadsheetId,valueRanges:Object.entries(raw.tables).map(([title,t],i)=>({range:ranges[i],majorDimension:'ROWS',values:structuredClone(t.values)}))};mutate(result,'batch',++reads);return result;}
+    async batchGet(ranges){calls.push('batch');assert.equal(ranges.length,Object.keys(raw.tables).length);const result={spreadsheetId:raw.spreadsheetId,valueRanges:Object.entries(raw.tables).map(([title,t],i)=>({range:ranges[i],majorDimension:'ROWS',values:structuredClone(t.values)}))};mutate(result,'batch',++reads);return result;}
   };
 }
+const {capturaMeses}=require('./fixtures.cjs');
+test('C003 duas leituras incluem Meses com range completo e mes textual/serial conservado',async()=>{
+  for(const mes of ['2026-10',46300]) {
+    const client=fake(capturaMeses([[mes,'ntv','Objetivo','Pauta A']]));
+    const raw=await coleta.coletarCaptura(client,{now:()=>new Date('2026-10-05T12:00:00Z')});
+    assert.equal(Object.keys(raw.tables).length,7);assert.equal(raw.tables.Meses.range,'A1:D20');
+    assert.equal(validarCaptura(raw).meses[0].mes,mes);assert.equal(raw.firstReadSha256,hashCelulas(raw.tables));
+    assert.deepEqual(client.calls,['meta','batch','batch','meta']);
+  }
+});
+for(const [nome,raw,mutate] of [
+  ['criação',capturaValida(),(r,k,n)=>{if(k==='meta'&&n===2)r.sheets.push({properties:{title:'Meses',sheetId:6,gridProperties:{rowCount:20,columnCount:4}}});}],
+  ['remoção',capturaMeses(),(r,k,n)=>{if(k==='meta'&&n===2)r.sheets.pop();}],
+  ['id',capturaMeses(),(r,k,n)=>{if(k==='meta'&&n===2)r.sheets.at(-1).properties.sheetId++;}],
+  ['mudança somente Meses',capturaMeses(),(r,k,n)=>{if(k==='batch'&&n===2)r.valueRanges.at(-1).values[1][2]='Mudança';}],
+  ['range parcial',capturaMeses(),(r,k)=>{if(k==='batch')r.valueRanges.at(-1).range="'Meses'!A1:D19";}],
+  ['header',capturaMeses(),(r,k)=>{if(k==='batch')r.valueRanges.at(-1).values[0][2]='outro';}]
+]) test('C003 recusa '+nome+' sem retry',async()=>{
+  const client=fake(raw,mutate);await assert.rejects(()=>coleta.coletarCaptura(client),{categoria:'dados'});
+  assert.ok(client.calls.filter(c=>c==='batch').length<=2);
+});
 test('C01 duas batchGet tipadas, ranges completos, hashes e fonte direta v1',async()=>{
   const raw=capturaValida();mudarCelula(raw,'Produções',1,'data_prevista',46296);
   const client=fake(raw),result=await coleta.coletarCaptura?.(client,{now:()=>new Date('2026-10-05T12:00:00Z'),capturaId:'nova-sintetica'});

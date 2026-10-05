@@ -12,6 +12,39 @@ const {carregarMapaQuadro}=require('../src/quadro-config.cjs');
 const {validarCaptura}=require('../src/captura.cjs');
 const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
+const {capturaMeses}=require('./fixtures.cjs');
+test('P003 Meses opcional filtra marca/extras e preserva raiz, semanas e contagens',t=>{
+  const raw=capturaMeses([['2026-10','ntv','Objetivo sintético','Pauta A','privado'],['2026-10','outra','Outra marca',''],['2026-11','','Sem marca','']],['extra']);
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const legacy=projetarVisao(estado(capturaValida(),t),NOW,mapaQuadroValido());
+  assert.deepEqual(Object.keys(view).sort(),envelope);assert.deepEqual(view.semanas,legacy.semanas);
+  assert.deepEqual(view.captura.contagens,legacy.captura.contagens);
+  assert.deepEqual(view.planilha.at(-1),{nome:'Meses',cabecalhos:['mes','marca_id','objetivo','pautas'],quantidadeLinhas:1,linhas:[{mes:'2026-10',marca_id:'ntv',objetivo:'Objetivo sintético',pautas:'Pauta A'}]});
+  assert.doesNotMatch(JSON.stringify(view),/Outra marca|Sem marca|privado|extra/);
+});
+test('P003 duplicatas preservadas com aviso em cada linha física inclusive após vazios',t=>{
+  const raw=capturaMeses([['2026-10','ntv','A',''],[],['2026-10','ntv','B',''],['2026-10','outra','C',''],['2026-11','ntv','D','']]);
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.equal(view.planilha.at(-1).linhas.length,3);
+  assert.deepEqual(view.avisos.filter(a=>a.aba==='Meses'),[2,4].map(linha=>({aba:'Meses',linha,campo:'mes',motivo:'Mês e marca repetidos'})));
+  assert.equal(view.estado,'atualizada_hoje');
+});
+test('P003 meses/tipos inválidos avisam sem eco e texto credenciado é redigido',t=>{
+  const raw=capturaMeses([['2026-13','ntv',12,true],[46000,'ntv','',''],['2026-01','ntv','Veja https://usuario:senha@exemplo.invalid/item hoje','<b>Texto literal</b>'],['2026-02','outra',12,true]]);
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const avisos=view.avisos.filter(a=>a.aba==='Meses');
+  for(const [linha,campo,motivo] of [[2,'mes','Mês inválido'],[2,'objetivo','Texto mensal inválido'],[2,'pautas','Texto mensal inválido'],[3,'mes','Mês inválido'],[4,'objetivo','conteúdo sensível suprimido']]) assert.ok(avisos.some(a=>a.linha===linha&&a.campo===campo&&a.motivo===motivo));
+  assert.equal(avisos.length,5);
+  assert.equal(view.planilha.at(-1).linhas[2].objetivo,'Veja [conteúdo suprimido] hoje');
+  assert.doesNotMatch(JSON.stringify(view),/usuario:senha|exemplo.invalid/);
+});
+test('P003 nova captura sem Meses remove somente opcional e não herda objetivo',t=>{
+  const dir=temporario(t);promoverCaptura(capturaMeses(),dir);
+  const next=capturaValida();next.capturaId='meses-removida';redefinirHorario(next,'2026-10-02T12:06:00Z','2026-10-02T12:07:00Z');
+  assert.equal(promoverCaptura(next,dir).resultado,'completa');
+  const view=projetarVisao(lerEstado(dir),NOW,mapaQuadroValido());
+  assert.equal(view.planilha.length,6);assert.ok(!view.planilha.some(a=>a.nome==='Meses'));
+});
 function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
 const colunasQuadro=['Planejamento','Redação','Visual','Mídia','Revisão','Pronta','Publicada','Outras'];
 test('P002 fonte direta enum e seis tabelas de 66 campos, sem envelope privado',t=>{

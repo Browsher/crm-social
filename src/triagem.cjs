@@ -1,4 +1,4 @@
-const {CAMPOS}=require('./captura.cjs');
+const {CAMPOS,CAMPOS_MESES,linhaMensal}=require('./captura.cjs');
 const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 // Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
 const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
@@ -54,7 +54,7 @@ function selecionarNtv(captura,avisos,origens,validadeJson) {
   const ids=new Set(producoes.map(r=>r.producao_id)), weeks=new Set(semanas.map(r=>r.semana_id));
   const linhas=[semanas,producoes,captura.paginas.filter(r=>ids.has(r.producao_id)),captura.cenas.filter(r=>ids.has(r.producao_id)),
     captura.arquivos.filter(r=>ids.has(r.producao_id) || (!r.producao_id && weeks.has(r.semana_id))),captura.revisoes.filter(r=>ids.has(r.producao_id))];
-  return Object.fromEntries(Object.entries(CAMPOS).map(([nome,fields],i)=>{
+  const result=Object.fromEntries(Object.entries(CAMPOS).map(([nome,fields],i)=>{
     const table=captura.envelope.tables[nome],keyIndex=table.values[0].indexOf(fields[0]);
     const fisicas=new Map(table.values.slice(1).map((row,index)=>[row[keyIndex],index+2]));
     return [chaves[i],linhas[i].map(r=>{
@@ -68,6 +68,20 @@ function selecionarNtv(captura,avisos,origens,validadeJson) {
       return selected;
     })];
   }));
+  if(Object.hasOwn(captura,'meses')) {
+    const grupos=new Map();
+    result.meses=captura.meses.filter(r=>r.marca_id==='ntv').map(record=>{
+      const linha=linhaMensal(record),selected=selecionar(record,CAMPOS_MESES,'Meses',linha,avisos);
+      origens.set(selected,{aba:'Meses',linha});
+      const avisar=(campo,motivo)=>avisos.push({aba:'Meses',linha,campo,motivo});
+      if(typeof selected.mes!=='string'||!/^\d{4}-(?:0[1-9]|1[0-2])$/.test(selected.mes)) avisar('mes','Mês inválido');
+      else {const grupo=grupos.get(selected.mes)??[];grupo.push(linha);grupos.set(selected.mes,grupo);}
+      for(const campo of ['objetivo','pautas']) if(selected[campo]!==''&&typeof selected[campo]!=='string') avisar(campo,'Texto mensal inválido');
+      return selected;
+    });
+    for(const grupo of grupos.values()) if(grupo.length>1) for(const linha of grupo) avisos.push({aba:'Meses',linha,campo:'mes',motivo:'Mês e marca repetidos'});
+  }
+  return result;
 }
 function validarIdentidadesNtv(captura) {
   try { selecionarNtv(captura,[],new WeakMap(),new WeakMap()); }

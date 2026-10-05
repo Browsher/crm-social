@@ -6,6 +6,16 @@ const path=require('node:path');
 const {capturaValida,temporario,redefinirHorario,mudarCelula}=require('./fixtures.cjs');
 const {lerEstado,promoverCaptura}=require('../src/snapshot.cjs');
 const cli=path.resolve(__dirname,'../scripts/importar-captura.cjs');
+const {capturaMeses}=require('./fixtures.cjs');
+test('C003 CLI aceita opcional e recusa estrutura incompleta sem substituir bytes',t=>{
+  const dir=temporario(t),data=path.join(dir,'dados'),input=path.join(dir,'entrada.json'),raw=capturaMeses();
+  fs.writeFileSync(input,JSON.stringify(raw));assert.equal(executar([input,'--data-dir',data]).status,0);
+  const file=path.join(data,'capturas',raw.capturaId+'.json'),before=fs.readFileSync(file);
+  raw.capturaId='meses-cli-incompleta';delete raw.metadataAfter.Meses;
+  fs.writeFileSync(input,JSON.stringify(raw));assert.equal(executar([input,'--data-dir',data]).status,1);
+  assert.deepEqual(fs.readFileSync(file),before);
+  assert.equal(lerEstado(data).captura.envelope.completedAt,raw.completedAt);
+});
 function executar(args) {
   if (!fs.existsSync(cli)) return spawnSync(process.execPath,['-e',"process.stderr.write('CLI ainda não implementado'); process.exitCode=70;"],{encoding:'utf8'});
   return spawnSync(process.execPath,[cli,...args],{encoding:'utf8'});

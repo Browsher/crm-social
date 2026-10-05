@@ -8,6 +8,62 @@ const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const CI=process.env.CI==='true';
 const skip=CI?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
+const {capturaMeses}=require('./fixtures.cjs');
+for(const width of [1440,390]) test('U003 Planilha preserva Meses completa, duplicatas, avisos e teclado em '+width,{skip},async t=>{
+  const rows=[['2026-10','ntv','A','A\nB\nC\nD\nE\nF\nG'],[],['2026-10','ntv','B','Outra pauta'],['2026-10','outra','C','Ignorar']];
+  const page=await abrir(t,width,true,()=>{},()=>{},()=>capturaMeses(rows));
+  await page.locator('#selo').click();const tabs=page.locator('#abas-planilha [role=tab]');
+  assert.deepEqual(await tabs.evaluateAll(ns=>ns.map(n=>n.dataset.aba)),['Semanas','Produções','Páginas','Cenas','Arquivos','Revisoes','Meses','Histórico']);
+  await page.locator('[data-aba="Revisoes"]').focus();await page.keyboard.press('ArrowRight');
+  assert.equal(await page.locator('[data-aba="Meses"]').getAttribute('aria-selected'),'true');
+  assert.equal(await page.locator('[data-aba="Meses"]').evaluate(n=>document.activeElement===n),true);
+  assert.deepEqual(await page.locator('#dados-planilha th').allTextContents(),['mes','marca_id','objetivo','pautas']);
+  assert.match(await page.locator('#dados-planilha').textContent(),/2 linhas da NTV/);
+  assert.equal(await page.locator('#dados-planilha tbody tr').count(),2);
+  assert.equal(await page.locator('#dados-planilha tbody tr').first().locator('td').nth(3).textContent(),'A\nB\nC\nD\nE\nF\nG');
+  const avisos=page.locator('#avisos-tabela tbody tr').filter({hasText:'Mês e marca repetidos'});
+  assert.equal(await avisos.count(),2);assert.deepEqual(await avisos.evaluateAll(ns=>ns.map(n=>[...n.cells].map(c=>c.textContent))),[['Meses','2','mes','Mês e marca repetidos'],['Meses','4','mes','Mês e marca repetidos']]);
+  await page.keyboard.press('End');assert.equal(await page.locator('[data-aba="Histórico"]').getAttribute('aria-selected'),'true');
+  await page.keyboard.press('Home');assert.equal(await page.locator('[data-aba="Semanas"]').getAttribute('aria-selected'),'true');
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+});
+test('U003 Planilha Meses vazia existe e Histórico localiza falha estrutural',{skip},async t=>{
+  const page=await abrir(t,390,true,()=>{},dir=>{
+    const bad=capturaMeses();bad.capturaId='meses-historico-incompleta';bad.tables.Meses.complete=false;promoverCaptura(bad,dir);
+  },()=>capturaMeses([]));
+  await page.locator('#selo').click();await page.locator('[data-aba="Meses"]').click();
+  assert.match(await page.locator('#dados-planilha').textContent(),/0 linhas da NTV.*Nenhuma linha/s);
+  await page.locator('[data-aba="Histórico"]').click();
+  assert.match(await page.locator('tr[data-resultado="falhou"]').textContent(),/Aba Meses incompleta/);
+});
+for(const width of [1440,390]) test('U003 card acompanha mês, conserva texto literal e não cria ações em '+width,{skip},async t=>{
+  const page=await abrir(t,width,true,()=>{},()=>{},()=>capturaMeses([
+    ['2026-10','ntv','Objetivo de outubro sintético',' Primeira\r\n\r\n Segunda \nTerceira\nQuarta\nQuinta\nSexta\nSétima'],
+    ['2026-10','outra','Outra marca','Ignorar'],['2026-11','ntv','<img src=x onerror=alert(1)>','<b>Pauta literal</b>']
+  ]));
+  const card=page.locator('#objetivo-mes');
+  assert.match(await card.textContent(),/Objetivo de outubro sintético/);
+  assert.deepEqual(await card.locator('li').allTextContents(),['Primeira','Segunda','Terceira','Quarta','Quinta']);
+  assert.match(await card.textContent(),/\+2/);assert.equal(await card.locator('a,button,input,textarea,img').count(),0);
+  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  assert.match(await card.textContent(),/<img src=x onerror=alert\(1\)>/);
+  assert.deepEqual(await card.locator('li').allTextContents(),['<b>Pauta literal</b>']);
+  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  assert.match(await card.textContent(),/Ainda não definido/);assert.equal(await card.locator('li').count(),0);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+});
+for(const [nome,rows,objetivo,itens] of [
+  ['ausente',null,'Ainda não definido',[]],['vazia',[],'Ainda não definido',[]],
+  ['objetivo vazio',[['2026-10','ntv','','Pauta A']],'Ainda não definido',['Pauta A']],
+  ['tipos inválidos',[['2026-10','ntv',12,true]],'Ainda não definido',[]],
+  ['cinco',[['2026-10','ntv','Objetivo','A\nB\nC\nD\nE']],'Objetivo',['A','B','C','D','E']],
+  ['zero',[['2026-10','ntv','Objetivo',' \r\n\n']],'Objetivo',[]],
+  ['duplicada',[['2026-10','ntv','A','Pauta A'],['2026-10','ntv','B','Pauta B']],'A confirmar',[]]
+]) test('U003 card '+nome,{skip},async t=>{
+  const page=await abrir(t,390,true,()=>{},()=>{},rows===null?capturaValida:()=>capturaMeses(rows));
+  const card=page.locator('#objetivo-mes');assert.match(await card.textContent(),new RegExp(objetivo));
+  assert.deepEqual(await card.locator('li').allTextContents(),itens);assert.doesNotMatch(await card.textContent(),/\+\d/);
+});
 async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixture=capturaValida,mapa=mapaQuadroValido(),incluirSemData=true) {
   t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE || 'playwright');

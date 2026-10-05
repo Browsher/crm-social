@@ -10,6 +10,10 @@ const CAMPOS = Object.freeze({
 });
 const nomes = Object.keys(CAMPOS);
 const saidas = ['semanas','producoes','paginas','cenas','arquivos','revisoes'];
+const CAMPOS_MESES=Object.freeze(['mes','marca_id','objetivo','pautas']);
+const linhasMeses=new WeakMap();
+const linhaMensal=record=>linhasMeses.get(record);
+const nomesCapturados=tables=>Object.hasOwn(tables,'Meses')?[...nomes,'Meses']:nomes;
 const vazio = value => value === '' || value === null;
 const objeto = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const idSeguro = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,100}$/.test(value);
@@ -21,8 +25,8 @@ function instanteUtc(value) {
   const time=Date.parse(value);
   return Number.isFinite(time) && new Date(time).toISOString().slice(0,19)===value.slice(0,19);
 }
-function mesmosNomes(value) {
-  return objeto(value) && Object.keys(value).sort().join('|')===nomes.slice().sort().join('|');
+function mesmosNomes(value,esperados) {
+  return objeto(value) && Object.keys(value).sort().join('|')===esperados.slice().sort().join('|');
 }
 function validarEnvelope(raw) {
   exigir(objeto(raw),'envelope');
@@ -34,7 +38,9 @@ function validarEnvelope(raw) {
   exigir(instanteUtc(raw.startedAt),'startedAt');
   exigir(instanteUtc(raw.completedAt),'completedAt');
   exigir(Date.parse(raw.startedAt)<=Date.parse(raw.completedAt),'intervalo');
-  exigir(mesmosNomes(raw.tables) && mesmosNomes(raw.metadataBefore) && mesmosNomes(raw.metadataAfter),'abas');
+  exigir(objeto(raw.tables),'abas');
+  const esperados=nomesCapturados(raw.tables);
+  exigir(mesmosNomes(raw.tables,esperados) && mesmosNomes(raw.metadataBefore,esperados) && mesmosNomes(raw.metadataAfter,esperados),'abas');
 }
 function letraColuna(n) {
   let name='';
@@ -69,18 +75,22 @@ function conferirCabecalhos(headers,nome) {
     exigir(!seen.has(h),nome+' cabeçalho duplicado');
     seen.add(h);
   }
-  for (const field of CAMPOS[nome]) exigir(seen.has(field),nome+' '+field);
+  for (const field of nome==='Meses'?CAMPOS_MESES:CAMPOS[nome]) exigir(seen.has(field),nome+' '+field);
 }
 function registros(table,nome) {
   const [headers,...rows]=table.values;
   conferirCabecalhos(headers,nome);
-  const key=CAMPOS[nome][0], seen=new Set(), result=[];
+  const key=CAMPOS[nome]?.[0], seen=new Set(), result=[];
   rows.forEach((row,index) => {
     if (row.every(vazio)) return;
     const record=Object.fromEntries(headers.filter(h=>!vazio(h)).map(h=>[h,row[headers.indexOf(h)] ?? '']));
-    const id=record[key];
-    exigir(typeof id==='string' && id.trim()!=='' && !seen.has(id),nome+' linha '+(index+2)+' '+key);
-    seen.add(id); result.push(record);
+    if(nome==='Meses') linhasMeses.set(record,index+2);
+    else {
+      const id=record[key];
+      exigir(typeof id==='string' && id.trim()!=='' && !seen.has(id),nome+' linha '+(index+2)+' '+key);
+      seen.add(id);
+    }
+    result.push(record);
   });
   return result;
 }
@@ -94,7 +104,7 @@ function matrizCanonica(values) {
   return rows;
 }
 function hashCelulas(tables) {
-  const pairs=nomes.slice().sort().map(nome=>{
+  const pairs=nomesCapturados(tables).slice().sort().map(nome=>{
     const t=tables[nome];
     return [nome,{sheetId:t.sheetId,range:t.range,values:matrizCanonica(t.values)}];
   });
@@ -103,7 +113,7 @@ function hashCelulas(tables) {
 function validarCaptura(raw) {
   validarEnvelope(raw);
   const result={envelope:structuredClone(raw)};
-  nomes.forEach((nome,index)=>{
+  nomesCapturados(raw.tables).forEach((nome,index)=>{
     const meta=conferirMetadata(raw,nome), table=raw.tables[nome];
     exigir(objeto(table),nome+' tabela');
     exigir(table.sheetId===meta.sheetId,nome+' metadata sheetId');
@@ -111,7 +121,7 @@ function validarCaptura(raw) {
     exigir(table.range==='A1:'+letraColuna(meta.columnCount)+meta.rowCount,nome+' range');
     exigir(instanteUtc(table.readAt) && Date.parse(table.readAt)>=Date.parse(raw.startedAt) && Date.parse(table.readAt)<=Date.parse(raw.completedAt),nome+' readAt');
     conferirMatriz(table,meta,nome);
-    result[saidas[index]]=registros(table,nome);
+    result[nome==='Meses'?'meses':saidas[index]]=registros(table,nome);
   });
   exigir(typeof raw.secondReadSha256==='string' && /^[a-f0-9]{64}$/.test(raw.secondReadSha256),'hash');
   exigir(raw.firstReadSha256===raw.secondReadSha256 && raw.secondReadSha256===hashCelulas(raw.tables),'hash');
@@ -122,4 +132,4 @@ function validarTempoImportacao(completedAt,nowIso,completedAtVigente=null) {
   if (fim>Date.parse(nowIso)+10*60*1000) throw new Error('captura inválida: completedAt excede o relógio local em mais de 10 minutos');
   if (completedAtVigente!==null && fim<=Date.parse(completedAtVigente)) throw new Error('captura desatualizada: completedAt igual ou anterior ao da vigente');
 }
-module.exports={validarCaptura,validarTempoImportacao,CAMPOS,idSeguro,instanteUtc,hashCelulas,letraColuna};
+module.exports={validarCaptura,validarTempoImportacao,CAMPOS,CAMPOS_MESES,linhaMensal,idSeguro,instanteUtc,hashCelulas,letraColuna};
