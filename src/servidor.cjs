@@ -1,7 +1,7 @@
 const http=require('node:http');
 const fs=require('node:fs');
 const path=require('node:path');
-const {lerEstado,atualizarCaptura}=require('./snapshot.cjs');
+const {lerEstado,atualizarCaptura,MOTIVOS_TEMPO}=require('./snapshot.cjs');
 const {criarClienteGoogle,MOTIVOS}=require('./google.cjs');
 const {coletarCaptura}=require('./coleta.cjs');
 const {projetarVisao}=require('./projecao.cjs');
@@ -31,7 +31,8 @@ function corpoVazio(req){
 function respostaAtualizacao(result){
   const categoria=Object.hasOwn(MOTIVOS,result.categoria)?result.categoria:null;
   const ok=['completa','sem_alteracao'].includes(result.resultado);
-  return {status:ok?200:categoria==='dados'?422:503,body:{resultado:ok?result.resultado:'falhou',mensagem:ok?'Dados atualizados':MOTIVOS[categoria]??'Atualização indisponível; última captura não foi alterada',categoria:ok?null:categoria,registrada:!!categoria||result.resultado==='completa',avisos:result.avisos?.length?['falha ao liberar a trava; confira o estado local']:[]}};
+  const temporal=categoria==='dados'&&Object.values(MOTIVOS_TEMPO).includes(result.motivoResumo)?result.motivoResumo:null;
+  return {status:ok?200:categoria==='dados'?422:503,body:{resultado:ok?result.resultado:'falhou',mensagem:ok?'Dados atualizados':temporal??MOTIVOS[categoria]??'Atualização indisponível; última captura não foi alterada',categoria:ok?null:categoria,registrada:!!categoria||result.resultado==='completa',avisos:result.avisos?.length?['falha ao liberar a trava; confira o estado local']:[]}};
 }
 async function postAtualizar(req,res,atualizar){
   if(req.url!=='/api/atualizar')return enviar(req,res,400,'text/plain; charset=utf-8','Requisição inválida');

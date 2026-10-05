@@ -27,6 +27,8 @@ Datas de publicação: fração arredondada a milissegundo, conversão com round
 | rede | Não foi possível ler a planilha; tente novamente | 503 |
 | dados | Captura inválida ou planilha mudou entre as leituras | 422 |
 
+Recusa pela ordem temporal continua na categoria `dados` e HTTP 422, com motivo fixo próprio: **Captura desatualizada; a vigente foi preservada** quando o fim não supera o da vigente; **Horário da captura mais de 10 minutos no futuro** quando excede a tolerância local. O servidor só repassa esses dois motivos por allowlist, nunca uma mensagem arbitrária do coletor. Status e Histórico mostram o mesmo motivo legível; o importador da Central conserva os motivos anteriores.
+
 Preservar vigente/completedAt; confirmar recibo de falha quando possível, para selo/Histórico. Lock ocupado: 409/mensagem fixa, sem coletar/recibo concorrente. I/O sem confirmação: 503/falha não registrada; não entra nas quatro categorias Google, nem finge Histórico. Cleanup close/unlink separados; avisos[] contém só texto fixo de trava e aparece na mensagem curta da UI, sem mudar resultado original.
 
 ## HTTP/UI

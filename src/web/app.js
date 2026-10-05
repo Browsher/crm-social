@@ -409,6 +409,8 @@ function motivoHistorico(motivo) {
   const rotulos={
     'captura inválida: completedAt excede o relógio local em mais de 10 minutos':'Horário da captura mais de 10 minutos no futuro',
     'captura desatualizada: completedAt igual ou anterior ao da vigente':'Captura desatualizada; a vigente foi preservada',
+    'Captura desatualizada; a vigente foi preservada':'Captura desatualizada; a vigente foi preservada',
+    'Horário da captura mais de 10 minutos no futuro':'Horário da captura mais de 10 minutos no futuro',
     'arquivo local ausente ou ilegível':'Arquivo local ausente ou ilegível',
     'JSON inválido no arquivo local':'Formato do arquivo local inválido'
   };

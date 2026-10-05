@@ -15,6 +15,7 @@ async function abrir(t,width){
   const server=criarServidor({dataDir,port:0,quadroConfigPath:map,atualizar:()=>atualizarCaptura(dataDir,async()=>{
     calls++;await new Promise(r=>{release=r;});if(mode==='falha')throw falha('rede');
     const raw=capturaValida();raw.source='google-sheets-api';raw.capturaId='direta-interface-'+calls;
+    if(mode==='desatualizada')return raw;
     redefinirHorario(raw,'2026-10-05T11:00:00Z',`2026-10-05T11:${String(calls).padStart(2,'0')}:00Z`);return raw;
   }).then(r=>warning?{...r,avisos:['falha ao liberar a trava; confira o estado local']}:r)});
   await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch();
@@ -64,4 +65,15 @@ test('U002 POST falhou e GET falhou: motivo original nao vira sucesso',{skip},as
   await a.page.locator('#atualizar').click();await a.page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
   await a.page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
   assert.equal(await a.page.locator('#resultado-atualizacao').textContent(),'Não foi possível ler a planilha; tente novamente · consulta local indisponível');
+});
+
+for(const width of [1440,390])test('U002 recusa temporal mostra motivo no status e no Historico em '+width,{skip},async t=>{
+  const a=await abrir(t,width),previous=await a.page.locator('#fim-captura').textContent();
+  a.setMode('desatualizada');await a.page.locator('#atualizar').click();
+  await a.page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
+  await a.page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+  assert.equal(await a.page.locator('#resultado-atualizacao').textContent(),'Captura desatualizada; a vigente foi preservada');
+  assert.equal(await a.page.locator('#fim-captura').textContent(),previous);
+  await a.page.locator('#abas-planilha [data-aba="Histórico"]').click();
+  assert.ok((await a.page.locator('tr[data-resultado="falhou"]').textContent()).includes('Captura desatualizada; a vigente foi preservada'));
 });

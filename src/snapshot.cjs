@@ -4,6 +4,10 @@ const {randomUUID}=require('node:crypto');
 const {validarCaptura,validarTempoImportacao,idSeguro,instanteUtc}=require('./captura.cjs');
 const {validarIdentidadesNtv}=require('./triagem.cjs');
 const {MOTIVOS}=require('./google.cjs');
+const MOTIVOS_TEMPO=Object.freeze({
+  'captura desatualizada: completedAt igual ou anterior ao da vigente':'Captura desatualizada; a vigente foi preservada',
+  'captura inválida: completedAt excede o relógio local em mais de 10 minutos':'Horário da captura mais de 10 minutos no futuro'
+});
 
 function json(file) { return JSON.parse(fs.readFileSync(file,'utf8')); }
 function ponteiro(dataDir) {
@@ -147,7 +151,8 @@ function promoverComTrava(raw,dataDir,direta=false) {
     return confirmar(dataDir,before.estado,recibo(raw,'completa',''),raw.capturaId);
   } catch (e) {
     if(direta&&e.code)throw new Error('persistência: falha não pôde ser registrada');
-    const reason=direta?MOTIVOS.dados:(e.message.endsWith(': inválido') ? e.message : motivoSeguro(e));
+    const temporal=Object.hasOwn(MOTIVOS_TEMPO,e.message)?MOTIVOS_TEMPO[e.message]:MOTIVOS.dados;
+    const reason=direta?temporal:(e.message.endsWith(': inválido') ? e.message : motivoSeguro(e));
     try {
       const result=confirmar(dataDir,before.estado,recibo(raw,'falhou',reason),before.estado.capturaId);
       return direta?{...result,categoria:'dados'}:result;
@@ -176,4 +181,4 @@ async function coletarComTrava(dataDir,coletar) {
   }
   return promoverComTrava(raw,dataDir,true);
 }
-module.exports={promoverCaptura,lerEstado,registrarFalhaEntrada,atualizarCaptura};
+module.exports={promoverCaptura,lerEstado,registrarFalhaEntrada,atualizarCaptura,MOTIVOS_TEMPO};

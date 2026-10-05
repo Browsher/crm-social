@@ -6,6 +6,8 @@ Selecionar Node24.19.0 conforme [001](../001-consulta-local-producao/quickstart.
 
 Importação manual: node scripts/importar-captura.cjs seguido de caminho privado do arquivo escolhido pelo autor; --data-dir opcional TEMP. GET/arquivo não dependem de chave. Não corrigir captura recusada à mão.
 
+Se a leitura direta informar **Captura desatualizada; a vigente foi preservada**, a candidata não é posterior à captura local vigente; isso pode ocorrer enquanto uma captura da Central adiantada dentro da tolerância de 10 minutos ainda supera o relógio local. **Horário da captura mais de 10 minutos no futuro** indica que a candidata excedeu essa tolerância. Ambas preservam captura/data e registram falha de categoria `dados`, sem atribuir o problema a uma mudança da planilha. Confira o relógio local e o fim exibido da captura; não edite seus bytes nem force a promoção.
+
 ## Tarefa do autor, pendente
 
 1. Criar conta de serviço dedicada e habilitar Sheets API no próprio projeto Google Cloud.

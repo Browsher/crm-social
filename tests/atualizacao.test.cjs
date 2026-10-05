@@ -57,3 +57,27 @@ test('A06 I/O na candidata direta nao confirma categoria dados nem recibo falso'
   assert.deepEqual(fs.readFileSync(path.join(dir,'atual.json')),before);
   assert.equal(snapshot.lerEstado(dir).historico.length,1);assert.equal(snapshot.lerEstado(dir).captura.envelope.completedAt,raw.completedAt);
 });
+
+test('A07 recusa temporal direta confirma motivo proprio e preserva vigente',async t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-05T12:00:00Z')});
+  const dir=temporario(t),vigente=capturaValida();
+  redefinirHorario(vigente,'2026-10-05T12:00:00Z','2026-10-05T12:05:00Z');
+  snapshot.promoverCaptura(vigente,dir);
+  const file=path.join(dir,'capturas',vigente.capturaId+'.json'),bytes=fs.readFileSync(file);
+  for(const [fim,mensagem] of [
+    ['2026-10-05T12:00:00Z','Captura desatualizada; a vigente foi preservada'],
+    ['2026-10-05T12:11:00Z','Horário da captura mais de 10 minutos no futuro']
+  ]){
+    const raw=nova();raw.capturaId+='-'+fim.slice(14,16);
+    redefinirHorario(raw,'2026-10-05T11:59:00Z',fim);
+    const result=await snapshot.atualizarCaptura(dir,async()=>raw);
+    assert.equal(result.resultado,'falhou');assert.equal(result.categoria,'dados');
+    assert.equal(result.motivoResumo,mensagem);
+    const state=snapshot.lerEstado(dir);
+    assert.equal(state.ultimaTentativa.motivoResumo,mensagem);
+    assert.equal(state.captura.envelope.completedAt,vigente.completedAt);
+    assert.equal(state.estado.capturaId,vigente.capturaId);
+    assert.deepEqual(fs.readFileSync(file),bytes);
+    assert.equal(fs.existsSync(path.join(dir,'capturas',raw.capturaId+'.json')),false);
+  }
+});

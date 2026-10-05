@@ -4,7 +4,7 @@ const http=require('node:http');
 const fs=require('node:fs');
 const path=require('node:path');
 const {capturaValida,capturaPlanilha,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario,campos,recalcularHashes}=require('./fixtures.cjs');
-const {promoverCaptura,registrarFalhaEntrada,lerEstado}=require('../src/snapshot.cjs');
+const {promoverCaptura,registrarFalhaEntrada,lerEstado,atualizarCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=carregarModulo('src/servidor.cjs',['criarServidor']);
 async function ambiente(t,captura=true,options={}) {
   const root=temporario(t), webDir=path.join(root,'web'), dataDir=path.join(root,'privado'), quadroConfigPath=path.join(root,'mapa.json');
@@ -54,6 +54,51 @@ test('H002 POST local permitido; guards antes do callback e GET sem rede',async 
   ])assert.equal((await request(port,url,method,h,body)).status,status);
   assert.equal(calls,1);
 });
+
+test('H002 composicao padrao sem configuracao confirma falha sem fetch e preserva captura',async t=>{
+  const keys=['CRM_GOOGLE_CREDENTIALS_FILE','CRM_SPREADSHEET_ID'];
+  const saved=keys.map(key=>[key,process.env[key]]);
+  t.after(()=>{for(const [key,value] of saved){if(value===undefined)delete process.env[key];else process.env[key]=value;}});
+  for(const key of keys)delete process.env[key];
+  const spy=t.mock.method(globalThis,'fetch',()=>{throw new Error('rede nao permitida no teste');});
+  const {port,dataDir}=await ambiente(t);
+  // Uma falha ativa nao deve virar frescor/sucesso por causa de POST ou GET.
+  registrarFalhaEntrada(dataDir,'ENTRADA_JSON');
+  const pointer=path.join(dataDir,'atual.json'),beforeBytes=fs.readFileSync(pointer),before=JSON.parse(beforeBytes);
+  const file=path.join(dataDir,'capturas',before.capturaId+'.json'),bytes=fs.readFileSync(file);
+  const completedAt=lerEstado(dataDir).captura.envelope.completedAt;
+  const initial=await request(port,'/api/visao');assert.equal(initial.status,200);
+  const initialView=JSON.parse(initial.body);
+  assert.deepEqual(fs.readFileSync(pointer),beforeBytes);
+  const response=await request(port,'/api/atualizar','POST',{Origin:'http://127.0.0.1:'+port,'Content-Type':'application/json'},'{}');
+  assert.equal(response.status,503);
+  assert.deepEqual(JSON.parse(response.body),{resultado:'falhou',mensagem:'Configuração da leitura indisponível',categoria:'configuracao',registrada:true,avisos:[]});
+  const state=lerEstado(dataDir);
+  assert.equal(state.ultimaTentativa.resultado,'falhou');
+  assert.equal(state.ultimaTentativa.motivoResumo,'Configuração da leitura indisponível');
+  assert.equal(state.historico.length,before.historicoIds.length+1);
+  assert.deepEqual(fs.readFileSync(file),bytes);
+  assert.equal(state.captura.envelope.completedAt,completedAt);
+  assert.equal(state.estado.capturaId,before.capturaId);
+  assert.deepEqual(JSON.parse(fs.readFileSync(pointer,'utf8')),{
+    ...before,ultimaTentativaId:state.ultimaTentativa.tentativaId,
+    historicoIds:[...before.historicoIds,state.ultimaTentativa.tentativaId]
+  });
+  const receipt=JSON.parse(fs.readFileSync(path.join(dataDir,'tentativas',state.ultimaTentativa.tentativaId+'.json'),'utf8'));
+  assert.deepEqual(receipt,state.ultimaTentativa);
+  const confirmedBytes=fs.readFileSync(pointer),after=await request(port,'/api/visao');
+  assert.equal(after.status,200);const view=JSON.parse(after.body);
+  assert.deepEqual(view.captura,initialView.captura);
+  assert.equal(view.captura.completedAt,completedAt);
+  assert.equal(view.estado,'falha_atualizacao');
+  assert.deepEqual(view.selo,initialView.selo);
+  assert.deepEqual(view.selo,{texto:'Atualização falhou',cor:'vermelho',destino:'planilha'});
+  const reread=JSON.parse((await request(port,'/api/visao')).body);
+  assert.deepEqual(reread.captura,view.captura);assert.deepEqual(reread.selo,view.selo);
+  assert.deepEqual(fs.readFileSync(pointer),confirmedBytes);
+  assert.deepEqual(fs.readFileSync(file),bytes);
+  assert.equal(spy.mock.callCount(),0);
+});
 test('H002 categorias e I/O retornam somente motivo fixo; nenhum dado privado',async t=>{
   for(const categoria of ['configuracao','acesso','rede','dados',null]){
     const {port}=await ambiente(t,true,{atualizar:async()=>{
@@ -71,6 +116,26 @@ test('H002 erro original e aviso de trava permanecem seguros no HTTP',async t=>{
   const r=await request(port,'/api/atualizar','POST',{Origin:'http://127.0.0.1:'+port,'Content-Type':'application/json'},'{}');
   assert.equal(r.status,503);assert.deepEqual(JSON.parse(r.body).avisos,['falha ao liberar a trava; confira o estado local']);
   assert.doesNotMatch(r.body,/privado/);
+});
+
+test('H002 recusa temporal direta informa motivo fixo no POST e no recibo',async t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-05T12:00:00Z')});
+  let dataDir;
+  const env=await ambiente(t,true,{atualizar:()=>atualizarCaptura(dataDir,async()=>{
+    const raw=capturaValida();raw.source='google-sheets-api';raw.capturaId='direta-tempo-http';
+    return raw;
+  })});dataDir=env.dataDir;
+  const pointerBefore=lerEstado(dataDir).estado,captureFile=path.join(dataDir,'capturas',pointerBefore.capturaId+'.json');
+  const captureBytes=fs.readFileSync(captureFile);
+  const response=await request(env.port,'/api/atualizar','POST',{Origin:'http://127.0.0.1:'+env.port,'Content-Type':'application/json'},'{}');
+  assert.equal(response.status,422);
+  const body=JSON.parse(response.body);
+  assert.equal(body.categoria,'dados');assert.equal(body.registrada,true);
+  assert.equal(body.mensagem,'Captura desatualizada; a vigente foi preservada');
+  const state=lerEstado(dataDir);
+  assert.equal(state.ultimaTentativa.motivoResumo,body.mensagem);
+  assert.equal(state.estado.capturaId,pointerBefore.capturaId);
+  assert.deepEqual(fs.readFileSync(captureFile),captureBytes);
 });
 test('H01 ausência estruturada não vira dados de demonstração', async t => {
   const {port}=await ambiente(t,false);

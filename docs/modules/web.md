@@ -168,3 +168,5 @@ O selo é calculado no último GET. Se a página atravessar a meia-noite de São
 ## Atualização da 002
 
 atualizar envia somente JSON vazio à API local; não conhece chave, token ou ID da fonte. O servidor decide configuração privada. Mensagens de POST preservadas, inclusive quando GET posterior falha; aviso de liberação usa texto fixo sem transformar o resultado original. Dados/filtros/aba permanecem na falha, e finally libera o botão. Testes em [atualizacao-interface.test.cjs](../../tests/atualizacao-interface.test.cjs); seis screenshots sintéticos e limites na [validação da 002](../../specs/002-consulta-planilhas/validacao.md).
+
+Recusas temporais diretas mostram motivo próprio no status da atualização e no Histórico; `motivoHistorico` aceita somente os dois textos fixos novos além dos motivos legados. Os casos sintéticos em 1440/390 verificam captura/data preservadas e a mesma mensagem nas duas apresentações.
