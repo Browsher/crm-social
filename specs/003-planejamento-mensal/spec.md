@@ -22,10 +22,10 @@ Como autor, quero ver o objetivo e as pautas do mês exibido em Planejamento par
 
 **Acceptance Scenarios**:
 
-1. **Given** uma única linha para o mês exibido e a NTV, **When** abre Planejamento ou troca de mês, **Then** o card **Objetivo do mês** mostra o objetivo correspondente e até cinco pautas, na ordem da célula; pautas restantes aparecem como **+N**.
-2. **Given** aba ausente, vazia ou sem linha para esse mês/marca, **When** consulta o mês, **Then** o card mostra **Ainda não definido**, sem objetivo inferido de temas semanais.
-3. **Given** duas ou mais linhas para a mesma marca e mês, mesmo com textos iguais, **When** consulta o mês, **Then** o card mostra **A confirmar**, sem escolher objetivo/pautas de uma linha, e os avisos localizados ficam na Planilha.
-4. **Given** uma linha com objetivo vazio e pautas preenchidas, **When** consulta o mês, **Then** o objetivo mostra **Ainda não definido** e as pautas válidas continuam na lista curta. Linhas vazias dentro da célula de pautas não contam no **+N**.
+1. **Given** uma única linha para o mês exibido e a NTV, **When** abre Planejamento ou troca de mês, **Then** o card **Objetivo do mês** mostra o objetivo correspondente na cor principal e até cinco pautas, na ordem da célula; pautas restantes aparecem como **+N pautas**, com singular **+1 pauta**.
+2. **Given** aba ausente, vazia ou sem linha para esse mês/marca, **When** consulta o mês, **Then** o card mostra **Ainda não definido** apagado, sem objetivo inferido de temas semanais.
+3. **Given** duas ou mais linhas para a mesma marca e mês, mesmo com textos iguais, **When** consulta o mês, **Then** o card mostra **A confirmar** apagado, sem escolher objetivo/pautas de uma linha, e os avisos localizados ficam na Planilha.
+4. **Given** uma linha com objetivo vazio e pautas preenchidas, **When** consulta o mês, **Then** o objetivo mostra **Ainda não definido** e as pautas válidas continuam na lista curta. Linhas vazias dentro da célula de pautas não contam no **+N pautas**.
 
 ### User Story 2 — Atualizar incluindo Meses sem perder compatibilidade (Priority: P2)
 
@@ -71,8 +71,8 @@ Como autor, quero consultar a tabela Meses e localizar linhas duplicadas na mesm
 - **FR-001**: O CRM DEVE consultar a aba opcional **Meses** com somente as colunas mínimas **mes**, **marca_id**, **objetivo**, **pautas**, criada e preenchida manualmente pelo autor. Não DEVE exigir campos extras nem escrever na fonte.
 - **FR-002**: Capturas sem Meses DEVEM continuar válidas com as seis abas obrigatórias das 001/002, inclusive pelo caminho da Central. A ausência estável não DEVE causar aviso de dados nem migração/regravação de arquivos históricos.
 - **FR-003**: **Atualizar dados** DEVE incluir Meses quando existir, usando a mesma coleta íntegra da 002; mudança de presença/conteúdo durante a coleta ou falha estrutural DEVE preservar captura vigente/data e registrar a falha pelas regras existentes. Consulta local não DEVE buscar Google.
-- **FR-004**: O card **Objetivo do mês** DEVE acompanhar o mês exibido em Planejamento e a marca NTV. Uma linha correspondente mostra seu objetivo; ausência de linha ou objetivo vazio mostra **Ainda não definido**.
-- **FR-005**: As pautas DEVEM aparecer como lista de no máximo cinco linhas não vazias, na ordem original, com **+N** para o restante. A célula completa DEVE permanecer consultável na Planilha; não adicionar botão de plano, editor ou campos extras no card.
+- **FR-004**: O card **Objetivo do mês** DEVE acompanhar o mês exibido em Planejamento e a marca NTV. Uma linha correspondente mostra seu objetivo textual definido na cor principal; ausência de linha ou objetivo vazio mostra **Ainda não definido** apagado. **A confirmar** também DEVE usar o tom apagado.
+- **FR-005**: As pautas DEVEM aparecer como lista de no máximo cinco linhas não vazias, na ordem original, com **+N pautas** para o restante, flexionando **+1 pauta** quando restar uma. O marcador DEVE ser separado do texto do objetivo e das pautas. A célula completa DEVE permanecer consultável na Planilha; não adicionar botão de plano, editor ou campos extras no card.
 - **FR-006**: Duas ou mais linhas para o mesmo mês/marca DEVEM gerar aviso de dados localizado na Planilha e estado **A confirmar** no card, sem objetivo/pautas arbitrários, sem sobrescrever linhas e sem invalidar uma captura estruturalmente íntegra.
 - **FR-007**: A aba Meses DEVE aparecer na Planilha somente quando capturada, mesmo vazia, com as quatro colunas, contagem NTV e os comportamentos existentes de teclado, foco, seleção e rolagem. Avisos DEVEM ficar no painel existente; nenhum texto de aviso longo no card.
 - **FR-008**: Dados mensais inválidos DEVEM produzir avisos localizados, sem associação inventada; textos DEVEM seguir a triagem/privacidade da consulta existente. Nenhum dado real, identificador de planilha, e-mail de conta ou segredo DEVE entrar em arquivo versionado, exemplo público ou log.
@@ -89,10 +89,10 @@ Como autor, quero consultar a tabela Meses e localizar linhas duplicadas na mesm
 ### Measurable Outcomes
 
 - **SC-001**: Em dois meses sintéticos distintos, trocar o mês mostra o objetivo correto; aba/linha ausente e objetivo vazio mostram **Ainda não definido**, sem inferência.
-- **SC-002**: Células sintéticas com 0, 5 e 7 pautas mostram respectivamente 0, 5 e 5 itens; a última mostra **+2**. Linhas vazias e CRLF não alteram a contagem esperada.
+- **SC-002**: Células sintéticas com 0, 5, 6 e 7 pautas mostram respectivamente 0, 5, 5 e 5 itens; as duas últimas mostram **+1 pauta** e **+2 pautas**. Até cinco itens não exibem marcador, mesmo com `+2` literal no objetivo ou em uma pauta. Linhas vazias e CRLF não alteram a contagem esperada.
 - **SC-003**: Em duplicata sintética de marca/mês, o card mostra **A confirmar**, todas as linhas aparecem na Planilha e cada linha envolvida tem aviso; mesmo mês de outra marca não cria conflito NTV.
 - **SC-004**: Capturas sintéticas antigas da 001/002/Central mantêm importação, hash, horário e seis tabelas; captura nova com Meses inclui a opcional na integridade, e mudança somente nela é percebida. Falha preserva a vigente.
-- **SC-005**: Card e tabela funcionam em 1440/390 px sem corte horizontal da página; a aba Meses e os avisos funcionam por teclado, e a seleção se recupera quando a opcional desaparece.
+- **SC-005**: Card e tabela funcionam em 1440/390 px sem corte horizontal da página; objetivo definido usa cor principal, Ainda não definido/A confirmar usam tom apagado após navegação; a aba Meses e os avisos funcionam por teclado, e a seleção se recupera quando a opcional desaparece.
 - **SC-006**: Testes das cinco camadas usam somente fixtures/fakes/TEMP; nenhuma consulta ou teste escreve no Google, altera agentes/workflows/metas, produz mídia ou publica.
 
 ## Assumptions

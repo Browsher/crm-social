@@ -16,7 +16,7 @@ Preservar as seis obrigatórias e seu descriptor `CAMPOS`; criar descriptor sepa
 
 - Somente consulta local NTV; quatro mínimos: `mes`, `marca_id`, `objetivo`, `pautas`. CRM nunca escreve no Google, Drive, n8n ou agentes.
 - Meses é opcional; captura antiga não sofre migração, regravação ou novo hash. Seis obrigatórias e 66 mínimos permanecem intactos.
-- Card: até cinco pautas, restante `+N`; sem aba/linha/objetivo, `Ainda não definido`; duplicata, `A confirmar` e nenhum texto escolhido.
+- Card: objetivo definido na cor principal; até cinco pautas, restante `+N pautas`/`+1 pauta`; sem aba/linha/objetivo, `Ainda não definido`; duplicata, `A confirmar` e nenhum texto escolhido. Apenas esses dois estados usam tom apagado.
 - A preparação manual de Meses é do autor; não bloqueia implementação ou testes com fakes/fixtures/TEMP. T021/aceite da 002 bloqueia somente o merge.
 - Não alterar tools/configuração/baseline do gate, autenticação, endpoints ou dependências. Nenhum perfil, agenda, meta semanal ou vínculo mês/semana novo.
 - Sem dados reais, IDs privados, e-mails de conta ou segredo em Git/relatórios/logs. Aplicação/testes locais usam somente fixtures e TEMP; nenhuma consulta real nesta implementação.
@@ -51,7 +51,7 @@ Conferido antes da pesquisa e novamente após o desenho: sem exceção ou emenda
 
 ### Documentation (this feature)
 
-`spec.md`, `plan.md`, `research.md`, `data-model.md`, `contracts/meses.md`, `quickstart.md`, `checklists/requirements.md` e `tasks.md`. Evidências executadas em [validacao.md](validacao.md), [gate local](../../docs/reports/003-local-gate.json) e screenshots sintéticos; não comprovam integração real.
+`spec.md`, `plan.md`, `research.md`, `data-model.md`, `contracts/meses.md`, `quickstart.md`, `checklists/requirements.md` e `tasks.md`. Evidências executadas em [validacao.md](validacao.md), [gate local inicial](../../docs/reports/003-local-gate.json), [gate local dos ajustes](../../docs/reports/003-ajustes-local-gate.json) e screenshots sintéticos; não comprovam integração real.
 
 ### Source Code (repository root) — implementação local
 
@@ -86,4 +86,4 @@ Conferido antes da pesquisa e novamente após o desenho: sem exceção ou emenda
 
 ## Complexity Tracking
 
-Sem violação constitucional, novo módulo de coordenação ou infraestrutura. Extensão localizada dos módulos existentes. Gate local em Node 24.19.0: 312 testes PASS sem pulos, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A por ausência de dependências de aplicação; relatório e limites na [validação](validacao.md). Integração real e aceite Linux/reviews do PR permanecem pendentes.
+Sem violação constitucional, novo módulo de coordenação ou infraestrutura. Extensão localizada dos módulos existentes. Gate local dos ajustes, fonte `84ab509`, em Node 24.19.0: 320 testes PASS sem pulos, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos e baseline preservada. `objetivoMensal` passou de complexidade 12 para 14, abaixo do bloqueio em 21. Semgrep SKIP por ausência no Windows e audit N/A por ausência de dependências de aplicação; relatório e limites na [validação](validacao.md). Gate/review Linux de `f020d26` são da rodada anterior; checks/review dos ajustes atuais e integração real permanecem pendentes.

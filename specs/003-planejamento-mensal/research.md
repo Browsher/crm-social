@@ -22,8 +22,8 @@ Data: 2026-10-05. Decisões de planejamento preservadas e conferidas na implemen
 
 ## 4. Consulta mínima
 
-**Decisão:** Meses é tabela opcional de `visao.planilha`; card filtra o mês exibido em `state.mes`. Objetivo vazio não definido; pautas LF/CRLF, primeiras cinco e +N; célula completa na Planilha.
-**Motivo:** evita propriedade raiz/rota nova e vínculo com semana. Renderização por `textContent` e mesma redação de texto existente.
+**Decisão:** Meses é tabela opcional de `visao.planilha`; card filtra o mês exibido em `state.mes`. Objetivo textual definido na cor principal; Ainda não definido/A confirmar apagados. Pautas LF/CRLF, primeiras cinco e +N pautas, singular +1 pauta; célula completa na Planilha.
+**Motivo:** evita propriedade raiz/rota nova e vínculo com semana. Renderização por `textContent` e mesma redação de texto existente. O booleano textual `definido` mantém conteúdo e classe coerentes ao navegar; `.more-topics` separa o contador de texto literal como `+2`.
 **Alternativas:** botões de execução/editor/plano detalhado, leitura livre de Drive e lógica de agentes ampliariam o produto além do reescopo.
 
 ## 5. Validação semântica e preparação

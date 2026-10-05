@@ -24,7 +24,7 @@ Chave semântica: `(marca_id, mes)`; não é unicidade estrutural da captura. Du
 
 ## Estados derivados do card
 
-Filtrar linhas NTV com mes válido igual ao `state.mes` exibido. Zero linhas: Ainda não definido, sem pautas. Uma: objetivo textual ou Ainda não definido, com lista curta derivada de pautas textuais. Duas ou mais: A confirmar, sem objetivo/pautas de qualquer candidata.
+Filtrar linhas NTV com mes válido igual ao `state.mes` exibido. Zero linhas: Ainda não definido, sem pautas. Uma: objetivo textual ou Ainda não definido, com lista curta derivada de pautas textuais. Duas ou mais: A confirmar, sem objetivo/pautas de qualquer candidata. O objetivo textual definido usa cor principal; somente os estados Ainda não definido/A confirmar ficam apagados. A lista mantém até cinco pautas; o restante aparece em marcador separado +N pautas, singular +1 pauta, sem interpretar números do texto registrado como contador.
 
 O servidor publica os registros triados e os avisos; o navegador apenas deriva o card, sem outra autoridade ou requisição remota. Pautas inválidas nunca viram strings artificiais. Na Planilha, escalares originais permitidos continuam visíveis como dados, conforme as regras existentes de apresentação.
 

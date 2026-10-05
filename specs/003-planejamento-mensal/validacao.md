@@ -38,7 +38,8 @@ Gerados no servidor real em porta efêmera com Playwright existente; somente fix
 | Estado | 1440 px | 390 px |
 | --- | --- | --- |
 | Objetivo e pautas | [Desktop](../../docs/design/screenshots/003-objetivo-1440.png) | [Celular](../../docs/design/screenshots/003-objetivo-390.png) |
-| Cinco pautas e +2 | [Desktop](../../docs/design/screenshots/003-mais-1440.png) | [Celular](../../docs/design/screenshots/003-mais-390.png) |
+| Cinco pautas e +2 pautas | [Desktop](../../docs/design/screenshots/003-mais-1440.png) | [Celular](../../docs/design/screenshots/003-mais-390.png) |
+| Cinco pautas e +1 pauta | [Desktop](../../docs/design/screenshots/003-mais-um-1440.png) | [Celular](../../docs/design/screenshots/003-mais-um-390.png) |
 | Ainda não definido | [Desktop](../../docs/design/screenshots/003-indefinido-1440.png) | [Celular](../../docs/design/screenshots/003-indefinido-390.png) |
 | A confirmar | [Desktop](../../docs/design/screenshots/003-confirmar-1440.png) | [Celular](../../docs/design/screenshots/003-confirmar-390.png) |
 | Meses na Planilha | [Desktop](../../docs/design/screenshots/003-planilha-1440.png) | [Celular](../../docs/design/screenshots/003-planilha-390.png) |
@@ -77,3 +78,28 @@ I1 corrigido nesta rodada: `docs/design/telas.md` agora registra a 003 implement
 M4/M5/M6 são sugestões preventivas de código sem defeito atual: cópias/cabeçalhos da projeção, guarda contra clones futuros e consolidação de seletor CSS. Permanecem opcionais, junto dos avisos de complexidade e da asserção mais específica registrados na rodada anterior; nenhuma mudança de código/teste nesta correção documental.
 
 Comparação registrada: `git diff --exit-code 3f8c1a6 9ef4e6b -- src tests tools .github .quality-gate quality-gate.config.json` retornou 0 sem diff. O código validado e seus testes permanecem idênticos. Esta correção altera somente documentação/relatórios; seus checks e novo review devem ser conferidos no PR antes do encerramento, sem atribuir a ela o resultado de um head anterior. T002/T015 e T021 permanecem pendentes; PR aberto, sem merge.
+
+## Ajustes visuais e quatro Minor do PR #15 — 05/10/2026
+
+Rodada anterior `f020d26852bf1881377da2f65657169b3f343973`: [gate Linux SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37374848470) e [review publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6003221284), 0 Critical/Important, sem segurança/regressão e quatro Minor. Esses resultados são históricos, não comprovam o novo código desta rodada.
+
+O autor pediu objetivo definido com a cor principal dos títulos, estilo apagado somente para os estados provisórios, `+N pautas`/`+1 pauta`, ajustes triviais dos quatro Minor e screenshots atualizados. Implementado na fonte `84ab509241b68097b89f4016a19ec312124b50ee`, autor/committer noreply e sem coautoria. Nenhuma mudança de API, projeção, captura, fonte, dependência, tools/CI/baseline ou constituição.
+
+- RED: `node --test --test-name-pattern U003 tests/interface.test.cjs`, Node 24.19.0, Playwright existente, sem CI; **20 testes, 12 PASS / 8 FAIL**, zero pulos, exit 1. Falhas naturais nas duas larguras: objetivo definido ainda apagado e marcadores `+1`/`+2` sem a unidade. Sandbox EPERM foi contornado por execução local autorizada; não foi contado como RED.
+- GREEN: mesmo comando, **20/20 PASS**, zero FAIL/SKIP. O objetivo textual de registro único usa `--ink`; `.month-placeholder` recebe apenas os estados provisórios. O marcador identifica pautas e flexiona o singular; cinco/zero pautas não criam marcador. Navegação volta dos estados provisórios ao objetivo definido sem conservar a cor apagada.
+- Suíte completa/gate: `node tools/quality-gate.mjs` em Windows, **320 PASS sem pulos**, cobertura **98,36601307189542%**, drop 0, complexidade PASS com 17 avisos; `objetivoMensal` passa de 12 a 14, abaixo de 21. Semgrep SKIP por ausência no Windows, audit N/A e baselineUpdated:false, exit 0. [Relatório desta rodada](../../docs/reports/003-ajustes-local-gate.json), com fonte validada e HEAD real do processo distinguidos; [relatório inicial](../../docs/reports/003-local-gate.json) preservado.
+
+| Minor do review f020d26 | Tratamento nesta rodada |
+| --- | --- |
+| m1 — evidência sem delimitar head | README/AGENTS/ROADMAP e índice identificam expressamente o CI/review anterior `f020d26`; o resumo JSON `9ef4e6b` é histórico. O aceite dos novos checks será conferido e publicado no PR com o head exato, sem promover prova anterior. |
+| m2 — objetivo definido apagado | Cor principal para objetivo definido; classe e cor apagada somente para os estados provisórios, com teste computado em 1440/390. |
+| m3 — concordância da duplicata entre card/triagem | Teste de integração verifica mês único + outra marca, duplicatas do mês seguinte (avisos nas linhas físicas 4/6) e mês com espaços inválido (linha 8), confrontando card e Planilha nas duas larguras. Essa regressão já passava antes do ajuste, sem RED fabricado; nenhuma nova propriedade na API. |
+| m4 — asserções sobre todo o card | `.more-topics` exato/ausente; objetivo e pauta contêm `+2` em fixture com cinco itens, sem falso marcador. Também já passava como regressão antes da implementação. |
+
+Refactor mínimo adicional: seletor `.brief-icon` consolidado, preservando `flex-shrink:0`. As sugestões anteriores de centralizar cabeçalhos ou adicionar guarda contra clones futuros continuam preventivas/opcionais, sem defeito atual comprovado; não ampliar arquitetura para este ajuste.
+
+Review independente local da fatia `f020d26` → `84ab509`: **0 Critical, 0 Important, 0 Minor**, sem problema de segurança/regressão identificado. Limites: revisão offline dos diffs/evidências fornecidos pelo coordenador, perfil integral e recortes contratuais; não executou testes nem leu autonomamente os arquivos/relatório integral/imagens. A prova local foi executada pelo coordenador; review remoto novo ainda depende do push.
+
+Os dez screenshots anteriores foram regenerados e os dois do singular acrescentados, todos com fixtures sintéticas/servidor real loopback/TEMP e Playwright existente. **12 imagens inspecionadas**, zero request externo/erro JavaScript, página sem corte horizontal; Planilha em 390 conserva rolagem local. A tabela acima aponta para as imagens desta rodada, com objetivo principal, `+2 pautas`, `+1 pauta`, Ainda não definido, A confirmar e Meses.
+
+Doc-sync-onboarding: 14 Markdown afetados sincronizados, 389 links relativos conferidos, cercas balanceadas, sem alterar dados/fontes/constituição. Documentação de evidências desta seção e índice local sincronizados pelo coordenador. **13/15 tarefas** mantidas; T002/T015 do autor pendentes e T021 da 002 continua bloqueando somente o merge. Nenhuma demonstração real ou escrita operacional. Novos checks/review do head enviado devem ser conferidos antes do encerramento; PR permanece aberto, sem merge/auto-merge.

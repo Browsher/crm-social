@@ -24,7 +24,7 @@ O HTML importa somente `/styles.css` e `/app.js`; o JavaScript consulta GET /api
 | Atualizar dados | POST {} e depois GET; botão desabilitado até o fim, mensagem curta role=status |
 | Erro de consulta | Mensagem local; visão/selo já carregados são preservados e botão é liberado; sem visão anterior mostra Consulta indisponível |
 | Captura ausente | Peça a primeira leitura à Central, sem fallback fictício |
-| Objetivo mensal | Mês exibido em `state.mes`: objetivo e até cinco pautas/+N, Ainda não definido se ausente/vazio e A confirmar em duplicatas; sem botão Plano do mês |
+| Objetivo mensal | Mês exibido em `state.mes`: objetivo definido na cor principal e até cinco pautas/+N pautas (singular +1 pauta); Ainda não definido se ausente/vazio e A confirmar em duplicatas, ambos apagados; sem botão Plano do mês |
 
 Os handlers são instalados uma vez antes da primeira consulta, com Planejamento como tela inicial. `reler` consulta a API, atualiza `state.view` após uma resposta bem-sucedida e renderiza sem trocar a tela escolhida. O botão é liberado em `finally`, inclusive após 503, permitindo nova tentativa. Sem visão anterior, `render` retorna sem acessar dados: filtros continuam seguros após a primeira falha e `#erro` fica visível junto a **Consulta indisponível**. Abrir/reler GET não grava ou consulta Google; somente o POST explícito inicia leitura pelo servidor.
 
@@ -32,7 +32,11 @@ Em Planilha, `detalhesCaptura` mostra **Captura pela Central** ou **Leitura dire
 
 ## Objetivo e pautas do mês
 
-`objetivoMensal` lê exclusivamente Meses em `state.view.planilha`, selecionando NTV e o `state.mes` exibido. Zero linhas mostra **Ainda não definido**; uma linha mostra objetivo textual não vazio ou esse estado, com pautas textuais divididas por LF/CRLF, trim e descarte das vazias. Mantém ordem/repetições e exibe as primeiras cinco com **+N** para o restante. Duas ou mais linhas mostram **A confirmar** sem escolher objetivo/pautas. Número/bool não viram texto artificial no card; a célula completa permanece na tabela. Todos os textos são criados por `textContent`, sem link ou execução, e o card acompanha navegação mensal e POST→GET. Os avisos ficam na Planilha, sem vínculo inferido com temas semanais.
+`objetivoMensal` lê exclusivamente Meses em `state.view.planilha`, selecionando NTV e o `state.mes` exibido. Zero linhas mostra **Ainda não definido**; uma linha mostra objetivo textual não vazio ou esse estado, com pautas textuais divididas por LF/CRLF, trim e descarte das vazias. Mantém ordem/repetições e exibe as primeiras cinco com **+N pautas** para o restante, singular **+1 pauta**. Duas ou mais linhas mostram **A confirmar** sem escolher objetivo/pautas. Número/bool não viram texto artificial no card; a célula completa permanece na tabela. Todos os textos são criados por `textContent`, sem link ou execução, e o card acompanha navegação mensal e POST→GET. Os avisos ficam na Planilha, sem vínculo inferido com temas semanais.
+
+O booleano `definido` aceita somente objetivo textual não vazio após trim e orienta conteúdo/classe. O parágrafo usa `var(--ink)` na cor principal; apenas os estados **Ainda não definido** e **A confirmar** recebem `month-placeholder`, com o tom apagado anterior `#8a958e`. A regra `.brief-icon` concentra `flex-shrink:0` junto dos demais estilos do ícone, sem seletor duplicado.
+
+As regressões em 1440/390 verificam a cor ao navegar por objetivos/ausências/duplicatas, **+1 pauta**/**+2 pautas** e ausência de `.more-topics` com até cinco itens, mesmo quando objetivo/pauta contêm `+2` literal. O teste de integração confirma card e avisos de mês: outubro único, novembro duplicado nas linhas físicas 4/6, dezembro com espaços inválido na linha 8; outra marca fica fora. Essa conferência preserva o contrato recebido da API. [Gate local dos ajustes](../reports/003-ajustes-local-gate.json) e [validação](../../specs/003-planejamento-mensal/validacao.md) distinguem o código atual das rodadas anteriores de CI.
 
 ## Calendário, lista e Sem data
 
