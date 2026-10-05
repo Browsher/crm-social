@@ -1,38 +1,36 @@
-# Specification Quality Checklist: Planejamento mensal e repasse ao Diretor
+# Specification Quality Checklist: Consulta do planejamento mensal
 
-**Purpose**: Conferir a qualidade do rascunho antes de resolver as perguntas e, em etapa futura, planejar.
+**Purpose**: Conferir o reescopo definido pelo autor antes do planejamento.
 **Created**: 2026-10-05
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
 
 - [x] Sem detalhes de implementação (linguagens, frameworks ou interfaces técnicas).
-- [x] Foco no valor para o autor e na necessidade de organizar o mês.
-- [x] Escrita para o autor, com papéis e limites explícitos.
+- [x] Foco no valor para o autor e na consulta mensal mínima.
+- [x] Escrita para o autor, com fonte e limites explícitos.
 - [x] Todas as seções obrigatórias preenchidas.
 
 ## Requirement Completeness
 
-- [ ] Nenhum marcador de esclarecimento pendente.
-- [ ] Todos os requisitos testáveis e sem ambiguidade.
+- [x] Nenhum marcador de esclarecimento pendente.
+- [x] Requisitos testáveis e sem ambiguidade de produto.
 - [x] Critérios de sucesso mensuráveis.
-- [x] Critérios de sucesso independentes da tecnologia de implementação.
-- [ ] Todos os cenários de aceite definidos sem decisão pendente.
+- [x] Critérios de sucesso independentes da tecnologia.
+- [x] Cenários de aceite definidos.
 - [x] Casos de borda identificados.
 - [x] Escopo delimitado.
 - [x] Dependências e premissas identificadas.
 
 ## Feature Readiness
 
-- [ ] Todos os requisitos funcionais com critérios de aceite decididos.
+- [x] Requisitos funcionais com critérios de aceite definidos.
 - [x] Jornadas cobrem os fluxos principais.
-- [x] Jornadas e critérios de sucesso correspondem aos resultados desejados.
+- [x] Jornadas e critérios correspondem aos resultados desejados.
 - [x] Sem detalhes de implementação na especificação.
 
 ## Notes
 
-- Revisão documental do specify e análise de ambiguidades do clarify: 12/16 itens passam; quatro ficam pendentes pelas mesmas três decisões do autor. Não é validação de aplicativo implementado.
-- Q1: entrada do objetivo mensal; Q2: modo de repasse ao Diretor; Q3: alcance da transição da meta. Nenhuma recomendação foi registrada como resposta.
-- FR-005 depende de Q1/Q2; FR-012 e SC-006 dependem de Q3. O aceite editorial do repasse só pode ser fechado após as respostas.
-- Perguntas e recomendações estão na seção Clarifications da spec canônica. Pronto para o autor responder ao clarify; não pronto para plan/tasks/implementação.
-- T021 da 002 permanece pendente e bloqueia a implementação da 003. Nenhum plano, tarefas, código ou mudança remota operacional foi produzido.
+- Reescopo do autor em 05/10/2026 substitui a proposta anterior: 16/16 itens de qualidade documental passam; nenhuma pergunta de produto pendente. Clarify adicional dispensado.
+- Esse resultado não comprova implementação ou testes. T021/aceite da 002 continua bloqueando a implementação da 003.
+- Meses é opcional, criada/preenchida pelo autor; sua tarefa manual não bloqueia fixtures sintéticas. Operação de agentes e migração de meta ficam fora do CRM.

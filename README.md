@@ -12,7 +12,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Estado da entrega
 
-- **Planejado:** [003 com spec em rascunho e três perguntas do clarify](specs/003-planejamento-mensal/spec.md), em 05/10/2026; sem plano, tarefas ou código, implementação bloqueada pela T021/aceite da 002. 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A [002](specs/002-consulta-planilhas/spec.md) tem emenda 1.1.0 aplicada e aguarda conta/demonstração reais.
+- **Planejado:** [003 reescopada para consulta de Meses opcional](specs/003-planejamento-mensal/spec.md), com [plano](specs/003-planejamento-mensal/plan.md) e [15 tarefas](specs/003-planejamento-mensal/tasks.md), em 05/10/2026. Sem implementação; aguarda T021/aceite da 002. 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A [002](specs/002-consulta-planilhas/spec.md) tem emenda 1.1.0 aplicada e aguarda conta/demonstração reais.
 - **Implementado:** 001 e leitura direta da 002, JWT/fetch nativos, seis abas tipadas e POST local; importação manual preservada.
 - **Testado:** 001 demonstrada com captura real; 002 com cinco camadas, RSA gerada e transporte falso. Evidências da 002 na [validação](specs/002-consulta-planilhas/validacao.md).
 - **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Leitura Google implementada com cliente falso; conta/demonstração reais pendentes. Sem escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
@@ -43,7 +43,7 @@ A [gaveta compacta](docs/design/mockups/gaveta-v2.html) reúne o dia inteiro em 
 
 Planilha apresenta seis abas com os 66 mínimos triados, contagens de linhas NTV e Histórico final com todas as tentativas confirmadas, recentes primeiro. Setas esquerda/direita, Home e End alternam as abas com foco; cada tabela tem rolagem própria. A releitura conserva a aba disponível selecionada. O painel de avisos mostra Aba/Linha/Campo/Motivo; menu, selo e **Todos os avisos** restauram a visão geral dos avisos, enquanto as seis tabelas sempre mantêm o conjunto NTV completo. Sem captura, aparece somente Histórico e orientação à Central. Células dedicadas de URL recusadas exibem **link não permitido**; o marcador de supressão e os textos livres legítimos permanecem. Nenhum valor da tabela navega ou carrega mídia automaticamente.
 
-A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; conta e demonstração reais continuam pendentes. A 003 tratará o objetivo mensal e a meta de uma imagem, um carrossel e um vídeo semanais, preservando as peças históricas existentes. Até lá, o objetivo do mês mostra **Ainda não definido**.
+A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; conta e demonstração reais continuam pendentes. A 003 está apenas planejada: lerá objetivo/pautas da aba opcional Meses, preenchida à mão pelo autor, sem escrita ou fluxo de agentes no CRM. A migração da meta semanal é operação externa. Até implementar a 003, o objetivo do mês continua **Ainda não definido**.
 
 ## Executar a primeira entrega local
 

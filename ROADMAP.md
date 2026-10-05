@@ -38,15 +38,17 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **002 reduzida:** [24 tarefas](specs/002-consulta-planilhas/tasks.md), tipos nativos, datas declaradas e mesmo v1 sem perfil novo; [emenda aplicada](specs/002-consulta-planilhas/constitution-proposal.md). Não converter captura histórica. Estado somente na [validação](specs/002-consulta-planilhas/validacao.md).
 
-## 003 — Planejamento mensal e repasse ao Diretor
+## 003 — Consulta do planejamento mensal
 
-**Estado em 05/10/2026:** [rascunho da especificação](specs/003-planejamento-mensal/spec.md) criado pelo `speckit-specify`; análise do `speckit-clarify` com três perguntas aguardando o autor. [Checklist](specs/003-planejamento-mensal/checklists/requirements.md): 12/16 itens, pendências de decisão explícitas. Sem plano, tarefas ou código. A implementação continua bloqueada pela demonstração real T021/aceite da 002; esta especificação não altera a operação.
+**Estado em 05/10/2026:** [spec reescopada pelo autor](specs/003-planejamento-mensal/spec.md), [plano](specs/003-planejamento-mensal/plan.md) e [15 tarefas](specs/003-planejamento-mensal/tasks.md); somente planejamento, sem implementação. [Checklist](specs/003-planejamento-mensal/checklists/requirements.md): 16/16; sem dúvida real para clarify adicional. A implementação aguarda T021/aceite da 002.
 
-**Resultado visível:** objetivo do mês, pautas sugeridas e ligação de cada semana ao plano mensal. O Estrategista de Conteúdo Mensal será um perfil delegado pela Central; o Diretor detalha e ajusta o recorte semanal, registrando a justificativa e preservando a origem mensal.
+**Resultado visível:** objetivo e pautas do mês exibido, lidos da aba opcional **Meses** (`mes`, `marca_id`, `objetivo`, `pautas`). Card com até cinco pautas e **+N**; sem aba/linha, **Ainda não definido**; duplicata por marca/mês, **A confirmar** com aviso na Planilha. Meses aparece na Planilha como as outras tabelas, quando capturada.
 
-**Dependências:** concluir 001–002, definir identidade por marca/mês/versão e o contrato de repasse mês/semana. Planejar uma migração conjunta de documentos, perfis e consumidores para a meta futura de uma imagem, um carrossel de 4–6 páginas e um Reels de 15–30 segundos por semana. Conferir fontes antes de qualquer mudança remota.
+**Dependências:** concluir T021/aceite da 002 antes da implementação. O autor cria/preenche Meses à mão; isso não bloqueia testes com fixtures sintéticas nem a consulta sem a aba. Atualizar dados passa a ler Meses se existir, preservando as seis obrigatórias e as capturas anteriores da Central.
 
-**Aceite:** o plano mensal mantém origem e versão; ajustes semanais não apagam a proposta anterior. Reentrada com as mesmas origens não duplica mês, semana ou entrega. A meta nova vale conforme a migração definida, preservando as duas imagens das semanas históricas, incluindo a imagem B. Hipóteses e datas sugeridas continuam identificadas. Este backlog não instala o perfil, muda prompts ou cria agenda; esses passos exigem escopo e evidência próprios quando a feature for detalhada.
+**Aceite:** consulta somente leitura; Meses opcional sem migração histórica; integridade, falhas, frescor, privacidade e histórico da 002 preservados. Pouco texto, quatro mínimos, sem campos extras, repasse, vínculo mensal com semana ou migração da meta semanal pelo CRM.
+
+**Operação (fora do CRM):** o preenchimento de Meses pode ser assumido pelo Estrategista ou pela Central no futuro, sem mudar o CRM. Fluxo dos agentes, repasse ao Diretor e migração da meta semanal são operação externa, com escopo/autorização/evidência próprios.
 
 ## 004 — Revisões e pedidos de ajuste
 

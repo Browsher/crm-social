@@ -71,14 +71,19 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
 
-## Feature 003 — Planejamento mensal (somente rascunho da especificação)
+## Feature 003 — Consulta mensal (somente planejamento, sem implementação)
 
 | Documento | Uso |
 | --- | --- |
-| [Spec e perguntas do clarify](../specs/003-planejamento-mensal/spec.md) | Objetivo, pautas, origem mensal e proposta de repasse; três decisões aguardando o autor em 05/10/2026 |
-| [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | 12/16 itens passam; pendências pelas perguntas Q1–Q3 |
+| [Spec](../specs/003-planejamento-mensal/spec.md) | Reescopo do autor em 05/10/2026: Meses opcional, objetivo/lista curta, duplicatas e compatibilidade |
+| [Plano](../specs/003-planejamento-mensal/plan.md) | Extensão mínima dos módulos atuais; cinco camadas futuras |
+| [Pesquisa](../specs/003-planejamento-mensal/research.md) | Código existente e documentação oficial da API consultada via Context7 |
+| [Modelo](../specs/003-planejamento-mensal/data-model.md) / [Contrato](../specs/003-planejamento-mensal/contracts/meses.md) | Quatro mínimos, optionalidade/hash legado, linha física, avisos e consulta |
+| [Tarefas](../specs/003-planejamento-mensal/tasks.md) | 15 pendentes, com preparação manual do autor independente de testes |
+| [Quickstart](../specs/003-planejamento-mensal/quickstart.md) | Instruções do autor e ensaios futuros, não executados |
+| [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | 16/16 de qualidade documental; sem pergunta real de produto |
 
-Sem plano, tarefas ou código. Implementação condicionada à demonstração real T021/aceite da 002. Nenhuma escrita na operação, instalação de perfil ou mudança de agenda nesta rodada.
+Sem código ou teste novo executado. Implementação condicionada à demonstração real T021/aceite da 002. Nenhuma escrita na operação, instalação de perfil, repasse ao Diretor ou mudança de agenda/meta semanal. O analyze desta entrega é somente leitura; achados no relatório da conversa, sem arquivo concorrente de requisitos.
 
 ## Design e evidência visual
 
