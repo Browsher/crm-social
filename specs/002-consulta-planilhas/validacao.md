@@ -31,3 +31,22 @@ T024: publicação do PR/aceite remoto em andamento; sem merge autorizado.
 | Atualizando | [Desktop](../../docs/design/screenshots/002-atualizando-1440.png) | [Celular](../../docs/design/screenshots/002-atualizando-390.png) |
 | Sucesso | [Desktop](../../docs/design/screenshots/002-sucesso-1440.png) | [Celular](../../docs/design/screenshots/002-sucesso-390.png) |
 | Falha, captura preservada | [Desktop](../../docs/design/screenshots/002-falha-1440.png) | [Celular](../../docs/design/screenshots/002-falha-390.png) |
+
+
+## Aceite remoto inicial e correção de I/O — 2026-10-05
+
+PR [#14](https://github.com/Browsher/crm-social/pull/14), head implementado 0eb7aca. [Gate Linux](https://github.com/Browsher/crm-social/actions/runs/37345736031): SUCCESS, tests/coverage/complexity/Semgrep PASS, audit N/A, exit0 e baseline intacta. [Review](https://github.com/Browsher/crm-social/actions/runs/37345736300): SUCCESS; [comentário do Claude](https://github.com/Browsher/crm-social/pull/14#issuecomment-5999297932) publicado. generate-tests/publish-tests SKIPPED, sem rótulo.
+
+Trecho: “Não encontrei nenhum achado Critical. Há 1 Important: falhas de I/O na promoção direta são classificadas como dados”. I1 corrigido nesta rodada: A06 RED1/1 (não havia rejeição), GREEN46/46 snapshot/atualização; falta de espaço não confirma tentativa falsa e mantém bytes/completedAt. Gate local repetido após a correção: 267 PASS, zero FAIL/SKIP de testes, coverage 98.31%, complexity PASS16 avisos; Semgrep SKIP Windows/audit N/A. [Relatório completo local](../../docs/reports/002-local-gate.json). [Resumo do CI inicial](../../docs/reports/002-ci-gate.json) preserva a origem/limite: workflow não publicou o JSON completo como artefato, portanto esse resumo não inventa métricas remotas.
+
+### Minor / limites conhecidos do review inicial
+
+- M1: snapshot importa somente constantes MOTIVOS do adaptador Google, sem efeito colateral/rede no load. Módulo neutro adiado para manter escopo simples; arestas nativas faltantes corrigidas no Mermaid.
+- M2: 409 da trava acoplado ao texto estável; testes de snapshot/CLI cobrem concorrência, caso HTTP concorrente específico permanece melhoria.
+- M3: corpo acima de1KiB não é armazenado, mas o fluxo é consumido até terminar antes do413; impacto limitado ao servidor em loopback com Origin/Host.
+- M4: documentação esclarece cache por coleta/instância; cliente novo por clique, sem cache global.
+- M5: casos adicionais de fonte/metadados/chave/códigos HTTP além dos cenários proporcionais executados são melhorias de cobertura, não coleta real.
+- M6/M7: andaime RED opcional nos testes e expressões compactas permanecem dívida de legibilidade.
+- M8: frases de estado, nome de emenda aplicada, espaços e referência de validação corrigidos; histórico não duplicado em outros documentos.
+
+T024: PR aberto, checks/comentário inicial comprovados; atualização de I1 no mesmo PR. Sem merge. T021 continua pendente do autor. Aceite do head corrigido será confirmado no PR e no relatório final da execução.

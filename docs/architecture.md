@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002 implementada localmente com conta/demonstração reais pendentes; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define requisitos; leitura Google da 002 está implementada e testada com cliente falso; [validação](../specs/002-consulta-planilhas/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 implementada/testada com cliente falso; conta e demonstração reais pendentes: [validação da 002](../specs/002-consulta-planilhas/validacao.md).
 
 ## Módulos e imports reais
 
@@ -17,8 +17,10 @@ flowchart LR
   Server --> Google["src/google.cjs"]
   Server --> Coleta["src/coleta.cjs"]
   Snapshot -->|MOTIVOS| Google
+  Coleta --> Crypto
   Coleta --> Captura
   Coleta -->|falha| Google
+  Google --> FS
   Google --> Crypto
   Google --> Fetch["fetch nativo / OAuth e Sheets somente leitura"]
   Server --> Quadro["src/quadro-config.cjs"]

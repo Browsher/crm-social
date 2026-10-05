@@ -46,3 +46,14 @@ test('A05 candidata invalida usa categoria dados e motivo fixo',async t=>{
   assert.equal(result.categoria,'dados');assert.equal(result.motivoResumo,MOTIVOS.dados);
   assert.equal(snapshot.lerEstado(dir).captura,null);
 });
+test('A06 I/O na candidata direta nao confirma categoria dados nem recibo falso',async t=>{
+  const dir=temporario(t),raw=capturaValida();snapshot.promoverCaptura(raw,dir);
+  const before=fs.readFileSync(path.join(dir,'atual.json')),open=fs.openSync;
+  t.mock.method(fs,'openSync',(file,...args)=>{
+    if(typeof file==='string'&&file===path.join(dir,'capturas',nova().capturaId+'.json'))throw Object.assign(new Error('sentinela-privada'),{code:'ENOSPC'});
+    return open(file,...args);
+  });
+  await assert.rejects(snapshot.atualizarCaptura(dir,async()=>nova()),e=>e.message==='persistência: falha não pôde ser registrada'&&e.categoria===undefined);
+  assert.deepEqual(fs.readFileSync(path.join(dir,'atual.json')),before);
+  assert.equal(snapshot.lerEstado(dir).historico.length,1);assert.equal(snapshot.lerEstado(dir).captura.envelope.completedAt,raw.completedAt);
+});

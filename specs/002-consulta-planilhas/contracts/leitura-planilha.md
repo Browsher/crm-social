@@ -34,3 +34,5 @@ Preservar vigente/completedAt; confirmar recibo de falha quando possível, para 
 GET /api/visao continua sem rede/escrita; estáticos e bind127.0.0.1 iguais. POST /api/atualizar exige Host127.0.0.1:porta e Originhttp://127.0.0.1:porta, JSON{} até1KiB; sem query, extra campo, URL/ID/key do browser. Guardas400/403/413/415/405 e resposta só resultado/mensagem/categoria/avisos/registrada, nunca captura bruta.
 
 UI POST → GET para visão confirmada, botão desabilitado durante ambos; preserva tela anterior se GET falhar. Mensagem curta role=status: Atualizando dados / Dados atualizados / motivo fixo. Origem direta legível; zero Google no navegador. Arquivo da Central continua sem configuração Google. Conta real/demonstração pendentes, não bloqueiam fixtures/fakes.
+
+Cache é por instância do cliente; o servidor padrão cria uma por POST. Reutiliza token na mesma coleta, não entre cliques.

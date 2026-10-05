@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM consulta capturas locais; estas regras orientam quem mantém esse leitor. Consulte a [arquitetura](docs/architecture.md) e o [índice documental](docs/index.md) para entrar nos módulos implementados.
 
-Quando este repositório estiver dentro do workspace Social Midia, ../AGENTS.md também se aplica; fora dele, ignore esta referência. Ler [README](README.md), [ROADMAP](ROADMAP.md), [constituição](.specify/memory/constitution.md) e apenas os arquivos da feature ativa. `.specify/feature.json` é ponteiro local, não versionado; no checkout remoto, identificar a feature pela branch e sua pasta em specs/. A [002](specs/002-consulta-planilhas/spec.md) está especificada/planejada; [emenda](specs/002-consulta-planilhas/constitution-proposal.md) aplicada (1.1.0); implementada localmente; conta/demonstração reais pendentes, aceite em [validacao.md](specs/002-consulta-planilhas/validacao.md).
+Quando este repositório estiver dentro do workspace Social Midia, ../AGENTS.md também se aplica; fora dele, ignore esta referência. Ler [README](README.md), [ROADMAP](ROADMAP.md), [constituição](.specify/memory/constitution.md) e apenas os arquivos da feature ativa. `.specify/feature.json` é ponteiro local, não versionado; no checkout remoto, identificar a feature pela branch e sua pasta em specs/. A [002](specs/002-consulta-planilhas/spec.md) está implementada localmente; [emenda](specs/002-consulta-planilhas/constitution-proposal.md) aplicada (1.1.0); implementada localmente; conta/demonstração reais pendentes, aceite em [validacao.md](specs/002-consulta-planilhas/validacao.md).
 
 ## Estado e fronteiras
 
@@ -57,5 +57,3 @@ Regras obrigatórias para qualquer agente (Claude Code ou Codex). Instruções m
 
 No Codex, quando uma regra pedir um agente (doc-sync-onboarding, test-writer, reviewer, security-auditor), leia .claude/agents/<nome>.md e siga as instruções dele.
 <!-- meu-setup:end -->
-
-002 implementada e testada com fonte sintética; conta e demonstração reais pendentes. Estado e evidências na [validação da 002](specs/002-consulta-planilhas/validacao.md). Equipe/Workflow, abas auxiliares e mudança da Fila pertencem à v2 visual ilustrativa, fora do menu v1.

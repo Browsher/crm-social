@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "source": "Resumo dos logs oficiais do Actions; não é cópia do quality-gate-report.json remoto",
+  "head": "0eb7aca4811082d30959eb3d414ca1df83a9ce77",
+  "run": "https://github.com/Browsher/crm-social/actions/runs/37345736031",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS"
+    },
+    {
+      "name": "coverage",
+      "state": "PASS"
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "warnings": 16
+    },
+    {
+      "name": "semgrep",
+      "state": "PASS"
+    },
+    {
+      "name": "audit",
+      "state": "N/A"
+    }
+  ]
+}

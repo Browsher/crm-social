@@ -32,9 +32,9 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço própria, com chave fora do repositório e nunca enviada ao navegador.
 
-**Dependências:** 001 concluída, emenda1.1.0 aprovada/aplicada em05/10. Seis abas existentes, chave externa, JWT nativo sem dependência de aplicação, batchGet duas vezes e mesmo importador. Conta do autor pendente não bloqueia testes falsos. Sem abas auxiliares nesta feature.
+**Dependências:** 001 concluída, emenda 1.1.0 aprovada/aplicada em 05/10. Seis abas existentes, chave externa, JWT nativo sem dependência de aplicação, batchGet duas vezes e mesmo importador. Conta do autor pendente não bloqueia testes falsos. Sem abas auxiliares nesta feature.
 
-**Aceite:** seis abas tipadas/íntegras, sem escrita Google/Drive, chave fora de Git/browser/log, quatro falhas preservando vigente/data e Central por arquivo. Objetivo **Ainda não definido** até003. Conta/demonstração real pendentes; estado na [validação da002](specs/002-consulta-planilhas/validacao.md).
+**Aceite:** seis abas tipadas/íntegras, sem escrita Google/Drive, chave fora de Git/browser/log, quatro falhas preservando vigente/data e Central por arquivo. Objetivo **Ainda não definido** até 003. Conta/demonstração real pendentes; estado na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
 **002 reduzida:** [24 tarefas](specs/002-consulta-planilhas/tasks.md), tipos nativos, datas declaradas e mesmo v1 sem perfil novo; [emenda aplicada](specs/002-consulta-planilhas/constitution-proposal.md). Não converter captura histórica. Estado somente na [validação](specs/002-consulta-planilhas/validacao.md).
 
@@ -66,7 +66,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** **Equipe** em cartões dos seis agentes, com Central/Coordenação e Diretor criativo como duas funções; Estrategista Mensal como Proposto e Stories em Histórico recolhido. **Workflow** em painel com Controle, vários selos por workflow, gatilho, última execução conhecida, gargalos e histórico recolhido. Responsável registrado, correção e eventual interpretação de dependência continuam separados e rastreáveis à fonte.
 
-**Fora do v1, decisão05/10:** Equipe/Workflow são somente visual ilustrativo para v2, fora do menu planejado do v1. Agentes/Controle/Execucoes e mudança da Fila no n8n para gravar resumo ficam nesse backlog, com especificação/autorização próprias. A002 captura somente seis abas. Mockup não prova implantação/agenda/integração.
+**Fora do v1, decisão 05/10:** Equipe/Workflow são somente visual ilustrativo para v2, fora do menu planejado do v1. Agentes/Controle/Execucoes e mudança da Fila no n8n para gravar resumo ficam nesse backlog, com especificação/autorização próprias. A 002 captura somente seis abas. Mockup não prova implantação/agenda/integração.
 
 **Aceite:** cada estado pode ser conferido na origem; configuração de agenda não aparece como execução comprovada. Divergências de cadastro/configuração mostram as duas fontes e horários. **Publicado · geração bloqueada · integração pendente** podem coexistir; planejado, implementado, testado e integrado são dimensões distintas. Prompts, configurações, IDs de serviço, logs brutos e caminhos privados não vão para os cartões. Dados antigos, falhas e pendências continuam explícitos. Abrir ou atualizar não dispara geração, cobrança ou publicação. Não há métricas comerciais inventadas.
 
@@ -77,5 +77,3 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
 **Próximo passo:** o autor prepara a conta leitora conforme o [quickstart da 002](specs/002-consulta-planilhas/quickstart.md). Demonstração real pendente; implementação, testes e aceite remoto na [validação da 002](specs/002-consulta-planilhas/validacao.md). Nenhuma coleta real nesta rodada.
-
-002 implementada e testada com fonte sintética; conta e demonstração reais pendentes. Estado e evidências na [validação da 002](specs/002-consulta-planilhas/validacao.md). Equipe/Workflow, abas auxiliares e mudança da Fila pertencem à v2 visual ilustrativa, fora do menu v1.

@@ -163,3 +163,7 @@ As evidências têm origem, estado e limites registrados somente na [validação
 Este índice cobre os Markdown autorais de docs/specs, governança/regra curta e referências locais pertinentes, além das evidências sanitizadas referenciadas acima. Templates e catálogos de skills são ferramentas preservadas, não uma segunda especificação. Dados privados de data/, dependências e demais relatórios temporários ficam fora do índice.
 
 Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; tabelas de campos/rotas/env; Mermaid de imports/persistência; PT-BR com acentos e caminhos relativos. Atualizar na mesma tarefa, separando planejado, implementado, testado e integrado.
+
+## Evidência da 002
+
+[Relatório completo do gate local](reports/002-local-gate.json) e [resumo do gate Linux extraído dos logs oficiais](reports/002-ci-gate.json). Heads, execuções, review e aceites somente na [validação](../specs/002-consulta-planilhas/validacao.md).

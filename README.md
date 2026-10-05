@@ -23,7 +23,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 - [Feature 001: consulta da produção](specs/001-consulta-local-producao/spec.md)
 - [Plano de implementação](specs/001-consulta-local-producao/plan.md)
 - [Tarefas da primeira feature](specs/001-consulta-local-producao/tasks.md)
-- [Feature 002: Planilhas](specs/002-consulta-planilhas/spec.md), [plano](specs/002-consulta-planilhas/plan.md), [24 tarefas](specs/002-consulta-planilhas/tasks.md) e [proposta constitucional](specs/002-consulta-planilhas/constitution-proposal.md)
+- [Feature 002: Planilhas](specs/002-consulta-planilhas/spec.md), [plano](specs/002-consulta-planilhas/plan.md), [24 tarefas](specs/002-consulta-planilhas/tasks.md) e [emenda aplicada](specs/002-consulta-planilhas/constitution-proposal.md)
 - [Constituição](.specify/memory/constitution.md) e [instruções de desenvolvimento](AGENTS.md)
 - [Desenho aprovado](docs/design/desenho.md) e [prévia visual](docs/design/prototype/index.html)
 - [Telas decididas e escopo por feature](docs/design/telas.md)
@@ -69,5 +69,3 @@ Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consu
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 
 **Próximo passo:** o autor prepara a conta leitora conforme o [quickstart da 002](specs/002-consulta-planilhas/quickstart.md). Demonstração real pendente; implementação, testes e aceite remoto na [validação da 002](specs/002-consulta-planilhas/validacao.md). Nenhuma coleta real nesta rodada.
-
-002 implementada e testada com fonte sintética; conta e demonstração reais pendentes. Estado e evidências na [validação da 002](specs/002-consulta-planilhas/validacao.md). Equipe/Workflow, abas auxiliares e mudança da Fila pertencem à v2 visual ilustrativa, fora do menu v1.

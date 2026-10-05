@@ -34,7 +34,7 @@ Spec/plan/contrato vigentes nesta pasta. TDD com RED observado antes de GREEN; c
 - [ ] T021 AUTOR prepara conta/read-only/chave externa/compartilhamento conforme quickstart.md; marcar pendente até confirmação. Não bloqueia implementação/testes/PR; demonstração real fora desta rodada. FR-008.
 - [x] T022 Penúltima etapa técnica: node --test e node tools/quality-gate.mjs locais verdes com config vigente; registrar estados reais em validacao.md sem afrouxar baseline/checks. FR-009, SC-004.
 - [x] T023 Última etapa técnica: doc-sync-onboarding para README/AGENTS fora do bloco/ROADMAP/índice/arquitetura/módulos/project-structure≤60; estado real/limites e links de validação. FR-009.
-- [ ] T024 Commit/push002 e UM PR sem merge; gate Linux verde e review publicado do head, links/comentário/checks em validacao.md. FR-009, SC-004.
+- [x] T024 Commit/push002 e UM PR sem merge; gate Linux verde e review publicado do head, links/comentário/checks em validacao.md. FR-009, SC-004.
 
 ## Rastreabilidade/dependências
 

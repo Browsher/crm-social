@@ -103,3 +103,5 @@ O nome “Histórico” aqui significa recibos persistidos/projetados; a US5 já
 ## Atualização assíncrona da 002
 
 O callback de coleta é aguardado sob a mesma .importacao.lock do CLI. adquirir/identificarTrava/liberar são compartilhados; close/unlink separados preservam resultado/erro. coletarComTrava traduz configuração/acesso/rede/dados em recibo fixo, mantendo captura/completedAt. promoverComTrava conserva as regras legadas, com motivo fixo para entrada direta inválida. I/O sem confirmação não finge recibo. [tests/atualizacao.test.cjs](../../tests/atualizacao.test.cjs) cobre concorrência durante await, quatro falhas, bytes/horário e cleanup em TEMP; provas na [validação da 002](../../specs/002-consulta-planilhas/validacao.md).
+
+Na promoção direta, erro de filesystem com code (por exemplo, indisponibilidade de gravação) é relançado como persistência não confirmada, sem categoria dados nem tentativa falsa no Histórico. A06 reproduz falta de espaço preservando bytes/horário. Validação, identidade, tempo e conflito continuam dados; regras do CLI legadas preservadas.

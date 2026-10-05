@@ -146,6 +146,7 @@ function promoverComTrava(raw,dataDir,direta=false) {
     gravarImutavel(file,body);
     return confirmar(dataDir,before.estado,recibo(raw,'completa',''),raw.capturaId);
   } catch (e) {
+    if(direta&&e.code)throw new Error('persistência: falha não pôde ser registrada');
     const reason=direta?MOTIVOS.dados:(e.message.endsWith(': inválido') ? e.message : motivoSeguro(e));
     try {
       const result=confirmar(dataDir,before.estado,recibo(raw,'falhou',reason),before.estado.capturaId);
