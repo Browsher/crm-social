@@ -3,6 +3,7 @@ const path=require('node:path');
 const {randomUUID}=require('node:crypto');
 const {validarCaptura,validarTempoImportacao,idSeguro,instanteUtc}=require('./captura.cjs');
 const {validarIdentidadesNtv}=require('./triagem.cjs');
+const {MOTIVOS}=require('./google.cjs');
 
 function json(file) { return JSON.parse(fs.readFileSync(file,'utf8')); }
 function ponteiro(dataDir) {
@@ -83,7 +84,7 @@ function motivoSeguro(error) {
   if (error.code) return 'persistência: falha na gravação';
   return error.message;
 }
-function exclusiva(dataDir,operation) {
+function adquirir(dataDir) {
   const lock=path.join(dataDir,'.importacao.lock');
   let fd;
   try { fs.mkdirSync(dataDir,{recursive:true}); }
@@ -92,20 +93,29 @@ function exclusiva(dataDir,operation) {
   catch (e) {
     throw new Error(e.code==='EEXIST'?'persistência: importação em andamento; confira a instância antes de tentar novamente':'persistência: falha não pôde ser registrada');
   }
-  let outcome;
+  return {fd,lock};
+}
+function identificarTrava({fd}) {
+  try { fs.writeFileSync(fd,JSON.stringify({pid:process.pid,iniciadaEm:new Date().toISOString()}),'utf8'); fs.fsyncSync(fd); }
+  catch { throw new Error('persistência: falha não pôde ser registrada'); }
+}
+function liberar({fd,lock},outcome) {
+  let warning=false;
+  try { fs.closeSync(fd); } catch { warning=true; }
+  try { fs.unlinkSync(lock); } catch { warning=true; }
+  if (warning) outcome.avisos=[...(outcome.avisos ?? []),'falha ao liberar a trava; confira o estado local'];
+}
+function exclusiva(dataDir,operation) {
+  const lock=adquirir(dataDir);let outcome;
   try {
-    try { fs.writeFileSync(fd,JSON.stringify({pid:process.pid,iniciadaEm:new Date().toISOString()}),'utf8'); fs.fsyncSync(fd); }
-    catch { throw new Error('persistência: falha não pôde ser registrada'); }
+    identificarTrava(lock);
     outcome=operation();
     return outcome;
   } catch (e) {
     outcome=e;
     throw e;
   } finally {
-    let warning=false;
-    try { fs.closeSync(fd); } catch { warning=true; }
-    try { fs.unlinkSync(lock); } catch { warning=true; }
-    if (warning) outcome.avisos=[...(outcome.avisos ?? []),'falha ao liberar a trava; confira o estado local'];
+    liberar(lock,outcome);
   }
 }
 function registrarFalhaEntrada(dataDir,codigo) {
@@ -119,7 +129,7 @@ function registrarFalhaEntrada(dataDir,codigo) {
     } catch { throw new Error('persistência: falha não pôde ser registrada'); }
   });
 }
-function promoverComTrava(raw,dataDir) {
+function promoverComTrava(raw,dataDir,direta=false) {
   let before;
   try { prepararDiretorios(dataDir); before=lerEstado(dataDir); }
   catch { throw new Error('persistência: falha não pôde ser registrada'); }
@@ -136,10 +146,33 @@ function promoverComTrava(raw,dataDir) {
     gravarImutavel(file,body);
     return confirmar(dataDir,before.estado,recibo(raw,'completa',''),raw.capturaId);
   } catch (e) {
-    const reason=e.message.endsWith(': inválido') ? e.message : motivoSeguro(e);
-    try { return confirmar(dataDir,before.estado,recibo(raw,'falhou',reason),before.estado.capturaId); }
+    const reason=direta?MOTIVOS.dados:(e.message.endsWith(': inválido') ? e.message : motivoSeguro(e));
+    try {
+      const result=confirmar(dataDir,before.estado,recibo(raw,'falhou',reason),before.estado.capturaId);
+      return direta?{...result,categoria:'dados'}:result;
+    }
     catch { throw new Error('persistência: falha não pôde ser registrada'); }
   }
 }
 function promoverCaptura(raw,dataDir) { return exclusiva(dataDir,()=>promoverComTrava(raw,dataDir)); }
-module.exports={promoverCaptura,lerEstado,registrarFalhaEntrada};
+async function atualizarCaptura(dataDir,coletar) {
+  const lock=adquirir(dataDir);let outcome;
+  try {
+    identificarTrava(lock);
+    outcome=await coletarComTrava(dataDir,coletar);return outcome;
+  }catch(error){outcome=error;throw error;}
+  finally{liberar(lock,outcome);}
+}
+async function coletarComTrava(dataDir,coletar) {
+  let raw;
+  try {raw=await coletar();}
+  catch(error){
+    const categoria=Object.hasOwn(MOTIVOS,error?.categoria)?error.categoria:'rede';
+    try {
+      prepararDiretorios(dataDir);const before=lerEstado(dataDir);
+      return {...confirmar(dataDir,before.estado,recibo(null,'falhou',MOTIVOS[categoria]),before.estado.capturaId),categoria};
+    }catch{throw new Error('persistência: falha não pôde ser registrada');}
+  }
+  return promoverComTrava(raw,dataDir,true);
+}
+module.exports={promoverCaptura,lerEstado,registrarFalhaEntrada,atualizarCaptura};

@@ -30,7 +30,7 @@ function validarEnvelope(raw) {
   exigir(idSeguro(raw.capturaId),'capturaId');
   exigir(typeof raw.spreadsheetId==='string' && raw.spreadsheetId.trim()!=='','spreadsheetId');
   exigir(raw.brandId==='ntv','brandId');
-  exigir(raw.source==='google-drive-connector','source');
+  exigir(['google-drive-connector','google-sheets-api'].includes(raw.source),'source');
   exigir(instanteUtc(raw.startedAt),'startedAt');
   exigir(instanteUtc(raw.completedAt),'completedAt');
   exigir(Date.parse(raw.startedAt)<=Date.parse(raw.completedAt),'intervalo');
@@ -122,4 +122,4 @@ function validarTempoImportacao(completedAt,nowIso,completedAtVigente=null) {
   if (fim>Date.parse(nowIso)+10*60*1000) throw new Error('captura inválida: completedAt excede o relógio local em mais de 10 minutos');
   if (completedAtVigente!==null && fim<=Date.parse(completedAtVigente)) throw new Error('captura desatualizada: completedAt igual ou anterior ao da vigente');
 }
-module.exports={validarCaptura,validarTempoImportacao,CAMPOS,idSeguro,instanteUtc};
+module.exports={validarCaptura,validarTempoImportacao,CAMPOS,idSeguro,instanteUtc,hashCelulas,letraColuna};

@@ -10,9 +10,10 @@ Persistência e validação dos recibos confirmados implementadas e verificadas 
 | --- | --- |
 | `lerEstado(dataDir)` | Valida ponteiro, cada recibo confirmado e captura; não escreve, repara ou reaplica a política temporal relativa |
 | `promoverCaptura(raw, dataDir)` | Adquire exclusividade, confere estrutura e identidades NTV antes do no-op, depois identidade da captura/tempo; prepara arquivos e promove ou confirma falha |
+| `atualizarCaptura(dataDir,coletar)` | Mantém exclusividade durante await; mesma promoção, falha fixa e liberação separada |
 | `registrarFalhaEntrada(dataDir, codigo)` | Confirma falha de arquivo/JSON que não chegou à validação, preservando captura |
 
-Não há rota, variável de ambiente ou rede. Imports nativos: fs, path e randomUUID; imports locais: [validação](captura.md) e `validarIdentidadesNtv` de [triagem](triagem.md). Não importa configuração ou projeção do quadro. `dataDir` é argumento do chamador confiável, não dado de uma requisição.
+Não há rota, variável de ambiente ou rede. Imports nativos: fs, path e randomUUID; imports locais: MOTIVOS do [cliente Google](google.md) (somente constantes, sem chamada de rede), [validação](captura.md) e `validarIdentidadesNtv` de [triagem](triagem.md). Não importa configuração ou projeção do quadro. `dataDir` é argumento do chamador confiável, não dado de uma requisição.
 
 ## Arquivos e autoridade
 
@@ -98,3 +99,7 @@ Regressões de estrutura/tipos e calendário/fuso de recibos confirmados, além 
 Regressões em snapshot, importador e servidor conferem rejeição de identidades/vínculos antes da promoção, recibo localizado sem célula, manutenção da captura anterior consultável e defesa da consulta contra bytes antigos/corrompidos. Resultados somente na validação.
 
 O nome “Histórico” aqui significa recibos persistidos/projetados; a US5 já os apresenta na aba final da Planilha, sem mudar esta persistência. A estrutura da captura é revalidada na leitura, sem a política temporal relativa exclusiva da importação. Falha de rename testada não comprova resistência a queda de energia. Capturas/recibos preparados sem confirmação permanecem preservados; temporários têm limpeza localizada por tentativa quando gravação/rename falham. Interrupção pode deixar arquivos/trava; não há varredura de limpeza automática nem restauração que fabrique aceitação.
+
+## Atualização assíncrona da 002
+
+O callback de coleta é aguardado sob a mesma .importacao.lock do CLI. adquirir/identificarTrava/liberar são compartilhados; close/unlink separados preservam resultado/erro. coletarComTrava traduz configuração/acesso/rede/dados em recibo fixo, mantendo captura/completedAt. promoverComTrava conserva as regras legadas, com motivo fixo para entrada direta inválida. I/O sem confirmação não finge recibo. [tests/atualizacao.test.cjs](../../tests/atualizacao.test.cjs) cobre concorrência durante await, quatro falhas, bytes/horário e cleanup em TEMP; provas na [validação da 002](../../specs/002-consulta-planilhas/validacao.md).

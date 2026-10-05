@@ -24,7 +24,7 @@ async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixtu
     promoverCaptura(recalcularHashes(raw),dataDir);
   }
   depois(dataDir);
-  const server=criarServidor({dataDir,quadroConfigPath,port:0});
+  const server=criarServidor({dataDir,quadroConfigPath,port:0,atualizar:async()=>({resultado:'sem_alteracao'})});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   let browser;
   t.after(async()=>{
@@ -472,7 +472,7 @@ for(const scenario of estadosSelo) {
     }
     assert.equal(await page.locator('#fonte-captura').textContent(),'Captura pela Central');
     assert.equal(await page.getByRole('button',{name:'Atualizar dados',exact:true}).isVisible(),true);
-    assert.match(await page.locator('#releitura-aviso').textContent(),/Reler captura local; não consulta o Google/);
+    assert.match(await page.locator('#releitura-aviso').textContent(),/Leitura da planilha pelo servidor local, somente leitura/);
     if(scenario.captura) {
       assert.match(await page.locator('#fim-captura').textContent(),scenario.nome==='anterior'?/02\/10\/2026.*09:05/:/04\/10\/2026.*08:05/);
       assert.equal(await page.locator('#periodo-captura').textContent(),'28/09/2026 a 04/10/2026');
@@ -519,7 +519,7 @@ test('U04 celular relê só API local, conserva falha/horário e recupera erro s
     assert.equal(await page.locator('#planilha').isVisible(),true);
     assert.equal(await button.isEnabled(),true);
   } finally {fs.writeFileSync(pointer,saved);}
-  assert.deepEqual(seen,[{url:'/api/visao',method:'GET'},{url:'/api/visao',method:'GET'},{url:'/api/visao',method:'GET'}]);
+  assert.deepEqual(seen,[1,2,3].flatMap(()=>[{url:'/api/atualizar',method:'POST'},{url:'/api/visao',method:'GET'}]));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
 });
 test('U01 menu exato, objetivo mensal indefinido e dia múltiplo', {skip}, async t => {
@@ -847,7 +847,7 @@ for(const width of [1440,390]) {
     assert.equal(await page.locator('#abas-planilha [data-aba="Histórico"]').getAttribute('aria-selected'),'true');
     assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['falhou','completa']);
     assert.equal(fs.readFileSync(pointer,'utf8'),before);
-    assert.deepEqual(seen,[{url:'/api/visao',method:'GET'}]);
+    assert.deepEqual(seen,[{url:'/api/atualizar',method:'POST'},{url:'/api/visao',method:'GET'}]);
     assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
   });
   test('U10 sem captura orienta a Central e Histórico vazio em '+width, {skip},async t=>{
@@ -895,7 +895,7 @@ test('U10 releitura de uma nova captura atualiza tabela e Histórico sem consult
   assert.match(await page.locator('#fim-captura').textContent(),/04\/10\/2026.*08:30/);
   await page.locator('#abas-planilha [data-aba="Histórico"]').click();
   assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['completa','completa']);
-  assert.deepEqual(seen,[{url:'/api/visao',method:'GET'}]);
+  assert.deepEqual(seen,[{url:'/api/atualizar',method:'POST'},{url:'/api/visao',method:'GET'}]);
 });
 test('U10 título longo no filtro de avisos não provoca corte no celular', {skip},async t=>{
   const page=await abrir(t,390,true,raw=>celulaPorId(raw,'Produções','peca-3','titulo','TituloSintetico'.repeat(35)),

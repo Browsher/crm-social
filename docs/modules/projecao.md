@@ -14,7 +14,7 @@ Imports: `CAMPOS` de [captura](captura.md), `COLUNAS` de [quadro-config](quadro-
 
 | Campo de saída | Comportamento atual |
 | --- | --- |
-| `schemaVersion` / `fonte` | 1 e rótulo Captura pela Central |
+| `schemaVersion` / `fonte` | 1 e rótulo Captura pela Central ou Leitura direta pelo servidor local, por source permitido |
 | `captura` | null sem captura; senão capturaId, completedAt, período e contagens NTV |
 | `estado` / `selo` | Quatro estados contratuais abaixo; destino planilha em todos eles |
 | `semanas` | Mínimos selecionados + período civil de sete dias, objetivo mensal indefinido e IDs ordinais |
@@ -140,3 +140,5 @@ A validade de `origens_json` é calculada sobre o texto original antes da supres
 [tests/projecao.test.cjs](../../tests/projecao.test.cjs) cobre seleção NTV, isolamento da entrada, campos selecionados, supressão e preservação de URLs, datas civis, formatos, cobertura, órfãos e ordem. US2 verifica fim da captura, virada do dia em São Paulo, quatro estados e precedência da falha sem payload privado; US3 cobre responsáveis/revisões, ordenação e isolamento de versões, mídias ausentes/incompatíveis/empatadas, números/JSON inválidos, linha física dos avisos e resolução semanal sem duplicar avisos globais. Casos de usuário/senha sintéticos, inclusive URLs malformadas, verificam supressão, motivos fixos, vazios preservados e captura original intacta; [servidor](../../tests/servidor.test.cjs) e [interface](../../tests/interface.test.cjs) conferem ausência das credenciais no JSON real e no dia. Regressões em [tests/snapshot.test.cjs](../../tests/snapshot.test.cjs) conferem GET/no-op preservando falha/horário e nova captura encerrando a falha. Resultados em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
 Uma pegadinha permanece explícita: a função `registros` em `src/captura.cjs` normaliza null explícito para string vazia na entidade; o envelope privado conserva o original; etapa_producao null é recuperada antes da triagem. As seis tabelas da US5 conservam essa normalização nos demais mínimos. A linha física dos avisos já é preservada, inclusive após linhas vazias ou de outra marca. Classificação de Produção e tabelas de Planilha implementadas; detalhe, tabela e recibo não comprovam integração operacional. Verificações locais e revisão ficam somente na validação.
+
+002 mantém seis tabelas/66 mínimos e tipos recebidos; origem direta não expõe source bruto ou ID privado. Teste P002 em tests/projecao.test.cjs; [validação](../../specs/002-consulta-planilhas/validacao.md).

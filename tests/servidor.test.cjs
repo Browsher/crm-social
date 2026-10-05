@@ -6,23 +6,23 @@ const path=require('node:path');
 const {capturaValida,capturaPlanilha,mapaQuadroValido,temporario,carregarModulo,mudarCelula,redefinirHorario,campos,recalcularHashes}=require('./fixtures.cjs');
 const {promoverCaptura,registrarFalhaEntrada,lerEstado}=require('../src/snapshot.cjs');
 const {criarServidor}=carregarModulo('src/servidor.cjs',['criarServidor']);
-async function ambiente(t,captura=true) {
+async function ambiente(t,captura=true,options={}) {
   const root=temporario(t), webDir=path.join(root,'web'), dataDir=path.join(root,'privado'), quadroConfigPath=path.join(root,'mapa.json');
   fs.mkdirSync(webDir); fs.mkdirSync(dataDir);
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroValido()));
   for (const name of ['index.html','app.js','styles.css','extra.txt']) fs.writeFileSync(path.join(webDir,name),'estático sintético '+name);
   if (captura) promoverCaptura(capturaValida(),dataDir);
-  const server=criarServidor({dataDir,port:0,webDir,quadroConfigPath});
+  const server=criarServidor({dataDir,port:0,webDir,quadroConfigPath,...options});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   t.after(()=>new Promise(resolve=>server.close(resolve)));
   return {server,dataDir,port:server.address().port};
 }
-function request(port,url='/',method='GET',headers={}) {
+function request(port,url='/',method='GET',headers={},body='') {
   return new Promise((resolve,reject)=>{
     const req=http.request({hostname:'127.0.0.1',port,path:url,method,headers},res=>{
       const chunks=[]; res.on('data',c=>chunks.push(c)); res.on('end',()=>resolve({status:res.statusCode,headers:res.headers,body:Buffer.concat(chunks).toString('utf8')}));
     });
-    req.on('error',reject);req.end();
+    req.on('error',reject);req.end(body);
   });
 }
 test('H01 consulta real seleciona campos e não escreve no estado', async t => {
@@ -36,6 +36,41 @@ test('H01 consulta real seleciona campos e não escreve no estado', async t => {
   assert.equal(body.producoes.length,4);
   assert.doesNotMatch(r.body,/sentinela-nao-publicar|metadataBefore|spreadsheetId/);
   assert.equal(fs.readFileSync(path.join(dataDir,'atual.json'),'utf8'),before);
+});
+test('H002 POST local permitido; guards antes do callback e GET sem rede',async t=>{
+  let calls=0;const {port}=await ambiente(t,true,{atualizar:async()=>{calls++;return {resultado:'completa'};}});
+  const headers={Origin:'http://127.0.0.1:'+port,'Content-Type':'application/json'};
+  assert.equal((await request(port,'/api/visao')).status,200);assert.equal(calls,0);
+  const ok=await request(port,'/api/atualizar','POST',headers,'{}');assert.equal(ok.status,200);
+  assert.equal(JSON.parse(ok.body).mensagem,'Dados atualizados');assert.equal(calls,1);
+  for(const [url,method,h,body,status] of [
+    ['/api/atualizar','POST',{'Content-Type':'application/json'},'{}',403],
+    ['/api/atualizar','POST',{...headers,Origin:'https://fora.invalid'},'{}',403],
+    ['/api/atualizar','POST',{...headers,Host:'fora.invalid'},'{}',403],
+    ['/api/atualizar','POST',{...headers,'Content-Type':'text/plain'},'{}',415],
+    ['/api/atualizar','POST',headers,'{',400],['/api/atualizar','POST',headers,'{"id":"externo"}',400],
+    ['/api/atualizar?x=y','POST',headers,'{}',400],['/api/atualizar','POST',headers,'[]',400],
+    ['/api/atualizar','POST',headers,' '.repeat(1025),413],['/api/atualizar','PUT',headers,'{}',405]
+  ])assert.equal((await request(port,url,method,h,body)).status,status);
+  assert.equal(calls,1);
+});
+test('H002 categorias e I/O retornam somente motivo fixo; nenhum dado privado',async t=>{
+  for(const categoria of ['configuracao','acesso','rede','dados',null]){
+    const {port}=await ambiente(t,true,{atualizar:async()=>{
+      if(!categoria)throw new Error('sentinela-privada');
+      return {resultado:'falhou',categoria,motivoResumo:'sentinela-privada',spreadsheetId:'privado',avisos:['falha ao liberar a trava; confira o estado local']};
+    }});
+    const r=await request(port,'/api/atualizar','POST',{Origin:'http://127.0.0.1:'+port,'Content-Type':'application/json'},'{}');
+    assert.equal(r.status,categoria==='dados'?422:503);assert.doesNotMatch(r.body,/sentinela-privada|spreadsheetId|stack/);
+    assert.equal(JSON.parse(r.body).registrada,!!categoria);
+    assert.equal((await request(port,'/api/visao')).status,200);
+  }
+});
+test('H002 erro original e aviso de trava permanecem seguros no HTTP',async t=>{
+  const {port}=await ambiente(t,true,{atualizar:async()=>{throw Object.assign(new Error('privado'),{avisos:['privado']});}});
+  const r=await request(port,'/api/atualizar','POST',{Origin:'http://127.0.0.1:'+port,'Content-Type':'application/json'},'{}');
+  assert.equal(r.status,503);assert.deepEqual(JSON.parse(r.body).avisos,['falha ao liberar a trava; confira o estado local']);
+  assert.doesNotMatch(r.body,/privado/);
 });
 test('H01 ausência estruturada não vira dados de demonstração', async t => {
   const {port}=await ambiente(t,false);

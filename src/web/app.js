@@ -370,7 +370,7 @@ function controles() {
   $('#dia').addEventListener('close',()=>{if(focoDia?.isConnected) focoDia.focus();});
   $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');$('#menu').setAttribute('aria-expanded',String(open));});
   $('#selo').addEventListener('click',()=>navegar('planilha'));
-  $('#atualizar').addEventListener('click',reler);
+  $('#atualizar').addEventListener('click',atualizar);
   $('#semana-anterior').addEventListener('click',()=>trocarSemana(-1));
   $('#semana-proxima').addEventListener('click',()=>trocarSemana(1));
   $('#todos-avisos').addEventListener('click',()=>{state.avisosProducaoId=null;renderAvisosPlanilha();$('#avisos-dados').focus();});
@@ -494,19 +494,33 @@ function detalhesCaptura() {
   notice.replaceChildren(...items);notice.hidden=items.length===0;
   renderPlanilha();
 }
-async function reler() {
+async function reler({manterDesabilitado=false}={}) {
   $('#atualizar').disabled=true;
   try {
     const response=await fetch('/api/visao',{cache:'no-store'});
     if (!response.ok) throw new Error('consulta indisponível');
     state.view=await response.json();
     detalhesCaptura();render();$('#erro').hidden=true;
+    return true;
   } catch {
     $('#erro').textContent='Não foi possível ler a captura local. Confira o servidor e tente novamente.';$('#erro').hidden=false;
     if(!state.view) $('#selo').textContent='Consulta indisponível';
+    return false;
   } finally {
-    $('#atualizar').disabled=false;
+    if(!manterDesabilitado) $('#atualizar').disabled=false;
   }
+}
+async function atualizar() {
+  const status=$('#resultado-atualizacao');$('#atualizar').disabled=true;status.textContent='Atualizando dados…';
+  try {
+    const response=await fetch('/api/atualizar',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    const result=await response.json();
+    const consultada=await reler({manterDesabilitado:true});
+    const parts=[consultada?result.mensagem:result.resultado==='falhou'?result.mensagem+' · consulta local indisponível':'Atualização concluída; consulta local indisponível'];
+    if(result.avisos?.length)parts.push('falha ao liberar a trava; confira o estado local');
+    status.textContent=parts.join(' · ');
+  }catch{status.textContent='Não foi possível atualizar os dados; confira o servidor e tente novamente';}
+  finally{$('#atualizar').disabled=false;}
 }
 async function iniciar() {controles();navegar('planejamento');await reler();}
 iniciar();

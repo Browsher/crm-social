@@ -15,10 +15,10 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | Documento | Para que serve |
 | --- | --- |
 | [README](../README.md) | Apresentação, estado e comandos reais |
-| [ROADMAP](../ROADMAP.md) | Seis features, aceite futuro e progresso parcial |
+| [ROADMAP](../ROADMAP.md) | Cinco features do v1 e v2 visual ilustrativo |
 | [AGENTS](../AGENTS.md) | Regras locais e bloco gerenciado preservado |
 | [CLAUDE](../CLAUDE.md) | Importador das instruções canônicas; não é outra regra de produto |
-| [Constituição 1.0.0](../.specify/memory/constitution.md) | Princípios e limites; nenhuma emenda nesta entrega |
+| [Constituição 1.1.0](../.specify/memory/constitution.md) | Princípios e limites; emenda VI aprovada/aplicada em05/10 |
 | [Regra curta de estrutura](../.claude/rules/project-structure.md) | EntryPoints/pastas/imports/testes observados, até 60 linhas |
 | [architecture.md](architecture.md) | Mapa de módulos/imports, persistência, rotas/env e dívidas |
 | [Este índice](index.md) | Todos os documentos autorais do projeto e referências de ferramenta |
@@ -27,6 +27,8 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 | Documento | Código explicado |
 | --- | --- |
+| [Google](modules/google.md) | JWT/fetch nativos, configuração externa e token em memória |
+| [Coleta](modules/coleta.md) | Seis grades tipadas, duas leituras, metadados/hashes e datas |
 | [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, normalização e hash |
 | [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
@@ -51,22 +53,23 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
 
-## Feature 002 — Planilhas (somente especificada/planejada)
+## Feature 002 — Planilhas (implementada localmente; conta/demonstração reais pendentes)
 
 | Documento | Uso |
 | --- | --- |
-| [Spec](../specs/002-consulta-planilhas/spec.md) | Três histórias, leitura direta somente leitura, nove abas e continuidade da Central |
-| [Emenda proposta](../specs/002-consulta-planilhas/constitution-proposal.md) | Princípio VI/versão 1.1.0; pendente do autor, constituição vigente intacta |
+| [Spec](../specs/002-consulta-planilhas/spec.md) | Três histórias, leitura direta somente leitura, seis abas e continuidade da Central |
+| [Emenda aplicada](../specs/002-consulta-planilhas/constitution-proposal.md) | Princípio VI/versão 1.1.0; aprovada pelo autor em05/10 |
 | [Plano](../specs/002-consulta-planilhas/plan.md) | Interfaces, segurança, trava assíncrona e cinco riscos |
 | [Pesquisa](../specs/002-consulta-planilhas/research.md) | Fontes oficiais/Context7 e alternativas |
-| [Modelo](../specs/002-consulta-planilhas/data-model.md) | Perfis v1, tipos e 45 cabeçalhos privados auxiliares |
+| [Modelo](../specs/002-consulta-planilhas/data-model.md) | V1 seis abas, tipos e configuração privada |
 | [Contrato](../specs/002-consulta-planilhas/contracts/leitura-planilha.md) | Integridade, transporte, HTTP e compatibilidade |
-| [Tarefas](../specs/002-consulta-planilhas/tasks.md) | 52 tarefas futuras com RED/GREEN e gates separados |
+| [Tarefas](../specs/002-consulta-planilhas/tasks.md) | 24 tarefas com RED/GREEN e gates separados |
 | [Quickstart](../specs/002-consulta-planilhas/quickstart.md) | Testes falsos e preparação da conta pelo autor para demonstração |
+| [Validação](../specs/002-consulta-planilhas/validacao.md) | Decisões, RED/GREEN, screenshots e aceite remoto |
 | [Checklist](../specs/002-consulta-planilhas/checklists/requirements.md) | Qualidade da especificação; não substitui testes ou aprovação |
-| [Análise](../specs/002-consulta-planilhas/analysis.md) | 0 Critical/High e três ajustes Medium pendentes; sem remediação automática |
+| [Análise](../specs/002-consulta-planilhas/analysis.md) | Nova análise reduzida; ajustes antigos corrigidos pelo escopo aprovado |
 
-Nenhuma coleta, implementação, instalação ou PR da 002 foi realizado nesta preparação.
+Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
 
 ## Design e evidência visual
 

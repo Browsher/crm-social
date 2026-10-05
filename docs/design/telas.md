@@ -10,7 +10,7 @@ Como uma agenda que começa pelas páginas do mês, a entrega atual tem a 001 im
 - **Conteúdo da peça no detalhe do dia.** Calendário, lista e quadro mostram o mínimo para localizar; registros complementares abrem por clique na gaveta, enquanto avisos técnicos ficam na API/Planilha.
 - **Tudo sobre a planilha fica na página Planilha.** Nas outras telas, um selo curto de status leva até ela.
 - **Nada inventado.** Dia sem peça fica vazio. Campo vazio é "desconhecido", nunca zero. Valor fora do conhecido aparece como está, em "Outras".
-- **Registrado, evidência e sugestão são coisas diferentes.** A 001 mostra o registrado na planilha e avisos; interpretações de encaminhamento ficam para a 006.
+- **Registrado, evidência e sugestão são coisas diferentes.** A 001 mostra o registrado na planilha e avisos; interpretações de encaminhamento ficam fora do v1, para v2 visual ilustrativo.
 - **Consulta apenas.** Nenhuma tela aprova, gera mídia, agenda ou publica.
 
 ## Menu por feature
@@ -21,8 +21,8 @@ Como uma agenda que começa pelas páginas do mês, a entrega atual tem a 001 im
 | Produção | 001 | Sim |
 | Planilha | 001 (busca direta: 002 Planilhas) | Sim |
 | Conteúdos | 005 | Não aparece |
-| Equipe | 006 | Não aparece |
-| Workflow | 006 | Não aparece |
+
+Equipe/Workflow fora do menu planejado do v1: **v2 (visual ilustrativo)**, decisão05/10. Abas auxiliares e mudança da Fila no n8n no mesmo backlog futuro.
 
 ## Selo de status (todas as telas, no topo)
 
@@ -92,7 +92,7 @@ Referência de apresentação: [mockup da gaveta compacta v2](mockups/gaveta-v2.
 
 Como no protótipo. Prévias só de arquivos liberados; referência não aparece como peça final.
 
-## 7. Equipe (006) — cartões, aba própria
+## 7. Equipe — v2 (visual ilustrativo), fora do v1
 
 - Cartão por agente (6): nome, área, estado da agenda com a fonte, "com ele agora" (peças em que é o responsável registrado) e o que aguarda.
 - Central com duas funções: Coordenação e Diretor criativo. Estrategista Mensal separado, como Proposto. Stories em Histórico, recolhido.
@@ -100,7 +100,7 @@ Como no protótipo. Prévias só de arquivos liberados; referência não aparece
 - Detalhe do agente: recebe → faz → entrega → repassa; quem aciona; maturidade (planejado, implementado, testado, integrado).
 - Fontes: aba Agentes (chave real: "Coluna 1") e a configuração real das agendas. Nunca expor prompt, configuração, IDs ou caminhos.
 
-## 8. Workflow (006) — painel, aba própria
+## 8. Workflow — v2 (visual ilustrativo), fora do v1
 
 - Flags da aba Controle no topo (ligada / desligada / opcional).
 - Tabela dos workflows da operação atual: estado (vários selos: "Publicado · Geração bloqueada · Integração pendente"), gatilho, última execução conhecida (aba Execucoes) e bloqueio.
@@ -112,12 +112,11 @@ Como no protótipo. Prévias só de arquivos liberados; referência não aparece
 
 - Botão Atualizar dados busca direto na planilha, só leitura, pelo servidor local, com conta de serviço do Google e chave fora do repositório.
 - Emenda na constituição (o CRM passa a poder ler a planilha, só leitura, nunca no navegador).
-- Amplia a captura para Agentes, Controle e Execucoes (base da feature 006).
-- [002 especificada/planejada](../../specs/002-consulta-planilhas/spec.md): duas leituras íntegras/tipadas, mesmo importador v1 e falha preservando captura/data. Auxiliares são privadas, sem tela nova; [emenda](../../specs/002-consulta-planilhas/constitution-proposal.md) permanece proposta. O comportamento instalado ainda é a releitura local da 001.
+- [002 reduzida](../../specs/002-consulta-planilhas/spec.md): seis abas tipadas, batchGet duas vezes, hashes iguais e mesmo importadorv1. Falha preserva captura/data; emenda1.1.0 aplicada. Auxiliares/Equipe/Workflow/Fila são v2 ilustrativo, fora do v1; estado na [validação](../../specs/002-consulta-planilhas/validacao.md).
 
 ## 10. Aplicação destas decisões no repositório
 
-A [spec da 001](../../specs/001-consulta-local-producao/spec.md) é a especificação funcional canônica. Seu [plano](../../specs/001-consulta-local-producao/plan.md), [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) e [tarefas](../../specs/001-consulta-local-producao/tasks.md) traduzem estas decisões em requisitos verificáveis. O [roadmap](../../ROADMAP.md) define 002 Planilhas, 003 planejamento mensal, 004 revisões, 005 prévias/biblioteca e 006 Equipe/Workflow. A entrega local implementa US1–US5 e o iniciador; demonstração com captura real e onboarding final concluídos, com resultados e limites na validação.
+A [spec da 001](../../specs/001-consulta-local-producao/spec.md) é a especificação funcional canônica. Seu [plano](../../specs/001-consulta-local-producao/plan.md), [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) e [tarefas](../../specs/001-consulta-local-producao/tasks.md) traduzem estas decisões em requisitos verificáveis. O [roadmap](../../ROADMAP.md) define 002 Planilhas, 003 planejamento mensal, 004 revisões, 005 prévias/biblioteca e, fora do v1, Equipe/Workflow como v2 visual ilustrativo. A entrega local implementa US1–US5 e o iniciador; demonstração com captura real e onboarding final concluídos, com resultados e limites na validação.
 
 - O cartão ou dia selecionado abre todas as peças NTV daquele dia, inclusive outros formatos que um filtro tenha escondido no calendário. O filtro serve para localizar; não recorta a gaveta. A gaveta de um dia vazio informa ausência e não cria peças. Sem data válida abre uma lista identificada; um cartão sem data no quadro leva ao conjunto sem data da semana.
 - O selo usa a data civil de `completedAt` em America/Sao_Paulo. Sem captura válida, mostra **Sem dados**, com eventual falha no Histórico. Com captura válida e tentativa posterior falha, prevalece **Atualização falhou**; uma releitura HTTP bem-sucedida não apaga a falha da importação. Uma tentativa nova aceita encerra o aviso. A Planilha conserva fonte, instante e período completos.
