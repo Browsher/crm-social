@@ -192,4 +192,4 @@ Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; ta
 
 ## Evidência da 003
 
-[Relatório do gate local da consulta mensal](reports/003-local-gate.json): testes/cobertura/complexidade PASS, Semgrep SKIP por ausência no Windows, audit N/A e baseline não atualizada. Execuções, revisão, dez screenshots sintéticos e pendências reais somente na [validação](../specs/003-planejamento-mensal/validacao.md). Gate Linux e reviews serão conferidos no PR; integração real não comprovada.
+[Relatório do gate local da consulta mensal](reports/003-local-gate.json): testes/cobertura/complexidade PASS, Semgrep SKIP por ausência no Windows, audit N/A e baseline não atualizada. [Resumo do gate Linux](reports/003-ci-gate.json): execução estrita com Semgrep PASS, extraído dos logs oficiais sem inventar contagem/percentual remotos. Execuções, review publicado, dez screenshots sintéticos e pendências reais na [validação](../specs/003-planejamento-mensal/validacao.md). [PR #15](https://github.com/Browsher/crm-social/pull/15) aberto, sem merge até T021/aceite da 002; integração real não comprovada.

@@ -40,7 +40,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## 003 — Consulta do planejamento mensal
 
-**Estado em 05/10/2026:** [spec reescopada pelo autor](specs/003-planejamento-mensal/spec.md), [plano](specs/003-planejamento-mensal/plan.md) e [tarefas](specs/003-planejamento-mensal/tasks.md); implementação e testes locais concluídos com fixtures/fakes/TEMP. [Validação](specs/003-planejamento-mensal/validacao.md) e [gate local](docs/reports/003-local-gate.json): Node 24.19.0, 312 PASS sem pulos, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos, baseline preservada; Semgrep SKIP por ausência no Windows e audit N/A. Gate Linux/reviews serão conferidos no PR. Nenhuma integração real comprovada.
+**Estado em 05/10/2026:** [spec reescopada pelo autor](specs/003-planejamento-mensal/spec.md), [plano](specs/003-planejamento-mensal/plan.md) e [tarefas](specs/003-planejamento-mensal/tasks.md); implementação e testes locais concluídos com fixtures/fakes/TEMP. [Validação](specs/003-planejamento-mensal/validacao.md) e [gate local](docs/reports/003-local-gate.json): Node 24.19.0, 312 PASS sem pulos, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos, baseline preservada; Semgrep SKIP por ausência no Windows e audit N/A. Gate Linux e review publicado conferidos no PR #15, com evidências na validação. Nenhuma integração real comprovada.
 
 **Resultado visível:** objetivo e pautas do mês exibido, lidos da aba opcional **Meses** (`mes`, `marca_id`, `objetivo`, `pautas`). Card com até cinco pautas e **+N**; sem aba/linha, **Ainda não definido**; duplicata por marca/mês, **A confirmar** com aviso na Planilha. Meses aparece na Planilha como as outras tabelas, quando capturada.
 

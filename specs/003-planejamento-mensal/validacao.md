@@ -47,4 +47,21 @@ Screenshots não comprovam leitura da conta/planilha real. T002/T015 do autor co
 
 T014: doc-sync-onboarding concluído em README/AGENTS/ROADMAP, índice/arquitetura, módulos captura/coleta/triagem/projecao/web, documentos canônicos da 003 e guia dos screenshots. 419 links relativos válidos nos 17 Markdown atribuídos, cercas balanceadas e diff sem erro. Notas pai atualizadas; índice Graphify recebe atualização restrita local, preservando fontes fora do escopo. Hooks opcionais git.commit antes/depois da implementação têm auto_commit desabilitado; commits manuais autorizados com noreply e sem coautoria.
 
+## PR e gate Linux — 05/10/2026
+
+[PR #15](https://github.com/Browsher/crm-social/pull/15) aberto para main, branch 003-planejamento-mensal, **sem merge**. Head inicial `3f757e1f48ff4cca8c79edc30c77771a9a2c6d82`, com autor/committer noreply e sem coautoria. [Quality gate Linux](https://github.com/Browsher/crm-social/actions/runs/37370817974): **SUCCESS**, execução estrita exit 0; tests/coverage/complexity/Semgrep PASS, 17 avisos de complexidade, audit N/A, baselineUpdated:false. [Resumo sanitizado dos logs](../../docs/reports/003-ci-gate.json).
+
+O log remoto publica estados, sem contagem/percentual; não copiar os 312 PASS/98,37% locais como números remotos. UI/PowerShell têm pulos previstos no Linux; não substituem a prova local das cinco camadas.
+
+[Review publicado do head 3f757e1](https://github.com/Browsher/crm-social/pull/15#issuecomment-6002583129), [execução SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37370817925): nenhum Critical/Important no código, nenhum problema de segurança ou regressão identificado. Quatro sugestões Minor não bloqueantes registradas:
+
+1. Complexidade em faixa de aviso de objetivoMensal (12) e metadata (12); gate PASS, abaixo de 21. Separações sugeridas são refactor opcional, sem erro de comportamento observado.
+2. Quatro cabeçalhos mensais repetidos na projeção; unificar com CAMPOS_MESES é manutenção opcional. O contrato atual está conferido por teste de projeção com valores literais.
+3. WeakMap de origem depende do mesmo objeto normalizado; caminhos atuais o preservam e teste confere linhas 2/4. Guarda adicional contra clones futuros é sugestão preventiva, sem defeito atual.
+4. Asserção de +2 pode mirar .more-topics para ficar mais específica. A fixture atual não tem +2 no objetivo e já detectou RED sem o marcador; melhoria de teste opcional. A referência de linha 4607 no comentário não corresponde ao arquivo atual; o caso pertinente é U003 card.
+
+T013 concluída com gate/review deste head e as cinco camadas locais, sem modificar baseline/tools/CI. T014 inclui este registro/índice de evidências. Atualização final é somente documental; os [checks e reviews do PR](https://github.com/Browsher/crm-social/pull/15/checks) devem ser conferidos novamente antes do encerramento. Não afirmar aceite de novo head com uma execução anterior.
+
+**13/15 tarefas concluídas**; somente T002 e T015 do autor pendentes. T021 da 002 continua pendente e bloqueia merge. PR aberto, auto-merge não configurado; nenhuma escrita no Google/Drive/n8n/agentes ou demonstração real nesta execução.
+
 Decisão técnica: manter a ordenação canônica por nome no hash, incluindo Meses quando presente, como o algoritmo v1 e as fixtures independentes; ausência conserva o hash legado. A expressão “Meses por último” no contrato descreve a ordem visual, não uma nova serialização de hash. Custo se incorreto: incompatibilidade de hash em capturas novas; testes fixam o legado e conferem toda a opcional.

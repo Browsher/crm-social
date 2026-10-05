@@ -1,7 +1,7 @@
 # Tasks: Consulta do planejamento mensal (15 tarefas)
 
 **Input**: [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md), [contrato](contracts/meses.md) e [quickstart](quickstart.md).
-**Status**: implementação autorizada pelo autor em 05/10/2026; T021 da 002 bloqueia somente o merge. T002/T015 permanecem manuais e não bloqueiam testes sintéticos. Push e PR autorizados, sem merge.
+**Status**: 13/15 concluídas em 05/10/2026, com gate local/Linux e review publicado no PR #15. T002/T015 permanecem pendentes do autor e não bloqueiam testes sintéticos. T021 da 002 bloqueia o merge; PR permanece aberto, sem merge.
 **Tests**: TDD obrigatório, RED observado antes do GREEN, nas cinco camadas. Fakes/fixtures/TEMP; nenhum Google real nos testes. Um dono por arquivo; não desfazer edições alheias. Não instalar dependência ou alterar baseline/tools do gate.
 
 ## Fase 1 — Setup e pré-requisito
@@ -45,7 +45,7 @@
 
 ## Fase final — Qualidade, documentação e demonstração
 
-- [ ] T013 Verificar cinco camadas e suite completa com Node/Playwright existentes, rodar `tools/quality-gate.mjs` sem alterar tools/baseline, conferir gate Linux no PR autorizado e obter review publicado sem Critical/segurança/regressão. Registrar evidências/limites em `specs/003-planejamento-mensal/validacao.md`. Não tratar pulos UI/PowerShell do Linux como validação local. Sem merge até T021/aceite da 002. FR-002/003/008/009/010; SC-001–SC-006.
+- [x] T013 Verificar cinco camadas e suite completa com Node/Playwright existentes, rodar `tools/quality-gate.mjs` sem alterar tools/baseline, conferir gate Linux no PR autorizado e obter review publicado sem Critical/segurança/regressão. Registrar evidências/limites em `specs/003-planejamento-mensal/validacao.md`. Não tratar pulos UI/PowerShell do Linux como validação local. Sem merge até T021/aceite da 002. FR-002/003/008/009/010; SC-001–SC-006.
 - [x] T014 Sincronizar documentação e onboarding pelo perfil `.claude/agents/doc-sync-onboarding.md`, após código/gate: `README.md`, `AGENTS.md`, `ROADMAP.md`, `docs/index.md`, `docs/architecture.md`, módulos captura/coleta/triagem/projecao/web afetados e `specs/003-planejamento-mensal/validacao.md`; conferir design/contrato e estados planejado/implementado/testado/integrado. Fonte operacional continua readonly, sem agentes/meta semanal no CRM. Conferir diff documental final e links; screenshots somente sintéticos quando necessários. FR-001/002/007/008/009/010.
 - [ ] T015 **Autor: demonstração privada após T002 e implementação validada**, conforme `specs/003-planejamento-mensal/quickstart.md#demonstração-privada-após-implementar`: Atualizar dados, conferir card/tabela do mês atual contra a mesma captura e registrar somente resultado/limites sanitizados em `specs/003-planejamento-mensal/validacao.md`, sem duplicata deliberada na planilha real. Não bloqueia testes sintéticos; não inventar conclusão. FR-001/003/004/005/007/008/010.
 
