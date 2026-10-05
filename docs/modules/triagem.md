@@ -2,7 +2,7 @@
 
 Como conferir as etiquetas antes de colocar uma fotografia no álbum, a triagem impede que identidades diferentes virem a mesma etiqueta de conteúdo suprimido. O importador usa essa conferência antes de aceitar a captura; a consulta reutiliza a mesma seleção.
 
-Fonte: [src/triagem.cjs](../../src/triagem.cjs). Estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md); captura operacional e aceite final permanecem pendentes. O módulo foi extraído da projeção preservando o recorte NTV, os 66 mínimos e as regras de redação existentes.
+Fonte: [src/triagem.cjs](../../src/triagem.cjs). Estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md); demonstração privada e onboarding final concluídos, com limites na validação. O módulo foi extraído da projeção preservando o recorte NTV, os 66 mínimos e as regras de redação existentes.
 
 ## Interfaces e dependências
 

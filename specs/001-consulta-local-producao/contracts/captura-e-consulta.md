@@ -1,6 +1,6 @@
 # Contrato de captura e consulta v1
 
-Como uma fotografia com etiqueta, a captura precisa de identidade, origem e instante para ser consultada. T001–T038 implementadas e verificadas localmente (38 de 41 tarefas); T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes, sem aceite operacional da 001. Evidências na [validação](../validacao.md). Coletor previsto: Central com conector autenticado; consumidor local sem credenciais Google.
+Como uma fotografia com etiqueta, a captura conserva origem e instante. 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../validacao.md). Coletor: Central com conector; consumidor local sem credenciais Google.
 Requisitos em [spec.md](../spec.md); decisão de interface em [telas.md](../../../docs/design/telas.md). Este contrato não cria cabeçalhos nem escrita operacional.
 
 ## Envelope privado da captura

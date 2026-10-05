@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-T001–T038 implementadas/verificadas localmente (38/41); T039/T040/T041 pendentes, sem aceite operacional; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md).
+T001–T041 concluídas (41/41), com demonstração privada; próxima: 002 Planilhas; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local não versionado; remoto usa branch/specs da 001.
@@ -52,5 +52,5 @@ T001–T038 implementadas/verificadas localmente (38/41); T039/T040/T041 pendent
 - M8: UI fora do LCOV e pulos UI/PowerShell no Linux; CLI coberta; aceite Windows local exige zero pulos.
 - US4: primeira pendência/+N visíveis; mídia oculta no cartão de Planejamento/Redação/Visual; semanaId declarada no estado.
 - US5: abas por teclado/foco, rolagem própria e Histórico confirmado; releitura conserva aba disponível.
-- T039 captura real, T040 gate pós-demonstração e T041 onboarding final pendentes; este doc-sync não conclui T041.
+- T039 captura real, T040 gate e T041 onboarding concluídos; resultados/limites só na validação.
 - Não alterar constituição, ferramentas/gate, agentes oficiais ou operação n8n.

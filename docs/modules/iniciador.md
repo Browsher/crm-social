@@ -2,7 +2,7 @@
 
 Como uma chave que abre somente este álbum, o iniciador escolhe o Node existente e abre uma instância do CRM neste computador. Ele não importa captura, consulta Google ou comanda a produção.
 
-Implementado e verificado localmente em T035–T038; evidências e limites na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [Iniciar CRM.ps1](../../Iniciar%20CRM.ps1), para Windows PowerShell 5.1. A captura real e o aceite operacional continuam pendentes.
+Implementado e verificado localmente em T035–T038; evidências e limites na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [Iniciar CRM.ps1](../../Iniciar%20CRM.ps1), para Windows PowerShell 5.1. Demonstração privada e onboarding final concluídos; resultados e limites na validação.
 
 ## Entrada e escolha do runtime
 

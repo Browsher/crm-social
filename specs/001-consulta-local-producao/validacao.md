@@ -1,6 +1,6 @@
-# Validação — feature 001, US1–US5 e Fase 8 sintética
+# Validação — feature 001 entregue e demonstrada com captura real
 
-Como conferir um álbum antes de entregá-lo: cada regra é provada com uma captura sintética, sem tocar na operação. Recorte atual: T001–T038, fundação e US1–US5 integradas, iniciador e revisão/verificação sintética da Fase 8 concluídos localmente. T039–T041 aguardam demonstração operacional autorizada e aceite final; o PR da Fase 8 permanece aberto sem merge. A correção do Important de preflight tem gate local completo e gate Linux/review confirmados no head f916fd6; o registro final abaixo distingue as rodadas históricas. As seções anteriores a **Fase 8 — iniciador e verificação sintética** são registros históricos das rodadas: heads, selos provisórios, contagens e pendências de merge descrevem aquele momento, não o estado corrente.
+Como conferir um álbum antes de entregá-lo: a 001 está implementada, testada e demonstrada com captura real, com T001–T041 concluídas (41/41). A integração é privada e local: captura da Central → importador → CRM; runtime sem Google ou escrita operacional. Próximo passo planejado: 002 — Planilhas, com especificação e emenda da constituição próprias. O registro final abaixo reúne fechamento e limites. As seções anteriores são evidências históricas: estados de PR, contagens e pendências descrevem aquele momento, sem substituir a conferência atual.
 
 ## Preparação T001
 
@@ -1283,3 +1283,95 @@ Sincronizar a documentação deste incremento não conclui o onboarding final T0
    do mapa, publicação somente explícita, selo pelo completedAt, seis abas/66
    mínimos, avisos e Histórico confirmado. Registrar só evidência compartilhável
    e limites. T040/T041 finais vêm depois dessa demonstração autorizada.
+
+## Fechamento T039–T041 — demonstração privada e onboarding final
+
+### T039 — captura real e conferências
+
+capturaId: **ntv_20261004T231331718Z**. Importação no data/ padrão: **passou**.
+Entrada intacta por conferência de hash antes/depois: **passou**. Iniciador e
+servidor local usados; instâncias próprias encerradas ao fim. Comparações em
+memória, sem screenshot real salvo, compartilhado ou versionado. Este registro
+contém só contagens, resultados e limites, sem valores de células.
+
+| Aba | Linhas na captura | Linhas no recorte NTV/API/tela | Conferência do recorte |
+| --- | ---: | ---: | --- |
+| Semanas | 1 | 1 | passou |
+| Produções | 4 | 4 | passou |
+| Páginas | 5 | 5 | passou |
+| Cenas | 4 | 4 | passou |
+| Arquivos | 52 | 51 | passou; limitação de escopo abaixo |
+| Revisoes | 5 | 5 | passou |
+
+A expectativa inicial de **52 Arquivos na tela falhou**. Há **1 arquivo sem
+vínculo com produção nem semana**, não referenciado pelas unidades ou documentos
+semanais. A identidade NTV não é comprovada pelos campos do contrato. O filtro
+vigente conserva **51**: **29** ligados às produções e **22** semanais. O registro
+sem escopo permanece integral na captura privada, sem inferir marca nem incluir
+na interface apenas para atingir a contagem esperada. Não houve ajuste da fonte.
+
+| Conferência da T039 | Resultado |
+| --- | --- |
+| Importação, entrada intacta e API local | passou |
+| Seis abas; todos os 66 mínimos por linha, API e DOM após normalização/triagem | passou |
+| Identidades, datas civis e período | passou |
+| Quadro configurado e publicação somente explícita | passou |
+| Páginas, cenas, revisões e responsabilidade registrada | passou |
+| Selo pelo fim da captura, nas três telas | passou |
+| Gaveta, acordeões, Esc e devolução do foco | passou |
+| Contagens e conteúdo das seis tabelas | passou |
+| Avisos localizados e painel único de avisos | passou |
+| Histórico confirmado | passou |
+| Releitura sem nova captura, recibo ou mudança do horário | passou |
+| 1440/390 px sem corte da página/gaveta | passou |
+| Sem pageerror nem requisição externa | passou |
+
+**Limitações da captura:** **77 avisos** exibidos: **64** por campos numéricos
+recebidos como texto, **4** de mídia ausente e **9** de relações/origens a confirmar.
+Tipagem preservada sem conversão manual, relaxamento de validação ou reconstrução
+da captura. Sem versão inteira positiva comprovada, vínculos/vigência e ordenação
+numérica ficam a confirmar conforme o contrato. Avisos esperados para os
+valores/tipos recebidos, sem perda de peças pelo CRM. A demonstração não comprova
+bytes de mídia, aprovação, publicação nem sincronização contínua. Extras e o
+registro sem escopo permanecem privados, fora da projeção automática.
+
+As primeiras comparações do roteiro temporário tinham expectativas incorretas:
+vazio foi comparado com marcador visual e clique programático não dava foco ao
+acionador. Conferidos código e DOM, o roteiro passou a comparar vazio literal e
+focar o botão antes de abrir. Não se confirmou divergência funcional do CRM;
+nenhum código foi alterado nem RED artificial criado. O arquivo real não foi
+copiado para TEMP nem usado como fixture/teste versionado.
+
+### T040 — gate vigente após a demonstração
+
+Comando real: node tools/quality-gate.mjs, Node 24.19.0/configuração vigente,
+sem CI=true, checks desabilitados ou atualização de baseline.
+
+| Checagem local | Estado |
+| --- | --- |
+| tests | PASS; 240 testes |
+| coverage | PASS; 97,961264% das linhas do escopo LCOV |
+| complexity / ESLint | PASS; máximo 13, nove avisos |
+| semgrep | SKIP; CE 1.179.0 ausente no Windows |
+| audit | N/A; aplicação sem package.json/dependências |
+
+**Exit 0; 64,89 s; baseline atualizada: false.** Repetição independente do
+runner confirmou **240 PASS / 0 FAIL / 0 SKIP** nas oito suítes locais.
+Semgrep real/estrito é obrigatório no Linux do PR final. UI fora do LCOV e pulos
+UI/PowerShell no Linux permanecem limites M8; CI não substitui as cinco camadas
+Windows locais.
+
+### T041 — sincronização final
+
+README, ROADMAP, AGENTS fora do bloco gerenciado, índice, status de spec/plan/modelo/
+contrato/tarefas, módulos afetados e regra curta refletem a entrega. **41 de 41
+tarefas marcadas**. Planejado: 002 Planilhas. Implementado: cinco histórias,
+iniciador, importação/persistência e API local. Testado: suíte/gate e comparação
+privada da captura real. Integrado: arquivo da Central importado e consultado
+localmente; Google direto, escrita editorial e ciclo de mídia fora da 001.
+
+Sem mudança de arquitetura, contrato efetivo, constituição, código, gate,
+baseline, workflows, agentes oficiais ou regras do workspace pai. As pendências
+da revisão final permanecem limites conhecidos. Aceite Linux, comentário do
+review e merge do PR final serão registrados somente depois da conferência real.
+A branch 001 será mantida.

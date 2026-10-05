@@ -2,7 +2,7 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura, gaveta, Produção e Planilha implementados localmente; verificação de escala sintética e estado T001–T038 na [validação](../../specs/001-consulta-local-producao/validacao.md). Captura operacional e aceite final permanecem pendentes. Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Funções estáveis em app.js: `abrirDia`/`acordeaoPeca`, `secaoUnidades`/`secaoRevisoes`, `renderProducao`/`pendenciaQuadro`, `renderPlanilha`/`celulaPlanilha` e `detalhesCaptura`.
+Planejamento, frescor/releitura, gaveta, Produção e Planilha implementados localmente; verificação sintética e estado final T001–T041 na [validação](../../specs/001-consulta-local-producao/validacao.md). Demonstração privada e onboarding final concluídos; limites na validação. Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Funções estáveis em app.js: `abrirDia`/`acordeaoPeca`, `secaoUnidades`/`secaoRevisoes`, `renderProducao`/`pendenciaQuadro`, `renderPlanilha`/`celulaPlanilha` e `detalhesCaptura`.
 
 ## Inicialização e navegação
 

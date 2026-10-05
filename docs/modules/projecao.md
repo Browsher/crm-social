@@ -2,7 +2,7 @@
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Projeção, detalhes, quadro, seis tabelas e regressões de identidade/versão implementados e verificados localmente; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs). Captura operacional e aceite completo continuam pendentes.
+Projeção, detalhes, quadro, seis tabelas e regressões de identidade/versão implementados e verificados localmente; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs). Demonstração privada e onboarding final concluídos; limites na validação.
 
 Funções de entrada e fronteira: `reciboPublico` e `projetarVisao`; `redigirTexto` e `selecionarNtv` vêm do módulo compartilhado [triagem](triagem.md). Organização: `planejar`, `agruparDias`, `aplicarFrescor` e `montarPlanilha`. Detalhes e quadro: `detalhar`, `unidades`, `revisoes`, `documentosSemana`, `pendenciasMidia`, `colunaProducao` e `montarQuadro`. Usar os nomes da função na fonte, sem depender de linhas que mudam entre entregas.
 

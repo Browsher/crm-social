@@ -1,14 +1,14 @@
 # Feature Specification: Consulta local da produção NTV
 
-Como um álbum da operação, esta feature permite localizar registros sem comandar a produção. A especificação abaixo continua sendo a meta completa; o estado da entrega parcial é registrado separadamente.
+Como um álbum da operação, esta feature permite localizar registros sem comandar a produção. A especificação abaixo continua sendo a meta completa; o estado da entrega e os limites são registrados separadamente.
 
 **Feature Branch**: `001-consulta-local-producao`, criada de `main` no repositório local.
 
 **Feature Directory**: `specs/001-consulta-local-producao`
 
-**Created**: 2026-10-02 | **Updated**: 2026-10-04 (T035–T038 e regressões locais)
+**Created**: 2026-10-02 | **Updated**: 2026-10-04 (fechamento T039–T041)
 
-**Status**: T001–T038 implementadas e verificadas localmente (38 de 41 tarefas). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; a 001 não tem aceite operacional. Evidências em [validacao.md](validacao.md). A sincronização deste incremento não conclui T041.
+**Status**: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
