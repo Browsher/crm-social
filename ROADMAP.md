@@ -1,12 +1,12 @@
 # Roadmap — CRM Social local
 
-Como um álbum que ganha páginas em entregas pequenas, o CRM tem T001–T038 implementadas e verificadas localmente: 38 de 41 tarefas. Evidências na [validação](specs/001-consulta-local-producao/validacao.md). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; 001 ainda não tem aceite operacional. 002–006 continuam em backlog; a [constituição 1.0.0](.specify/memory/constitution.md) não instala perfis editoriais nem comprova integração operacional.
+Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). 002–006 continuam planejadas; a [constituição](.specify/memory/constitution.md) permanece vigente. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
 O review usa 60 turnos e timeout de 20 minutos; geração de testes mantém 20 turnos. Custo/tempo e teto numérico de arquivos permanecem dívidas. Retenção por possível segredo, aviso de falha e `gerar-testes` não têm prova remota; se `files` vier menor que `changedFiles`, a lista incompleta é recusada.
 
-US1–US5, iniciador e escala sintética estão verificados localmente; revisão e limites na [validação](specs/001-consulta-local-producao/validacao.md). A UI fora do LCOV e os pulos explícitos UI/PowerShell no Linux permanecem na pendência M8; CLI segue coberta. Esta sincronização incremental não conclui T041.
+US1–US5, iniciador e escala sintética estão verificados localmente; revisão e limites na [validação](specs/001-consulta-local-producao/validacao.md). A UI fora do LCOV e os pulos explícitos UI/PowerShell no Linux permanecem na pendência M8; CLI segue coberta. Demonstração privada e onboarding final concluídos, com limites registrados.
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
@@ -18,7 +18,7 @@ As seis features abaixo serão construídas em sequência. Somente a 001 recebe 
 
 **Implementação final local:** o [iniciador](docs/modules/iniciador.md) usa Node existente, processo oculto e logs privados. Leitura valida os recibos confirmados; projeção recusa identidade/vínculo alterado pela triagem e mantém mídia vigente a confirmar quando falta versão válida. Revisão e cenário sintético de escala têm evidência na [validação](specs/001-consulta-local-producao/validacao.md).
 
-**Ainda pendente na 001:** T039 captura operacional, T040 gate após demonstração e T041 onboarding final. A feature não tem aceite operacional; a leitura direta Google pertence à 002.
+**Entregue na 001:** T039 demonstrada com captura real, T040 aprovado localmente e no Linux e T041 sincronizado. Vínculos/vigência da captura demonstrada ficam a confirmar por tipagem; limites e aceite remoto estão na [validação](specs/001-consulta-local-producao/validacao.md). Leitura direta Google permanece planejada na 002.
 
 **Resultado visível:** menu com Planejamento, Produção e Planilha. Planejamento mostra calendário com cartões, lista semanal, objetivo **Ainda não definido** e **N sem data**. Clicar no cartão ou no dia abre a gaveta do dia inteiro, com acordeões por peça. Produção organiza as peças em quadro por etapa, com **Outras** preservando valores desconhecidos. Planilha apresenta as seis abas capturadas e Histórico. O selo de status tem quatro estados; no celular, Planejamento usa lista e a gaveta ocupa a tela.
 
@@ -30,11 +30,13 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## 002 — Planilhas
 
-**Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço com chave configurada fora do repositório e nunca enviada ao navegador. Não herdar autenticação deste chat.
+**Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço própria, com chave fora do repositório e nunca enviada ao navegador.
 
 **Dependências:** concluir a 001 e aprovar uma emenda explícita da constituição antes de implementar a leitura direta. Definir contrato de acesso mínimo, erros, cobertura e integridade; ampliar a captura para **Agentes, Controle e Execucoes**, além das seis abas da 001. A identidade real de Agentes é `Coluna 1`. Não renomear cabeçalhos remotos nem colocar chave/captura em fixtures.
 
 **Aceite:** leitura sem escritas em Google/Drive, credenciais fora da interface e do Git, falha preservando a última captura válida e sua data. As três abas novas mantêm fonte/horário e servem à 006; cadastro ou flag não prova agenda ativa ou integração. A 002 não cria fonte de objetivo mensal: **Ainda não definido** permanece até o contrato da 003. Esta rodada registra a emenda como futura e conserva a constituição vigente.
+
+**Decisão pendente da demonstração:** autor e Central precisam decidir a tipagem da próxima coleta e, se necessária, uma mudança explícita do contrato. O acompanhamento e o efeito sobre vínculos/vigência estão na [validação](specs/001-consulta-local-producao/validacao.md). Não converter a captura existente nem relaxar validação silenciosamente.
 
 ## 003 — Planejamento mensal e repasse ao Diretor
 
@@ -74,4 +76,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo:** T039 do [plano da feature 001](specs/001-consulta-local-producao/plan.md) e suas [tarefas](specs/001-consulta-local-producao/tasks.md), seguida de T040/T041. A [validação](specs/001-consulta-local-producao/validacao.md) registra a entrega local e o aceite operacional pendente. Não avançar para a feature seguinte sem demonstrar a anterior, conferir seus critérios de aceite e registrar pendências reais.
+**Próximo passo:** especificar 002 — Planilhas e aprovar a emenda da constituição para leitura direta pelo servidor local. A 001 foi demonstrada com captura real; [validação](specs/001-consulta-local-producao/validacao.md) concentra resultados, limites e aceite remoto. Nenhuma integração da 002 foi implementada.

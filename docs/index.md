@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página localiza decisões, módulos e evidências: T001–T038 implementadas e verificadas localmente (38 de 41 tarefas). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes, sem aceite operacional da 001. Evidências na [validação](../specs/001-consulta-local-producao/validacao.md).
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 ## Ordem de leitura
 
@@ -44,10 +44,10 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [spec.md](../specs/001-consulta-local-producao/spec.md) | Requisitos/cenários/aceite da feature completa, preservados |
 | [plan.md](../specs/001-consulta-local-producao/plan.md) | Solução planejada completa; cabeçalho distingue recorte implementado |
 | [research.md](../specs/001-consulta-local-producao/research.md) | Pesquisa histórica de 03/10 e justificativas; não é status atual da implementação |
-| [data-model.md](../specs/001-consulta-local-producao/data-model.md) | Modelo atual, entidades, guardas de leitura/projeção e transições; aceite operacional pendente |
+| [data-model.md](../specs/001-consulta-local-producao/data-model.md) | Modelo atual, entidades, guardas de leitura/projeção e transições; demonstração concluída, limites na validação |
 | [Contrato captura/consulta](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) | Envelope e 66 mínimos, persistência e UI completas; pendências explícitas |
-| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T038 marcadas e T039–T041 pendentes; rastreabilidade |
-| [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, oito suítes, iniciador, demo TEMP e roteiro da captura real pendente |
+| [tasks.md](../specs/001-consulta-local-producao/tasks.md) | T001–T041 concluídas; rastreabilidade |
+| [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, oito suítes, iniciador, demo TEMP e roteiro da captura real executado em T039 e repetível |
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
 
@@ -117,7 +117,7 @@ As evidências têm origem, estado e limites registrados somente na [validação
 
 ## Evidência local da fase final
 
-[Resumo sanitizado de T035–T038](reports/001-fase8-local.json); iniciador, escala e regressões locais. Histórico de verificações e aceite operacional pendente somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+[Resumo sanitizado de T035–T038](reports/001-fase8-local.json); iniciador, escala e regressões locais. Histórico de verificações, demonstração real e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 
 [Resumo da validação anterior à promoção](reports/001-fase8-preflight-local.json); triagem compartilhada e rejeição da candidata sem substituir a vigente. Execuções e limites somente na [validação](../specs/001-consulta-local-producao/validacao.md).
 

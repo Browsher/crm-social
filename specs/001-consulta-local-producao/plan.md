@@ -1,6 +1,6 @@
 # Consulta local da produção — Implementation Plan
 
-Como um álbum montado por partes, o plano define o leitor completo e a sequência de entrega. As cinco histórias de consulta já existem localmente; a fase final abaixo continua sendo a solução planejada para concluir a 001.
+Como um álbum montado por partes, o plano define o leitor completo e a sequência de entrega. As cinco histórias de consulta e a fase final estão implementadas/testadas; a demonstração com captura real foi concluída. Leitura direta Google permanece planejada na 002.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: use `superpowers:subagent-driven-development` na execução desta feature, ou `superpowers:executing-plans` se ela for executada sequencialmente. Este documento é o plano canônico; não criar uma segunda cópia em `docs/superpowers/plans/`.
 
@@ -12,7 +12,7 @@ Como um álbum montado por partes, o plano define o leitor completo e a sequênc
 
 **Spec:** [spec.md](spec.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas aprovadas](../../docs/design/telas.md).
 
-T001–T038 estão implementadas e verificadas localmente (38 de 41 tarefas); evidências na [validação](validacao.md) e interfaces reais na [arquitetura](../../docs/architecture.md). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; não há aceite operacional da 001. Esta sincronização não conclui T041.
+001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Interfaces atuais na [arquitetura](../../docs/architecture.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 **Branch:** `001-consulta-local-producao`, criada da `main` no repositório `crm-social` e conferida nesta tarefa. Não executar novamente a criação da feature para atualizar estes documentos.
 
@@ -59,7 +59,7 @@ por `CRM_NODE_PATH`, validar a versão no quickstart e passá-lo por `-NodePath`
 iniciador. Não versionar caminho pessoal. Os testes CLI usam `process.execPath`; o
 gate existente também usa o próprio executável para os testes e o ESLint.
 
-A regra `.claude/rules/project-structure.md` está preparada e sincronizada. Aplicativo, importador e iniciador têm comandos reais no quickstart; o Playwright existente permanece sem nova instalação. Captura operacional e aceite completo continuam pendentes.
+A regra `.claude/rules/project-structure.md` está preparada e sincronizada. Aplicativo, importador e iniciador têm comandos reais no quickstart; o Playwright existente permanece sem nova instalação. Demonstração privada e onboarding final concluídos; limites na validação.
 
 ## Constitution Check
 

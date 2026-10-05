@@ -1,6 +1,6 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: T001–T038 implementadas e verificadas localmente (38 de 41 tarefas), com evidências na [validação](validacao.md). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; a feature não está aceita operacionalmente. Esta sincronização incremental não conclui T041. Branch da feature `001-consulta-local-producao`.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Branch 001-consulta-local-producao. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). Os mockups de [telas](../../docs/design/mockups/telas-v2.html) e [gaveta compacta](../../docs/design/mockups/gaveta-v2.html) servem como referência visual; não validam backend ou persistência.
 
@@ -138,7 +138,7 @@ A importação adquire `.importacao.lock` no diretório escolhido. Segunda inst�
 
 ## Cenários sintéticos obrigatórios
 
-Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T038, incluindo iniciador, escala sintética e regressões, têm evidência na [validação](validacao.md). A captura operacional e as etapas finais T039–T041 permanecem pendentes; o roteiro não equivale a resultado real nem conclui T041 pelo doc-sync deste incremento.
+Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T038, incluindo iniciador, escala sintética e regressões, têm evidência na [validação](validacao.md). T039–T041 concluídas com captura real, gate e onboarding; resultados e limites somente na validação. Este roteiro reprodutível não substitui a evidência.
 
 | Caso | Ação | Resultado a conferir |
 | --- | --- | --- |
@@ -171,9 +171,9 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T038, inclu
 
 Os arquivos de cada cenário e pares RED/GREEN estão em [tasks.md](tasks.md), com mapeamento de FR-001–016 e SC-001–009. SC-007 confere o mapa literal do quadro; SC-008, todas as seis tabelas/66 mínimos e tentativas; SC-009, teclado e 390/1440 nos cinco fluxos. Testes da interface bloqueiam e registram requisições externas; resultado esperado: zero. Dados mínimos registrados permitidos aparecem somente na consulta local; artefatos compartilháveis usam dados sintéticos.
 
-## Primeira leitura real e demonstração futura
+## Leitura real e demonstração local
 
-Procedimento preparado para a Central em T039; **não executado nesta sincronização**. O dicionário não substitui a captura. Os comandos de importação e início já existem, mas a primeira leitura real e sua comparação ainda estão pendentes.
+Procedimento executado com captura real em T039; resultados e limites na [validação](validacao.md). O dicionário não substitui a captura. Os comandos abaixo permitem repetir com nova captura privada; nunca editar à mão o arquivo coletado.
 
 1. Central prepara o JSON `schemaVersion: 1` conforme o [contrato](contracts/captura-e-consulta.md): `metadataBefore`/`metadataAfter`, seis abas completas e todos os 66 cabeçalhos mínimos reais. Ler até 50.000 células por chamada, repetir a leitura completa e guardar os valores da segunda; `firstReadSha256`/`secondReadSha256` e metadados estáveis precisam concordar. Coleta parcial/conflitante não é promovida.
 2. Salvar a captura íntegra em `data/entrada/<capturaId>.json`, privado/ignorado. Atribuir a `$crmCapturePath` o caminho local real da coleta; não copiar fixtures nem fabricar um exemplo operacional. Com `$crmNode` selecionado pelo bloco de ambiente, importar:
@@ -207,7 +207,7 @@ Não alterar permissões do Drive, controles, agendamentos, n8n, prompts editori
 & './.specify/scripts/powershell/check-prerequisites.ps1' -Json -RequireSpec -RequireTasks -IncludeTasks
 ```
 
-Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T038 estão implementadas/verificadas; esta sincronização não altera os checks de T039–T041.
+Esse comando confirma documentos encontrados e feature ativa. Não comprova testes funcionais, integração ou coleta. T001–T041 concluídas; as evidências reais estão na validação e não são inferidas deste comando.
 
 ## Quality gate e sincronização final da implementação
 
@@ -219,4 +219,4 @@ Revisão independente/correções e demonstração precedem estas duas últimas 
 
 T040: quality gate é penúltima etapa, com a configuração vigente e runner `node --test`; registrar resultado real e impedir conclusão se falhar. T041: última etapa segue `.claude/agents/doc-sync-onboarding.md`, sincronizando README/roadmap/status/documentação afetada e `validacao.md`. Se a revisão documental exigir código, voltar ao ciclo teste/revisão/gate antes de fechar.
 
-Não tratar o procedimento preparado como executado nem aprovação do mockup como aceite da feature. As evidências locais ficam na [validação](validacao.md); o aceite completo da 001 continua dependendo da captura oficial, gate após demonstração e onboarding final de T039–T041.
+Não tratar aprovação do mockup como aceite. Demonstração com captura real, gate e onboarding de T039–T041 estão registrados na [validação](validacao.md), junto aos limites; nenhuma imagem pública contém dados da demonstração operacional.

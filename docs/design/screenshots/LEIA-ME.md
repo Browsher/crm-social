@@ -2,7 +2,7 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
-Estado em 04/10/2026: evidência visual local de T001–T034/US1–US5; sete tarefas finais, iniciador, captura operacional e aceite completo permanecem pendentes. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
+Registro histórico das imagens de 04/10/2026: evidência visual local de T001–T034/US1–US5. Na geração destas imagens, as sete tarefas finais ainda não tinham sido executadas. Hoje T001–T041 estão concluídas; resultados e limites ficam na validação, sem imagens da captura privada. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
 
 | Arquivo | O que mostra |
 | --- | --- |
@@ -21,7 +21,7 @@ Aplicação em execução, dados fictícios — lista semanal mobile da primeira
 
 ## Limites da evidência
 
-As imagens originais comprovam a aparência histórica do Planejamento da US1, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** dessas duas imagens era provisório e foi substituído na US2. US4/quadro e US5/abas, avisos e Histórico estão implementadas localmente; iniciador, captura operacional e aceite completo permanecem pendentes. Produção mostra quadro por semana; Planilha mostra captura/releitura, seis tabelas e Histórico. Revisão/integração corrente fica somente na validação.
+As imagens originais comprovam a aparência histórica do Planejamento da US1, não todas as interações, o CI Linux ou a feature completa. O selo **Captura local** dessas duas imagens era provisório e foi substituído na US2. US4/quadro e US5/abas, avisos e Histórico estão implementadas localmente. Iniciador e fechamento T039–T041 concluídos; limites da demonstração privada ficam na validação. Produção mostra quadro por semana; Planilha mostra captura/releitura, seis tabelas e Histórico. Revisão/integração corrente fica somente na validação.
 
 Não substituir essas imagens por screenshots com dados privados. [Telas decididas](../telas.md) e [spec canônica](../../../specs/001-consulta-local-producao/spec.md) mantêm os requisitos completos; resultados de testes ficam no registro de validação, não deduzidos da imagem.
 
@@ -170,8 +170,8 @@ avisos são verificadas nos testes, com resultados na [validação](../../../spe
 e [resumo sanitizado](../../reports/001-us5-local.json), sem deduzi-los só das imagens.
 
 As capturas anteriores permanecem históricas. Estes arquivos não comprovam coleta
-Google, captura operacional, bytes de mídia, integração ou aceite completo da 001;
-T035–T041 continuam pendentes. As regras de apresentação ficam nas [telas](../telas.md#4-planilha-001)
+Google, captura operacional, bytes de mídia, integração ou aceite completo da 001.
+Quando estas imagens foram geradas, T035–T041 estavam pendentes; seu fechamento posterior está na validação. As regras de apresentação ficam nas [telas](../telas.md#4-planilha-001)
 e no [contrato](../../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md#apresentação-de-planilha-e-alcance-das-urls).
 
 ## Planilha com origem compacta e motivos legíveis

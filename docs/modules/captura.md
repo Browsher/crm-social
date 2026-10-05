@@ -63,4 +63,4 @@ As falhas temporais são motivos fixos do recibo `falhou` e preservam a captura 
 
 [tests/dados.test.cjs](../../tests/dados.test.cjs) cobre reordenação, mínimos, IDs, dimensões, células, metadados, intervalos, duas marcas, hash e etapa desconhecida. Resultados executados ficam em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); esta documentação não reexecuta a suíte.
 
-Pegadinha: `validarEnvelope` exige um identificador de fonte não vazio, mas não consulta sua identidade configurada nem comprova que duas leituras remotas ocorreram. O importador confere a coerência do arquivo recebido. Captura oficial real, conferência da fonte pela Central e demonstração operacional seguem pendentes em T039.
+Pegadinha: `validarEnvelope` exige um identificador de fonte não vazio, mas não consulta sua identidade configurada nem comprova que duas leituras remotas ocorreram. O importador confere a coerência do arquivo recebido. T039 foi demonstrada com captura real, com limites na [validação](../../specs/001-consulta-local-producao/validacao.md); o runtime não executa nem autentica coleta remota.

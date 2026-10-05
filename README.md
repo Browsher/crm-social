@@ -2,13 +2,20 @@
 
 Como um álbum de fotografias da produção, o CRM apresenta uma captura da operação para localizar as peças da NTV neste computador. Sheets e Drive continuam sendo as fontes operacionais; o desenho aprovado orienta a interface.
 
-T001–T038 implementadas e verificadas localmente: 38 de 41 tarefas. Evidências e revisão na [validação](specs/001-consulta-local-producao/validacao.md). T039 (captura real), T040 (gate após demonstração) e T041 (onboarding final) permanecem pendentes; a feature 001 ainda não tem aceite operacional.
+001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
 O review usa 60 turnos e timeout de 20 minutos; geração de testes mantém 20 turnos. Custo/tempo e teto numérico de arquivos permanecem dívidas. Retenção por possível segredo, aviso de falha e `gerar-testes` não têm prova remota; se `files` vier menor que `changedFiles`, a lista incompleta é recusada.
 
-US1–US5, iniciador e cenário sintético de escala estão verificados localmente; resultados na [validação](specs/001-consulta-local-producao/validacao.md). A UI fica fora do LCOV e há SKIP explícito de UI/PowerShell no Linux (pendência M8); isso não substitui a execução Windows local. Esta sincronização incremental não conclui T041.
+US1–US5, iniciador e cenário sintético de escala estão verificados localmente; resultados na [validação](specs/001-consulta-local-producao/validacao.md). A UI fica fora do LCOV e há SKIP explícito de UI/PowerShell no Linux (pendência M8); isso não substitui a execução Windows local. Demonstração privada e onboarding final concluídos; limites conhecidos permanecem na validação.
+
+## Estado da entrega
+
+- **Planejado:** 002 Planilhas; acesso somente leitura pelo servidor, credencial fora do repositório e emenda da constituição ainda por definir.
+- **Implementado:** importação/persistência privadas, API local, Planejamento, Produção, Planilha/Histórico e iniciador.
+- **Testado:** cinco camadas locais e comparação com captura real, conforme a [validação](specs/001-consulta-local-producao/validacao.md).
+- **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Runtime sem Google, escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
 
 ## Onde começar
 
@@ -56,8 +63,8 @@ Start-Process $crmSession.url
 
 Se `CRM_NODE_PATH` não estiver definido, o iniciador resolve `node.exe` pelo PATH; confirmar Node 24.19.0 antes de iniciar. O retorno informa `processId`, `url`, `logDir` privado e uma orientação `encerrar`. Antes de encerrar, conferir que o PID ainda pertence à instância criada; parar somente esse processo. Porta ocupada não é encerrada pelo script.
 
-Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consulta-local-producao/quickstart.md#primeira-leitura-real-e-demonstração-futura): preparar JSON esquema 1, seis abas/66 mínimos, duas leituras completas com metadados e hashes concordantes, salvar privadamente em `data/entrada/<capturaId>.json`, importar com `& $crmNode scripts/importar-captura.cjs $crmCapturePath` e comparar os registros no CRM com essa mesma captura. Esse passo continua pendente; nenhuma fixture comprova coleta oficial.
+Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consulta-local-producao/quickstart.md#leitura-real-e-demonstração-local): preparar JSON esquema 1, seis abas/66 mínimos, duas leituras completas com metadados e hashes concordantes, salvar privadamente em `data/entrada/<capturaId>.json`, importar com `& $crmNode scripts/importar-captura.cjs $crmCapturePath` e comparar os registros no CRM com essa mesma captura. Esse roteiro foi executado com captura real; novas capturas repetem a validação. Nenhuma fixture comprova coleta oficial.
 
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 
-**Próximo passo:** a Central prepara a captura real de T039; depois vêm T040 e T041. Evidências e limitações na [validação](specs/001-consulta-local-producao/validacao.md). Esta consulta não instala agentes, muda agendas, gera mídia ou escreve na operação.
+**Próximo passo:** especificar 002 — Planilhas e aprovar a emenda da constituição antes da leitura direta pelo servidor local. Evidências e limitações na [validação](specs/001-consulta-local-producao/validacao.md). Esta consulta não instala agentes, muda agendas, gera mídia ou escreve na operação.
