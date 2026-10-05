@@ -84,7 +84,7 @@ Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
 | [Validação](../specs/003-planejamento-mensal/validacao.md) | RED/GREEN, gate local, revisão, screenshots sintéticos e pendências reais |
 | [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado em leitura; sua espera de implementação foi substituída pela autorização atual registrada em spec/validação/tarefas |
 
-Código/testes da 003 executados com fixtures/fakes/TEMP; Node 24.19.0, 312 PASS sem pulos e cobertura 98,3660%, drop 0. O autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge. T002/preparar Meses e T015/demonstração real permanecem pendentes; gate Linux/reviews serão conferidos no PR. Nenhuma escrita na operação, instalação de perfil, repasse ao Diretor ou mudança de agenda/meta semanal.
+Código/testes da 003 executados com fixtures/fakes/TEMP; Node 24.19.0, 312 PASS sem pulos e cobertura 98,3660%, drop 0. O autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge. T002/preparar Meses e T015/demonstração real permanecem pendentes. Gate Linux e reviews publicados dos heads registrados foram conferidos no PR; [validação](../specs/003-planejamento-mensal/validacao.md) distingue os resultados de cada head. Um novo head exige nova conferência dos checks. Nenhuma escrita na operação, instalação de perfil, repasse ao Diretor ou mudança de agenda/meta semanal.
 
 ## Design e evidência visual
 
@@ -115,7 +115,7 @@ Código/testes da 003 executados com fixtures/fakes/TEMP; Node 24.19.0, 312 PASS
 | [003 mais 1440](design/screenshots/003-mais-1440.png) / [390](design/screenshots/003-mais-390.png) | Primeiras cinco pautas e +N sintéticos |
 | [003 indefinido 1440](design/screenshots/003-indefinido-1440.png) / [390](design/screenshots/003-indefinido-390.png) | Ausência mensal sem inferência |
 | [003 confirmar 1440](design/screenshots/003-confirmar-1440.png) / [390](design/screenshots/003-confirmar-390.png) | Duplicatas sintéticas com A confirmar |
-| [003 Planilha 1440](design/screenshots/003-planilha-1440.png) / [390](design/screenshots/003-planilha-390.png) | Meses e avisos por linha física, sintéticos |
+| [003 Planilha 1440](design/screenshots/003-planilha-1440.png) / [390](design/screenshots/003-planilha-390.png) | Meses na Planilha, sintética |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Mockup da gaveta v2](design/mockups/gaveta-v2.html) | Referência compacta aprovada para a seção 2 das telas, somente dados sintéticos |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |

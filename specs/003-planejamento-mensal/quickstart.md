@@ -33,7 +33,7 @@ node --test tests/interface.test.cjs tests/atualizacao-interface.test.cjs
 node tools/quality-gate.mjs
 ```
 
-Os testes de comportamento e o gate local foram executados: Node 24.19.0, 312 testes PASS sem pulos nas cinco camadas, cobertura 98,3660%, drop 0 e complexidade PASS com 17 avisos. Baseline não atualizada; Semgrep SKIP por ausência no Windows, audit N/A sem dependências de aplicação. Consultar [validacao.md](validacao.md) para RED/GREEN, revisão e limites. Gate Linux e reviews serão conferidos no PR; seus pulos de UI/PowerShell não substituem a prova Windows local.
+Os testes de comportamento e o gate local foram executados: Node 24.19.0, 312 testes PASS sem pulos nas cinco camadas, cobertura 98,3660%, drop 0 e complexidade PASS com 17 avisos. Baseline não atualizada; Semgrep SKIP por ausência no Windows, audit N/A sem dependências de aplicação. Consultar [validacao.md](validacao.md) para RED/GREEN, gate Linux e reviews publicados dos heads registrados, além dos limites. Um novo head exige nova conferência dos checks; os pulos de UI/PowerShell no Linux não substituem a prova Windows local.
 
 ## Demonstração privada pendente — T015
 

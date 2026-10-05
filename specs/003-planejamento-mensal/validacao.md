@@ -65,3 +65,15 @@ T013 concluída com gate/review deste head e as cinco camadas locais, sem modifi
 **13/15 tarefas concluídas**; somente T002 e T015 do autor pendentes. T021 da 002 continua pendente e bloqueia merge. PR aberto, auto-merge não configurado; nenhuma escrita no Google/Drive/n8n/agentes ou demonstração real nesta execução.
 
 Decisão técnica: manter a ordenação canônica por nome no hash, incluindo Meses quando presente, como o algoritmo v1 e as fixtures independentes; ausência conserva o hash legado. A expressão “Meses por último” no contrato descreve a ordem visual, não uma nova serialização de hash. Custo se incorreto: incompatibilidade de hash em capturas novas; testes fixam o legado e conferem toda a opcional.
+
+## Correções do review documental — 05/10/2026
+
+O head `9ef4e6b3b6c05ea7b4ab834ae4fcbcf94e6055db` passou no [gate Linux estrito](https://github.com/Browsher/crm-social/actions/runs/37371910117), exit 0: tests/coverage/complexity/Semgrep PASS, 17 avisos, audit N/A e baselineUpdated:false. O resumo versionado acima agora identifica esse head e preserva a execução anterior. Nenhuma contagem/percentual remoto inferido.
+
+O [review desse head](https://github.com/Browsher/crm-social/pull/15#issuecomment-6003003928) foi publicado na [segunda tentativa](https://github.com/Browsher/crm-social/actions/runs/37371910130/attempts/2), SUCCESS. A primeira não executou passos: o GitHub não alocou runner após múltiplas tentativas. O review encontrou nenhum Critical, problema de segurança ou regressão no código, um Important documental (I1) e seis Minor.
+
+I1 corrigido nesta rodada: `docs/design/telas.md` agora registra a 003 implementada/testada com fixtures, T002/T015 pendentes e T021 bloqueando somente o merge, com link para esta validação. A nota de ausência de objetivo mensal foi delimitada à 001. M1 corrigido: índice e quickstart distinguem resultados já conferidos da necessidade de conferir novo head. M2 corrigido: a legenda dos screenshots da Planilha descreve somente Meses, sem alegar aviso mensal ausente da imagem. M3 corrigido: o relatório local identifica `validatedSourceCommit` e explicita que o gate precedeu o commit; não inventa o HEAD do processo.
+
+M4/M5/M6 são sugestões preventivas de código sem defeito atual: cópias/cabeçalhos da projeção, guarda contra clones futuros e consolidação de seletor CSS. Permanecem opcionais, junto dos avisos de complexidade e da asserção mais específica registrados na rodada anterior; nenhuma mudança de código/teste nesta correção documental.
+
+Comparação registrada: `git diff --exit-code 3f8c1a6 9ef4e6b -- src tests tools .github .quality-gate quality-gate.config.json` retornou 0 sem diff. O código validado e seus testes permanecem idênticos. Esta correção altera somente documentação/relatórios; seus checks e novo review devem ser conferidos no PR antes do encerramento, sem atribuir a ela o resultado de um head anterior. T002/T015 e T021 permanecem pendentes; PR aberto, sem merge.

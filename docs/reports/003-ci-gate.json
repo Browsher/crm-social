@@ -1,8 +1,9 @@
 {
   "schemaVersion": 1,
   "source": "Resumo dos logs oficiais do Actions; não é cópia do quality-gate-report.json remoto",
-  "head": "3f757e1f48ff4cca8c79edc30c77771a9a2c6d82",
-  "run": "https://github.com/Browsher/crm-social/actions/runs/37370817974",
+  "head": "9ef4e6b3b6c05ea7b4ab834ae4fcbcf94e6055db",
+  "run": "https://github.com/Browsher/crm-social/actions/runs/37371910117",
+  "previousRun": {"head": "3f757e1f48ff4cca8c79edc30c77771a9a2c6d82", "run": "https://github.com/Browsher/crm-social/actions/runs/37370817974", "conclusion": "success"},
   "exitCode": 0,
   "baselineUpdated": false,
   "results": [

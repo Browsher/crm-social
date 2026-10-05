@@ -1,5 +1,7 @@
 {
   "schemaVersion": 1,
+  "validatedSourceCommit": "3f8c1a644f7f4d12e2e9f466c2e4f9dbe6b4db78",
+  "validationContext": "O gate foi executado antes do commit de código. Este campo identifica a fonte validada, conferida byte a byte após o commit; não é o HEAD do processo durante a execução. Os heads 3f757e1 e 9ef4e6b só acrescentam documentação/evidências; git diff --exit-code 3f8c1a6 9ef4e6b -- src tests tools .github .quality-gate quality-gate.config.json retorna 0, sem diff.",
   "nodeVersion": "24.19.0",
   "exitCode": 0,
   "results": [
