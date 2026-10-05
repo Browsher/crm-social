@@ -71,6 +71,15 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
 
+## Feature 003 — Planejamento mensal (somente rascunho da especificação)
+
+| Documento | Uso |
+| --- | --- |
+| [Spec e perguntas do clarify](../specs/003-planejamento-mensal/spec.md) | Objetivo, pautas, origem mensal e proposta de repasse; três decisões aguardando o autor em 05/10/2026 |
+| [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | 12/16 itens passam; pendências pelas perguntas Q1–Q3 |
+
+Sem plano, tarefas ou código. Implementação condicionada à demonstração real T021/aceite da 002. Nenhuma escrita na operação, instalação de perfil ou mudança de agenda nesta rodada.
+
 ## Design e evidência visual
 
 | Documento / artefato | Para que serve |

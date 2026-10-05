@@ -40,6 +40,8 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## 003 — Planejamento mensal e repasse ao Diretor
 
+**Estado em 05/10/2026:** [rascunho da especificação](specs/003-planejamento-mensal/spec.md) criado pelo `speckit-specify`; análise do `speckit-clarify` com três perguntas aguardando o autor. [Checklist](specs/003-planejamento-mensal/checklists/requirements.md): 12/16 itens, pendências de decisão explícitas. Sem plano, tarefas ou código. A implementação continua bloqueada pela demonstração real T021/aceite da 002; esta especificação não altera a operação.
+
 **Resultado visível:** objetivo do mês, pautas sugeridas e ligação de cada semana ao plano mensal. O Estrategista de Conteúdo Mensal será um perfil delegado pela Central; o Diretor detalha e ajusta o recorte semanal, registrando a justificativa e preservando a origem mensal.
 
 **Dependências:** concluir 001–002, definir identidade por marca/mês/versão e o contrato de repasse mês/semana. Planejar uma migração conjunta de documentos, perfis e consumidores para a meta futura de uma imagem, um carrossel de 4–6 páginas e um Reels de 15–30 segundos por semana. Conferir fontes antes de qualquer mudança remota.

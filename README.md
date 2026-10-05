@@ -12,7 +12,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Estado da entrega
 
-- **Planejado:** 003–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A [002](specs/002-consulta-planilhas/spec.md) tem emenda 1.1.0 aplicada e aguarda conta/demonstração reais.
+- **Planejado:** [003 com spec em rascunho e três perguntas do clarify](specs/003-planejamento-mensal/spec.md), em 05/10/2026; sem plano, tarefas ou código, implementação bloqueada pela T021/aceite da 002. 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A [002](specs/002-consulta-planilhas/spec.md) tem emenda 1.1.0 aplicada e aguarda conta/demonstração reais.
 - **Implementado:** 001 e leitura direta da 002, JWT/fetch nativos, seis abas tipadas e POST local; importação manual preservada.
 - **Testado:** 001 demonstrada com captura real; 002 com cinco camadas, RSA gerada e transporte falso. Evidências da 002 na [validação](specs/002-consulta-planilhas/validacao.md).
 - **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Leitura Google implementada com cliente falso; conta/demonstração reais pendentes. Sem escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
