@@ -1316,7 +1316,8 @@ na interface apenas para atingir a contagem esperada. Não houve ajuste da fonte
 | Seis abas; todos os 66 mínimos por linha, API e DOM após normalização/triagem | passou |
 | Identidades, datas civis e período | passou |
 | Quadro configurado e publicação somente explícita | passou |
-| Páginas, cenas, revisões e responsabilidade registrada | passou |
+| Páginas, cenas, registros de revisão e responsabilidade; projeção fiel à captura | passou |
+| Comprovar versões/vigência e separar revisões vigentes/históricas com dado real | não comprovado; tipagem recebida é limitação, não erro da projeção |
 | Selo pelo fim da captura, nas três telas | passou |
 | Gaveta, acordeões, Esc e devolução do foco | passou |
 | Contagens e conteúdo das seis tabelas | passou |
@@ -1402,3 +1403,10 @@ As provas acima pertencem ao head indicado, sem antecipar resultados de heads po
 Head **24338388fa68281324a903aba4fa41f5c3a5af44**: [quality-gate SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37250831284/job/111577912054), tests/coverage/complexity/**Semgrep real PASS**, audit N/A, exit 0, baseline atualizada false. [Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37250831177/job/111577912023) e [comentário](https://github.com/Browsher/crm-social/pull/13#issuecomment-5986487604): **nenhum Critical, Important, segurança ou regressão; três Minor documentais**.
 
 M1: guia de screenshots sintéticas distingue o momento histórico das imagens do fechamento atual; a frase residual nas telas foi sincronizada. Nenhuma imagem foi substituída. M2: ressalva curta de tipagem/vigência e decisão pendente também no AGENTS, fora do bloco, e no Status da spec. M3: redação de credencial simplificada para não confundir sua localização com a da spec/constituição. Somente Markdown mudou; nenhuma alteração de contrato efetivo, código ou captura. A condição de merge continua sendo conferir gate e review da cabeça vigente, sem Critical, segurança ou regressão.
+
+
+### Terceira conferência remota e precisão do aceite
+
+Head **6a89f1aa9327c2544ff2acd29f72f4d0c2ff9826**: [quality-gate SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37251164760/job/111578924697), tests/coverage/complexity/**Semgrep real PASS**, audit N/A, exit 0 e baseline atualizada false. [Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37251164766/job/111578924231) e [comentário](https://github.com/Browsher/crm-social/pull/13#issuecomment-5986530576): **nenhum Critical, Important, segurança ou regressão; três Minor documentais**.
+
+M1: tabela da T039 separa fidelidade dos registros projetados da comprovação de versões/vigência. Esta última não foi demonstrada pela captura recebida; permanece limite e decisão pendente. M2: ressalva curta de tipagem também nas frases de estado dos documentos de entrada, inclusive contrato/modelo; o registro detalhado continua concentrado aqui. M3: pontuação do guia de screenshots corrigida. Somente documentação mudou; a captura privada, aplicação, contrato efetivo, configuração e baseline continuam intactos. Os checks da cabeça vigente devem passar antes do merge.

@@ -1,6 +1,6 @@
 # Tasks: Consulta local da produção NTV
 
-Como as páginas de um álbum montadas em ordem, estas tarefas dividem a consulta em entregas verificáveis: T001–T041 concluídas (41 de 41); revisão corrente e evidências na [validação](validacao.md). Branch `001-consulta-local-producao`; caminhos relativos a `crm-social/`.
+Como as páginas de um álbum montadas em ordem, estas tarefas dividem a consulta em entregas verificáveis: T001–T041 concluídas (41 de 41); revisão corrente e evidências na [validação](validacao.md). Branch `001-consulta-local-producao`; caminhos relativos a `crm-social/`. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 **Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas](../../docs/design/telas.md). Uma spec vigente, sem repetir a criação da feature. US1–US5 integradas; T035–T038 verificadas localmente e entregues em PR próprio, com evidências na [validação](validacao.md). T039–T041 concluídas: demonstração privada, gate e onboarding. Runtime sem leitura Google ou mudança na operação.
 

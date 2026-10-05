@@ -12,7 +12,7 @@ Como um álbum montado por partes, o plano define o leitor completo e a sequênc
 
 **Spec:** [spec.md](spec.md), [modelo](data-model.md), [contrato](contracts/captura-e-consulta.md) e [telas aprovadas](../../docs/design/telas.md).
 
-001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Interfaces atuais na [arquitetura](../../docs/architecture.md).
+001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Interfaces atuais na [arquitetura](../../docs/architecture.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 **Branch:** `001-consulta-local-producao`, criada da `main` no repositório `crm-social` e conferida nesta tarefa. Não executar novamente a criação da feature para atualizar estes documentos.
 

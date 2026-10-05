@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define requisitos; leitura Google pertence à 002.
+001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define requisitos; leitura Google pertence à 002. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 ## Módulos e imports reais
 

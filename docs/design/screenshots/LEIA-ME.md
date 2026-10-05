@@ -170,7 +170,7 @@ avisos são verificadas nos testes, com resultados na [validação](../../../spe
 e [resumo sanitizado](../../reports/001-us5-local.json), sem deduzi-los só das imagens.
 
 As capturas anteriores permanecem históricas. Estes arquivos não comprovam coleta
-Google, captura operacional, bytes de mídia, integração ou aceite completo da 001;
+Google, captura operacional, bytes de mídia, integração ou aceite completo da 001.
 Quando estas imagens foram geradas, T035–T041 estavam pendentes; seu fechamento posterior está na validação. As regras de apresentação ficam nas [telas](../telas.md#4-planilha-001)
 e no [contrato](../../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md#apresentação-de-planilha-e-alcance-das-urls).
 

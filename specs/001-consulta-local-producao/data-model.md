@@ -1,6 +1,6 @@
 # Modelo de consulta local
 
-Como um índice de fotografias, o modelo conserva identidades e relações: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Interfaces atuais na [arquitetura](../../docs/architecture.md).
+Como um índice de fotografias, o modelo conserva identidades e relações: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Interfaces atuais na [arquitetura](../../docs/architecture.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 

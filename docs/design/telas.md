@@ -2,7 +2,7 @@
 
 Data: 03/10/2026. Decidido com o autor sobre o [mockup v2](mockups/telas-v2.html), construído sobre o [protótipo aprovado](prototype/index.html). Visual, componentes e identidade (Social Studio) seguem o protótipo.
 
-Como uma agenda que começa pelas páginas do mês, a entrega atual tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../../specs/001-consulta-local-producao/validacao.md).
+Como uma agenda que começa pelas páginas do mês, a entrega atual tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../../specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 ## Princípios
 

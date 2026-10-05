@@ -1,6 +1,6 @@
 # Roteiro de verificação da feature 001
 
-Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Branch 001-consulta-local-producao.
+Como conferir as páginas de um álbum antes de usá-lo, este roteiro separa execução e aceite: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md). Branch 001-consulta-local-producao. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](contracts/captura-e-consulta.md). Os mockups de [telas](../../docs/design/mockups/telas-v2.html) e [gaveta compacta](../../docs/design/mockups/gaveta-v2.html) servem como referência visual; não validam backend ou persistência.
 
