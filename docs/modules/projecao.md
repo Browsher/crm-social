@@ -2,7 +2,7 @@
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Projeção, detalhes, quadro, seis tabelas e regressões de identidade/versão implementados e verificados localmente; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs). Demonstração privada e onboarding final concluídos; limites na validação.
+Projeção, detalhes, quadro, seis tabelas, Meses opcional e regressões de identidade/versão implementados e verificados localmente; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs). Demonstração privada e onboarding final concluídos; limites na validação.
 
 Funções de entrada e fronteira: `reciboPublico` e `projetarVisao`; `redigirTexto` e `selecionarNtv` vêm do módulo compartilhado [triagem](triagem.md). Organização: `planejar`, `agruparDias`, `aplicarFrescor` e `montarPlanilha`. Detalhes e quadro: `detalhar`, `unidades`, `revisoes`, `documentosSemana`, `pendenciasMidia`, `colunaProducao` e `montarQuadro`. Usar os nomes da função na fonte, sem depender de linhas que mudam entre entregas.
 
@@ -21,9 +21,9 @@ Imports: `CAMPOS` de [captura](captura.md), `COLUNAS` de [quadro-config](quadro-
 | `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null, formato por slot, detalhes e `quadro:{coluna,pendencias}` |
 | `dias` | Grupos por data civil; sem data agrupado por semanaId, inclusive null |
 | `quadro` | `colunas:[{nome}]` e `semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]`; oito colunas por semana, inclusive semanaId null; IDs ordinais |
-| `planilha` | Sem captura, lista vazia; com captura, seis abas `{nome,cabecalhos,quantidadeLinhas,linhas}` com cópias dos mínimos triados e contagens NTV |
+| `planilha` | Sem captura, lista vazia; com captura, seis abas `{nome,cabecalhos,quantidadeLinhas,linhas}` com cópias dos mínimos triados e contagens NTV; Meses acrescentada somente se capturada, com quatro mínimos |
 | `historico` / `ultimaTentativa` | Todos os recibos confirmados selecionados, recentes primeiro; Histórico final na Planilha, sem órfãos/no-op duplicado |
-| `avisos` | Data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
+| `avisos` | Mês/texto mensal inválido e duplicatas de Meses; data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
 
 | Precedência | `estado` | Texto / cor |
 | --- | --- | --- |
@@ -40,7 +40,7 @@ Somente campos mínimos explícitos são considerados; envelope, metadados/hash 
 
 ## Seis tabelas de consulta
 
-`montarPlanilha` (`src/projecao.cjs:345`) percorre `CAMPOS` na ordem Semanas,
+`montarPlanilha` (`src/projecao.cjs`) percorre `CAMPOS` na ordem Semanas,
 Produções, Páginas, Cenas, Arquivos e Revisoes. Como cópias de folhas já selecionadas,
 as linhas carregam somente os mínimos triados, sem herdar os dados calculados das
 outras telas.
@@ -142,3 +142,5 @@ A validade de `origens_json` é calculada sobre o texto original antes da supres
 Uma pegadinha permanece explícita: a função `registros` em `src/captura.cjs` normaliza null explícito para string vazia na entidade; o envelope privado conserva o original; etapa_producao null é recuperada antes da triagem. As seis tabelas da US5 conservam essa normalização nos demais mínimos. A linha física dos avisos já é preservada, inclusive após linhas vazias ou de outra marca. Classificação de Produção e tabelas de Planilha implementadas; detalhe, tabela e recibo não comprovam integração operacional. Verificações locais e revisão ficam somente na validação.
 
 002 mantém seis tabelas/66 mínimos e tipos recebidos; origem direta não expõe source bruto ou ID privado. Teste P002 em tests/projecao.test.cjs; [validação](../../specs/002-consulta-planilhas/validacao.md).
+
+003 acrescenta Meses em `montarPlanilha` somente quando a triagem retorna `meses`, mesmo sem linhas. São quatro mínimos NTV, sem propriedade raiz/contagem mensal nova, vínculo com semanas ou mudanças nos 66 mínimos anteriores. Avisos de mês/tipo/duplicata vêm da triagem, com linha física preservada em WeakMap pelo parser. O browser deriva o card pelo mês exibido a partir dessa tabela; `semanas[].objetivoMensal` não passa a ter autoridade mensal. [Validação da 003](../../specs/003-planejamento-mensal/validacao.md) registra provas sintéticas e demonstração real pendente.

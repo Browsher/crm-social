@@ -1,6 +1,6 @@
 # Contrato — extensão opcional Meses
 
-Definido em 05/10/2026 pelo reescopo do autor. Estende futuramente o [contrato da 002](../../002-consulta-planilhas/contracts/leitura-planilha.md); não altera seu registro histórico. [Spec](../spec.md) e [modelo](../data-model.md) são as referências de produto e dados.
+Definido em 05/10/2026 pelo reescopo do autor e implementado/testado localmente com dados sintéticos. Estende o [contrato da 002](../../002-consulta-planilhas/contracts/leitura-planilha.md); não altera seu registro histórico. [Spec](../spec.md), [modelo](../data-model.md) e [validação](../validacao.md) registram produto, dados e limites; integração real pendente.
 
 ## Entrada e compatibilidade
 
@@ -8,7 +8,7 @@ Envelope `schemaVersion:1`, sources Central/direta e mesmos seis nomes obrigató
 
 Quando presente, Meses está conjuntamente em `tables`, `metadataBefore` e `metadataAfter`, com `complete:true`, cabeçalho mínimo, tipos escalares permitidos e metadados/range íntegros. Mesmo mês em várias linhas não causa falha de unicidade da primeira coluna. Ausência nos três mapas é normal; presença parcial é erro de dados.
 
-`hashCelulas` conserva a canonicalização e a ordem das seis abas; Meses entra por último só quando presente. Para toda captura antiga, hash e bytes privados já gravados permanecem os mesmos; não preencher a opcional com vazio. Hash/compare inclui toda Meses antes do filtro NTV, inclusive linhas duplicadas e colunas extras privadas.
+`hashCelulas` conserva a canonicalização com pares ordenados pelo nome da aba (`sort`); Meses participa nessa ordem somente quando presente. A posição final de Meses vale apenas para a apresentação da Planilha. Para toda captura antiga, hash e bytes privados já gravados permanecem os mesmos; não preencher a opcional com vazio. Hash/compare inclui toda Meses antes do filtro NTV, inclusive linhas duplicadas e colunas extras privadas.
 
 ## Coleta direta
 
@@ -18,7 +18,7 @@ Metadados antes → construir ranges alocados das seis obrigatórias + Meses se 
 
 ## Triagem e avisos
 
-Somente marca literal `ntv` entra na consulta. Aplicar aos quatro mínimos a mesma redação de texto privado existente, sem expor extras. Preservar índice físico desde o parser, sem Map pela primeira coluna para Meses.
+Somente marca literal `ntv` entra na consulta. Aplicar aos quatro mínimos a mesma redação de texto privado existente, sem expor extras. O parser registra índice físico em WeakMap privado, recuperado por `linhaMensal(record)` na triagem, sem Map pela primeira coluna para Meses.
 
 Agrupar por marca/mês válido: duplicata gera aviso para cada linha envolvida, aba Meses, campo mes, motivo fixo **Mês e marca repetidos**. Mês NTV inválido: campo mes, motivo **Mês inválido**. Objetivo/pautas de tipo não textual não vazio: campo correspondente, motivo **Texto mensal inválido**; no card são ausentes. Não ecoar valor no motivo. Marca diferente/ausente fica fora como nas seis abas existentes, sem aviso só por essa ausência.
 

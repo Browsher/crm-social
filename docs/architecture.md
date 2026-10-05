@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 implementada/testada com cliente falso; conta e demonstração reais pendentes: [validação da 002](../specs/002-consulta-planilhas/validacao.md).
+001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 implementada/testada com cliente falso; conta e demonstração reais pendentes: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, implementada e testada localmente; [validação da 003](../specs/003-planejamento-mensal/validacao.md) separa testes sintéticos da demonstração real pendente. Push/PR autorizados; T021/aceite da 002 bloqueia somente o merge.
 
 ## Módulos e imports reais
 
@@ -26,7 +26,7 @@ flowchart LR
   Server --> Quadro["src/quadro-config.cjs"]
   Projecao --> Captura
   Projecao --> Triagem
-  Triagem -->|CAMPOS| Captura
+  Triagem -->|CAMPOS, CAMPOS_MESES e linhaMensal| Captura
   Projecao --> Quadro
   Server -->|define caminho padrão| Config["config/quadro-etapas.json"]
   Quadro -.->|lê caminho recebido| Config
@@ -41,21 +41,21 @@ flowchart LR
 
 | Módulo | Responsabilidade atual | Documento |
 | --- | --- | --- |
-| captura | Seis abas/66 mínimos, identidades, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
-| triagem | Seleção NTV/66 mínimos, redação conservadora e validação de identidades antes da promoção; sem I/O ou mapa do quadro | [Triagem](modules/triagem.md) |
+| captura | Seis abas obrigatórias/66 mínimos e Meses opcional/quatro mínimos, identidades, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
+| triagem | Seleção NTV/66 mínimos e quatro mínimos mensais opcionais, avisos semânticos por linha física, redação conservadora e validação de identidades antes da promoção; sem I/O ou mapa do quadro | [Triagem](modules/triagem.md) |
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
-| projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas | [Projeção](modules/projecao.md) |
+| projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses opcional | [Projeção](modules/projecao.md) |
 | google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
-| coleta | Duas leituras de seis grades, datas, hashes e metadados | [Coleta](modules/coleta.md) |
+| coleta | Duas leituras de seis grades e Meses quando existe, datas, hashes e metadados | [Coleta](modules/coleta.md) |
 | servidor | HTTP local com cinco rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Histórico e avisos detalhados | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses opcional, Histórico e avisos detalhados; card mensal pelo mês exibido | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
-`.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch `001-consulta-local-producao` e sua pasta de specs; o ponteiro não é pré-requisito do importador/servidor.
+`.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch e sua pasta de specs (atual `003-planejamento-mensal`); o ponteiro não é pré-requisito do importador/servidor.
 
 ## Entrada, persistência e confirmação
 
@@ -154,11 +154,11 @@ Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-con
 
 ## O que já aparece e o que falta
 
-Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” global, objetivo indefinido e gaveta do dia inteiro em acordeões. Peça remarcada segue sua data civil no mês e continua agrupada pela semana registrada. Seis status literais recebem rótulos legíveis só na UI; desconhecidos e API mantêm o original. Mês usa somente inicial maiúscula; calendário inclui apenas semanas com dia do mês e sidebar desktop acompanha a altura da página. Desktop usa calendário; 390 px começa em lista e menu recolhido. [Screenshots](design/screenshots/LEIA-ME.md) são da aplicação com dados fictícios.
+Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” global, objetivo/pautas do mês exibido em Meses opcional, estados indefinido/A confirmar e gaveta do dia inteiro em acordeões. Peça remarcada segue sua data civil no mês e continua agrupada pela semana registrada. Seis status literais recebem rótulos legíveis só na UI; desconhecidos e API mantêm o original. Mês usa somente inicial maiúscula; calendário inclui apenas semanas com dia do mês e sidebar desktop acompanha a altura da página. Desktop usa calendário; 390 px começa em lista e menu recolhido. [Screenshots](design/screenshots/LEIA-ME.md) são da aplicação com dados fictícios.
 
 US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
 
-Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas de dados e Histórico final. **Atualizar dados** desabilita o botão durante POST /api/atualizar e o GET posterior; role=status informa atualização/sucesso/falha e aviso fixo da trava, quando houver. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
+Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas obrigatórias, Meses opcional quando capturada depois de Revisoes e Histórico final. Meses acompanha teclado/rolagem e retorna à primeira aba disponível se desaparecer; falhas da opcional usam mensagem legível no Histórico. **Atualizar dados** desabilita o botão durante POST /api/atualizar e o GET posterior; role=status informa atualização/sucesso/falha e aviso fixo da trava, quando houver. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
@@ -172,13 +172,13 @@ completa; o atalho da gaveta localiza os avisos relacionados à peça.
 ```mermaid
 flowchart TD
   Estado[Estado confirmado por lerEstado] --> Selecionar[selecionarNtv e triagem dos mínimos]
-  Selecionar --> Copiar[montarPlanilha copia somente CAMPOS]
+  Selecionar --> Copiar[montarPlanilha copia CAMPOS e Meses triada se presente]
   Selecionar --> Enriquecer[Planejamento, detalhes e quadro]
   Estado --> Recibos[base seleciona recibos confirmados recentes primeiro]
   Copiar --> API[GET /api/visao existente]
   Enriquecer --> API
   Recibos --> API
-  API --> Abas[Seis abas NTV e Histórico]
+  API --> Abas[Seis abas NTV, Meses opcional e Histórico]
   API --> Avisos[Avisos gerais e detalhes.avisos da peça]
   Gaveta[ver na Planilha da gaveta] -->|fecha, abre Produções e dá foco| Filtro[Somente avisos da peça]
   Avisos --> Filtro
@@ -233,6 +233,6 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
 | UI fora do LCOV e pulos UI/PowerShell no Linux | tests/interface.test.cjs e tests/iniciador.test.cjs; M8; CI/cobertura não substituem execução Windows local |
 
-A projeção preserva a linha física dos avisos desde a matriz privada, por ID e WeakMap; não usa índice filtrado como localização. As demais dívidas acima continuam explícitas. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.
+A projeção preserva a linha física dos avisos desde a matriz privada, por ID e WeakMap; Meses usa WeakMap registrado pelo parser e `linhaMensal`, sem chave única pela primeira coluna ou índice filtrado como localização. As demais dívidas acima continuam explícitas. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.
 
-Estado e provas da 002 na [validação](../specs/002-consulta-planilhas/validacao.md). JWT/fetch sem dependência, timeout/sem redirects e quatro categorias de falha; [contrato](../specs/002-consulta-planilhas/contracts/leitura-planilha.md). Limite lexical de chave/junction e dupla leitura sem transação documentados nos módulos.
+Estado e provas da 002 na [validação](../specs/002-consulta-planilhas/validacao.md). A [003](../specs/003-planejamento-mensal/contracts/meses.md) estende o envelope v1: Meses ausente não acrescenta mapa/array; quando presente participa dos dois hashes com pares ordenados por nome. Não há migração dos bytes/hashes antigos, rota/env nova ou alteração de guardas do POST/GET. Estado/testes e pendências reais na [validação da 003](../specs/003-planejamento-mensal/validacao.md). JWT/fetch sem dependência, timeout/sem redirects e quatro categorias de falha; [contrato](../specs/002-consulta-planilhas/contracts/leitura-planilha.md). Limite lexical de chave/junction e dupla leitura sem transação documentados nos módulos.

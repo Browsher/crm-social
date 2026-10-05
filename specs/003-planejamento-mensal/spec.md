@@ -2,8 +2,8 @@
 
 **Feature Branch**: `003-planejamento-mensal`
 **Created**: 2026-10-05
-**Status**: Reescopo definido pelo autor em 05/10/2026; especificação e planejamento, sem implementação.
-**Input**: O CRM pessoal apenas lê a aba opcional `Meses`, preenchida à mão pelo autor, e mostra objetivo e pautas do mês. A decisão substitui integralmente o rascunho anterior. Fluxo de agentes, repasse ao Diretor e migração da meta semanal ficam fora do CRM. Implementação aguarda T021/aceite da 002.
+**Status**: Reescopo definido pelo autor em 05/10/2026; implementada e testada localmente com dados sintéticos. Evidências e limitações em [validacao.md](validacao.md); demonstração real pendente.
+**Input**: O CRM pessoal apenas lê a aba opcional `Meses`, preenchida à mão pelo autor, e mostra objetivo e pautas do mês. A decisão substitui integralmente o rascunho anterior. Fluxo de agentes, repasse ao Diretor e migração da meta semanal ficam fora do CRM. O autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge da 003.
 
 ## Contexto e limites
 
@@ -77,7 +77,7 @@ Como autor, quero consultar a tabela Meses e localizar linhas duplicadas na mesm
 - **FR-007**: A aba Meses DEVE aparecer na Planilha somente quando capturada, mesmo vazia, com as quatro colunas, contagem NTV e os comportamentos existentes de teclado, foco, seleção e rolagem. Avisos DEVEM ficar no painel existente; nenhum texto de aviso longo no card.
 - **FR-008**: Dados mensais inválidos DEVEM produzir avisos localizados, sem associação inventada; textos DEVEM seguir a triagem/privacidade da consulta existente. Nenhum dado real, identificador de planilha, e-mail de conta ou segredo DEVE entrar em arquivo versionado, exemplo público ou log.
 - **FR-009**: A consulta DEVE preservar navegação mensal, calendário/lista, filtros, gaveta, semanas/peças históricas, selo e Histórico existentes. Reentrada da mesma captura não DEVE duplicar tentativa nem renovar horário; alteração somente em Meses DEVE ser reconhecida.
-- **FR-010**: A tarefa manual do autor DEVE orientar criação da aba e preenchimento do mês atual, sem bloquear testes com fixtures sintéticas. A implementação da 003 DEVE aguardar T021/aceite da 002; esta rodada apenas especifica, planeja, decompõe e analisa, sem código ou escrita operacional.
+- **FR-010**: A tarefa manual do autor DEVE orientar criação da aba e preenchimento do mês atual, sem bloquear implementação ou testes com fixtures sintéticas. Conforme autorização atual do autor, implementação, push e PR da 003 podem avançar; T021/aceite da 002 DEVE bloquear somente o merge. Criação/preenchimento de Meses e demonstração real da 003 continuam tarefas pendentes, sem escrita operacional pelo CRM.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -100,5 +100,5 @@ Como autor, quero consultar a tabela Meses e localizar linhas duplicadas na mesm
 - Um autor, NTV e servidor local existente; nenhuma dependência ou infraestrutura nova. Objetivo e pautas são informação manual, não prova de decisão/execução editorial.
 - `mes` é texto com ano de quatro dígitos e mês entre 01 e 12; o autor formata a coluna como texto. A chave é marca/mês, sem vínculo inferido com semanas.
 - Cabeçalhos mínimos são lidos por nome; colunas extras não são expostas pela consulta. Texto de pautas preserva a célula original na tabela, enquanto o card deriva a lista curta.
-- A tarefa manual de preparar Meses é do autor. Ausência da aba não bloqueia testes ou consulta; a única trava prévia de implementação permanece T021/aceite da 002.
+- A tarefa manual de preparar Meses é do autor. Ausência da aba não bloqueia implementação, testes ou consulta; T021/aceite da 002 permanece pré-requisito do merge, conforme autorização atual.
 - Escopo decidido pelo autor; não restou dúvida real para `speckit-clarify`. Operação de agentes e migração semanal não fazem parte de requisitos, plano ou tarefas do CRM.

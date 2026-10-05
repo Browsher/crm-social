@@ -1,12 +1,12 @@
-# Coleta tipada das seis abas
+# Coleta tipada das seis abas e Meses opcional
 
-Como fotografar duas vezes o mesmo conjunto e conferir as etiquetas, [src/coleta.cjs](../../src/coleta.cjs) só devolve a candidata quando as duas leituras e os metadados concordam. Não grava arquivos. Estado/testes na [validação da 002](../../specs/002-consulta-planilhas/validacao.md).
+Como fotografar duas vezes o mesmo conjunto e conferir as etiquetas, [src/coleta.cjs](../../src/coleta.cjs) só devolve a candidata quando as duas leituras e os metadados concordam. Não grava arquivos. Estado/testes na [validação da 002](../../specs/002-consulta-planilhas/validacao.md) e extensão mensal na [validação da 003](../../specs/003-planejamento-mensal/validacao.md).
 
-coletarCaptura(client,{now,capturaId}) recebe cliente injetado e produz envelope v1. As seis abas são Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes; outras abas da fonte não entram. Cada range vai de A1 até a última linha/coluna alocada. Antes/depois são conferidos identidade da fonte, ID de aba, dimensões e fuso.
+coletarCaptura(client,{now,capturaId}) recebe cliente injetado e produz envelope v1. As seis abas são Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes; Meses entra somente quando seu título exato existe nos metadados iniciais; outras abas da fonte não entram. Ausência estável não gera range inexistente nem aviso. O conjunto de seis/sete ranges é o mesmo nas duas leituras; criação/remoção de Meses ou alteração de ID/dimensões/fuso até os metadados finais recusa a candidata. Cada range vai de A1 até a última linha/coluna alocada. Antes/depois são conferidos identidade da fonte, ID de aba, dimensões e fuso.
 
 ```mermaid
 flowchart TD
-  Antes[Metadados antes] --> Primeira[batchGet das seis grades]
+  Antes[Metadados antes] --> Primeira[batchGet de seis grades e Meses se presente]
   Primeira --> Tipos[Datas declaradas; escalares preservados]
   Tipos --> Hash1[hashCelulas]
   Hash1 --> Segunda[batchGet das seis grades novamente]
@@ -19,8 +19,8 @@ flowchart TD
 
 O cliente pede ROWS, UNFORMATTED_VALUE e SERIAL_NUMBER. Ranges/respostas incompletos, cabeçalho obrigatório ausente, escalar inválido e mudanças são recusados. Finais vazios omitidos pela API são permitidos dentro da grade. hashCelulas e letraColuna são os helpers do validador existente, não uma segunda definição do formato.
 
-dataSerial converte números somente em inicio_semana/data_prevista (dia civil inteiro) e publicado_em (instante no fuso da planilha). Textos numéricos continuam texto; versões/índices numéricos continuam números. Época 1899-12-30, precisão de milissegundo. Round-trip do horário civil exige um instante único: horário ambíguo/inexistente em DST recusa. Nenhuma data é inferida de outro campo.
+dataSerial converte números somente em inicio_semana/data_prevista (dia civil inteiro) e publicado_em (instante no fuso da planilha). Textos numéricos continuam texto; versões/índices numéricos continuam números. Época 1899-12-30, precisão de milissegundo. Round-trip do horário civil exige um instante único: horário ambíguo/inexistente em DST recusa. Nenhuma data é inferida de outro campo. `mes` conserva o escalar recebido, sem conversão serial; validação semântica pertence à triagem.
 
-Envelope source=google-sheets-api; fonte da Central continua google-drive-connector. O [contrato](../../specs/002-consulta-planilhas/contracts/leitura-planilha.md) define o restante. [tests/coleta.test.cjs](../../tests/coleta.test.cjs) usa cliente falso; não consulta a planilha real. Limite: duas observações não são transação remota e não detectam necessariamente uma alteração desfeita entre elas. Conta real/demonstração seguem pendentes.
+Envelope source=google-sheets-api; fonte da Central continua google-drive-connector. O [contrato](../../specs/002-consulta-planilhas/contracts/leitura-planilha.md) define o restante. [tests/coleta.test.cjs](../../tests/coleta.test.cjs) usa cliente falso; não consulta a planilha real. Limite: duas observações não são transação remota e não detectam necessariamente uma alteração desfeita entre elas. Conta real/demonstração seguem pendentes. A 003 mantém POST e guardas existentes; testes de presença/ausência, criação/remoção e hash da opcional usam somente cliente falso, sem validar integração real.
 
 C04 percorre a coleta completa com metadados `America/Sao_Paulo`, `inicio_semana` e `publicado_em` seriais. Confere a publicação UTC no envelope e os dois hashes sobre os valores convertidos, com resultado esperado literal; essa prova sintética não valida o fuso ou a conta da planilha real.

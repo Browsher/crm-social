@@ -1,6 +1,6 @@
 # Roadmap — CRM Social local
 
-Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; implementação da 002 em aceite; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). 002 implementada localmente; 003–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; implementação da 002 em aceite; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). 002 e 003 implementadas/testadas localmente; 004–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
@@ -10,7 +10,7 @@ US1–US5, iniciador e escala sintética estão verificados localmente; revisão
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
-As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com conta/demonstração reais pendentes; 003–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
+As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com conta/demonstração reais pendentes; 003 implementada/testada localmente e com demonstração real pendente; 004–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
 
 ## 001 — Consulta local da produção
 
@@ -40,11 +40,11 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## 003 — Consulta do planejamento mensal
 
-**Estado em 05/10/2026:** [spec reescopada pelo autor](specs/003-planejamento-mensal/spec.md), [plano](specs/003-planejamento-mensal/plan.md) e [15 tarefas](specs/003-planejamento-mensal/tasks.md); somente planejamento, sem implementação. [Checklist](specs/003-planejamento-mensal/checklists/requirements.md): 16/16; sem dúvida real para clarify adicional. A implementação aguarda T021/aceite da 002.
+**Estado em 05/10/2026:** [spec reescopada pelo autor](specs/003-planejamento-mensal/spec.md), [plano](specs/003-planejamento-mensal/plan.md) e [tarefas](specs/003-planejamento-mensal/tasks.md); implementação e testes locais concluídos com fixtures/fakes/TEMP. [Validação](specs/003-planejamento-mensal/validacao.md) e [gate local](docs/reports/003-local-gate.json): Node 24.19.0, 312 PASS sem pulos, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos, baseline preservada; Semgrep SKIP por ausência no Windows e audit N/A. Gate Linux/reviews serão conferidos no PR. Nenhuma integração real comprovada.
 
 **Resultado visível:** objetivo e pautas do mês exibido, lidos da aba opcional **Meses** (`mes`, `marca_id`, `objetivo`, `pautas`). Card com até cinco pautas e **+N**; sem aba/linha, **Ainda não definido**; duplicata por marca/mês, **A confirmar** com aviso na Planilha. Meses aparece na Planilha como as outras tabelas, quando capturada.
 
-**Dependências:** concluir T021/aceite da 002 antes da implementação. O autor cria/preenche Meses à mão; isso não bloqueia testes com fixtures sintéticas nem a consulta sem a aba. Atualizar dados passa a ler Meses se existir, preservando as seis obrigatórias e as capturas anteriores da Central.
+**Dependências:** o autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge. T002/criar-preencher Meses à mão e T015/demonstração real da 003 permanecem pendentes, sem bloquear testes sintéticos ou consulta sem a aba. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas anteriores da Central.
 
 **Aceite:** consulta somente leitura; Meses opcional sem migração histórica; integridade, falhas, frescor, privacidade e histórico da 002 preservados. Pouco texto, quatro mínimos, sem campos extras, repasse, vínculo mensal com semana ou migração da meta semanal pelo CRM.
 
@@ -80,4 +80,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo:** o autor prepara a conta leitora conforme o [quickstart da 002](specs/002-consulta-planilhas/quickstart.md). Demonstração real pendente; implementação, testes e aceite remoto na [validação da 002](specs/002-consulta-planilhas/validacao.md). Nenhuma coleta real nesta rodada.
+**Próximo passo:** conferir gate Linux/reviews no PR da 003. Autor prepara conta/demonstração da 002 e Meses/demonstração privada da 003; pendências na [validação da 003](specs/003-planejamento-mensal/validacao.md). T021/aceite da 002 bloqueia somente o merge; nenhuma coleta real nesta rodada.

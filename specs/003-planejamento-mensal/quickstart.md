@@ -1,6 +1,6 @@
-# Validação futura — Meses
+# Executar e conferir — Meses
 
-Data: 2026-10-05. Guia de execução futura; nenhum comando abaixo foi rodado como implementação da 003 nesta entrega. Pré-requisito: T021/aceite da 002 concluídos. Ambiente local e Node/Playwright existentes conforme o [quickstart da 002](../002-consulta-planilhas/quickstart.md).
+Data: 2026-10-05. Consulta mensal implementada e testada localmente com fixtures/fakes/TEMP. Ambiente e Node/Playwright existentes conforme o [quickstart da 002](../002-consulta-planilhas/quickstart.md). Evidências na [validação](validacao.md) e no [gate local](../../docs/reports/003-local-gate.json); nenhum Google real consultado. O autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge.
 
 ## Tarefa do autor — criar/preencher Meses
 
@@ -11,9 +11,9 @@ Na planilha já usada pelo CRM, à mão:
 3. Formatar **mes** como texto simples e preencher uma única linha do mês atual em **AAAA-MM**, marca **ntv**, objetivo curto e pautas, uma por linha dentro da mesma célula.
 4. Manter apenas uma linha por mês/marca. Não fornecer IDs, e-mails de conta ou chaves em documentos públicos.
 
-O CRM não cria/preenche a aba. Esta tarefa é manual e não bloqueia testes: sem a aba real, usar as fixtures sintéticas. Preparação não comprova integração nem destrava a implementação antes da T021 da 002.
+O CRM não cria/preenche a aba. T002 permanece tarefa manual pendente e não bloqueia implementação ou testes: sem a aba real, usar as fixtures sintéticas. Preparação não comprova integração. T015/demonstração real também permanece pendente; T021/aceite da 002 bloqueia somente o merge.
 
-## Ensaios sintéticos após implementar
+## Repetir os ensaios sintéticos
 
 Usar apenas TEMP e cliente falso; detalhes no [contrato](contracts/meses.md). Preservar fixtures antigas, acrescentando variantes sintéticas: opcional ausente/presente vazia, dois meses, 0/5/7 pautas, CRLF/vazios, duplicata de chave NTV, outra marca, mes/texto inválidos, HTML/URL credenciada e presença/conteúdo alterados entre leituras.
 
@@ -33,8 +33,8 @@ node --test tests/interface.test.cjs tests/atualizacao-interface.test.cjs
 node tools/quality-gate.mjs
 ```
 
-Executar testes antes do código correspondente e registrar RED/GREEN reais. Ao final, gate local sem pulos das cinco camadas, gate Linux com limitações UI/PowerShell explícitas, review independente e documentação sincronizada. Não alterar baseline para acomodar a feature. Evidências futuras em `validacao.md`, sem dados reais ou falsificação de resultado.
+Os testes de comportamento e o gate local foram executados: Node 24.19.0, 312 testes PASS sem pulos nas cinco camadas, cobertura 98,3660%, drop 0 e complexidade PASS com 17 avisos. Baseline não atualizada; Semgrep SKIP por ausência no Windows, audit N/A sem dependências de aplicação. Consultar [validacao.md](validacao.md) para RED/GREEN, revisão e limites. Gate Linux e reviews serão conferidos no PR; seus pulos de UI/PowerShell não substituem a prova Windows local.
 
-## Demonstração privada após implementar
+## Demonstração privada pendente — T015
 
 Autor conclui preparação manual e usa **Atualizar dados** após o aceite da 002 e implementação da 003. Conferir objetivo/pautas do mês atual e a tabela Meses contra a mesma captura vigente. Não criar duplicata deliberadamente na fonte real para testar: esses casos são sintéticos. Guardar apenas resultado/limites sanitizados, sem linha real, identificador de planilha, e-mail ou segredo em screenshot/relatório público.

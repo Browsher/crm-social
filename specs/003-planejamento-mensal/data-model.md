@@ -1,6 +1,6 @@
 # Modelo — Meses opcional
 
-Data: 2026-10-05; desenho futuro, sem implementação. [Spec](spec.md), [contrato](contracts/meses.md).
+Data: 2026-10-05; implementado e testado localmente com dados sintéticos. [Spec](spec.md), [contrato](contracts/meses.md) e [evidências/limites](validacao.md); demonstração real pendente.
 
 ## Linha da aba Meses
 
@@ -11,11 +11,11 @@ Data: 2026-10-05; desenho futuro, sem implementação. [Spec](spec.md), [contrat
 | objetivo | Texto; vazio mostra Ainda não definido; tipo não textual gera aviso e é ausente no card |
 | pautas | Texto com uma pauta por linha; LF/CRLF, trim das bordas, vazios descartados, ordem/repetições preservadas; tipo não textual gera aviso e nenhum item no card |
 
-Chave semântica: `(marca_id, mes)`; não é unicidade estrutural da captura. Duas ou mais linhas NTV com a mesma chave são preservadas e avisadas individualmente, mesmo com texto igual. Nenhum ID novo, campo de versão mensal ou vínculo de semana. Parser conserva índice físico da fonte em representação interna, separado das quatro colunas expostas.
+Chave semântica: `(marca_id, mes)`; não é unicidade estrutural da captura. Duas ou mais linhas NTV com a mesma chave são preservadas e avisadas individualmente, mesmo com texto igual. Nenhum ID novo, campo de versão mensal ou vínculo de semana. `registros` em `src/captura.cjs` conserva índice físico da fonte em WeakMap privado; `linhaMensal(record)` entrega essa origem à triagem, separado das quatro colunas expostas.
 
 ## Captura e projeção
 
-- Seis abas obrigatórias e 66 mínimos continuam iguais. Meses opcional tem quatro mínimos adicionais; ordem depois de Revisoes.
+- Seis abas obrigatórias e 66 mínimos continuam iguais. Meses opcional tem quatro mínimos adicionais; ordem visual depois de Revisoes e antes de Histórico. O hash ordena os pares pelo nome da aba, incluindo Meses só quando presente; hashes antigos são preservados.
 - Ausência: `tables`, `metadataBefore` e `metadataAfter` omitem Meses conjuntamente. Não acrescentar chave com vazio à captura antiga.
 - Presença: os três mapas incluem Meses; metadados/ranges/hashes e leitura completa obedecem ao v1. Cabeçalho mínimo obrigatório mesmo em tabela sem linhas. Colunas extras permanecem privadas.
 - O retorno normalizado de `validarCaptura` conserva envelope/seis arrays existentes e acrescenta `meses` somente quando capturada; a triagem conserva duplicatas/localizações em `origens` por linha física, antes da projeção dos mínimos. Não introduzir wrapper `dados.abas` nem preencher opcional ausente.

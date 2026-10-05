@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002/003 implementadas/testadas localmente, com demonstrações reais pendentes; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 ## Ordem de leitura
 
@@ -28,16 +28,16 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | Documento | Código explicado |
 | --- | --- |
 | [Google](modules/google.md) | JWT/fetch nativos, configuração externa e token em memória |
-| [Coleta](modules/coleta.md) | Seis grades tipadas, duas leituras, metadados/hashes e datas |
-| [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, normalização e hash |
+| [Coleta](modules/coleta.md) | Seis grades obrigatórias e Meses opcional, duas leituras, metadados/hashes e datas |
+| [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos e quatro mensais opcionais, normalização/hash e origem física |
 | [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
 | [Importador](modules/importador.md) | scripts/importar-captura.cjs; argumentos/saída e falhas de entrada |
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
-| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas; Histórico confirmado |
+| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses opcional; Histórico confirmado |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; quatro rotas fixas e Host/Origin |
 | [Iniciador Windows](modules/iniciador.md) | Iniciar CRM.ps1; Node existente, processo oculto, confirmação, retorno e logs privados |
-| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Histórico, releitura e avisos por peça |
+| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses opcional/Histórico, card mensal, releitura e avisos por peça |
 
 ## Feature 001 canônica
 
@@ -71,19 +71,20 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
 
-## Feature 003 — Consulta mensal (somente planejamento, sem implementação)
+## Feature 003 — Consulta mensal (implementada/testada localmente; demonstração real pendente)
 
 | Documento | Uso |
 | --- | --- |
 | [Spec](../specs/003-planejamento-mensal/spec.md) | Reescopo do autor em 05/10/2026: Meses opcional, objetivo/lista curta, duplicatas e compatibilidade |
-| [Plano](../specs/003-planejamento-mensal/plan.md) | Extensão mínima dos módulos atuais; cinco camadas futuras |
+| [Plano](../specs/003-planejamento-mensal/plan.md) | Extensão mínima dos módulos atuais; cinco camadas verificadas localmente |
 | [Pesquisa](../specs/003-planejamento-mensal/research.md) | Código existente e documentação oficial da API consultada via Context7 |
 | [Modelo](../specs/003-planejamento-mensal/data-model.md) / [Contrato](../specs/003-planejamento-mensal/contracts/meses.md) | Quatro mínimos, optionalidade/hash legado, linha física, avisos e consulta |
-| [Tarefas](../specs/003-planejamento-mensal/tasks.md) | 15 pendentes, com preparação manual do autor independente de testes |
-| [Quickstart](../specs/003-planejamento-mensal/quickstart.md) | Instruções do autor e ensaios futuros, não executados |
-| [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | 16/16 de qualidade documental; sem pergunta real de produto |
+| [Tarefas](../specs/003-planejamento-mensal/tasks.md) | 15 tarefas; preparação/demonstração manuais pendentes independentes dos testes sintéticos |
+| [Quickstart](../specs/003-planejamento-mensal/quickstart.md) | Instruções do autor e comandos para repetir ensaios sintéticos executados |
+| [Validação](../specs/003-planejamento-mensal/validacao.md) | RED/GREEN, gate local, revisão, screenshots sintéticos e pendências reais |
+| [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado em leitura; sua espera de implementação foi substituída pela autorização atual registrada em spec/validação/tarefas |
 
-Sem código ou teste novo executado. Implementação condicionada à demonstração real T021/aceite da 002. Nenhuma escrita na operação, instalação de perfil, repasse ao Diretor ou mudança de agenda/meta semanal. O analyze desta entrega é somente leitura; achados no relatório da conversa, sem arquivo concorrente de requisitos.
+Código/testes da 003 executados com fixtures/fakes/TEMP; Node 24.19.0, 312 PASS sem pulos e cobertura 98,3660%, drop 0. O autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge. T002/preparar Meses e T015/demonstração real permanecem pendentes; gate Linux/reviews serão conferidos no PR. Nenhuma escrita na operação, instalação de perfil, repasse ao Diretor ou mudança de agenda/meta semanal.
 
 ## Design e evidência visual
 
@@ -110,6 +111,11 @@ Sem código ou teste novo executado. Implementação condicionada à demonstraç
 | [Planilha ajustada/dados 1440](design/screenshots/001-us5-ajuste-dados-1440.png) / [390](design/screenshots/001-us5-ajuste-dados-390.png) | Seis tabelas com rolagem própria e registros sintéticos |
 | [Planilha ajustada/avisos 1440](design/screenshots/001-us5-ajuste-avisos-1440.png) / [390](design/screenshots/001-us5-ajuste-avisos-390.png) | Origem com falha/contador e painel único de avisos; dados sintéticos |
 | [Planilha ajustada/Histórico 1440](design/screenshots/001-us5-ajuste-historico-1440.png) / [390](design/screenshots/001-us5-ajuste-historico-390.png) | Histórico confirmado sintético, sem repetir motivos no cabeçalho |
+| [003 objetivo 1440](design/screenshots/003-objetivo-1440.png) / [390](design/screenshots/003-objetivo-390.png) | Card com objetivo e pautas sintéticos |
+| [003 mais 1440](design/screenshots/003-mais-1440.png) / [390](design/screenshots/003-mais-390.png) | Primeiras cinco pautas e +N sintéticos |
+| [003 indefinido 1440](design/screenshots/003-indefinido-1440.png) / [390](design/screenshots/003-indefinido-390.png) | Ausência mensal sem inferência |
+| [003 confirmar 1440](design/screenshots/003-confirmar-1440.png) / [390](design/screenshots/003-confirmar-390.png) | Duplicatas sintéticas com A confirmar |
+| [003 Planilha 1440](design/screenshots/003-planilha-1440.png) / [390](design/screenshots/003-planilha-390.png) | Meses e avisos por linha física, sintéticos |
 | [Mockup v2](design/mockups/telas-v2.html) | Demonstração visual histórica, incluindo variantes futuras |
 | [Mockup da gaveta v2](design/mockups/gaveta-v2.html) | Referência compacta aprovada para a seção 2 das telas, somente dados sintéticos |
 | [Limites do mockup](design/mockups/LEIA-ME.md) | Sanitização e diferenças entre demonstração e escopo |
@@ -183,3 +189,7 @@ Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; ta
 [Relatório completo do gate local](reports/002-local-gate.json) e [resumo do gate Linux extraído dos logs oficiais](reports/002-ci-gate.json). Heads, execuções, review e aceites somente na [validação](../specs/002-consulta-planilhas/validacao.md).
 
 [Relatório local dos ajustes do PR #14](reports/002-ajustes-local-gate.json), com head validado explícito; os dois relatórios acima preservam as rodadas anteriores. Aceite Linux e reviews correspondentes na mesma validação.
+
+## Evidência da 003
+
+[Relatório do gate local da consulta mensal](reports/003-local-gate.json): testes/cobertura/complexidade PASS, Semgrep SKIP por ausência no Windows, audit N/A e baseline não atualizada. Execuções, revisão, dez screenshots sintéticos e pendências reais somente na [validação](../specs/003-planejamento-mensal/validacao.md). Gate Linux e reviews serão conferidos no PR; integração real não comprovada.
