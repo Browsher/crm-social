@@ -331,14 +331,18 @@ function lista(semData=false) {
 function objetivoMensal() {
   const linhas=(state.view.planilha.find(a=>a.nome==='Meses')?.linhas ?? []).filter(r=>r.marca_id==='ntv'&&r.mes===state.mes);
   const registro=linhas.length===1?linhas[0]:null;
+  const definido=typeof registro?.objetivo==='string'&&registro.objetivo.trim().length>0;
   const objetivo=linhas.length>1?'A confirmar':
-    (typeof registro?.objetivo==='string'&&registro.objetivo.trim()?registro.objetivo:'Ainda não definido');
+    (definido?registro.objetivo:'Ainda não definido');
   const conteudo=node('div',undefined,'month-content');
-  conteudo.append(node('small','Objetivo do mês'),node('p',objetivo));
+  conteudo.append(node('small','Objetivo do mês'),node('p',objetivo,definido?undefined:'month-placeholder'));
   const pautas=typeof registro?.pautas==='string'?registro.pautas.split(/\r?\n/).map(p=>p.trim()).filter(Boolean):[];
   if(pautas.length) {
     const lista=node('ul');lista.append(...pautas.slice(0,5).map(p=>node('li',p)));conteudo.append(lista);
-    if(pautas.length>5) conteudo.append(node('span','+'+(pautas.length-5),'more-topics'));
+    if(pautas.length>5) {
+      const restantes=pautas.length-5;
+      conteudo.append(node('span','+'+restantes+(restantes===1?' pauta':' pautas'),'more-topics'));
+    }
   }
   const icone=node('span','◎','brief-icon');icone.setAttribute('aria-hidden','true');
   $('#objetivo-mes').replaceChildren(icone,conteudo);

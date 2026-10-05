@@ -39,14 +39,14 @@ main{margin-left:var(--sidebar);padding:28px 32px 35px;max-width:1900px}
 .badge.verde{color:var(--green-dark);background:var(--green-light)}
 .badge.vermelho{color:#9d4545;background:#fff1f1}
 .month-brief{display:flex;align-items:center;gap:13px;background:white;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:6px;padding:17px 20px;margin-bottom:26px}
-.brief-icon{width:36px;height:36px;display:grid;place-items:center;background:var(--green-light);color:var(--green);border-radius:50%;font-size:23px}
+.brief-icon{width:36px;height:36px;display:grid;place-items:center;background:var(--green-light);color:var(--green);border-radius:50%;font-size:23px;flex-shrink:0}
 .month-brief small{color:var(--muted);font-size:11px}
-.month-brief p{font-size:14px;font-weight:500;margin-top:2px;color:#8a958e}
+.month-brief p{font-size:14px;font-weight:500;margin-top:2px;color:var(--ink)}
+.month-brief p.month-placeholder{color:#8a958e}
 .month-content{min-width:0;overflow-wrap:anywhere}
 .month-content ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
 .month-content li{margin:3px 0}
 .more-topics{display:block;margin-top:6px;font-size:12px;color:var(--muted)}
-.brief-icon{flex-shrink:0}
 .month-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .month-nav{display:flex;gap:6px}
 .month-nav button{border:1px solid var(--line);background:white;border-radius:5px;width:34px;height:31px;font-size:24px;line-height:1}

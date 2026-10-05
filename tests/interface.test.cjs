@@ -44,7 +44,7 @@ for(const width of [1440,390]) test('U003 card acompanha mês, conserva texto li
   const card=page.locator('#objetivo-mes');
   assert.match(await card.textContent(),/Objetivo de outubro sintético/);
   assert.deepEqual(await card.locator('li').allTextContents(),['Primeira','Segunda','Terceira','Quarta','Quinta']);
-  assert.match(await card.textContent(),/\+2/);assert.equal(await card.locator('a,button,input,textarea,img').count(),0);
+  assert.equal(await card.locator('.more-topics').textContent(),'+2 pautas');assert.equal(await card.locator('a,button,input,textarea,img').count(),0);
   await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
   assert.match(await card.textContent(),/<img src=x onerror=alert\(1\)>/);
   assert.deepEqual(await card.locator('li').allTextContents(),['<b>Pauta literal</b>']);
@@ -56,14 +56,85 @@ for(const [nome,rows,objetivo,itens] of [
   ['ausente',null,'Ainda não definido',[]],['vazia',[],'Ainda não definido',[]],
   ['objetivo vazio',[['2026-10','ntv','','Pauta A']],'Ainda não definido',['Pauta A']],
   ['tipos inválidos',[['2026-10','ntv',12,true]],'Ainda não definido',[]],
-  ['cinco',[['2026-10','ntv','Objetivo','A\nB\nC\nD\nE']],'Objetivo',['A','B','C','D','E']],
+  ['cinco',[['2026-10','ntv','Objetivo +2','Pauta +2\nB\nC\nD\nE']],'Objetivo +2',['Pauta +2','B','C','D','E']],
   ['zero',[['2026-10','ntv','Objetivo',' \r\n\n']],'Objetivo',[]],
   ['duplicada',[['2026-10','ntv','A','Pauta A'],['2026-10','ntv','B','Pauta B']],'A confirmar',[]]
 ]) test('U003 card '+nome,{skip},async t=>{
   const page=await abrir(t,390,true,()=>{},()=>{},rows===null?capturaValida:()=>capturaMeses(rows));
-  const card=page.locator('#objetivo-mes');assert.match(await card.textContent(),new RegExp(objetivo));
-  assert.deepEqual(await card.locator('li').allTextContents(),itens);assert.doesNotMatch(await card.textContent(),/\+\d/);
+  const card=page.locator('#objetivo-mes');assert.equal(await card.locator('.month-content p').textContent(),objetivo);
+  assert.deepEqual(await card.locator('li').allTextContents(),itens);assert.equal(await card.locator('.more-topics').count(),0);
 });
+for(const width of [1440,390]) {
+  test('U003 cor principal no objetivo definido e apagada só nos placeholders em '+width,{skip},async t=>{
+    const page=await abrir(t,width,true,()=>{},()=>{},()=>capturaMeses([
+      ['2026-10','ntv','Objetivo sintético definido','Pauta A'],
+      ['2026-11','ntv','','Pauta sem objetivo'],
+      ['2026-12','ntv','A','Pauta A'],['2026-12','ntv','B','Pauta B']
+    ]));
+    const objetivo=page.locator('#objetivo-mes .month-content p');
+    const principal=await page.evaluate(()=>getComputedStyle(document.body).color);
+    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    assert.equal(await objetivo.textContent(),'Ainda não definido');
+    const apagada=await objetivo.evaluate(n=>getComputedStyle(n).color);
+    assert.notEqual(apagada,principal);
+    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    assert.equal(await objetivo.textContent(),'A confirmar');
+    assert.equal(await objetivo.evaluate(n=>getComputedStyle(n).color),apagada);
+    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    assert.equal(await objetivo.textContent(),'Ainda não definido');
+    assert.equal(await objetivo.evaluate(n=>getComputedStyle(n).color),apagada);
+    for(let i=0;i<3;i++) await page.getByRole('button',{name:'Mês anterior',exact:true}).click();
+    assert.equal(await objetivo.textContent(),'Objetivo sintético definido');
+    assert.equal(await objetivo.evaluate(n=>getComputedStyle(n).color),principal,
+      'Objetivo definido deve usar a cor principal --ink depois de sair dos placeholders');
+  });
+  for(const [nome,pautas,marcador] of [
+    ['singular','A\nB\nC\nD\nE\nF','+1 pauta'],
+    ['plural','A\nB\nC\nD\nE\nF\nG','+2 pautas']
+  ]) test('U003 pautas restantes com rótulo '+nome+' em '+width,{skip},async t=>{
+    const page=await abrir(t,width,true,()=>{},()=>{},()=>capturaMeses([
+      ['2026-10','ntv','Objetivo +2','Pauta +2\nB\nC\nD\nE'],
+      ['2026-11','ntv','Objetivo seguinte',pautas],['2026-12','ntv','Objetivo sem pautas','']
+    ]));
+    const card=page.locator('#objetivo-mes');
+    assert.equal(await card.locator('li').count(),5);
+    assert.equal(await card.locator('.more-topics').count(),0);
+    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    const texto=await card.locator('.more-topics').textContent();
+    assert.equal(await card.locator('li').count(),5);
+    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    assert.equal(await card.locator('li').count(),0);
+    assert.equal(await card.locator('.more-topics').count(),0);
+    assert.equal(texto,marcador,'O restante deve identificar pautas e flexionar o singular');
+  });
+  test('U003 card e avisos concordam para mês válido, duplicatas e espaços inválidos em '+width,{skip},async t=>{
+    const page=await abrir(t,width,true,()=>{},()=>{},()=>capturaMeses([
+      ['2026-10','ntv','Objetivo único','Pauta única'],['2026-10','outra','Ignorar','Ignorar'],
+      ['2026-11','ntv','Objetivo A','Pauta A'],[],['2026-11','ntv','Objetivo B','Pauta B'],
+      ['2026-11','outra','Ignorar','Ignorar'],[' 2026-12 ','ntv','Não selecionar','Não selecionar'],
+      [' 2026-12 ','outra','Ignorar','Ignorar']
+    ]));
+    const card=page.locator('#objetivo-mes');
+    assert.match(await page.locator('#mes').textContent(),/Outubro.*2026/);
+    assert.equal(await card.locator('.month-content p').textContent(),'Objetivo único');
+    assert.deepEqual(await card.locator('li').allTextContents(),['Pauta única']);
+    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    assert.match(await page.locator('#mes').textContent(),/Novembro.*2026/);
+    assert.equal(await card.locator('.month-content p').textContent(),'A confirmar');
+    assert.equal(await card.locator('li').count(),0);
+    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    assert.match(await page.locator('#mes').textContent(),/Dezembro.*2026/);
+    assert.equal(await card.locator('.month-content p').textContent(),'Ainda não definido');
+    assert.equal(await card.locator('li').count(),0);
+    await page.locator('#selo').click();await page.locator('[data-aba="Meses"]').click();
+    assert.equal(await page.locator('#dados-planilha tbody tr').count(),4);
+    const avisos=await page.locator('#avisos-tabela tbody tr').evaluateAll(ns=>ns
+      .map(n=>[...n.cells].map(c=>c.textContent)).filter(c=>c[0]==='Meses')
+      .sort((a,b)=>Number(a[1])-Number(b[1])));
+    assert.deepEqual(avisos,[['Meses','4','mes','Mês e marca repetidos'],
+      ['Meses','6','mes','Mês e marca repetidos'],['Meses','8','mes','Mês inválido']]);
+  });
+}
 async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixture=capturaValida,mapa=mapaQuadroValido(),incluirSemData=true) {
   t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-04T12:00:00Z')});
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE || 'playwright');
