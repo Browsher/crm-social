@@ -8,7 +8,7 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Created**: 2026-10-02 | **Updated**: 2026-10-04 (fechamento T039–T041)
 
-**Status**: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](validacao.md).
+**Status**: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão pendente, resultados e limites na [validação](validacao.md).
 
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em

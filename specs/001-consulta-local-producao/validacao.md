@@ -1394,4 +1394,11 @@ Head conferido: **1239ac2a974106ff757e1d10e582e8c111f34d8a**.
 
 **Decisão em aberto — tipagem da coleta:** autor e Central precisam decidir entre uma próxima captura que preserve números no formato previsto ou uma mudança explícita/aprovada do contrato. Até essa decisão, a captura demonstrada mantém vínculos/vigência a confirmar. Nenhuma célula foi corrigida, nenhuma coerção nova foi implementada e nenhuma validação foi relaxada.
 
-A rodada deste registro altera somente documentação. Os checks do novo head e a condição de merge serão conferidos após o push; as provas acima pertencem ao head indicado, sem antecipar resultado futuro.
+As provas acima pertencem ao head indicado, sem antecipar resultados de heads posteriores. A condição de merge é conferir os checks da cabeça vigente do PR.
+
+
+### Segunda conferência remota e ajustes finais de redação
+
+Head **24338388fa68281324a903aba4fa41f5c3a5af44**: [quality-gate SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37250831284/job/111577912054), tests/coverage/complexity/**Semgrep real PASS**, audit N/A, exit 0, baseline atualizada false. [Review SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37250831177/job/111577912023) e [comentário](https://github.com/Browsher/crm-social/pull/13#issuecomment-5986487604): **nenhum Critical, Important, segurança ou regressão; três Minor documentais**.
+
+M1: guia de screenshots sintéticas distingue o momento histórico das imagens do fechamento atual; a frase residual nas telas foi sincronizada. Nenhuma imagem foi substituída. M2: ressalva curta de tipagem/vigência e decisão pendente também no AGENTS, fora do bloco, e no Status da spec. M3: redação de credencial simplificada para não confundir sua localização com a da spec/constituição. Somente Markdown mudou; nenhuma alteração de contrato efetivo, código ou captura. A condição de merge continua sendo conferir gate e review da cabeça vigente, sem Critical, segurança ou regressão.
