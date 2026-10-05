@@ -15,10 +15,10 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | Documento | Para que serve |
 | --- | --- |
 | [README](../README.md) | Apresentação, estado e comandos reais |
-| [ROADMAP](../ROADMAP.md) | Seis features, aceite futuro e progresso parcial |
+| [ROADMAP](../ROADMAP.md) | Cinco features do v1 e v2 visual ilustrativo |
 | [AGENTS](../AGENTS.md) | Regras locais e bloco gerenciado preservado |
 | [CLAUDE](../CLAUDE.md) | Importador das instruções canônicas; não é outra regra de produto |
-| [Constituição 1.0.0](../.specify/memory/constitution.md) | Princípios e limites; nenhuma emenda nesta entrega |
+| [Constituição 1.1.0](../.specify/memory/constitution.md) | Princípios e limites; emenda VI aprovada/aplicada em05/10 |
 | [Regra curta de estrutura](../.claude/rules/project-structure.md) | EntryPoints/pastas/imports/testes observados, até 60 linhas |
 | [architecture.md](architecture.md) | Mapa de módulos/imports, persistência, rotas/env e dívidas |
 | [Este índice](index.md) | Todos os documentos autorais do projeto e referências de ferramenta |
@@ -27,6 +27,8 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 | Documento | Código explicado |
 | --- | --- |
+| [Google](modules/google.md) | JWT/fetch nativos, configuração externa e token em memória |
+| [Coleta](modules/coleta.md) | Seis grades tipadas, duas leituras, metadados/hashes e datas |
 | [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, normalização e hash |
 | [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
@@ -50,6 +52,24 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [quickstart.md](../specs/001-consulta-local-producao/quickstart.md) | Ambiente/Node/PATH, oito suítes, iniciador, demo TEMP e roteiro da captura real executado em T039 e repetível |
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
+
+## Feature 002 — Planilhas (implementada localmente; conta/demonstração reais pendentes)
+
+| Documento | Uso |
+| --- | --- |
+| [Spec](../specs/002-consulta-planilhas/spec.md) | Três histórias, leitura direta somente leitura, seis abas e continuidade da Central |
+| [Emenda aplicada](../specs/002-consulta-planilhas/constitution-proposal.md) | Princípio VI/versão 1.1.0; aprovada pelo autor em05/10 |
+| [Plano](../specs/002-consulta-planilhas/plan.md) | Interfaces, segurança, trava assíncrona e cinco riscos |
+| [Pesquisa](../specs/002-consulta-planilhas/research.md) | Fontes oficiais/Context7 e alternativas |
+| [Modelo](../specs/002-consulta-planilhas/data-model.md) | V1 seis abas, tipos e configuração privada |
+| [Contrato](../specs/002-consulta-planilhas/contracts/leitura-planilha.md) | Integridade, transporte, HTTP e compatibilidade |
+| [Tarefas](../specs/002-consulta-planilhas/tasks.md) | 24 tarefas com RED/GREEN e gates separados |
+| [Quickstart](../specs/002-consulta-planilhas/quickstart.md) | Testes falsos e preparação da conta pelo autor para demonstração |
+| [Validação](../specs/002-consulta-planilhas/validacao.md) | Decisões, RED/GREEN, screenshots e aceite remoto |
+| [Checklist](../specs/002-consulta-planilhas/checklists/requirements.md) | Qualidade da especificação; não substitui testes ou aprovação |
+| [Análise](../specs/002-consulta-planilhas/analysis.md) | Nova análise reduzida; ajustes antigos corrigidos pelo escopo aprovado |
+
+Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
 
 ## Design e evidência visual
 
@@ -143,3 +163,9 @@ As evidências têm origem, estado e limites registrados somente na [validação
 Este índice cobre os Markdown autorais de docs/specs, governança/regra curta e referências locais pertinentes, além das evidências sanitizadas referenciadas acima. Templates e catálogos de skills são ferramentas preservadas, não uma segunda especificação. Dados privados de data/, dependências e demais relatórios temporários ficam fora do índice.
 
 Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; tabelas de campos/rotas/env; Mermaid de imports/persistência; PT-BR com acentos e caminhos relativos. Atualizar na mesma tarefa, separando planejado, implementado, testado e integrado.
+
+## Evidência da 002
+
+[Relatório completo do gate local](reports/002-local-gate.json) e [resumo do gate Linux extraído dos logs oficiais](reports/002-ci-gate.json). Heads, execuções, review e aceites somente na [validação](../specs/002-consulta-planilhas/validacao.md).
+
+[Relatório local dos ajustes do PR #14](reports/002-ajustes-local-gate.json), com head validado explícito; os dois relatórios acima preservam as rodadas anteriores. Aceite Linux e reviews correspondentes na mesma validação.

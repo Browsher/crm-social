@@ -186,3 +186,4 @@ Origem resume falha e quantidade; a lista completa aparece somente na tabela.
 | Histórico | [Abrir](001-us5-ajuste-historico-1440.png) | [Abrir](001-us5-ajuste-historico-390.png) |
 
 Evidências e limites permanecem na [validação](../../../specs/001-consulta-local-producao/validacao.md).
+002: exemplos sintéticos de atualizando/sucesso/falha em 1440/390; imagens e procedência somente na [validação da 002](../../../specs/002-consulta-planilhas/validacao.md).

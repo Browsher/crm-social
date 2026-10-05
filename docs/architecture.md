@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A [spec](../specs/001-consulta-local-producao/spec.md) define requisitos; leitura Google pertence à 002. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 implementada/testada com cliente falso; conta e demonstração reais pendentes: [validação da 002](../specs/002-consulta-planilhas/validacao.md).
 
 ## Módulos e imports reais
 
@@ -14,6 +14,15 @@ flowchart LR
   Snapshot --> Triagem["src/triagem.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
   Server --> Projecao["src/projecao.cjs"]
+  Server --> Google["src/google.cjs"]
+  Server --> Coleta["src/coleta.cjs"]
+  Snapshot -->|MOTIVOS| Google
+  Coleta --> Crypto
+  Coleta --> Captura
+  Coleta -->|falha| Google
+  Google --> FS
+  Google --> Crypto
+  Google --> Fetch["fetch nativo / OAuth e Sheets somente leitura"]
   Server --> Quadro["src/quadro-config.cjs"]
   Projecao --> Captura
   Projecao --> Triagem
@@ -23,7 +32,7 @@ flowchart LR
   Quadro -.->|lê caminho recebido| Config
   HTML["src/web/index.html"] --> JS["/app.js"]
   HTML --> CSS["/styles.css"]
-  JS -->|GET /api/visao| Server
+  JS -->|GET /api/visao e POST /api/atualizar| Server
   Snapshot --> FS["node:fs / node:path"]
   Captura --> Crypto["node:crypto"]
   Snapshot --> Crypto
@@ -38,7 +47,9 @@ flowchart LR
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
 | projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas | [Projeção](modules/projecao.md) |
-| servidor | HTTP local com quatro rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
+| google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
+| coleta | Duas leituras de seis grades, datas, hashes e metadados | [Coleta](modules/coleta.md) |
+| servidor | HTTP local com cinco rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
 | web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Histórico e avisos detalhados | [Interface](modules/web.md) |
 
@@ -56,6 +67,10 @@ flowchart TD
   CLI -->|parse válido| Promover[promoverCaptura]
   Falha --> Lock[Exclusividade por diretório]
   Promover --> Lock
+  Botao[POST local protegido] --> Atualizar[atualizarCaptura adquire mesma trava]
+  Atualizar --> Remota[Cliente nativo e coletarCaptura, await sob trava]
+  Remota -->|candidata v1| Estado
+  Remota -->|falha fixa| Rejeitar
   Lock --> Estado[Ler estado confirmado]
   Estado --> Validar{Estrutura válida?}
   Validar -->|não| Rejeitar[Recibo falhou preserva a vigente]
@@ -108,12 +123,13 @@ O ponto de entrada faz bind somente em `127.0.0.1:4318` por padrão. `criarServi
 | /app.js | GET/HEAD, JS fixo |
 | /styles.css | GET/HEAD, CSS fixo |
 | /api/visao | GET/HEAD, JSON selecionado; sem captura é 200 com ausência estruturada |
-| Outro método com origem válida | 405 e Allow GET, HEAD |
+| /api/atualizar | POST local JSON {}, origem obrigatória e ≤1KiB; leitura/promoção |
+| Outro método com origem válida | 405; Allow POST no atualizador, GET/HEAD nas outras rotas |
 | Outra rota, privado ou traversal | 404; query não escolhe diretórios |
 | Host/Origin recusados | 403, antes de método/rota |
 | Estado confirmado ilegível | 503 resumido, sem alteração da captura |
 
-Host é exatamente `127.0.0.1:<porta real>`; `localhost` não passa. Origin ausente é permitido; presente deve ser a própria origem HTTP. Sem CORS externo. CSP restringe scripts/estilos/conexões a self e proíbe imagens/objetos/incorporação. Respostas têm no-store/nosniff; HEAD não inclui corpo.
+Host é exatamente `127.0.0.1:<porta real>`; `localhost` não passa. Origin ausente é permitido somente na consulta; POST exige a própria origem HTTP. Sem CORS externo. CSP restringe scripts/estilos/conexões a self e proíbe imagens/objetos/incorporação. Respostas têm no-store/nosniff; HEAD não inclui corpo.
 
 O servidor não expõe `data/`, configuração bruta, envelope/metadados de coleta, células extras ou qualquer arquivo arbitrário. Texto é renderizado por `textContent`; supressão conservadora protege formatos conhecidos de conteúdo sensível sem confundir HTTPS com caminho Windows. Antes do HTTP, a projeção analisa `Arquivos.url` e `Produções.url_video_final` com `new URL`: usuário ou senha causam **[conteúdo suprimido]** e aviso fixo localizado, sem expor o valor. String não vazia recusada pelo construtor também é suprimida, com motivo fixo **URL inválida suprimida**; vazio/somente espaços é preservado sem esse aviso. Original permanece só na captura privada. Nenhuma URL registrada é carregada automaticamente; a UI também não ecoa URL recusada como texto bruto.
 
@@ -128,11 +144,13 @@ Por decisão do autor, a triagem em texto livre e recibo substitui somente peda�
 | `quadroConfigPath` / `webDir` | Argumentos internos confiáveis de criarServidor, sem controle HTTP |
 | `-DataDir` / `-Port` / `-NodePath` | Iniciador; diretório privado, porta 0–65535 e runtime explícito; defaults data/ e 4318 |
 | `CRM_NODE_PATH` | Iniciador usa se -NodePath estiver vazio; fallback node.exe no PATH; módulos Node não leem essa variável |
+| `CRM_GOOGLE_CREDENTIALS_FILE` | Cliente Google no POST; caminho absoluto privado fora do projeto |
+| `CRM_SPREADSHEET_ID` | Cliente Google no POST; ID privado, sem controle HTTP ou browser |
 | `PATH` | Diretório do Node 24.19.0 à frente para subprocessos do gate; ver quickstart |
 | `CRM_PLAYWRIGHT_MODULE` | Teste de interface resolve Playwright existente; sem ela tenta playwright |
 | `CI=true` / plataforma Linux | Interface faz SKIP com CI=true; iniciador faz SKIP fora de win32. M8: UI fora do LCOV e fronteira UI/PowerShell no Linux, sem substituir aceite Windows |
 
-Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). O [iniciador](modules/iniciador.md) confirma a linha de início do Node em até dez segundos, retorna PID/URL/logDir/orientação de encerramento e mantém logs em `<DataDir>/runtime/`. Em erro encerra somente o filho criado por sua chamada; nunca o ocupante da porta. A primeira captura oficial continua pendente e deve preservar os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); hashes coerentes de fixture não comprovam coleta real.
+Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). O [iniciador](modules/iniciador.md) confirma a linha de início do Node em até dez segundos, retorna PID/URL/logDir/orientação de encerramento e mantém logs em `<DataDir>/runtime/`. Em erro encerra somente o filho criado por sua chamada; nunca o ocupante da porta. A 001 foi demonstrada com captura oficial; a leitura direta da 002 ainda aguarda conta/demonstração reais e deve preservar os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); hashes coerentes de fixture não comprovam coleta real.
 
 ## O que já aparece e o que falta
 
@@ -140,7 +158,7 @@ Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” glo
 
 US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
 
-Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas de dados e Histórico final. **Atualizar dados** desabilita apenas o próprio botão durante `GET /api/visao` com cache no-store. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
+Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas de dados e Histórico final. **Atualizar dados** desabilita o botão durante POST /api/atualizar e o GET posterior; role=status informa atualização/sucesso/falha e aviso fixo da trava, quando houver. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
@@ -216,3 +234,5 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | UI fora do LCOV e pulos UI/PowerShell no Linux | tests/interface.test.cjs e tests/iniciador.test.cjs; M8; CI/cobertura não substituem execução Windows local |
 
 A projeção preserva a linha física dos avisos desde a matriz privada, por ID e WeakMap; não usa índice filtrado como localização. As demais dívidas acima continuam explícitas. Não há leitura de data/ para implementar/documentar, escrita operacional, geração, publicação, deploy ou instalação de agentes por consequência da consulta.
+
+Estado e provas da 002 na [validação](../specs/002-consulta-planilhas/validacao.md). JWT/fetch sem dependência, timeout/sem redirects e quatro categorias de falha; [contrato](../specs/002-consulta-planilhas/contracts/leitura-planilha.md). Limite lexical de chave/junction e dupla leitura sem transação documentados nos módulos.

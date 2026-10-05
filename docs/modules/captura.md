@@ -10,6 +10,7 @@ Implementado com regras puras de estrutura e tempo; estado e evidências na [val
 | --- | --- |
 | `validarCaptura(raw)` | Valida e retorna `{envelope, semanas, producoes, paginas, cenas, arquivos, revisoes}`; o envelope recebe cópia independente |
 | `validarTempoImportacao(completedAt, nowIso, completedAtVigente=null)` | Confere tolerância futura e ordem estrita do fim de uma candidata já validada; relógio/instante vigente são fornecidos pelo importador sob trava |
+| `hashCelulas(tables)` / `letraColuna(n)` | Helpers reutilizados pela coleta direta; mesma definição v1 |
 | `CAMPOS` | Listas explícitas de cabeçalhos mínimos por aba; consumidas também pela projeção |
 | `idSeguro(value)` | Restringe IDs de captura/tentativa usados em nomes de arquivos a 1–100 caracteres alfanuméricos, hífen ou sublinhado |
 | `instanteUtc(value)` | Confere timestamp UTC com `Z`, segundos e fração opcional de 1–3 dígitos |
@@ -20,7 +21,7 @@ Implementado com regras puras de estrutura e tempo; estado e evidências na [val
 
 | Grupo | Regra efetivamente validada |
 | --- | --- |
-| Identidade/fonte | `schemaVersion=1`, `capturaId` seguro, `brandId=ntv`, `source=google-drive-connector`, `spreadsheetId` string não vazia |
+| Identidade/fonte | `schemaVersion=1`, `capturaId` seguro, `brandId=ntv`, `source=google-drive-connector` ou `google-sheets-api`, `spreadsheetId` string não vazia |
 | Instantes | `startedAt <= completedAt`; `readAt` de cada tabela está no intervalo |
 | Abas | Exatamente Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes em tables e nos dois mapas de metadados |
 | Metadados | `sheetId` inteiro não negativo; dimensões inteiras positivas; mesmos valores antes/depois |
@@ -63,4 +64,4 @@ As falhas temporais são motivos fixos do recibo `falhou` e preservam a captura 
 
 [tests/dados.test.cjs](../../tests/dados.test.cjs) cobre reordenação, mínimos, IDs, dimensões, células, metadados, intervalos, duas marcas, hash e etapa desconhecida. Resultados executados ficam em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); esta documentação não reexecuta a suíte.
 
-Pegadinha: `validarEnvelope` exige um identificador de fonte não vazio, mas não consulta sua identidade configurada nem comprova que duas leituras remotas ocorreram. O importador confere a coerência do arquivo recebido. T039 foi demonstrada com captura real, com limites na [validação](../../specs/001-consulta-local-producao/validacao.md); o runtime não executa nem autentica coleta remota.
+Pegadinha: `validarEnvelope` exige um identificador de fonte não vazio, mas não consulta sua identidade configurada nem comprova que duas leituras remotas ocorreram. O importador confere a coerência do arquivo recebido. T039 foi demonstrada com captura real, com limites na [validação](../../specs/001-consulta-local-producao/validacao.md); a coleta direta está isolada no [coletor](coleta.md).

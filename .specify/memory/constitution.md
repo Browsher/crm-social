@@ -42,6 +42,23 @@ Plano e tarefas DEVEM apontar para uma única especificação vigente, sem docum
 concorrentes que descrevam contratos diferentes. O usuário participa das decisões de
 produto por feature; autorizações existentes DEVEM ser preservadas, sem repetição ritual.
 
+### VI. Leitura remota explícita, mínima e privada
+
+O servidor local PODE ler a planilha configurada por meio de conta de serviço própria,
+com escopo único `https://www.googleapis.com/auth/spreadsheets.readonly` e compartilhamento
+como leitora. A chave DEVE permanecer fora do repositório e NÃO DEVE ser enviada ao navegador.
+Credenciais, tokens, identificadores privados e dados reais NÃO DEVEM aparecer em arquivos
+versionados, testes, comentários ou logs públicos.
+
+Toda leitura direta DEVE produzir a captura íntegra do contrato vigente, com metadados
+antes/depois, duas leituras completas e hashes iguais, e passar pelo mesmo importador
+e validação da captura por arquivo. Falha DEVE preservar a última captura válida e sua data.
+O caminho de importação da Central DEVE continuar disponível.
+
+Essa capacidade NÃO concede escrita no Google/Drive, fila, n8n ou mídia, NÃO instala agenda
+e NÃO transforma o CRM em coordenador. Preparação da conta e compartilhamento exigem ação
+do autor; testes DEVEM usar cliente falso e dados sintéticos. O servidor permanece em loopback.
+
 ## Limites do produto
 
 - Acesso local: eventual servidor DEVE escutar apenas em loopback, não na rede inteira.
@@ -75,4 +92,4 @@ de contrato. Incrementar major para quebra de princípios, minor para novo princ
 para esclarecimento. Revisões de implementação DEVEM conferir esta constituição e a spec;
 um desvio exige justificativa concreta, nunca alteração silenciosa do teste para aceitá-lo.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-02
+**Version**: 1.1.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-05

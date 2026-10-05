@@ -14,6 +14,15 @@ const NOW='2026-10-02T14:00:00Z';
 const envelope=['schemaVersion','estado','selo','fonte','captura','ultimaTentativa','semanas','producoes','dias','quadro','planilha','historico','avisos'].sort();
 function estado(raw,t) { const dir=temporario(t); promoverCaptura(raw,dir); return lerEstado(dir,NOW); }
 const colunasQuadro=['Planejamento','Redação','Visual','Mídia','Revisão','Pronta','Publicada','Outras'];
+test('P002 fonte direta enum e seis tabelas de 66 campos, sem envelope privado',t=>{
+  const raw=capturaValida();raw.source='google-sheets-api';
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  assert.equal(view.fonte,'Leitura direta pelo servidor local');assert.equal(view.planilha.length,6);
+  assert.equal(view.planilha.reduce((n,tab)=>n+tab.cabecalhos.length,0),66);
+  assert.equal(view.producoes[0].versao,1);assert.equal(view.producoes[0].data_prevista,raw.tables.Produções.values[1][raw.tables.Produções.values[0].indexOf('data_prevista')]);
+  assert.doesNotMatch(JSON.stringify(view),/spreadsheetId|metadataBefore|google-sheets-api|__extra_privado/);
+  assert.equal(projetarVisao(estado(capturaValida(),t),NOW,mapaQuadroValido()).fonte,'Captura pela Central');
+});
 function mapaTemp(t,mapa=mapaQuadroValido()) {
   const file=path.join(temporario(t),'quadro-etapas.json');fs.writeFileSync(file,JSON.stringify(mapa));
   return carregarMapaQuadro(file);

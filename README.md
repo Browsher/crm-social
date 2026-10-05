@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da produção, o CRM apresenta uma captura da operação para localizar as peças da NTV neste computador. Sheets e Drive continuam sendo as fontes operacionais; o desenho aprovado orienta a interface.
 
-001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; implementação da 002 em aceite; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
@@ -12,17 +12,18 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Estado da entrega
 
-- **Planejado:** 002 Planilhas; acesso somente leitura pelo servidor, credencial fora do repositório e emenda da constituição ainda por definir.
-- **Implementado:** importação/persistência privadas, API local, Planejamento, Produção, Planilha/Histórico e iniciador.
-- **Testado:** cinco camadas locais e comparação com captura real, conforme a [validação](specs/001-consulta-local-producao/validacao.md).
-- **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Runtime sem Google, escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
+- **Planejado:** 003–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A [002](specs/002-consulta-planilhas/spec.md) tem emenda 1.1.0 aplicada e aguarda conta/demonstração reais.
+- **Implementado:** 001 e leitura direta da 002, JWT/fetch nativos, seis abas tipadas e POST local; importação manual preservada.
+- **Testado:** 001 demonstrada com captura real; 002 com cinco camadas, RSA gerada e transporte falso. Evidências da 002 na [validação](specs/002-consulta-planilhas/validacao.md).
+- **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Leitura Google implementada com cliente falso; conta/demonstração reais pendentes. Sem escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
 
 ## Onde começar
 
-- [Roadmap de seis features](ROADMAP.md)
+- [Roadmap do v1 e backlog ilustrativo v2](ROADMAP.md)
 - [Feature 001: consulta da produção](specs/001-consulta-local-producao/spec.md)
 - [Plano de implementação](specs/001-consulta-local-producao/plan.md)
 - [Tarefas da primeira feature](specs/001-consulta-local-producao/tasks.md)
+- [Feature 002: Planilhas](specs/002-consulta-planilhas/spec.md), [plano](specs/002-consulta-planilhas/plan.md), [24 tarefas](specs/002-consulta-planilhas/tasks.md) e [emenda aplicada](specs/002-consulta-planilhas/constitution-proposal.md)
 - [Constituição](.specify/memory/constitution.md) e [instruções de desenvolvimento](AGENTS.md)
 - [Desenho aprovado](docs/design/desenho.md) e [prévia visual](docs/design/prototype/index.html)
 - [Telas decididas e escopo por feature](docs/design/telas.md)
@@ -34,15 +35,15 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Como vamos construir
 
-Spec Kit mantém requisitos, plano e tarefas de cada feature. Superpowers apoia a implementação em partes, testes e revisão. A 001 já apresenta Planejamento com cartões, lista semanal e gaveta do dia, Produção em quadro por etapa e Planilha com abas e histórico de capturas. O menu tem somente esses três itens. Depois vêm 002 Planilhas (leitura direta pelo servidor local), 003 planejamento mensal, 004 pedidos de ajuste, 005 biblioteca/prévias e 006 Equipe/Workflow.
+Spec Kit mantém requisitos, plano e tarefas de cada feature. Superpowers apoia a implementação em partes, testes e revisão. A 001 já apresenta Planejamento com cartões, lista semanal e gaveta do dia, Produção em quadro por etapa e Planilha com abas e histórico de capturas. O menu tem somente esses três itens. Depois vêm 002 Planilhas (leitura direta pelo servidor local), 003 planejamento mensal, 004 pedidos de ajuste, 005 biblioteca/prévias e, fora do v1, Equipe/Workflow como v2 visual ilustrativo.
 
-A primeira versão recebe um arquivo de captura preparado pela Central e validado pelo importador local. O selo em todas as telas abre Planilha e mostra **Atualizado hoje, HH:MM**, **Dados de DD/MM**, **Atualização falhou** ou **Sem dados**, usando o fim da captura em São Paulo. Planilha apresenta fonte, fim, cobertura e avisos; **Atualizar dados** relê `GET /api/visao`, sem consultar Google nem renovar o horário. Falha de importação mantém a captura anterior e o selo vermelho até uma nova captura completa aceita; erro HTTP preserva a visão já carregada e permite repetir a consulta.
+A primeira versão recebe um arquivo de captura preparado pela Central e validado pelo importador local. O selo em todas as telas abre Planilha e mostra **Atualizado hoje, HH:MM**, **Dados de DD/MM**, **Atualização falhou** ou **Sem dados**, usando o fim da captura em São Paulo. Planilha apresenta fonte, fim, cobertura e avisos; **Atualizar dados** envia POST /api/atualizar, consulta as seis abas pelo servidor e só promove uma captura íntegra; depois relê GET /api/visao. GET continua sem rede. Falha de importação mantém a captura anterior e o selo vermelho até uma nova captura completa aceita; erro HTTP preserva a visão já carregada e permite repetir a consulta.
 
 A [gaveta compacta](docs/design/mockups/gaveta-v2.html) reúne o dia inteiro em acordeões: primeira peça aberta, demais com resumo, faixa de quatro dados preenchidos e páginas/cenas em linhas compactas. Texto registrado, versões anteriores e Histórico começam recolhidos; a revisão vigente fica separada das resolvidas. Documentos Plano/Redação/Visual aparecem uma vez no fim do dia, com **—** quando ausentes. Avisos técnicos permanecem na API; a gaveta mostra quantidade e link para o painel detalhado da Planilha, filtrado pelos avisos da peça. Arquivos são registros; links só HTTPS Drive/Docs por clique, sem ecoar URL dedicada recusada. Nos campos de URL dedicados, usuário/senha ou URL malformada não vazia são suprimidos antes do HTTP, com aviso fixo sem valor; vazio é preservado. Em texto livre, somente o pedaço HTTP(S) credenciado separado por espaços em branco vira marcador, preservando a frase; limites e regra de JSON estão no [contrato](specs/001-consulta-local-producao/contracts/captura-e-consulta.md). Esc fecha e devolve o foco; no celular a gaveta ocupa a tela inteira. Produção mostra quadro por semana/tema, oito colunas e Outras com originais/contador distinto. Cartões têm status informativo, responsável/correção separados e primeira pendência/+N das pendências visíveis; mídia ausente fica oculta nos cartões de Planejamento, Redação e Visual. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Configuração versionada mantém nove etapas e liberação/revisão vazias; mapa completo de demonstração é só sintético em TEMP.
 
 Planilha apresenta seis abas com os 66 mínimos triados, contagens de linhas NTV e Histórico final com todas as tentativas confirmadas, recentes primeiro. Setas esquerda/direita, Home e End alternam as abas com foco; cada tabela tem rolagem própria. A releitura conserva a aba disponível selecionada. O painel de avisos mostra Aba/Linha/Campo/Motivo; menu, selo e **Todos os avisos** restauram a visão geral dos avisos, enquanto as seis tabelas sempre mantêm o conjunto NTV completo. Sem captura, aparece somente Histórico e orientação à Central. Células dedicadas de URL recusadas exibem **link não permitido**; o marcador de supressão e os textos livres legítimos permanecem. Nenhum valor da tabela navega ou carrega mídia automaticamente.
 
-A busca direta no Google será a 002, mediante emenda explícita da constituição, somente leitura por conta de serviço com chave fora do repositório. A 003 tratará o objetivo mensal e a meta de uma imagem, um carrossel e um vídeo semanais, preservando as peças históricas existentes. Até lá, o objetivo do mês mostra **Ainda não definido**.
+A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; conta e demonstração reais continuam pendentes. A 003 tratará o objetivo mensal e a meta de uma imagem, um carrossel e um vídeo semanais, preservando as peças históricas existentes. Até lá, o objetivo do mês mostra **Ainda não definido**.
 
 ## Executar a primeira entrega local
 
@@ -67,4 +68,4 @@ Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consu
 
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 
-**Próximo passo:** especificar 002 — Planilhas e aprovar a emenda da constituição antes da leitura direta pelo servidor local. Evidências e limitações na [validação](specs/001-consulta-local-producao/validacao.md). Esta consulta não instala agentes, muda agendas, gera mídia ou escreve na operação.
+**Próximo passo:** o autor prepara a conta leitora conforme o [quickstart da 002](specs/002-consulta-planilhas/quickstart.md). Demonstração real pendente; implementação, testes e aceite remoto na [validação da 002](specs/002-consulta-planilhas/validacao.md). Nenhuma coleta real nesta rodada.

@@ -9,7 +9,7 @@ function reciboPublico(receipt) {
 }
 function base(estadoLocal) {
   const historico=estadoLocal.historico.map(reciboPublico).reverse();
-  return {schemaVersion:1,estado:'sem_captura',selo:{texto:'Sem dados',cor:'cinza',destino:'planilha'},fonte:'Captura pela Central',
+  return {schemaVersion:1,estado:'sem_captura',selo:{texto:'Sem dados',cor:'cinza',destino:'planilha'},fonte:estadoLocal.captura?.envelope.source==='google-sheets-api'?'Leitura direta pelo servidor local':'Captura pela Central',
     captura:null,ultimaTentativa:reciboPublico(estadoLocal.ultimaTentativa),semanas:[],producoes:[],dias:[],
     quadro:{colunas:COLUNAS.map(nome=>({nome})),semanas:[]},planilha:[],historico,avisos:[]};
 }
