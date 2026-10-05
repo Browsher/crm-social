@@ -113,6 +113,7 @@ Como no protótipo. Prévias só de arquivos liberados; referência não aparece
 - Botão Atualizar dados busca direto na planilha, só leitura, pelo servidor local, com conta de serviço do Google e chave fora do repositório.
 - Emenda na constituição (o CRM passa a poder ler a planilha, só leitura, nunca no navegador).
 - Amplia a captura para Agentes, Controle e Execucoes (base da feature 006).
+- [002 especificada/planejada](../../specs/002-consulta-planilhas/spec.md): duas leituras íntegras/tipadas, mesmo importador v1 e falha preservando captura/data. Auxiliares são privadas, sem tela nova; [emenda](../../specs/002-consulta-planilhas/constitution-proposal.md) permanece proposta. O comportamento instalado ainda é a releitura local da 001.
 
 ## 10. Aplicação destas decisões no repositório
 

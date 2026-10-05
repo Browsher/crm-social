@@ -51,6 +51,23 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
 
+## Feature 002 — Planilhas (somente especificada/planejada)
+
+| Documento | Uso |
+| --- | --- |
+| [Spec](../specs/002-consulta-planilhas/spec.md) | Três histórias, leitura direta somente leitura, nove abas e continuidade da Central |
+| [Emenda proposta](../specs/002-consulta-planilhas/constitution-proposal.md) | Princípio VI/versão 1.1.0; pendente do autor, constituição vigente intacta |
+| [Plano](../specs/002-consulta-planilhas/plan.md) | Interfaces, segurança, trava assíncrona e cinco riscos |
+| [Pesquisa](../specs/002-consulta-planilhas/research.md) | Fontes oficiais/Context7 e alternativas |
+| [Modelo](../specs/002-consulta-planilhas/data-model.md) | Perfis v1, tipos e 45 cabeçalhos privados auxiliares |
+| [Contrato](../specs/002-consulta-planilhas/contracts/leitura-planilha.md) | Integridade, transporte, HTTP e compatibilidade |
+| [Tarefas](../specs/002-consulta-planilhas/tasks.md) | 52 tarefas futuras com RED/GREEN e gates separados |
+| [Quickstart](../specs/002-consulta-planilhas/quickstart.md) | Testes falsos e preparação da conta pelo autor para demonstração |
+| [Checklist](../specs/002-consulta-planilhas/checklists/requirements.md) | Qualidade da especificação; não substitui testes ou aprovação |
+| [Análise](../specs/002-consulta-planilhas/analysis.md) | 0 Critical/High e três ajustes Medium pendentes; sem remediação automática |
+
+Nenhuma coleta, implementação, instalação ou PR da 002 foi realizado nesta preparação.
+
 ## Design e evidência visual
 
 | Documento / artefato | Para que serve |

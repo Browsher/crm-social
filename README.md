@@ -12,7 +12,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Estado da entrega
 
-- **Planejado:** 002 Planilhas; acesso somente leitura pelo servidor, credencial fora do repositório e emenda da constituição ainda por definir.
+- **Planejado:** [002 Planilhas](specs/002-consulta-planilhas/spec.md), com leitura tipada somente pelo servidor, credencial externa e [emenda 1.1.0 proposta](specs/002-consulta-planilhas/constitution-proposal.md), ainda não aprovada/aplicada; sem implementação.
 - **Implementado:** importação/persistência privadas, API local, Planejamento, Produção, Planilha/Histórico e iniciador.
 - **Testado:** cinco camadas locais e comparação com captura real, conforme a [validação](specs/001-consulta-local-producao/validacao.md).
 - **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Runtime sem Google, escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
@@ -23,6 +23,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 - [Feature 001: consulta da produção](specs/001-consulta-local-producao/spec.md)
 - [Plano de implementação](specs/001-consulta-local-producao/plan.md)
 - [Tarefas da primeira feature](specs/001-consulta-local-producao/tasks.md)
+- [Feature 002: Planilhas](specs/002-consulta-planilhas/spec.md), [plano](specs/002-consulta-planilhas/plan.md), [52 tarefas](specs/002-consulta-planilhas/tasks.md) e [proposta constitucional](specs/002-consulta-planilhas/constitution-proposal.md)
 - [Constituição](.specify/memory/constitution.md) e [instruções de desenvolvimento](AGENTS.md)
 - [Desenho aprovado](docs/design/desenho.md) e [prévia visual](docs/design/prototype/index.html)
 - [Telas decididas e escopo por feature](docs/design/telas.md)
@@ -67,4 +68,4 @@ Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consu
 
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 
-**Próximo passo:** especificar 002 — Planilhas e aprovar a emenda da constituição antes da leitura direta pelo servidor local. Evidências e limitações na [validação](specs/001-consulta-local-producao/validacao.md). Esta consulta não instala agentes, muda agendas, gera mídia ou escreve na operação.
+**Próximo passo:** aprovar a [emenda proposta da 002](specs/002-consulta-planilhas/constitution-proposal.md) antes de executar seu [plano](specs/002-consulta-planilhas/plan.md). A constituição permanece 1.0.0; o runtime continua sem Google. Evidências e limitações da 001 na [validação](specs/001-consulta-local-producao/validacao.md). Nenhuma agenda, geração ou escrita operacional é acrescentada.

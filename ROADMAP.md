@@ -10,7 +10,7 @@ US1–US5, iniciador e escala sintética estão verificados localmente; revisão
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
-As seis features abaixo serão construídas em sequência. Somente a 001 recebe especificação detalhada agora; 002–006 são recortes de backlog, sujeitos ao detalhamento quando chegar sua vez. Os critérios abaixo são condições de aceite futuro, não resultados já verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
+As seis features abaixo serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está especificada/planejada, sem implementação; 003–006 continuam backlog. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
 
 ## 001 — Consulta local da produção
 
@@ -36,7 +36,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Aceite:** leitura sem escritas em Google/Drive, credenciais fora da interface e do Git, falha preservando a última captura válida e sua data. As três abas novas mantêm fonte/horário e servem à 006; cadastro ou flag não prova agenda ativa ou integração. A 002 não cria fonte de objetivo mensal: **Ainda não definido** permanece até o contrato da 003. Esta rodada registra a emenda como futura e conserva a constituição vigente.
 
-**Decisão pendente da demonstração:** autor e Central precisam decidir a tipagem da próxima coleta e, se necessária, uma mudança explícita do contrato. O acompanhamento e o efeito sobre vínculos/vigência estão na [validação](specs/001-consulta-local-producao/validacao.md). Não converter a captura existente nem relaxar validação silenciosamente.
+**Planejado na 002:** valores efetivos tipados e perfil explícito de nove abas no envelope v1, preservando importação/hash legado, conforme [contrato](specs/002-consulta-planilhas/contracts/leitura-planilha.md). Resolve a limitação de número entregue como texto sem converter a captura histórica. [Plano](specs/002-consulta-planilhas/plan.md) e [52 tarefas](specs/002-consulta-planilhas/tasks.md) prontos; [emenda 1.1.0](specs/002-consulta-planilhas/constitution-proposal.md) proposta, pendente do ok antes de implementar. Conta/preparo do autor bloqueiam demonstração real, não testes falsos. Nenhuma integração da 002 foi instalada.
 
 ## 003 — Planejamento mensal e repasse ao Diretor
 
@@ -76,4 +76,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo:** especificar 002 — Planilhas e aprovar a emenda da constituição para leitura direta pelo servidor local. A 001 foi demonstrada com captura real; [validação](specs/001-consulta-local-producao/validacao.md) concentra resultados, limites e aceite remoto. Nenhuma integração da 002 foi implementada.
+**Próximo passo:** aprovar a [emenda proposta](specs/002-consulta-planilhas/constitution-proposal.md) e autorizar a execução do [plano da 002](specs/002-consulta-planilhas/plan.md). A 001 foi demonstrada com captura real; [validação](specs/001-consulta-local-producao/validacao.md) concentra sua evidência. Nenhuma integração da 002 foi implementada.
