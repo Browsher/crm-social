@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "source": "Resumo dos logs oficiais do Actions; não é cópia do quality-gate-report.json remoto",
+  "head": "fd92f09f38b04a0e1edf705dc12bad83831621ae",
+  "validatedSourceCommit": "84ab509241b68097b89f4016a19ec312124b50ee",
+  "run": "https://github.com/Browsher/crm-social/actions/runs/37389043475",
+  "conclusion": "success",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {"name": "tests", "state": "PASS"},
+    {"name": "coverage", "state": "PASS"},
+    {"name": "complexity", "state": "PASS", "warnings": 17},
+    {"name": "semgrep", "state": "PASS"},
+    {"name": "audit", "state": "N/A", "reason": "sem package.json/dependencias do app"}
+  ],
+  "review": {
+    "run": "https://github.com/Browsher/crm-social/actions/runs/37389043621",
+    "comment": "https://github.com/Browsher/crm-social/pull/15#issuecomment-6005518372",
+    "conclusion": "success",
+    "critical": 0,
+    "important": 0,
+    "minor": 6,
+    "securityOrRegressionFound": false
+  },
+  "limits": "Prova restrita ao head identificado. Logs públicos mostram estados do gate estrito, sem contagem/percentual remotos; UI/PowerShell têm pulos previstos no Linux e foram executados localmente. Demonstração real pendente. Novos commits exigem conferir seus checks no PR; este resumo não antecipa resultados."
+}

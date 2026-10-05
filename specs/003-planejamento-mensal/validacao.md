@@ -103,3 +103,20 @@ Review independente local da fatia `f020d26` → `84ab509`: **0 Critical, 0 Impo
 Os dez screenshots anteriores foram regenerados e os dois do singular acrescentados, todos com fixtures sintéticas/servidor real loopback/TEMP e Playwright existente. **12 imagens inspecionadas**, zero request externo/erro JavaScript, página sem corte horizontal; Planilha em 390 conserva rolagem local. A tabela acima aponta para as imagens desta rodada, com objetivo principal, `+2 pautas`, `+1 pauta`, Ainda não definido, A confirmar e Meses.
 
 Doc-sync-onboarding: 14 Markdown afetados sincronizados, 389 links relativos conferidos, cercas balanceadas, sem alterar dados/fontes/constituição. Documentação de evidências desta seção e índice local sincronizados pelo coordenador. **13/15 tarefas** mantidas; T002/T015 do autor pendentes e T021 da 002 continua bloqueando somente o merge. Nenhuma demonstração real ou escrita operacional. Novos checks/review do head enviado devem ser conferidos antes do encerramento; PR permanece aberto, sem merge/auto-merge.
+
+## Conferência remota dos ajustes e notas do novo review — 05/10/2026
+
+Head publicado `fd92f09f38b04a0e1edf705dc12bad83831621ae`: [gate Linux estrito SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37389043475), exit 0, tests/coverage/complexity/Semgrep PASS, 17 avisos, audit N/A e baselineUpdated:false. [Resumo dos logs oficiais](../../docs/reports/003-ajustes-ci-gate.json); o resumo anterior agora contém `historical:true` e aponta para este. Nenhuma contagem/percentual remoto inferido.
+
+[Review novo publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6005518372), [run SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37389043621): **0 Critical, 0 Important, 6 Minor**, sem defeito de comportamento, segurança ou regressão identificado. As duas pendências de evidência do parecer foram conferidas pelo coordenador: gate acima e `git diff --exit-code 84ab509 fd92f09 -- src tests tools .github .quality-gate quality-gate.config.json`, exit 0 sem diff. A fonte local de 320 PASS e a fonte do CI são idênticas. O reviewer não executou testes/scanners nem abriu os 12 PNGs; a inspeção visual local foi do coordenador. Os jobs opcionais generate-tests/publish-tests ficaram SKIP por ausência do rótulo solicitado.
+
+| Minor adicional do review fd92f09 | Tratamento |
+| --- | --- |
+| m1 — estado anterior ao push / T013 | Resumos/tasks agora identificam explicitamente a prova conferida de fd92f09 para a fonte 84ab509. T013 mantém [x] após gate/review conferidos; novos commits exigem seus próprios checks no PR. |
+| m2 — resumo CI antigo | Marcado expressamente como histórico/superado, conteúdo original preservado; novo resumo dos ajustes com head/run/review exatos. |
+| m3 — checklist preservava espera de implementação | Nota original identificada como histórica/substituída e autorização vigente incluída no próprio checklist: T021 bloqueia somente merge. |
+| m4 — integrada à main | Design passa a dizer mesclada na main, com integração/demonstração reais pendentes. |
+| m5 — fixtures de título duplicado/caixa | Sugestão opcional de cobertura defensiva, sem defeito atual: título exato/duplicata recusada já seguem o contrato. Não acrescentada nesta rodada de apresentação; permanece registrada para manutenção da coleta. |
+| m6 — cabeçalhos/identidade/complexidade | Sugestões preventivas sem defeito atual; cabeçalhos repetidos, guarda para clones futuros e extração do derivador permanecem opcionais. Complexidade 14/12 abaixo do bloqueio 21, sem ampliar arquitetura. |
+
+Esta correção é somente documental. A prova registrada cobre fd92f09 e a fonte 84ab509; não atribui antecipadamente um resultado remoto ao commit que registra a prova. Os checks/review do último head enviado serão conferidos e vinculados na descrição do PR antes de encerrar, preservando a rastreabilidade sem alterar novamente a fonte para registrar o próprio hash. T002/T015 e T021 continuam pendentes; 13/15 tasks, PR aberto, sem merge/auto-merge.

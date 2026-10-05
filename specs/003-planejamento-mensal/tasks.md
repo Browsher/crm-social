@@ -1,7 +1,7 @@
 # Tasks: Consulta do planejamento mensal (15 tarefas)
 
 **Input**: [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md), [contrato](contracts/meses.md) e [quickstart](quickstart.md).
-**Status**: 13/15 concluídas em 05/10/2026; gate Linux/review publicado do head `f020d26` pertencem à rodada anterior. Ajustes de apresentação da fonte `84ab509` verificados localmente; checks/review do novo head no PR #15 permanecem pendentes. T002/T015 permanecem pendentes do autor e não bloqueiam testes sintéticos. T021 da 002 bloqueia o merge; PR permanece aberto, sem merge.
+**Status**: 13/15 concluídas em 05/10/2026; gate Linux/review publicado do head `fd92f09` conferidos, com fonte de código `84ab509` idêntica e sem Critical/Important/segurança/regressão. Evidências na validação; novos commits exigem conferir os checks do PR #15. T002/T015 permanecem pendentes do autor e não bloqueiam testes sintéticos. T021 da 002 bloqueia o merge; PR permanece aberto, sem merge.
 **Tests**: TDD obrigatório, RED observado antes do GREEN, nas cinco camadas. Fakes/fixtures/TEMP; nenhum Google real nos testes. Um dono por arquivo; não desfazer edições alheias. Não instalar dependência ou alterar baseline/tools do gate.
 
 ## Fase 1 — Setup e pré-requisito

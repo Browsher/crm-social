@@ -1,5 +1,7 @@
 {
   "schemaVersion": 1,
+  "historical": true,
+  "supersededBy": "003-ajustes-ci-gate.json",
   "source": "Resumo dos logs oficiais do Actions; não é cópia do quality-gate-report.json remoto",
   "head": "9ef4e6b3b6c05ea7b4ab834ae4fcbcf94e6055db",
   "run": "https://github.com/Browsher/crm-social/actions/runs/37371910117",

@@ -32,5 +32,5 @@
 ## Notes
 
 - Reescopo do autor em 05/10/2026 substitui a proposta anterior: 16/16 itens de qualidade documental passam; nenhuma pergunta de produto pendente. Clarify adicional dispensado.
-- Esse resultado não comprova implementação ou testes. T021/aceite da 002 continua bloqueando a implementação da 003.
+- **Nota histórica do planejamento (substituída):** esse resultado não comprovava implementação ou testes; naquela etapa T021/aceite da 002 bloqueava a implementação da 003.
 - Meses é opcional, criada/preenchida pelo autor; sua tarefa manual não bloqueia fixtures sintéticas. Operação de agentes e migração de meta ficam fora do CRM.
