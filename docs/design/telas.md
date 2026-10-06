@@ -2,7 +2,7 @@
 
 Data: 03/10/2026. Decidido com o autor sobre o [mockup v2](mockups/telas-v2.html), construído sobre o [protótipo aprovado](prototype/index.html). Visual, componentes e identidade (Social Studio) seguem o protótipo.
 
-Estado em 05/10/2026: a 001 está implementada, testada e demonstrada com captura real, T001–T041 concluídas; resultados e limites na [validação da 001](../../specs/001-consulta-local-producao/validacao.md). A [002](../../specs/002-consulta-planilhas/validacao.md) está mesclada na main; T021 real concluída, com tipagem numérica resolvida e evidência sanitizada na validação da 002. A [003](../../specs/003-planejamento-mensal/validacao.md) está concluída, com código integrado pelo PR #15; T002/T015 conferidas no CRM com uma linha fictícia marcada como teste. Uso real antes de decidir 004/005. A tipagem da captura demonstrada na 001 deixa vínculos/vigência a confirmar, conforme sua validação.
+Estado atual: a 001 está implementada, testada e demonstrada com captura real, T001–T041 concluídas; resultados e limites na [validação da 001](../../specs/001-consulta-local-producao/validacao.md). A [002](../../specs/002-consulta-planilhas/validacao.md) está mesclada na main; T021 real concluída, com tipagem numérica resolvida e evidência sanitizada na validação da 002. A [003](../../specs/003-planejamento-mensal/validacao.md) está concluída, com código integrado pelo PR #15; T002/T015 conferidas no CRM com uma linha fictícia marcada como teste. Uso real antes de decidir 004/005. A tipagem da captura demonstrada na 001 deixa vínculos/vigência a confirmar, conforme sua validação.
 
 ## Princípios
 

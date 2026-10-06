@@ -1,6 +1,6 @@
 # Contrato — extensão opcional Meses
 
-Definido em 05/10/2026 pelo reescopo do autor e implementado/testado localmente com dados sintéticos. Estende o [contrato da 002](../../002-consulta-planilhas/contracts/leitura-planilha.md); não altera seu registro histórico. [Spec](../spec.md), [modelo](../data-model.md) e [validação](../validacao.md) registram produto, dados e limites; integração real pendente.
+Definido em 05/10/2026 pelo reescopo do autor e implementado/testado localmente com dados sintéticos. Estende o [contrato da 002](../../002-consulta-planilhas/contracts/leitura-planilha.md); não altera seu registro histórico. [Spec](../spec.md), [modelo](../data-model.md) e [validação](../validacao.md) registram produto, dados e limites; T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real não comprovado. Este fechamento não altera as regras do contrato; ver validação.
 
 ## Entrada e compatibilidade
 
