@@ -14,7 +14,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 - **Planejado:** 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A 003 está implementada com Meses opcional; T002 e T015 permanecem pendentes do autor.
 - **Implementado:** 001, leitura direta da 002 e consulta opcional de Meses da 003; JWT/fetch nativos, seis abas obrigatórias tipadas e POST local, com Meses incluída quando existe; importação manual preservada.
-- **Testado:** 001 e 002 demonstradas com captura real; 003 verificada com fixtures/fakes/TEMP nas cinco camadas. A integração da main exige nova conferência local e dos checks do PR #15; resultados históricos não validam o novo head. Evidências/limites na [validação da 002](specs/002-consulta-planilhas/validacao.md) e na [validação da 003](specs/003-planejamento-mensal/validacao.md).
+- **Testado:** 001 e 002 demonstradas com captura real; 003 verificada com fixtures/fakes/TEMP nas cinco camadas. A integração da main passou no gate Windows com 322 testes e cobertura 98,3871%; baseline preservada. [Relatório da integração](docs/reports/003-integracao-t021-local-gate.json). Checks/review vigentes do PR #15 devem ser conferidos antes do merge. Evidências/limites na [validação da 002](specs/002-consulta-planilhas/validacao.md) e na [validação da 003](specs/003-planejamento-mensal/validacao.md).
 - **Integrado:** a 002 concluiu T021, 24/24 tarefas, e foi integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16). Coleta direta aceita pelo mesmo importador, com hashes iguais e Histórico preservado. Tipagem válida não afirma vigência de versões distintas nem comprova mídia. A leitura real de Meses continua pendente; merge da 003 autorizado sob gate/review vigentes.
 
 ## Onde começar
@@ -69,4 +69,4 @@ Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consu
 
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 
-**Próximo passo:** conferir gate/review do head da 003 após integrar main e fazer o merge autorizado. Autor cria/preenche Meses e realiza T015; [validação da 003](specs/003-planejamento-mensal/validacao.md).
+**Próximo passo do autor:** criar/preencher Meses e realizar T015; [validação da 003](specs/003-planejamento-mensal/validacao.md).

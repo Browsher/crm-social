@@ -1,7 +1,7 @@
 # Tasks: Consulta do planejamento mensal (15 tarefas)
 
 **Input**: [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md), [contrato](contracts/meses.md) e [quickstart](quickstart.md).
-**Status**: 13/15 concluídas; T002/T015 permanecem pendentes do autor. T021 da 002 foi demonstrada e integrada pelo PR #16; main integrada na branch da 003. Gate/review do novo head precisam ser conferidos antes do merge autorizado. Resultados históricos e evidência desta integração na [validação](validacao.md).
+**Status**: 13/15 concluídas; T002/T015 permanecem pendentes do autor. T021 da 002 foi demonstrada e integrada pelo PR #16; main integrada na branch da 003. Gate Windows da integração passou: 322 testes, cobertura 98,3871%, baseline preservada. Gate Linux/review do head enviado devem ser conferidos antes do merge autorizado. Resultados históricos e evidência desta integração na [validação](validacao.md).
 **Tests**: TDD obrigatório, RED observado antes do GREEN, nas cinco camadas. Fakes/fixtures/TEMP; nenhum Google real nos testes. Um dono por arquivo; não desfazer edições alheias. Não instalar dependência ou alterar baseline/tools do gate.
 
 ## Fase 1 — Setup e pré-requisito

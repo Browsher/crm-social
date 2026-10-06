@@ -6,6 +6,12 @@ A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Brows
 
 A main integrada contém a correção TDD dos inteiros textuais canônicos nos campos numéricos da 002, seus testes sintéticos e a evidência sanitizada da T021. Meses mantém seus quatro mínimos e não recebe coerção numérica. As verificações locais e remotas anteriores abaixo são históricas; o head integrado exige seu próprio gate/review. Nenhuma demonstração real de Meses foi executada.
 
+Gate local da integração, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: Node 24.19.0, **322 PASS sem pulos** nas cinco camadas, cobertura **98,38709677419355%**, drop 0, complexidade PASS com 17 avisos, baselineUpdated:false, exit 0. Semgrep SKIP por ausência no Windows; audit N/A sem dependências de aplicação. [Relatório completo sanitizado](../../docs/reports/003-integracao-t021-local-gate.json) identifica a fonte registrada e o HEAD real anterior do processo; gate executado com as alterações depois registradas no merge.
+
+Revisão estática adicional dos dois arquivos combinados: 0 Critical/Important/Minor, sem defeito identificado; reviewer não executou Git/testes/scanners nem auditou autenticação/persistência integralmente. O coordenador comparou os dois pais: contra main, coleta/testes acrescentam somente Meses opcional/C003; contra o pai da 003, acrescentam somente NUMERICOS/inteiroTextual/converter e C05/C06 da main. Nenhuma perda de código na combinação. O gate completo acima cobre as regressões.
+
+Doc-sync-onboarding: estados e regra numérica conciliados nos guias/arquitetura/módulo de coleta/specs; 29 Markdown e 384 links relativos conferidos, cercas balanceadas e diff sem erro. **13/15 tarefas**, com T002/T015 desmarcadas. A evidência Linux e o review do head enviado serão conferidos e vinculados na descrição do [PR #15](https://github.com/Browsher/crm-social/pull/15) antes do merge; não se atribui a um novo head a execução antiga. Nenhuma demonstração real de Meses ou escrita operacional nesta integração.
+
 ## Histórico preservado — rodadas anteriores ao PR #16
 
 ## Autorização e limites — 05/10/2026

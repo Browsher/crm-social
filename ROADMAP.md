@@ -80,4 +80,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo:** conferir gate/review do head da 003 após integrar main e fazer o merge autorizado. Autor cria/preenche Meses e realiza T015; [validação da 003](specs/003-planejamento-mensal/validacao.md).
+**Próximo passo do autor:** criar/preencher Meses e realizar T015; [validação da 003](specs/003-planejamento-mensal/validacao.md).
