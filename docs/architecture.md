@@ -48,7 +48,7 @@ flowchart LR
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
 | projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas | [Projeção](modules/projecao.md) |
 | google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
-| coleta | Duas leituras de seis grades, datas, hashes e metadados | [Coleta](modules/coleta.md) |
+| coleta | Duas leituras de seis grades, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
 | servidor | HTTP local com cinco rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
 | web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Histórico e avisos detalhados | [Interface](modules/web.md) |
