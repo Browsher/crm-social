@@ -1,6 +1,6 @@
 # Roadmap — CRM Social local
 
-Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; 003–005 permanecem nas suas etapas do roadmap; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
+Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). 003 no PR #15; 004–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
@@ -10,7 +10,7 @@ US1–US5, iniciador e escala sintética estão verificados localmente; revisão
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
-As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com T021 demonstrada, 24/24 tarefas; 003–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
+As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com T021 demonstrada, 24/24 tarefas; 003 no PR #15, com tarefas manuais do autor pendentes; 004–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
 
 ## 001 — Consulta local da produção
 

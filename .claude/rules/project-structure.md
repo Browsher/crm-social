@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-T001–T041 concluídas (41/41), com demonstração privada; próxima: 002 Planilhas; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+T001–T041 concluídas (41/41), com demonstração privada; 002 concluída com T021 demonstrada; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021; decisão na validação já vinculada.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local; remoto usa branch/specs da feature ativa.
@@ -55,5 +55,5 @@ T001–T041 concluídas (41/41), com demonstração privada; próxima: 002 Plani
 - T039 captura real, T040 gate e T041 onboarding concluídos; resultados/limites só na validação.
 - Google/coleta: JWT/fetch nativos, seis abas tipadas e hashes; POST adquire lock durante await.
 - Chave externa/env CRM_GOOGLE_CREDENTIALS_FILE e CRM_SPREADSHEET_ID; sem browser/log.
-- 002 local com conta/demonstração pendentes; [validação](../../specs/002-consulta-planilhas/validacao.md).
+- 002 concluída com T021 demonstrada; [validação](../../specs/002-consulta-planilhas/validacao.md).
 - Preservar tools/gate, agentes oficiais e operação n8n.

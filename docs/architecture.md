@@ -228,7 +228,7 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Avisos de complexidade | Funções do CLI, snapshot, projeção e web; medições atuais somente na validação, manutenção sem retirar validações |
 | Manutenção da montagem do acordeão | acordeaoPeca em src/web/app.js; reúne seções com helpers compactos; preservar testes em futuras extrações, métricas na validação |
-| Fonte/hashes no envelope não são prova de coleta | validarCaptura em src/captura.cjs; Central e captura real ainda devem ser conferidas |
+| Fonte/hashes no envelope não são prova de coleta | validarCaptura em src/captura.cjs; demonstrações da Central/002 conferidas nas respectivas validações; futuras capturas continuam exigindo evidência própria |
 | Custo e limite do review | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
 | UI fora do LCOV e pulos UI/PowerShell no Linux | tests/interface.test.cjs e tests/iniciador.test.cjs; M8; CI/cobertura não substituem execução Windows local |
