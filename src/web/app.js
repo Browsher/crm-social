@@ -328,9 +328,29 @@ function lista(semData=false) {
   if (!groups.length) groups.push(node('p',semData?'Nenhuma peça sem data.':'Nenhuma peça neste mês e formato.','empty'));
   (semData?$('#lista-sem-data'):$('#lista')).replaceChildren(...groups);
 }
+function objetivoMensal() {
+  const linhas=(state.view.planilha.find(a=>a.nome==='Meses')?.linhas ?? []).filter(r=>r.marca_id==='ntv'&&r.mes===state.mes);
+  const registro=linhas.length===1?linhas[0]:null;
+  const definido=typeof registro?.objetivo==='string'&&registro.objetivo.trim().length>0;
+  const objetivo=linhas.length>1?'A confirmar':
+    (definido?registro.objetivo:'Ainda não definido');
+  const conteudo=node('div',undefined,'month-content');
+  conteudo.append(node('small','Objetivo do mês'),node('p',objetivo,definido?undefined:'month-placeholder'));
+  const pautas=typeof registro?.pautas==='string'?registro.pautas.split(/\r?\n/).map(p=>p.trim()).filter(Boolean):[];
+  if(pautas.length) {
+    const lista=node('ul');lista.append(...pautas.slice(0,5).map(p=>node('li',p)));conteudo.append(lista);
+    if(pautas.length>5) {
+      const restantes=pautas.length-5;
+      conteudo.append(node('span','+'+restantes+(restantes===1?' pauta':' pautas'),'more-topics'));
+    }
+  }
+  const icone=node('span','◎','brief-icon');icone.setAttribute('aria-hidden','true');
+  $('#objetivo-mes').replaceChildren(icone,conteudo);
+}
 function render() {
   if(!state.view) return;
   const mes=civil(state.mes+'-01',{month:'long',year:'numeric'});
+  objetivoMensal();
   $('#mes').textContent=mes.charAt(0).toUpperCase()+mes.slice(1);
   const empty=state.view.captura===null;
   $('#sem-captura').hidden=!empty;
@@ -404,7 +424,7 @@ function historicoPlanilha() {
 }
 function motivoHistorico(motivo) {
   if(!motivo) return '';
-  const aba=motivo.match(/^(Semanas|Produções|Páginas|Cenas|Arquivos|Revisoes) (.+): inválido$/);
+  const aba=motivo.match(/^(Semanas|Produções|Páginas|Cenas|Arquivos|Revisoes|Meses) (.+): inválido$/);
   if(aba) return 'Aba '+aba[1]+(aba[2]==='complete'?' incompleta':' inválida');
   const rotulos={
     'captura inválida: completedAt excede o relógio local em mais de 10 minutos':'Horário da captura mais de 10 minutos no futuro',

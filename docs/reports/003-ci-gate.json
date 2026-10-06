@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "historical": true,
+  "supersededBy": "003-ajustes-ci-gate.json",
+  "source": "Resumo dos logs oficiais do Actions; não é cópia do quality-gate-report.json remoto",
+  "head": "9ef4e6b3b6c05ea7b4ab834ae4fcbcf94e6055db",
+  "run": "https://github.com/Browsher/crm-social/actions/runs/37371910117",
+  "previousRun": {"head": "3f757e1f48ff4cca8c79edc30c77771a9a2c6d82", "run": "https://github.com/Browsher/crm-social/actions/runs/37370817974", "conclusion": "success"},
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {"name": "tests", "state": "PASS"},
+    {"name": "coverage", "state": "PASS"},
+    {"name": "complexity", "state": "PASS", "warnings": 17},
+    {"name": "semgrep", "state": "PASS"},
+    {"name": "audit", "state": "N/A", "reason": "sem package.json/dependencias do app"}
+  ],
+  "limits": "Logs públicos mostram estados do gate estrito, sem contagem/percentual remotos. UI/PowerShell têm pulos previstos no Linux; as cinco camadas foram executadas localmente com 312 PASS. Demonstração real pendente."
+}

@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-T001–T041 concluídas (41/41), com demonstração privada; 002 concluída com T021 demonstrada; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021; decisão na validação já vinculada.
+T001–T041 concluídas (41/41), com demonstração privada; 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local; remoto usa branch/specs da feature ativa.

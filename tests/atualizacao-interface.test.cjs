@@ -7,14 +7,15 @@ const {promoverCaptura,atualizarCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const {falha}=require('../src/google.cjs');
 const skip=process.env.CI==='true'?'Playwright local, sem instalação no CI':false;
-async function abrir(t,width){
+const {capturaMeses}=require('./fixtures.cjs');
+async function abrir(t,width,fixture=capturaValida,proxima=capturaValida){
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE||'playwright');
   const root=temporario(t),dataDir=path.join(root,'dados'),map=path.join(root,'mapa.json');
-  fs.writeFileSync(map,JSON.stringify(mapaQuadroValido()));promoverCaptura(capturaValida(),dataDir);
+  fs.writeFileSync(map,JSON.stringify(mapaQuadroValido()));promoverCaptura(fixture(),dataDir);
   let release,mode='sucesso',calls=0,warning=false;
   const server=criarServidor({dataDir,port:0,quadroConfigPath:map,atualizar:()=>atualizarCaptura(dataDir,async()=>{
     calls++;await new Promise(r=>{release=r;});if(mode==='falha')throw falha('rede');
-    const raw=capturaValida();raw.source='google-sheets-api';raw.capturaId='direta-interface-'+calls;
+    const raw=proxima();raw.source='google-sheets-api';raw.capturaId='direta-interface-'+calls;
     if(mode==='desatualizada')return raw;
     redefinirHorario(raw,'2026-10-05T11:00:00Z',`2026-10-05T11:${String(calls).padStart(2,'0')}:00Z`);return raw;
   }).then(r=>warning?{...r,avisos:['falha ao liberar a trava; confira o estado local']}:r)});
@@ -30,6 +31,23 @@ async function abrir(t,width){
   await page.locator('[data-formato="Reels"]').click();await page.locator('#selo').click();
   return {page,seen,setMode:value=>{mode=value;},setWarning:()=>{warning=true;},release:()=>release?.()};
 }
+for(const width of [1440,390]) test('U003 POST GET atualiza card, falha conserva data e ausência recupera aba em '+width,{skip},async t=>{
+  let remover=false;
+  const a=await abrir(t,width,()=>capturaMeses([['2026-10','ntv','Objetivo anterior','Pauta anterior']]),()=>remover?capturaValida():capturaMeses([['2026-10','ntv','Objetivo novo','Pauta nova']]));
+  const {page}=a;
+  const atualizar=async()=>{await page.locator('#atualizar').click();await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);};
+  await atualizar();const fim=await page.locator('#fim-captura').textContent();
+  await page.locator('#selo').click();await page.locator('[data-aba="Meses"]').click();
+  a.setMode('falha');await atualizar();assert.equal(await page.locator('#fim-captura').textContent(),fim);
+  await page.evaluate(()=>document.querySelector('[data-tela="planejamento"]').click());
+  assert.match(await page.locator('#objetivo-mes').textContent(),/Objetivo novo.*Pauta nova/s);
+  await page.locator('#selo').click();a.setMode('sucesso');remover=true;await atualizar();
+  assert.equal(await page.locator('[data-aba="Meses"]').count(),0);
+  assert.equal(await page.locator('[data-aba="Semanas"]').getAttribute('aria-selected'),'true');
+  assert.equal(await page.locator('#abas-planilha [role=tab]').count(),7);
+  await page.evaluate(()=>document.querySelector('[data-tela="planejamento"]').click());
+  assert.match(await page.locator('#objetivo-mes').textContent(),/Ainda não definido/);
+});
 for(const width of [1440,390])test('U002 POST pendente, sucesso, falha e recuperacao em '+width,{skip},async t=>{
   const a=await abrir(t,width),{page}=a,button=page.locator('#atualizar'),status=page.locator('#resultado-atualizacao');
   await button.click();await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');

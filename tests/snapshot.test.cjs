@@ -5,6 +5,24 @@ const path = require('node:path');
 const {capturaValida,temporario,carregarModulo,redefinirHorario,mudarCelula} = require('./fixtures.cjs');
 const {promoverCaptura,lerEstado} = carregarModulo('src/snapshot.cjs',['promoverCaptura','lerEstado']);
 const clock='2026-10-02T14:00:00Z';
+const {capturaMeses}=require('./fixtures.cjs');
+test('S003 promove mudança só em Meses, no-op e falha preservam bytes/horário',t=>{
+  const dir=temporario(t),raw=capturaMeses();
+  assert.equal(promoverCaptura(raw,dir).resultado,'completa');
+  const pointer=fs.readFileSync(path.join(dir,'atual.json'));
+  assert.equal(promoverCaptura(raw,dir).resultado,'sem_alteracao');
+  assert.deepEqual(fs.readFileSync(path.join(dir,'atual.json')),pointer);
+  const next=capturaMeses([['2026-10','ntv','Novo objetivo','']]);next.capturaId='meses-nova';
+  redefinirHorario(next,'2026-10-02T12:06:00Z','2026-10-02T12:07:00Z');
+  assert.equal(promoverCaptura(next,dir).resultado,'completa');
+  const file=path.join(dir,'capturas','meses-nova.json'),before=fs.readFileSync(file);
+  const bad=capturaMeses();bad.capturaId='meses-parcial';bad.tables.Meses.complete=false;
+  assert.equal(promoverCaptura(bad,dir).resultado,'falhou');
+  assert.deepEqual(fs.readFileSync(file),before);
+  const state=lerEstado(dir);assert.equal(state.captura.envelope.capturaId,'meses-nova');
+  assert.equal(state.captura.envelope.completedAt,next.completedAt);assert.equal(state.historico.length,3);
+  assert.equal(state.ultimaTentativa.resultado,'falhou');
+});
 function bytes(dir) {
   return fs.readFileSync(path.join(dir,'atual.json'),'utf8');
 }

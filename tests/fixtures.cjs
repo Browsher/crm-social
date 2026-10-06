@@ -196,4 +196,11 @@ function carregarModulo(relative, exports) {
   if (fs.existsSync(filename)) return require(filename);
   return Object.fromEntries(exports.map(name => [name, () => { throw new Error(name + ': comportamento ainda não implementado'); }]));
 }
-module.exports = {campos,capturaValida,capturaDetalhada,capturaQuadro,capturaPlanilha,capturaEscala,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};
+function capturaMeses(rows=[['2026-10','ntv','Organizar conteúdo sintético','Pauta A\nPauta B']],extras=[]) {
+  const raw=capturaValida(),headers=['mes','marca_id','objetivo','pautas',...extras];
+  raw.metadataBefore.Meses={sheetId:6,rowCount:20,columnCount:headers.length};
+  raw.metadataAfter.Meses=structuredClone(raw.metadataBefore.Meses);
+  raw.tables.Meses={sheetId:6,range:'A1:'+coluna(headers.length)+'20',readAt:raw.completedAt,complete:true,values:[headers,...rows]};
+  return recalcularHashes(raw);
+}
+module.exports = {capturaMeses,campos,capturaValida,capturaDetalhada,capturaQuadro,capturaPlanilha,capturaEscala,adicionarRegistro,mapaQuadroValido,mapaQuadroSintetico,recalcularHashes,mudarCelula,redefinirHorario,temporario,carregarModulo};

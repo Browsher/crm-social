@@ -2,16 +2,17 @@
 
 Como a conferência de uma fotografia e sua etiqueta, este módulo verifica se o arquivo recebido descreve uma observação completa e coerente. Ele recebe dados locais; não fotografa a operação nem chama o Google.
 
-Implementado com regras puras de estrutura e tempo; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/captura.cjs](../../src/captura.cjs), principalmente `validarEnvelope` (linha 27), `registros` (74), `hashCelulas` (96), `validarCaptura` (103) e `validarTempoImportacao` (120). O [contrato canônico](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) contém os 66 nomes literais.
+Implementado com regras puras de estrutura e tempo; estado e evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/captura.cjs](../../src/captura.cjs), principalmente `validarEnvelope`, `registros`, `hashCelulas`, `validarCaptura` e `validarTempoImportacao`. O [contrato canônico](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md) contém os 66 nomes literais.
 
 ## Interface e responsabilidades
 
 | Export | Uso real |
 | --- | --- |
-| `validarCaptura(raw)` | Valida e retorna `{envelope, semanas, producoes, paginas, cenas, arquivos, revisoes}`; o envelope recebe cópia independente |
+| `validarCaptura(raw)` | Valida e retorna `{envelope, semanas, producoes, paginas, cenas, arquivos, revisoes}` e `meses` somente quando capturada; o envelope recebe cópia independente |
 | `validarTempoImportacao(completedAt, nowIso, completedAtVigente=null)` | Confere tolerância futura e ordem estrita do fim de uma candidata já validada; relógio/instante vigente são fornecidos pelo importador sob trava |
 | `hashCelulas(tables)` / `letraColuna(n)` | Helpers reutilizados pela coleta direta; mesma definição v1 |
-| `CAMPOS` | Listas explícitas de cabeçalhos mínimos por aba; consumidas também pela projeção |
+| `CAMPOS` / `CAMPOS_MESES` | Seis listas obrigatórias/66 mínimos preservados; descriptor separado com mes, marca_id, objetivo, pautas |
+| `linhaMensal(record)` | Recupera em WeakMap privado a linha física registrada pelo parser mensal; não cria coluna extra |
 | `idSeguro(value)` | Restringe IDs de captura/tentativa usados em nomes de arquivos a 1–100 caracteres alfanuméricos, hífen ou sublinhado |
 | `instanteUtc(value)` | Confere timestamp UTC com `Z`, segundos e fração opcional de 1–3 dígitos |
 
@@ -23,13 +24,13 @@ Implementado com regras puras de estrutura e tempo; estado e evidências na [val
 | --- | --- |
 | Identidade/fonte | `schemaVersion=1`, `capturaId` seguro, `brandId=ntv`, `source=google-drive-connector` ou `google-sheets-api`, `spreadsheetId` string não vazia |
 | Instantes | `startedAt <= completedAt`; `readAt` de cada tabela está no intervalo |
-| Abas | Exatamente Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes em tables e nos dois mapas de metadados |
+| Abas | Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes obrigatórias; Meses opcional somente se presente conjuntamente em tables e nos dois mapas de metadados |
 | Metadados | `sheetId` inteiro não negativo; dimensões inteiras positivas; mesmos valores antes/depois |
 | Tabela | `complete=true`, ID da aba coerente, `range` literal de A1 até a dimensão alocada, matriz dentro desses limites |
 | Células | String, booleano, null ou número finito; objetos e listas em células são rejeitados |
 | Cabeçalhos | Mínimos por nome, em qualquer ordem; cabeçalho não vazio duplicado é erro; extras conservados no privado |
-| Registros | Chave de cada aba string não vazia e única; linha inteiramente vazia ignorada; célula omitida normalizada para string vazia |
-| Integridade | Primeiro/segundo hash iguais; segundo hash hexadecimal e igual ao SHA-256 recalculado das seis matrizes |
+| Registros | Chave das seis abas string não vazia e única; Meses conserva duplicatas/escalares para triagem semântica; linha inteiramente vazia ignorada; célula omitida normalizada para string vazia |
+| Integridade | Primeiro/segundo hash iguais; segundo hash hexadecimal e igual ao SHA-256 recalculado das matrizes capturadas, incluindo Meses se presente |
 
 | Aba | Chave de linha | Mínimos |
 | --- | --- | ---: |
@@ -39,12 +40,13 @@ Implementado com regras puras de estrutura e tempo; estado e evidências na [val
 | Cenas | `cena_id` | 11 |
 | Arquivos | `arquivo_id` | 12 |
 | Revisoes | `revisao_id` | 10 |
+| Meses (opcional) | Sem unicidade estrutural; chave de consulta marca/mês | 4 |
 
 A forma segura de ID de arquivo não é imposta às identidades editoriais: estas são conferidas como strings não vazias/únicas por aba. Não confundir ID interno com ID Drive.
 
 ## Hash e erros
 
-O hash usa JSON compacto de pares ordenados por nome de aba, com `sheetId`, `range` e `values` nessa ordem. Remove somente null/string vazia no fim das linhas e linhas finais vazias. Instantes e extras do envelope não entram no hash de células; a persistência compara separadamente a serialização do envelope completo.
+O hash usa JSON compacto de pares ordenados por nome de aba, com `sheetId`, `range` e `values` nessa ordem. Remove somente null/string vazia no fim das linhas e linhas finais vazias. Instantes e extras do envelope não entram no hash de células; a persistência compara separadamente a serialização do envelope completo. Meses participa somente quando presente, também na ordem por nome (`sort`); sem a opcional, hashes e arquivos históricos permanecem iguais. A posição final de Meses é somente visual na Planilha.
 
 Erro segue `<aba/linha/campo/regra>: inválido`, sem incluir valores das células. Cabeçalhos válidos sem registros são conjunto vazio válido. Etapa desconhecida continua válida; este módulo não classifica prontidão/publicação.
 
@@ -62,6 +64,6 @@ As falhas temporais são motivos fixos do recibo `falhou` e preservam a captura 
 
 ## Verificação e limites
 
-[tests/dados.test.cjs](../../tests/dados.test.cjs) cobre reordenação, mínimos, IDs, dimensões, células, metadados, intervalos, duas marcas, hash e etapa desconhecida. Resultados executados ficam em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); esta documentação não reexecuta a suíte.
+[tests/dados.test.cjs](../../tests/dados.test.cjs) cobre reordenação, mínimos, IDs, dimensões, células, metadados, intervalos, duas marcas, hash e etapa desconhecida. Resultados executados ficam em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); esta documentação não reexecuta a suíte. Regressões da opcional, linha física e hash legado foram executadas na [003](../../specs/003-planejamento-mensal/validacao.md); integração real de Meses pendente.
 
 Pegadinha: `validarEnvelope` exige um identificador de fonte não vazio, mas não consulta sua identidade configurada nem comprova que duas leituras remotas ocorreram. O importador confere a coerência do arquivo recebido. T039 foi demonstrada com captura real, com limites na [validação](../../specs/001-consulta-local-producao/validacao.md); a coleta direta está isolada no [coletor](coleta.md).

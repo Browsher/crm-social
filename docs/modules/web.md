@@ -2,7 +2,7 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura, gaveta, Produção e Planilha implementados localmente; verificação sintética e estado final T001–T041 na [validação](../../specs/001-consulta-local-producao/validacao.md). Demonstração privada e onboarding final concluídos; limites na validação. Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Funções estáveis em app.js: `abrirDia`/`acordeaoPeca`, `secaoUnidades`/`secaoRevisoes`, `renderProducao`/`pendenciaQuadro`, `renderPlanilha`/`celulaPlanilha` e `detalhesCaptura`.
+Planejamento, frescor/releitura, gaveta, Produção e Planilha implementados localmente; verificação sintética e estado final T001–T041 na [validação](../../specs/001-consulta-local-producao/validacao.md). Demonstração privada e onboarding final concluídos; limites na validação. Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Funções estáveis em app.js: `abrirDia`/`acordeaoPeca`, `secaoUnidades`/`secaoRevisoes`, `renderProducao`/`pendenciaQuadro`, `renderPlanilha`/`celulaPlanilha`, `detalhesCaptura` e `objetivoMensal`. Consulta mensal da 003 testada localmente com dados sintéticos; demonstração real pendente na [validação da 003](../../specs/003-planejamento-mensal/validacao.md).
 
 ## Inicialização e navegação
 
@@ -17,18 +17,26 @@ O HTML importa somente `/styles.css` e `/app.js`; o JavaScript consulta GET /api
 | Até 720 px | Lista inicial, menu recolhido; seletor visual Calendário/Lista fica oculto |
 | Menu | Exatamente Planejamento, Produção e Planilha |
 | Produção | Quadro por semana/tema, setas, oito colunas/vazias, pendências e Outras com título/contador da API |
-| Planilha | Fonte, fim em São Paulo, cobertura, releitura, seis abas de mínimos NTV, Histórico final e painel detalhado de avisos |
+| Planilha | Fonte, fim em São Paulo, cobertura, releitura, seis abas de mínimos NTV, Meses opcional com quatro mínimos, Histórico final e painel detalhado de avisos |
 | Filtros | Todos, Imagem, Carrossel e Reels, com aria-pressed |
 | Mês anterior/próximo | Troca somente o mês apresentado |
 | Selo | Quatro textos/cores contratuais da API em todas as telas; clique abre Planilha |
 | Atualizar dados | POST {} e depois GET; botão desabilitado até o fim, mensagem curta role=status |
 | Erro de consulta | Mensagem local; visão/selo já carregados são preservados e botão é liberado; sem visão anterior mostra Consulta indisponível |
 | Captura ausente | Peça a primeira leitura à Central, sem fallback fictício |
-| Objetivo mensal | Ainda não definido, sem botão Plano do mês |
+| Objetivo mensal | Mês exibido em `state.mes`: objetivo definido na cor principal e até cinco pautas/+N pautas (singular +1 pauta); Ainda não definido se ausente/vazio e A confirmar em duplicatas, ambos apagados; sem botão Plano do mês |
 
 Os handlers são instalados uma vez antes da primeira consulta, com Planejamento como tela inicial. `reler` consulta a API, atualiza `state.view` após uma resposta bem-sucedida e renderiza sem trocar a tela escolhida. O botão é liberado em `finally`, inclusive após 503, permitindo nova tentativa. Sem visão anterior, `render` retorna sem acessar dados: filtros continuam seguros após a primeira falha e `#erro` fica visível junto a **Consulta indisponível**. Abrir/reler GET não grava ou consulta Google; somente o POST explícito inicia leitura pelo servidor.
 
 Em Planilha, `detalhesCaptura` mostra **Captura pela Central** ou **Leitura direta pelo servidor local**, fim da captura formatado em `America/Sao_Paulo` e período civil das semanas; sem esses dados usa **Sem captura disponível** e **Cobertura não disponível**. **Origem e atualização** contém somente a linha **Última importação falhou; captura anterior preservada** quando a última tentativa falhou e há captura; sem captura, usa **Última importação falhou; nenhuma captura válida disponível**. Quando há avisos gerais, mostra o link **N avisos de dados**, com singular para um. A lista de motivos fica somente no painel Aba/Linha/Campo/Motivo. O selo segue ausência, falha ativa, hoje ou outro dia calculados na projeção; GET/no-op não renovam horário nem encerram a falha.
+
+## Objetivo e pautas do mês
+
+`objetivoMensal` lê exclusivamente Meses em `state.view.planilha`, selecionando NTV e o `state.mes` exibido. Zero linhas mostra **Ainda não definido**; uma linha mostra objetivo textual não vazio ou esse estado, com pautas textuais divididas por LF/CRLF, trim e descarte das vazias. Mantém ordem/repetições e exibe as primeiras cinco com **+N pautas** para o restante, singular **+1 pauta**. Duas ou mais linhas mostram **A confirmar** sem escolher objetivo/pautas. Número/bool não viram texto artificial no card; a célula completa permanece na tabela. Todos os textos são criados por `textContent`, sem link ou execução, e o card acompanha navegação mensal e POST→GET. Os avisos ficam na Planilha, sem vínculo inferido com temas semanais.
+
+O booleano `definido` aceita somente objetivo textual não vazio após trim e orienta conteúdo/classe. O parágrafo usa `var(--ink)` na cor principal; apenas os estados **Ainda não definido** e **A confirmar** recebem `month-placeholder`, com o tom apagado anterior `#8a958e`. A regra `.brief-icon` concentra `flex-shrink:0` junto dos demais estilos do ícone, sem seletor duplicado.
+
+As regressões em 1440/390 verificam a cor ao navegar por objetivos/ausências/duplicatas, **+1 pauta**/**+2 pautas** e ausência de `.more-topics` com até cinco itens, mesmo quando objetivo/pauta contêm `+2` literal. O teste de integração confirma card e avisos de mês: outubro único, novembro duplicado nas linhas físicas 4/6, dezembro com espaços inválido na linha 8; outra marca fica fora. Essa conferência preserva o contrato recebido da API. [Gate local dos ajustes](../reports/003-ajustes-local-gate.json) e [validação](../../specs/003-planejamento-mensal/validacao.md) distinguem o código atual das rodadas anteriores de CI.
 
 ## Calendário, lista e Sem data
 
@@ -72,7 +80,7 @@ existente; não há nova consulta remota nem escrita.
 | --- | --- |
 | Subtítulo | Dados capturados da planilha, por aba; ao voltar às demais telas, Peças registradas, semana a semana. |
 | Origem e atualização | Fonte, fim e cobertura; falha ativa em uma linha e contador de avisos gerais como link, sem repetir os motivos |
-| Abas de dados | Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes; contagem de linhas NTV e 66 mínimos triados, sem campos calculados de quadro/gaveta |
+| Abas de dados | Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes; 66 mínimos triados; Meses opcional depois de Revisoes com quatro mínimos; contagem de linhas NTV, sem campos calculados de quadro/gaveta |
 | Histórico final | Todas as tentativas confirmadas, recentes primeiro; horário em São Paulo, Completa/Falhou e motivo em linguagem de tela; vazio = Nenhuma tentativa confirmada |
 | Teclado de abas | Setas esquerda/direita com retorno nas pontas, Home/End; seleção e foco juntos, somente aba selecionada no Tab |
 | Tabela larga | Região de rolagem horizontal própria com nome/foco; conteúdo como texto e cabeçalhos de coluna |
@@ -80,35 +88,35 @@ existente; não há nova consulta remota nem escrita.
 | Avisos de dados | Aba/Linha/Campo/Motivo; — quando não há localização; oculto em Histórico ou sem avisos |
 | Releitura | Conserva a aba disponível e filtro da peça ainda existente; erro HTTP conserva a visão anterior |
 
-`tabelaLocal` (378) cria a região focável e tabela por `textContent`;
-`historicoPlanilha` (396) usa toda a lista confirmada, sem inferir novas tentativas
-de GET/no-op nem mostrar órfãos. `renderPlanilha` (456) acrescenta Histórico após
-as seis abas; `tabPlanilha` (444) e `escolherAba` (439) sincronizam seleção, foco,
+`tabelaLocal` cria a região focável e tabela por `textContent`;
+`historicoPlanilha` usa toda a lista confirmada, sem inferir novas tentativas
+de GET/no-op nem mostrar órfãos. `renderPlanilha` acrescenta Histórico após
+as seis abas e Meses se capturada; `tabPlanilha` e `escolherAba` sincronizam seleção, foco,
 `aria-selected` e `aria-labelledby`, com rolagem da aba até a área visível. Se a
 aba deixa de existir, a primeira disponível é selecionada.
 
-`avisosPeca` (173) fecha a gaveta, chama `navegar` (347) com a produção, abre
-Produções e dá rolagem/foco a `#avisos-dados`. `renderAvisosPlanilha` (427) usa os
+`avisosPeca` fecha a gaveta, chama `navegar` com a produção, abre
+Produções e dá rolagem/foco a `#avisos-dados`. `renderAvisosPlanilha` usa os
 avisos relacionados da peça; as seis tabelas permanecem globais à captura NTV.
 Menu e selo entram sem filtro; **Todos os avisos** restaura os gerais no painel.
 O link **N avisos de dados** de Origem também restaura os gerais, seleciona Produções
 e dá foco/rolagem ao painel, inclusive ao sair de Histórico. O contador usa a
 quantidade global de avisos, sem deduplicar linhas ou acompanhar o filtro da peça.
 
-`motivoAviso` (417) consolida o texto de mídia de cada aviso apenas na apresentação:
+`motivoAviso` consolida o texto de mídia de cada aviso apenas na apresentação:
 **Imagens e vídeo ausentes**, **Imagem final ausente**, **Nenhum arquivo da produção
 registrado** e **Imagem ausente** para páginas são exemplos. Retira a repetição
 do prefixo e reúne causas distintas em uma célula; conserva a quantidade de linhas
 e Aba/Linha/Campo. Outros motivos permanecem como recebidos; a API não é alterada.
 
-`motivoHistorico` (405) traduz falhas para linguagem de tela: **Cenas complete:
+`motivoHistorico` traduz falhas para linguagem de tela: **Cenas complete:
 inválido** vira **Aba Cenas incompleta**; outras validações de aba usam **Aba X
-inválida**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
+inválida**, incluindo Meses: complete inválido vira **Aba Meses incompleta**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
 inválido recebem rótulos próprios; motivo desconhecido usa **Captura não pôde ser
 importada**, vazio permanece vazio. Resultado desconhecido usa **Resultado
 desconhecido**. Os motivos originais do recibo continuam na API e na persistência.
 
-`celulaPlanilha` (470) aplica a allowlist somente a `url`/`url_video_final`:
+`celulaPlanilha` aplica a allowlist somente a `url`/`url_video_final`:
 valor dedicado preenchido recusado por `urlAutorizada` vira **link não permitido**;
 o marcador exato **[conteúdo suprimido]** permanece. A API conserva seus valores
 triados, incluindo URL dedicada válida fora da allowlist visual. Texto livre

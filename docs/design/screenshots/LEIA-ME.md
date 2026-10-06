@@ -187,3 +187,18 @@ Origem resume falha e quantidade; a lista completa aparece somente na tabela.
 
 Evidências e limites permanecem na [validação](../../../specs/001-consulta-local-producao/validacao.md).
 002: exemplos sintéticos de atualizando/sucesso/falha em 1440/390; imagens e procedência somente na [validação da 002](../../../specs/002-consulta-planilhas/validacao.md).
+
+## 003 — objetivo mensal e Meses opcional
+
+Doze capturas atuais de 05/10/2026 mostram os ajustes da aplicação em loopback com fixtures sintéticas e estado em TEMP: dez screenshots da 003 regenerados e dois novos para o singular **+1 pauta**. Objetivo definido aparece na cor principal; só **Ainda não definido**/**A confirmar** usam tom apagado. As capturas das features anteriores permanecem históricas; não houve consulta real de Meses. Testes, procedência e limitações na [validação da 003](../../../specs/003-planejamento-mensal/validacao.md), com [gate local dos ajustes](../../reports/003-ajustes-local-gate.json).
+
+| Vista | Desktop 1440 | Celular 390 |
+| --- | --- | --- |
+| Objetivo e pautas do mês | [Abrir](003-objetivo-1440.png) | [Abrir](003-objetivo-390.png) |
+| Cinco pautas e +2 pautas | [Abrir](003-mais-1440.png) | [Abrir](003-mais-390.png) |
+| Cinco pautas e +1 pauta | [Abrir](003-mais-um-1440.png) | [Abrir](003-mais-um-390.png) |
+| Ainda não definido | [Abrir](003-indefinido-1440.png) | [Abrir](003-indefinido-390.png) |
+| A confirmar por duplicata | [Abrir](003-confirmar-1440.png) | [Abrir](003-confirmar-390.png) |
+| Meses na Planilha | [Abrir](003-planilha-1440.png) | [Abrir](003-planilha-390.png) |
+
+Screenshots comprovam apresentação com dados fictícios; não comprovam conta/planilha real, integração, decisão editorial, mídia ou publicação. T002/preparar Meses e T015/demonstrar a 003 permanecem pendentes. T021/aceite da 002 bloqueia somente o merge da 003.

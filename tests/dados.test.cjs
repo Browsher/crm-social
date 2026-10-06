@@ -3,6 +3,42 @@ const assert = require('node:assert/strict');
 const {capturaValida,recalcularHashes,mudarCelula,carregarModulo} = require('./fixtures.cjs');
 const {validarCaptura} = carregarModulo('src/captura.cjs',['validarCaptura']);
 const {validarTempoImportacao}=require('../src/captura.cjs');
+const {capturaMeses,capturaDetalhada}=require('./fixtures.cjs');
+const {hashCelulas}=require('../src/captura.cjs');
+
+test('D003 hashes legados permanecem literais e ausência não injeta Meses',()=>{
+  assert.equal(hashCelulas(capturaValida().tables),'f5ba75b762461e8e84c6b6e83696c0d1685761813f7992b5c875f8c57297e87a');
+  assert.equal(hashCelulas(capturaDetalhada().tables),'aabd27ae6584755f362c3cac1c620b27bfa006225e7d320259dc6b11ff50eb6a');
+  assert.equal(Object.hasOwn(validarCaptura(capturaValida()),'meses'),false);
+});
+test('D003 Meses vazia, duplicada e meses entre marcas são estruturalmente válidos',()=>{
+  assert.deepEqual(validarCaptura(capturaMeses([])).meses,[]);
+  const raw=capturaMeses([['2026-10','ntv','A',''],[],['2026-10','ntv','B',''],['2026-10','outra','C',''],[false,'ntv',12,true]]);
+  const parsed=validarCaptura(raw);
+  assert.equal(parsed.meses.length,4);assert.equal(parsed.meses[1].objetivo,'B');
+  assert.equal(parsed.meses[3].mes,false);
+});
+test('D003 mínimos por nome e hash incluem extras e linhas de outras marcas',()=>{
+  const raw=capturaMeses([['2026-10','outra','A','B','privado-sintetico']],['extra']);
+  const before=hashCelulas(raw.tables);raw.tables.Meses.values[1][4]='extra-alterada';
+  assert.notEqual(hashCelulas(raw.tables),before);
+  recalcularHashes(raw);
+  raw.tables.Meses.values=raw.tables.Meses.values.map(r=>r.slice().reverse());
+  assert.equal(validarCaptura(recalcularHashes(raw)).meses[0].objetivo,'A');
+});
+for(const map of ['tables','metadataBefore','metadataAfter']) test('D003 Meses parcial em '+map+' é recusada',()=>{
+  const raw=capturaMeses();delete raw[map].Meses;
+  assert.throws(()=>validarCaptura(raw),/abas/);
+});
+for(const [nome,mutate] of [
+  ['header',r=>{r.tables.Meses.values[0][2]='outro';recalcularHashes(r);}],
+  ['range',r=>{r.tables.Meses.range='A1:D19';recalcularHashes(r);}],
+  ['hash',r=>{r.tables.Meses.values[1][2]='mudança';}],
+  ['metadata',r=>r.metadataAfter.Meses.sheetId++],
+  ['complete',r=>r.tables.Meses.complete=false]
+]) test('D003 Meses inválida: '+nome,()=>{
+  const raw=capturaMeses();mutate(raw);assert.throws(()=>validarCaptura(raw),/Meses|hash/);
+});
 
 test('D-review m4 tolera exatamente dez minutos de relógio adiantado, não mais', () => {
   const now='2026-10-04T12:00:00.000Z';

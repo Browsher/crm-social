@@ -278,10 +278,12 @@ function montarQuadro(result,mapaQuadro) {
     colunas:COLUNAS.map(nome=>colunaSemana(nome,result.producoes.filter(p=>p.semanaId===s.semana_id)))}));
 }
 function montarPlanilha(ntv) {
-  return Object.entries(CAMPOS).map(([nome,cabecalhos],i)=>{
+  const result=Object.entries(CAMPOS).map(([nome,cabecalhos],i)=>{
     const linhas=ntv[chaves[i]].map(record=>Object.fromEntries(cabecalhos.map(campo=>[campo,record[campo]])));
     return {nome,cabecalhos:[...cabecalhos],quantidadeLinhas:linhas.length,linhas};
   });
+  if(Object.hasOwn(ntv,'meses')) result.push({nome:'Meses',cabecalhos:['mes','marca_id','objetivo','pautas'],quantidadeLinhas:ntv.meses.length,linhas:ntv.meses});
+  return result;
 }
 function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   const result=base(estadoLocal), captura=estadoLocal.captura;

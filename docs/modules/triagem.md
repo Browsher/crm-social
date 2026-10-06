@@ -13,7 +13,7 @@ Fonte: [src/triagem.cjs](../../src/triagem.cjs). Estado e evidências na [valida
 | `selecionarNtv(captura, avisos, origens, validadeJson)` | Seleciona registros NTV e seus vínculos, copia somente mínimos triados, localiza avisos por linha física e mantém metadados em WeakMap |
 | `validarIdentidadesNtv(captura)` | Executa a mesma seleção em estruturas temporárias; identidade/vínculo alterável pela redação causa erro localizado sem incluir a célula |
 
-Importa somente `CAMPOS` de [captura](captura.md). Não conhece mapa do quadro, persistência, rotas, variáveis de ambiente ou rede. Recebe a captura normalizada por `validarCaptura`; não altera a entrada.
+Importa `CAMPOS`, `CAMPOS_MESES` e `linhaMensal` de [captura](captura.md). Não conhece mapa do quadro, persistência, rotas, variáveis de ambiente ou rede. Recebe a captura normalizada por `validarCaptura`; não altera a entrada.
 
 ## Promoção e consulta
 
@@ -34,8 +34,10 @@ Na [projeção](projecao.md), `selecionarNtv` mantém a mesma guarda contra byte
 
 ## Recorte, redação e limites
 
-Semanas e produções usam `marca_id=ntv`. Páginas, cenas e revisões seguem produções NTV; arquivos seguem produção NTV ou, sem produção, semana NTV. Dados de outras marcas fora desse recorte não participam da validação de identidades NTV. Cabeçalhos e valores selecionados continuam os mínimos literais de `CAMPOS`; extras não entram na seleção.
+Semanas e produções usam `marca_id=ntv`. Páginas, cenas e revisões seguem produções NTV; arquivos seguem produção NTV ou, sem produção, semana NTV. Dados de outras marcas fora desse recorte não participam da validação de identidades NTV. Cabeçalhos e valores selecionados continuam os mínimos literais de `CAMPOS`; extras não entram na seleção. Quando capturada, Meses seleciona somente `marca_id==='ntv'` e seus quatro mínimos de `CAMPOS_MESES`, sem vínculo com semanas. `linhaMensal` recupera em WeakMap a posição física registrada pelo parser, inclusive após linhas vazias e marcas excluídas.
 
 Os helpers internos `selecionar`, `sensivel`, `jsonValido`, `redigirPedacoUrl` e `motivoUrl` preservam os limites de redação descritos no [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md). Linha física vem da matriz original; `etapa_producao=null` é recuperada antes da triagem, e validade original de `origens_json` fica separada do texto redigido. A triagem é conservadora e não promete detectar todos os segredos possíveis.
+
+Meses gera motivos fixos sem ecoar a célula: **Mês inválido** em mes fora de `AAAA-MM`, **Texto mensal inválido** em objetivo/pautas não textuais e não vazios e **Mês e marca repetidos** para cada linha de mês válido repetido na NTV. São avisos semânticos: a captura estruturalmente íntegra continua aceita, duplicatas permanecem na tabela e o card mostra A confirmar. Textos inválidos são ausentes no card; escalares permitidos continuam consultáveis na Planilha. Regressões locais e limites na [validação da 003](../../specs/003-planejamento-mensal/validacao.md).
 
 Regressões nas suítes existentes de snapshot, importador, projeção e HTTP conferem a ordem da validação, a preservação da captura anterior, ausência da célula sensível nos motivos e defesa da consulta. Resultados ficam somente na validação; não há nova suíte ou dependência de aplicação por consequência da extração.
