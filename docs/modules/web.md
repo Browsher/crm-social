@@ -6,7 +6,7 @@ Planejamento, frescor/releitura, gaveta, Produção e Planilha implementados loc
 
 ## Inicialização e navegação
 
-O HTML importa somente `/styles.css` e `/app.js`; o JavaScript consulta GET /api/visao e atualiza por POST /api/atualizar; depois faz GET com cache no-store. Não há framework, imagem remota, Google ou autenticação no navegador.
+O HTML carrega `/theme.js` de forma síncrona antes de `/styles.css`, seguido de `/app.js` com defer; o aplicativo consulta GET /api/visao e atualiza por POST /api/atualizar; depois faz GET com cache no-store. Não há framework, imagem remota, Google ou autenticação no navegador.
 
 | Estado/controle | Comportamento atual |
 | --- | --- |
@@ -25,16 +25,37 @@ O HTML importa somente `/styles.css` e `/app.js`; o JavaScript consulta GET /api
 | Erro de consulta | Mensagem local; visão/selo já carregados são preservados e botão é liberado; sem visão anterior mostra Consulta indisponível |
 | Captura ausente | Peça a primeira leitura à Central, sem fallback fictício |
 | Objetivo mensal | Mês exibido em `state.mes`: objetivo definido na cor principal e até cinco pautas/+N pautas (singular +1 pauta); Ainda não definido se ausente/vazio e A confirmar em duplicatas, ambos apagados; sem botão Plano do mês |
+| Tema | Botão ao lado de Neste computador, rótulo do tema ativo, preferência inicial do sistema e escolha manual local persistida quando armazenamento está disponível |
 
 Os handlers são instalados uma vez antes da primeira consulta, com Planejamento como tela inicial. `reler` consulta a API, atualiza `state.view` após uma resposta bem-sucedida e renderiza sem trocar a tela escolhida. O botão é liberado em `finally`, inclusive após 503, permitindo nova tentativa. Sem visão anterior, `render` retorna sem acessar dados: filtros continuam seguros após a primeira falha e `#erro` fica visível junto a **Consulta indisponível**. Abrir/reler GET não grava ou consulta Google; somente o POST explícito inicia leitura pelo servidor.
 
 Em Planilha, `detalhesCaptura` mostra **Captura pela Central** ou **Leitura direta pelo servidor local**, fim da captura formatado em `America/Sao_Paulo` e período civil das semanas; sem esses dados usa **Sem captura disponível** e **Cobertura não disponível**. **Origem e atualização** contém somente a linha **Última importação falhou; captura anterior preservada** quando a última tentativa falhou e há captura; sem captura, usa **Última importação falhou; nenhuma captura válida disponível**. Quando há avisos gerais, mostra o link **N avisos de dados**, com singular para um. A lista de motivos fica somente no painel Aba/Linha/Campo/Motivo. O selo segue ausência, falha ativa, hoje ou outro dia calculados na projeção; GET/no-op não renovam horário nem encerram a falha.
 
+## Tema claro e escuro
+
+Como trocar a iluminação de uma agenda, o tema muda a apresentação e mantém os mesmos registros. Ajuste de 06/10/2026 implementado e testado localmente, sem nova feature Spec Kit; integração pendente. Arquivos: [theme.js](../../src/web/theme.js), [index.html](../../src/web/index.html), [styles.css](../../src/web/styles.css) e classe de formato da lista em [app.js](../../src/web/app.js).
+
+| Regra | Implementação e limite |
+| --- | --- |
+| Primeira visita | `matchMedia('(prefers-color-scheme: dark)')` define `document.documentElement.dataset.theme` antes do CSS; acompanha alterações do sistema enquanto não houver escolha manual |
+| Escolha existente | Somente `dark`/`light` em `localStorage` na chave `crm-theme` substituem a preferência do sistema; outro conteúdo é ignorado |
+| Alternância | Botão `#theme-toggle` mostra **☾ Escuro** ou **☀ Claro**, com `aria-label="Alternar tema"`, `aria-pressed`, foco visível e acionamento nativo por mouse/Enter/Espaço |
+| Armazenamento bloqueado | Get/set em try/catch; alternância continua funcionando e prevalece sobre alterações do sistema durante a página; sem persistência disponível, nova carga volta à preferência do sistema |
+| Cores | Literais somente nos tokens de `:root` e `[data-theme=dark]`, incluindo superfícies, textos, linhas, links, foco, sombras, backdrop, selos, avisos, erro e vazios |
+| Formatos | Imagem verde, carrossel âmbar, Reels roxo; calendário, lista e quadro conservam superfícies distintas nos dois temas |
+| Fronteira | Preferência apenas no navegador; nenhuma escrita de captura/recibo, chamada Google ou alteração de API/dados |
+
+O bootstrap externo síncrono mantém `script-src 'self'`, sem script inline ou relaxamento de CSP. `DOMContentLoaded` atualiza o rótulo/estado do botão e instala seu acionamento. O CSS usa `color-scheme` em cada tema para os controles nativos. O tema escuro tem fundo azulado `#0c1320`, superfícies `#131b2a`/`#18223a`, linhas `#233045`, texto `#e2e8f2` e apagado `#8a96aa`; mantém a marca em `#2a9f74`/`#5cc79c`. Ajustes de texto/estado no tema claro também atendem aos cenários de contraste; imagens históricas registram a paleta anterior.
+
+[tests/tema.test.cjs](../../tests/tema.test.cjs) teve **27 PASS sem SKIP** localmente: varredura CSS com teste do próprio scanner (hex/funções/nomes, inclusive media queries), bootstrap antes do CSS/DOM, GET/HEAD protegido, primeira visita nos dois temas, Enter/Espaço e persistência em 1440/390, precedência da escolha, armazenamento bloqueado, mudanças do sistema e tema correto antes da resposta CSS. Nos cenários sintéticos, texto visível habilitado precisa de contraste mínimo **4,5:1** em Planejamento/calendário/lista/objetivo, gaveta, Produção, Planilha/Meses/Histórico, erros e ausência de captura. A aferição combina cores computadas com os fundos ancestrais; não afirma cobrir todo dado ou estado futuro. Testes de navegador usam somente TEMP, bloqueiam requisições externas e exigem ausência de erros de página. Com `CI=true`, continuam declarando SKIP de UI; essa prova local não é executada pelo CI Linux.
+
+Gate Windows final: **350 PASS**, cobertura **98,3871%**, drop **0**, complexidade PASS com **17 avisos**, baseline preservada e exit **0**. Semgrep SKIP no Windows/audit N/A; checks Linux e review precisam ser conferidos no PR atual. [Galeria de 16 screenshots sintéticos](../design/screenshots/LEIA-ME.md#tema-claro-e-escuro), gerada por [scripts/screenshots-tema.cjs](../../scripts/screenshots-tema.cjs) com Node/Playwright existentes. Sem nova dependência, polling, alteração dos contratos de captura ou validação editorial.
+
 ## Objetivo e pautas do mês
 
 `objetivoMensal` lê exclusivamente Meses em `state.view.planilha`, selecionando NTV e o `state.mes` exibido. Zero linhas mostra **Ainda não definido**; uma linha mostra objetivo textual não vazio ou esse estado, com pautas textuais divididas por LF/CRLF, trim e descarte das vazias. Mantém ordem/repetições e exibe as primeiras cinco com **+N pautas** para o restante, singular **+1 pauta**. Duas ou mais linhas mostram **A confirmar** sem escolher objetivo/pautas. Número/bool não viram texto artificial no card; a célula completa permanece na tabela. Todos os textos são criados por `textContent`, sem link ou execução, e o card acompanha navegação mensal e POST→GET. Os avisos ficam na Planilha, sem vínculo inferido com temas semanais.
 
-O booleano `definido` aceita somente objetivo textual não vazio após trim e orienta conteúdo/classe. O parágrafo usa `var(--ink)` na cor principal; apenas os estados **Ainda não definido** e **A confirmar** recebem `month-placeholder`, com o tom apagado anterior `#8a958e`. A regra `.brief-icon` concentra `flex-shrink:0` junto dos demais estilos do ícone, sem seletor duplicado.
+O booleano `definido` aceita somente objetivo textual não vazio após trim e orienta conteúdo/classe. O parágrafo usa `var(--ink)` na cor principal; apenas os estados **Ainda não definido** e **A confirmar** recebem `month-placeholder`, com `var(--muted)` do tema ativo. A regra `.brief-icon` concentra `flex-shrink:0` junto dos demais estilos do ícone, sem seletor duplicado.
 
 As regressões em 1440/390 verificam a cor ao navegar por objetivos/ausências/duplicatas, **+1 pauta**/**+2 pautas** e ausência de `.more-topics` com até cinco itens, mesmo quando objetivo/pauta contêm `+2` literal. O teste de integração confirma card e avisos de mês: outubro único, novembro duplicado nas linhas físicas 4/6, dezembro com espaços inválido na linha 8; outra marca fica fora. Essa conferência preserva o contrato recebido da API. [Gate local dos ajustes](../reports/003-ajustes-local-gate.json) e [validação](../../specs/003-planejamento-mensal/validacao.md) distinguem o código atual das rodadas anteriores de CI.
 

@@ -46,6 +46,22 @@ Planilha apresenta seis abas com os 66 mínimos triados, Meses opcional com quat
 
 A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; demonstração T021 foi conferida e integrada pelo PR #16. A 003 consulta objetivo/pautas da aba opcional Meses, preenchida à mão pelo autor. O card acompanha o mês exibido, mostra objetivo definido na cor principal e até cinco pautas; o restante usa **+N pautas** ou **+1 pauta**. Ausência/objetivo vazio mostra **Ainda não definido**, duplicata mostra **A confirmar**, ambos apagados, com avisos de mês/tipo/duplicatas por linha física na Planilha. Textos usam `textContent`. As capturas antigas mantêm hash e bytes; Meses participa do hash ordenado por nome só quando presente. Nenhuma escrita ou fluxo de agentes; migração da meta semanal permanece operação externa. A demonstração da leitura pela fonte real usou uma linha fictícia marcada como teste; isso não comprova uso editorial real.
 
+## Tema claro e escuro — ajuste de interface
+
+Implementado e testado localmente em 06/10/2026, sem nova feature Spec Kit. O botão ao lado de **Neste computador** mostra **☾ Escuro** ou **☀ Claro** e alterna o tema; funciona com mouse, Enter e Espaço, com `aria-label` e estado `aria-pressed`. Na primeira visita, acompanha a preferência do sistema até uma escolha manual. A escolha válida fica em `localStorage` como `crm-theme`; se o armazenamento estiver bloqueado, a alternância continua funcionando durante a página aberta. O tema é aplicado antes do CSS, evitando carregar a página com a paleta errada.
+
+Todas as cores de `src/web/styles.css` usam variáveis de `:root`, redefinidas em `[data-theme=dark]`. A paleta escura azulada cobre calendário/lista, objetivo mensal, gaveta, Produção, tabelas/abas/avisos/Histórico, selos, erros e estados vazios. Imagem mantém verde, carrossel âmbar e Reels roxo nos dois temas. A preferência altera somente a apresentação neste navegador.
+
+TDD com fixtures sintéticas: **27 testes de tema passaram sem pulos**, incluindo teclado, persistência após recarga, preferência do sistema, armazenamento bloqueado, aplicação antes da resposta CSS, rota GET/HEAD e varredura de cores fixas. Os cenários de contraste verificaram texto visível com razão mínima **4,5:1** nas quatro telas em 1440/390, Meses/Histórico, erro e ausência de captura. Gate Windows final: **350 PASS**, cobertura **98,3871%**, drop **0**, complexidade PASS com **17 avisos**, baseline preservada e exit **0**; Semgrep SKIP no Windows e audit N/A. O CI Linux mantém pulos explícitos de UI/PowerShell; gate Linux e review do PR são verificações separadas. **Integração pendente; este ajuste não será mesclado nesta entrega.**
+
+[Galeria dos 16 screenshots sintéticos](docs/design/screenshots/LEIA-ME.md#tema-claro-e-escuro) e [comportamento técnico](docs/modules/web.md#tema-claro-e-escuro). Para reproduzir as imagens, com Node e Playwright existentes configurados:
+
+```powershell
+& $env:CRM_NODE_PATH scripts/screenshots-tema.cjs
+```
+
+O script resolve Playwright por `CRM_PLAYWRIGHT_MODULE` (ou `playwright` já disponível), cria servidor/estado em TEMP e substitui somente os 16 arquivos `tema-*.png` da galeria. Não usa o CRM do autor nem lê a planilha.
+
 ## Executar a primeira entrega local
 
 Na raiz do repositório, selecione o Node 24.19.0 existente por `CRM_NODE_PATH` e siga o [quickstart](specs/001-consulta-local-producao/quickstart.md). Os entrypoints reais são:

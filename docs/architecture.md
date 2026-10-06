@@ -31,6 +31,10 @@ flowchart LR
   Server -->|define caminho padrão| Config["config/quadro-etapas.json"]
   Quadro -.->|lê caminho recebido| Config
   HTML["src/web/index.html"] --> JS["/app.js"]
+  HTML -->|síncrono, antes do CSS| Theme["/theme.js"]
+  Theme -->|preferência visual| Storage["localStorage: crm-theme"]
+  System["prefers-color-scheme"] --> Theme
+  Theme -->|data-theme| CSS
   HTML --> CSS["/styles.css"]
   JS -->|GET /api/visao e POST /api/atualizar| Server
   Snapshot --> FS["node:fs / node:path"]
@@ -49,11 +53,13 @@ flowchart LR
 | projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses opcional | [Projeção](modules/projecao.md) |
 | google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
 | coleta | Duas leituras de seis grades e Meses quando existe, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
-| servidor | HTTP local com cinco rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
+| servidor | HTTP local com seis rotas fixas, quatro estáticos, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses opcional, Histórico e avisos detalhados; card mensal pelo mês exibido | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses opcional, Histórico e avisos detalhados; card mensal pelo mês exibido; tema claro/escuro somente visual | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
+
+Tema claro/escuro implementado e testado localmente em 06/10/2026, com integração pendente. `theme.js` é carregado de forma síncrona no head antes do CSS; usa `prefers-color-scheme` e a escolha válida `crm-theme`, com leitura/escrita protegidas por try/catch. Sem armazenamento disponível, a escolha manual dura na página aberta. O atributo `data-theme` seleciona somente variáveis visuais de `styles.css`; não modifica captura, recibo, filtros, API ou estado editorial. [Testes e limites](modules/web.md#tema-claro-e-escuro) e [galeria sintética](design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
 
 `.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch e sua pasta de specs (por exemplo, `003-planejamento-mensal`); o ponteiro não é pré-requisito do importador/servidor.
 
@@ -121,6 +127,7 @@ O ponto de entrada faz bind somente em `127.0.0.1:4318` por padrão. `criarServi
 | --- | --- |
 | / | GET/HEAD, HTML fixo |
 | /app.js | GET/HEAD, JS fixo |
+| /theme.js | GET/HEAD, JS fixo; aplica preferência visual antes do CSS |
 | /styles.css | GET/HEAD, CSS fixo |
 | /api/visao | GET/HEAD, JSON selecionado; sem captura é 200 com ausência estruturada |
 | /api/atualizar | POST local JSON {}, origem obrigatória e ≤1KiB; leitura/promoção |

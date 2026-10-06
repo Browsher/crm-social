@@ -24,6 +24,8 @@ O projeto roda somente neste computador. Sem deploy, novas agendas, geração, p
 
 ## Spec Kit e Superpowers
 
+O ajuste de tema claro/escuro de 06/10/2026 dispensa Spec Kit por instrução do autor. Implementado/testado localmente; integração pendente, sem merge autorizado nesta entrega. `src/web/theme.js` aplica a preferência antes do CSS, e `/theme.js` é um estático explícito protegido pelas mesmas guardas/CSP. Cores de `styles.css` ficam somente nos tokens de `:root`/`[data-theme=dark]`; a escolha `crm-theme` no localStorage é preferência visual, sem estado editorial. Testes de comportamento/contraste em `tests/tema.test.cjs`; galeria reproduzível por `scripts/screenshots-tema.cjs`, exclusivamente sintética em TEMP. Gate Windows final: 350 PASS, cobertura 98,3871%, drop 0, complexidade PASS/17 avisos, baseline preservada e exit 0; Semgrep SKIP/audit N/A. CI Linux mantém pulos de UI/PowerShell; exigir gate/review vigentes do PR sem confundir com prova local. Detalhes no [README](README.md#tema-claro-e-escuro--ajuste-de-interface) e no [módulo web](docs/modules/web.md#tema-claro-e-escuro).
+
 Usar as skills locais `.agents/skills/speckit-*` e scripts PowerShell oficiais. `spec.md` define requisitos; `plan.md` define solução e interfaces; `tasks.md` organiza execução. Não criar uma especificação paralela para a mesma feature em outra pasta.
 
 Aplicar Superpowers sobre esses documentos: esclarecer decisões novas, implementar em tarefas delimitadas, escrever os testes de comportamento solicitados, fazer revisão independente e verificar antes de declarar conclusão. O desenho amplo já foi aprovado; preserve decisões autorizadas e peça esclarecimento apenas sobre lacunas reais. Não criar fases de aprovação adicional sem necessidade.

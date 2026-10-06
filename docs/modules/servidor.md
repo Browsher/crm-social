@@ -27,6 +27,7 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | --- | --- |
 | GET / | `index.html`, `text/html` |
 | GET /app.js | JavaScript da aplicação |
+| GET /theme.js | JavaScript de preferência visual, carregado antes do CSS |
 | GET /styles.css | CSS da aplicação |
 | POST /api/atualizar | JSON {} até1KiB, Origin obrigatório; coleta injetável, 200/422/503/409 conforme contrato |
 | GET /api/visao | 200, JSON de `projetarVisao(lerEstado(dataDir), nowIso, mapa)`; ausência de captura é resultado estruturado |
@@ -36,11 +37,11 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | Host/Origin recusados | 403, antes da avaliação de método/rota |
 | Estado/recibo confirmado inválido ou identidade/vínculo recusado na projeção | 503 genérico, sem alteração da última captura ou reparo dos arquivos |
 
-A allowlist de `STATIC` (linha 7) não é ampliada pela presença de arquivos no diretório. A query é descartada ao escolher a rota; não altera configuração ou caminho. URL literal/codificada de traversal não corresponde às cinco rotas.
+A allowlist de `STATIC` contém quatro arquivos explícitos: HTML, aplicativo, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A query é descartada ao escolher a rota; não altera configuração ou caminho. URL literal/codificada de traversal não corresponde às seis rotas.
 
 ## Origem e conteúdo
 
-`permitida` (linha 13) exige Host exatamente `127.0.0.1:<porta real>`; `localhost` é recusado. Na consulta, Origin ausente é permitido; no POST é obrigatório; quando presente, deve ser exatamente `http://127.0.0.1:<porta>`. Não há CORS externo.
+`permitida` exige Host exatamente `127.0.0.1:<porta real>`; `localhost` é recusado. Na consulta, Origin ausente é permitido; no POST é obrigatório; quando presente, deve ser exatamente `http://127.0.0.1:<porta>`. Não há CORS externo.
 
 Todas as respostas incluem `Cache-Control: no-store`, `X-Content-Type-Options: nosniff` e CSP. A política restringe scripts/estilos/conexões à própria origem e bloqueia imagens, objetos, base externa e incorporação por outro site. Não há carregamento remoto, escrita editorial ou credencial Google no browser. A chave externa é usada somente pelo cliente no servidor.
 
@@ -50,7 +51,7 @@ A consulta lê e valida ponteiro/recibos/captura a cada GET e gera seleção per
 
 O ponto de entrada informa configuração inválida ou impossibilidade de iniciar, com saída de erro; não encerra processo ocupante de uma porta. O handler resume erro de estado em 503, sem stack, caminho ou conteúdo privado.
 
-[tests/servidor.test.cjs](../../tests/servidor.test.cjs) verifica consulta sem escrita, ausência real, bytes/HEAD dos três estáticos sintéticos, métodos, privados/traversal, Host/Origin e configuração inválida. Diretórios e portas são isolados; resultado em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
+[tests/servidor.test.cjs](../../tests/servidor.test.cjs) verifica consulta sem escrita, ausência real, bytes/HEAD dos quatro estáticos sintéticos, métodos, privados/traversal, Host/Origin e configuração inválida. Diretórios e portas são isolados; resultados anteriores em [validacao.md](../../specs/001-consulta-local-producao/validacao.md). O ajuste de 06/10/2026 acrescentou `/theme.js` sem mudar CSP, Host/Origin, métodos ou exposição de arquivos privados. [tests/tema.test.cjs](../../tests/tema.test.cjs) confere GET/HEAD, MIME JavaScript, ausência de corpo no HEAD, recusa de POST e origem externa. Implementado/testado localmente; integração pendente e gate/review do novo PR exigem conferência própria.
 
 Pegadinhas: `criarServidor` devolve um servidor não iniciado; o chamador deve manter bind em loopback. I/O é síncrono e o estado confirmado é validado novamente em cada consulta; cenário sintético de escala e limites na [validação](../../specs/001-consulta-local-producao/validacao.md). API disponível e UI sintética não comprovam captura oficial ou aceite operacional.
 

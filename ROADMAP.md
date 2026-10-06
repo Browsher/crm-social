@@ -74,6 +74,10 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Aceite:** cada estado pode ser conferido na origem; configuração de agenda não aparece como execução comprovada. Divergências de cadastro/configuração mostram as duas fontes e horários. **Publicado · geração bloqueada · integração pendente** podem coexistir; planejado, implementado, testado e integrado são dimensões distintas. Prompts, configurações, IDs de serviço, logs brutos e caminhos privados não vão para os cartões. Dados antigos, falhas e pendências continuam explícitos. Abrir ou atualizar não dispara geração, cobrança ou publicação. Não há métricas comerciais inventadas.
 
+## Manutenção de interface — tema claro e escuro
+
+Ajuste pequeno solicitado pelo autor, sem Spec Kit e sem alterar as features 001–005. Em 06/10/2026, tema aplicado antes do CSS, botão acessível e preferência visual local implementados/testados nas telas existentes. Gate Windows final com 350 PASS, cobertura 98,3871%, baseline preservada; 16 screenshots sintéticos em 1440/390 nos dois temas. **Integração pendente**, condicionada aos checks/review publicados; merge não autorizado nesta entrega. [Uso e limites](README.md#tema-claro-e-escuro--ajuste-de-interface), [interface](docs/modules/web.md#tema-claro-e-escuro) e [galeria](docs/design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
+
 ## Como vamos construir
 
 Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` descreve valor, escopo e aceite; `plan.md` registra solução, dependências e verificações; `tasks.md` organiza a execução rastreável à mesma especificação. O Spec Kit organiza esses documentos. O Superpowers apoia decisões, plano, implementação, testes proporcionais, revisão independente e verificação, sem criar contratos concorrentes.
