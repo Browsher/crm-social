@@ -5,11 +5,11 @@
 - Aba criada pelo autor.
 - 1 linha fictícia marcada como teste.
 - Card exibido: **passou**.
-- Contagens: **1 linha em Meses**, **1 objetivo exibido**, **3 pautas exibidas**, **0 avisos de Meses**.
+- Contagens conferidas na API e na tabela da tela: **4 colunas**, **1 linha em Meses**, **1 objetivo exibido**, **3 pautas exibidas**, **0 avisos de Meses**.
 
 ## Histórico preservado — verificações anteriores ao fechamento
 
-## Registro histórico — integração da main após T021
+### Registro histórico — integração da main após T021
 
 A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. T002/criar-preencher Meses e T015/demonstração real permanecem pendentes do autor; testes sintéticos não comprovam integração real da aba.
 
@@ -21,9 +21,9 @@ Revisão estática adicional dos dois arquivos combinados: 0 Critical/Important/
 
 Doc-sync-onboarding: estados e regra numérica conciliados nos guias/arquitetura/módulo de coleta/specs; 29 Markdown e 384 links relativos conferidos, cercas balanceadas e diff sem erro. **13/15 tarefas**, com T002/T015 desmarcadas. A evidência Linux e o review do head enviado serão conferidos e vinculados na descrição do [PR #15](https://github.com/Browsher/crm-social/pull/15) antes do merge; não se atribui a um novo head a execução antiga. Nenhuma demonstração real de Meses ou escrita operacional nesta integração.
 
-## Histórico preservado — rodadas anteriores ao PR #16
+### Histórico preservado — rodadas anteriores ao PR #16
 
-## Autorização e limites — 05/10/2026
+### Autorização e limites — 05/10/2026
 
 O autor autorizou implementação com speckit-implement/TDD, push e abertura de PR para main, sem merge. Essa instrução substitui a espera de implementação registrada no planejamento: T021 da 002 permanece pendente e bloqueia o merge da 003. T002 (criar/preencher Meses) e T015 (demonstração privada) são tarefas do autor, pendentes; fixtures não comprovam integração real.
 
@@ -31,7 +31,7 @@ Checklist documental conferido: 16/16, sem modificar marcadores. Pré-requisitos
 
 O checklist de qualidade da especificação foi preservado integralmente como exige speckit-implement. Sua nota de espera por T021 pertence à rodada documental anterior; a autorização atual acima, refletida em spec/plan/tasks, prevalece. Não é evidência de demonstração real concluída.
 
-## Registro de execução
+### Registro de execução
 
 As cinco camadas usam somente fixtures sintéticas, clientes falsos e diretórios TEMP. Gate/baseline permanecem intactos. Evidências RED/GREEN e screenshots serão registrados conforme executados.
 
@@ -42,7 +42,7 @@ As cinco camadas usam somente fixtures sintéticas, clientes falsos e diretório
 - T011: UI nova RED 13 PASS / 1 FAIL: falha estrutural Meses aparecia genérica no Histórico. Os demais casos já passaram como regressão reaproveitada: abas/ordem, quatro colunas, pautas completas, duplicatas/avisos físicos, teclado e POST→GET/fallback; nenhum RED fabricado.
 - T012: GREEN 14/14 dos casos U003 em interface/atualização; falha de Meses agora usa o mesmo rótulo localizado das outras tabelas no Histórico.
 
-## Suíte, gate e review local
+### Suíte, gate e review local
 
 Com Node 24.19.0 à frente do PATH e Playwright existente, `node tools/quality-gate.mjs` executou a suíte completa e concluiu com exit 0: **312 PASS**, nenhum FAIL/SKIP de testes locais; cobertura **98,37%**, queda zero; complexidade PASS, 17 avisos, nenhuma função ≥21. **baselineUpdated:false**. Relatório integral sanitizado: [003-local-gate.json](../../docs/reports/003-local-gate.json).
 
@@ -54,7 +54,7 @@ Review independente local, somente leitura, contra main `50e3a2d` + diff da 003:
 
 Decisão de execução: T013 é conferida em duas etapas porque o CI Linux/review publicado dependem de abrir o PR; após o gate/review local, T014 sincroniza documentos, e T013 só recebe [x] após os checks remotos. Nenhuma redução de requisito; custo se errado seria reportar qualidade remota antes de comprová-la, evitado pelo marcador pendente.
 
-## Screenshots sintéticos — 1440 e 390 px
+### Screenshots sintéticos — 1440 e 390 px
 
 Gerados no servidor real em porta efêmera com Playwright existente; somente fixtures sintéticas em TEMP, relógio do navegador fixado, sem request externo ou erro JavaScript. Dez imagens inspecionadas visualmente; página sem corte horizontal. No celular, a tabela Meses foi rolada localmente para mostrar objetivo/pautas completos; as quatro colunas/rolagem/teclado estão verificadas no teste.
 
@@ -71,7 +71,7 @@ Screenshots não comprovam leitura da conta/planilha real. T002/T015 do autor co
 
 T014: doc-sync-onboarding concluído em README/AGENTS/ROADMAP, índice/arquitetura, módulos captura/coleta/triagem/projecao/web, documentos canônicos da 003 e guia dos screenshots. 419 links relativos válidos nos 17 Markdown atribuídos, cercas balanceadas e diff sem erro. Notas pai atualizadas; índice Graphify recebe atualização restrita local, preservando fontes fora do escopo. Hooks opcionais git.commit antes/depois da implementação têm auto_commit desabilitado; commits manuais autorizados com noreply e sem coautoria.
 
-## PR e gate Linux — 05/10/2026
+### PR e gate Linux — 05/10/2026
 
 [PR #15](https://github.com/Browsher/crm-social/pull/15) aberto para main, branch 003-planejamento-mensal, **sem merge**. Head inicial `3f757e1f48ff4cca8c79edc30c77771a9a2c6d82`, com autor/committer noreply e sem coautoria. [Quality gate Linux](https://github.com/Browsher/crm-social/actions/runs/37370817974): **SUCCESS**, execução estrita exit 0; tests/coverage/complexity/Semgrep PASS, 17 avisos de complexidade, audit N/A, baselineUpdated:false. [Resumo sanitizado dos logs](../../docs/reports/003-ci-gate.json).
 
@@ -90,7 +90,7 @@ T013 concluída com gate/review deste head e as cinco camadas locais, sem modifi
 
 Decisão técnica: manter a ordenação canônica por nome no hash, incluindo Meses quando presente, como o algoritmo v1 e as fixtures independentes; ausência conserva o hash legado. A expressão “Meses por último” no contrato descreve a ordem visual, não uma nova serialização de hash. Custo se incorreto: incompatibilidade de hash em capturas novas; testes fixam o legado e conferem toda a opcional.
 
-## Correções do review documental — 05/10/2026
+### Correções do review documental — 05/10/2026
 
 O head `9ef4e6b3b6c05ea7b4ab834ae4fcbcf94e6055db` passou no [gate Linux estrito](https://github.com/Browsher/crm-social/actions/runs/37371910117), exit 0: tests/coverage/complexity/Semgrep PASS, 17 avisos, audit N/A e baselineUpdated:false. O resumo versionado acima agora identifica esse head e preserva a execução anterior. Nenhuma contagem/percentual remoto inferido.
 
@@ -102,7 +102,7 @@ M4/M5/M6 são sugestões preventivas de código sem defeito atual: cópias/cabe�
 
 Comparação registrada: `git diff --exit-code 3f8c1a6 9ef4e6b -- src tests tools .github .quality-gate quality-gate.config.json` retornou 0 sem diff. O código validado e seus testes permanecem idênticos. Esta correção altera somente documentação/relatórios; seus checks e novo review devem ser conferidos no PR antes do encerramento, sem atribuir a ela o resultado de um head anterior. T002/T015 e T021 permanecem pendentes; PR aberto, sem merge.
 
-## Ajustes visuais e quatro Minor do PR #15 — 05/10/2026
+### Ajustes visuais e quatro Minor do PR #15 — 05/10/2026
 
 Rodada anterior `f020d26852bf1881377da2f65657169b3f343973`: [gate Linux SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37374848470) e [review publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6003221284), 0 Critical/Important, sem segurança/regressão e quatro Minor. Esses resultados são históricos, não comprovam o novo código desta rodada.
 
@@ -127,7 +127,7 @@ Os dez screenshots anteriores foram regenerados e os dois do singular acrescenta
 
 Doc-sync-onboarding: 14 Markdown afetados sincronizados, 389 links relativos conferidos, cercas balanceadas, sem alterar dados/fontes/constituição. Documentação de evidências desta seção e índice local sincronizados pelo coordenador. **13/15 tarefas** mantidas; T002/T015 do autor pendentes e T021 da 002 continua bloqueando somente o merge. Nenhuma demonstração real ou escrita operacional. Novos checks/review do head enviado devem ser conferidos antes do encerramento; PR permanece aberto, sem merge/auto-merge.
 
-## Conferência remota dos ajustes e notas do novo review — 05/10/2026
+### Conferência remota dos ajustes e notas do novo review — 05/10/2026
 
 Head publicado `fd92f09f38b04a0e1edf705dc12bad83831621ae`: [gate Linux estrito SUCCESS](https://github.com/Browsher/crm-social/actions/runs/37389043475), exit 0, tests/coverage/complexity/Semgrep PASS, 17 avisos, audit N/A e baselineUpdated:false. [Resumo dos logs oficiais](../../docs/reports/003-ajustes-ci-gate.json); o resumo anterior agora contém `historical:true` e aponta para este. Nenhuma contagem/percentual remoto inferido.
 

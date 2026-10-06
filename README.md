@@ -12,10 +12,10 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Estado da entrega
 
-- **Planejado:** 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A 003 está concluída, 15/15 tarefas. Uso real antes de decidir 004/005.
+- **Planejado:** 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. Uso real antes de decidir 004/005.
 - **Implementado:** 001, leitura direta da 002 e consulta opcional de Meses da 003; JWT/fetch nativos, seis abas obrigatórias tipadas e POST local, com Meses incluída quando existe; importação manual preservada.
 - **Testado:** 001 e 002 demonstradas com captura real; 003 verificada com fixtures/fakes/TEMP nas cinco camadas e demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor. A integração da main passou no gate Windows com 322 testes e cobertura 98,3871%; baseline preservada. [Relatório da integração](docs/reports/003-integracao-t021-local-gate.json). Implementação integrada pelo PR #15; o fechamento documental exige seus próprios checks/review vigentes. Evidências/limites na [validação da 002](specs/002-consulta-planilhas/validacao.md) e na [validação da 003](specs/003-planejamento-mensal/validacao.md).
-- **Integrado:** a 002 concluiu T021, 24/24 tarefas, e foi integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16). Coleta direta aceita pelo mesmo importador, com hashes iguais e Histórico preservado. Tipagem válida não afirma vigência de versões distintas nem comprova mídia. A leitura direta já aceita de Meses foi conferida pela API e pela tela; T002/T015 concluídas, sem escrita operacional pelo CRM.
+- **Integrado:** a 002 concluiu T021, 24/24 tarefas, e foi integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16). Coleta direta aceita pelo mesmo importador, com hashes iguais e Histórico preservado. Tipagem válida não afirma vigência de versões distintas nem comprova mídia. A leitura direta já aceita de Meses foi conferida pela API e pela tela; 003 concluída, 15/15 tarefas; T002/T015 concluídas, sem escrita operacional pelo CRM.
 
 ## Onde começar
 

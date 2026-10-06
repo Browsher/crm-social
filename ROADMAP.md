@@ -22,7 +22,7 @@ As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a
 
 **Resultado visível:** menu com Planejamento, Produção e Planilha. Planejamento mostra calendário com cartões, lista semanal, objetivo **Ainda não definido** e **N sem data**. Clicar no cartão ou no dia abre a gaveta do dia inteiro, com acordeões por peça. Produção organiza as peças em quadro por etapa, com **Outras** preservando valores desconhecidos. Planilha apresenta as seis abas capturadas e Histórico. O selo de status tem quatro estados; no celular, Planejamento usa lista e a gaveta ocupa a tela.
 
-**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
+**Dependências:** definir o contrato da captura e conferir os registros disponíveis. Preservar IDs internos, versões e relações entre semana, produção e arquivos. Não há acesso contínuo à fonte nesta feature.
 
 **Aceite:** os conteúdos da captura aparecem sem duplicação, inclusive semanas que cruzam meses e a imagem B histórica. Calendário, lista, quadro e gaveta concordam entre si; o dia inteiro não é reduzido pelo filtro de formato. **Publicada** exige registro explícito de publicação; **com quem está** mantém `responsavel_atual`, separado de `responsavel_correcao` da revisão vigente. Sem inferir encaminhamentos. Captura antiga, parcial, inválida ou indisponível fica identificada e falha mantém a anterior. **Atualizar dados** apenas relê a captura local. Teclado, Esc e 390 px funcionam sem corte da página; tabelas têm rolagem própria. Nenhuma consulta edita, gera, ativa ou publica.
 
@@ -32,7 +32,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço própria, com chave fora do repositório e nunca enviada ao navegador.
 
-**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
+**Dependências:** 001 concluída, emenda 1.1.0 aprovada/aplicada em 05/10. Seis abas existentes, chave externa, JWT nativo sem dependência de aplicação, batchGet duas vezes e mesmo importador. Conta preparada pelo autor; testes continuam falsos/sintéticos. Sem abas auxiliares nesta feature.
 
 **Aceite:** seis abas tipadas/íntegras, sem escrita Google/Drive, chave fora de Git/browser/log, quatro falhas preservando vigente/data e Central por arquivo. Na 003, objetivo **Ainda não definido** quando falta a linha/objetivo de Meses. T021 demonstrada; estado na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
@@ -54,7 +54,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** o usuário solicita ajustes pelo CRM e acompanha o retorno. Toda solicitação identifica conteúdo, versão de origem e pedido; a Central confere a versão vigente e registra a decisão nos campos autorizados.
 
-**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
+**Dependências:** concluir 001–003 e definir o contrato de solicitação, confirmação, conflito e recibo, incluindo tratamento de reenvio.
 
 **Aceite:** uma solicitação permanece pendente até existir confirmação da Central para a versão correta. Versão divergente produz conflito explícito; reenvio não aplica a mesma mudança duas vezes. O recibo permite conferir o resultado na fonte. Rejeição confirmada bloqueia as dependências pertinentes. A interface não se torna um segundo escritor operacional, e aprovação humana não substitui conferência técnica nem habilita geração ou publicação.
 
@@ -62,7 +62,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** prévias reais dos arquivos autorizados, com origem, versão e relação com o conteúdo. Referências visuais e materiais de produção aparecem identificados; no carrossel, cada página mostra o arquivo efetivamente disponível.
 
-**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
+**Dependências:** concluir 001–004, conferir os registros de Biblioteca/Arquivos e definir como disponibilizar localmente os materiais permitidos. A tela **Conteúdos** entra aqui, com prévias somente dos arquivos liberados.
 
 **Aceite:** cada prévia corresponde a um arquivo real e à versão informada. Referência não aparece como peça produzida; arquivo ausente ou inacessível não recebe prévia fictícia. Mídia disponível, conferida e aprovada mantém estados distintos. Não há geração automática, exposição de credenciais nem mudança de permissões públicas do Drive.
 

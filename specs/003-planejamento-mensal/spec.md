@@ -3,7 +3,7 @@
 **Feature Branch**: `003-planejamento-mensal`
 **Created**: 2026-10-05
 **Status**: concluída, 15/15 tarefas; código integrado pelo PR #15 e demonstração pelo CRM conferida com uma linha fictícia marcada como teste na aba criada pelo autor. Evidências sanitizadas em [validacao.md](validacao.md). Próximo passo: uso real antes de decidir 004/005.
-**Input**: O CRM pessoal apenas lê a aba opcional `Meses`, preenchida à mão pelo autor, e mostra objetivo e pautas do mês. A decisão substitui integralmente o rascunho anterior. Fluxo de agentes, repasse ao Diretor e migração da meta semanal ficam fora do CRM. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão.
+**Input**: O CRM pessoal apenas lê a aba opcional `Meses`, preenchida à mão pelo autor, e mostra objetivo e pautas do mês. A decisão substitui integralmente o rascunho anterior. Fluxo de agentes, repasse ao Diretor e migração da meta semanal ficam fora do CRM. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O código da 003 foi integrado pelo PR #15. O fechamento documental exige gate/review vigentes sem bloqueio de segurança ou regressão.
 
 ## Contexto e limites
 
