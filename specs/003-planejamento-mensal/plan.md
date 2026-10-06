@@ -1,6 +1,6 @@
 # Consulta do planejamento mensal — Implementation Plan
 
-> **For agentic workers:** implementação executada por tarefas e testes de comportamento; evidências em [validacao.md](validacao.md). A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. Preparação manual de Meses e demonstração real continuam pendentes.
+> **For agentic workers:** implementação executada por tarefas e testes de comportamento; evidências em [validacao.md](validacao.md). A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. T002/T015 concluídas com aba criada pelo autor e uma linha fictícia marcada como teste; uso real antes de decidir 004/005.
 
 **Branch**: `003-planejamento-mensal` | **Date**: 2026-10-05 | **Spec**: [spec.md](spec.md)
 **Goal**: ler Meses opcional e apresentar objetivo/pautas mensais sem escrever na operação.
@@ -74,7 +74,7 @@ Conferido antes da pesquisa e novamente após o desenho: sem exceção ou emenda
 2. US1: `selecionarNtv(captura, avisos, origens, validadeJson)` mantém assinatura/resultado atual e acrescenta `meses` triados quando presentes; `origens` conserva localização física. `projetarVisao(estadoLocal, nowIso, mapaQuadro)` mantém assinatura e raiz/envelope/contagens, acrescentando apenas Meses em `planilha` e avisos existentes. Card deriva estados por `state.mes`, sem usar `semanas[].objetivoMensal` nem ligar semanas ao mês.
 3. US2: `coletarCaptura(client, options)` detecta opcional antes, lê todos os ranges duas vezes, compara hash e metadados finais. Mudança em Meses participa da promoção; falha mantém vigente/recibo/frescor como 002. `POST /api/atualizar {}` e GET mantêm o contrato atual.
 4. US3: renderizar a tabela opcional, avisos localizados e fallback de aba selecionada quando Meses desaparece, preservando seis tabelas/Histórico/atalhos.
-5. Aceite local: cinco camadas e gate local executados; resultados na validação. Gate Linux e review publicado do PR #15 conferidos; evidências na validação. Demonstração mensal privada após autor preparar a aba; isso não bloqueia a execução sintética. T021 atendida; merge autorizado sob gate/review vigentes sem bloqueio.
+5. Aceite local: cinco camadas e gate local executados; resultados na validação. Gate Linux e review publicado do PR #15 conferidos; evidências na validação. Demonstração mensal privada conferida com a aba preparada pelo autor e uma linha fictícia marcada como teste; isso não bloqueia a execução sintética. T021 atendida; merge autorizado sob gate/review vigentes sem bloqueio.
 
 ## Review Focus
 

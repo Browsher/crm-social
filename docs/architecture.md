@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, implementada e testada com fixtures; [validação da 003](../specs/003-planejamento-mensal/validacao.md) registra a demonstração real pendente. T021 atendida, integração da main em conferência sob gate/review vigentes.
+001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, está concluída e foi demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor; [validação da 003](../specs/003-planejamento-mensal/validacao.md). Código integrado pelo PR #15. Uso real antes de decidir 004/005.
 
 ## Módulos e imports reais
 
@@ -55,7 +55,7 @@ flowchart LR
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
-`.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch e sua pasta de specs (atual `003-planejamento-mensal`); o ponteiro não é pré-requisito do importador/servidor.
+`.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch e sua pasta de specs (por exemplo, `003-planejamento-mensal`); o ponteiro não é pré-requisito do importador/servidor.
 
 ## Entrada, persistência e confirmação
 

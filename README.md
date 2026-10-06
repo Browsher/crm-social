@@ -12,10 +12,10 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Estado da entrega
 
-- **Planejado:** 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A 003 está implementada com Meses opcional; T002 e T015 permanecem pendentes do autor.
+- **Planejado:** 004–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A 003 está concluída, 15/15 tarefas. Uso real antes de decidir 004/005.
 - **Implementado:** 001, leitura direta da 002 e consulta opcional de Meses da 003; JWT/fetch nativos, seis abas obrigatórias tipadas e POST local, com Meses incluída quando existe; importação manual preservada.
-- **Testado:** 001 e 002 demonstradas com captura real; 003 verificada com fixtures/fakes/TEMP nas cinco camadas. A integração da main passou no gate Windows com 322 testes e cobertura 98,3871%; baseline preservada. [Relatório da integração](docs/reports/003-integracao-t021-local-gate.json). Checks/review vigentes do PR #15 devem ser conferidos antes do merge. Evidências/limites na [validação da 002](specs/002-consulta-planilhas/validacao.md) e na [validação da 003](specs/003-planejamento-mensal/validacao.md).
-- **Integrado:** a 002 concluiu T021, 24/24 tarefas, e foi integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16). Coleta direta aceita pelo mesmo importador, com hashes iguais e Histórico preservado. Tipagem válida não afirma vigência de versões distintas nem comprova mídia. A leitura real de Meses continua pendente; merge da 003 autorizado sob gate/review vigentes.
+- **Testado:** 001 e 002 demonstradas com captura real; 003 verificada com fixtures/fakes/TEMP nas cinco camadas e demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor. A integração da main passou no gate Windows com 322 testes e cobertura 98,3871%; baseline preservada. [Relatório da integração](docs/reports/003-integracao-t021-local-gate.json). Implementação integrada pelo PR #15; o fechamento documental exige seus próprios checks/review vigentes. Evidências/limites na [validação da 002](specs/002-consulta-planilhas/validacao.md) e na [validação da 003](specs/003-planejamento-mensal/validacao.md).
+- **Integrado:** a 002 concluiu T021, 24/24 tarefas, e foi integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16). Coleta direta aceita pelo mesmo importador, com hashes iguais e Histórico preservado. Tipagem válida não afirma vigência de versões distintas nem comprova mídia. A leitura direta já aceita de Meses foi conferida pela API e pela tela; T002/T015 concluídas, sem escrita operacional pelo CRM.
 
 ## Onde começar
 
@@ -24,7 +24,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 - [Plano de implementação](specs/001-consulta-local-producao/plan.md)
 - [Tarefas da primeira feature](specs/001-consulta-local-producao/tasks.md)
 - [Feature 002: Planilhas](specs/002-consulta-planilhas/spec.md), [plano](specs/002-consulta-planilhas/plan.md), [24 tarefas](specs/002-consulta-planilhas/tasks.md) e [emenda aplicada](specs/002-consulta-planilhas/constitution-proposal.md)
-- [Feature 003: consulta mensal](specs/003-planejamento-mensal/spec.md), [quickstart](specs/003-planejamento-mensal/quickstart.md) e [validação local/pendências](specs/003-planejamento-mensal/validacao.md)
+- [Feature 003: consulta mensal](specs/003-planejamento-mensal/spec.md), [quickstart](specs/003-planejamento-mensal/quickstart.md) e [validação e fechamento](specs/003-planejamento-mensal/validacao.md)
 - [Constituição](.specify/memory/constitution.md) e [instruções de desenvolvimento](AGENTS.md)
 - [Desenho aprovado](docs/design/desenho.md) e [prévia visual](docs/design/prototype/index.html)
 - [Telas decididas e escopo por feature](docs/design/telas.md)
@@ -36,7 +36,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Como vamos construir
 
-Spec Kit mantém requisitos, plano e tarefas de cada feature. Superpowers apoia a implementação em partes, testes e revisão. A 001 já apresenta Planejamento com cartões, lista semanal e gaveta do dia, Produção em quadro por etapa e Planilha com abas e histórico de capturas. O menu tem somente esses três itens. Depois vêm 002 Planilhas (leitura direta pelo servidor local), 003 planejamento mensal, 004 pedidos de ajuste, 005 biblioteca/prévias e, fora do v1, Equipe/Workflow como v2 visual ilustrativo.
+Spec Kit mantém requisitos, plano e tarefas de cada feature. Superpowers apoia a implementação em partes, testes e revisão. A 001 já apresenta Planejamento com cartões, lista semanal e gaveta do dia, Produção em quadro por etapa e Planilha com abas e histórico de capturas. O menu tem somente esses três itens. 001–003 foram entregues. O próximo passo é uso real antes de decidir 004 pedidos de ajuste e 005 biblioteca/prévias. Equipe/Workflow permanece v2 visual ilustrativo.
 
 A primeira versão recebe um arquivo de captura preparado pela Central e validado pelo importador local. O selo em todas as telas abre Planilha e mostra **Atualizado hoje, HH:MM**, **Dados de DD/MM**, **Atualização falhou** ou **Sem dados**, usando o fim da captura em São Paulo. Planilha apresenta fonte, fim, cobertura e avisos; **Atualizar dados** envia POST /api/atualizar, consulta as seis abas obrigatórias e Meses quando existe pelo servidor e só promove uma captura íntegra; depois relê GET /api/visao. GET continua sem rede. Falha de importação mantém a captura anterior e o selo vermelho até uma nova captura completa aceita; erro HTTP preserva a visão já carregada e permite repetir a consulta.
 
@@ -44,7 +44,7 @@ A [gaveta compacta](docs/design/mockups/gaveta-v2.html) reúne o dia inteiro em 
 
 Planilha apresenta seis abas com os 66 mínimos triados, Meses opcional com quatro mínimos quando capturada e Histórico final com todas as tentativas confirmadas, recentes primeiro. Setas esquerda/direita, Home e End alternam as abas com foco; cada tabela tem rolagem própria. Meses vem depois de Revisoes e antes de Histórico; a releitura conserva a aba disponível selecionada ou retorna à primeira disponível quando Meses desaparece. O painel de avisos mostra Aba/Linha/Campo/Motivo; menu, selo e **Todos os avisos** restauram a visão geral dos avisos, enquanto as seis tabelas sempre mantêm o conjunto NTV completo. Sem captura, aparece somente Histórico e orientação à Central. Células dedicadas de URL recusadas exibem **link não permitido**; o marcador de supressão e os textos livres legítimos permanecem. Nenhum valor da tabela navega ou carrega mídia automaticamente.
 
-A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; demonstração T021 foi conferida e integrada pelo PR #16. A 003 consulta objetivo/pautas da aba opcional Meses, preenchida à mão pelo autor. O card acompanha o mês exibido, mostra objetivo definido na cor principal e até cinco pautas; o restante usa **+N pautas** ou **+1 pauta**. Ausência/objetivo vazio mostra **Ainda não definido**, duplicata mostra **A confirmar**, ambos apagados, com avisos de mês/tipo/duplicatas por linha física na Planilha. Textos usam `textContent`. As capturas antigas mantêm hash e bytes; Meses participa do hash ordenado por nome só quando presente. Nenhuma escrita ou fluxo de agentes; migração da meta semanal permanece operação externa. Implementação/testes sintéticos não comprovam leitura real da aba.
+A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; demonstração T021 foi conferida e integrada pelo PR #16. A 003 consulta objetivo/pautas da aba opcional Meses, preenchida à mão pelo autor. O card acompanha o mês exibido, mostra objetivo definido na cor principal e até cinco pautas; o restante usa **+N pautas** ou **+1 pauta**. Ausência/objetivo vazio mostra **Ainda não definido**, duplicata mostra **A confirmar**, ambos apagados, com avisos de mês/tipo/duplicatas por linha física na Planilha. Textos usam `textContent`. As capturas antigas mantêm hash e bytes; Meses participa do hash ordenado por nome só quando presente. Nenhuma escrita ou fluxo de agentes; migração da meta semanal permanece operação externa. A demonstração da leitura pela fonte real usou uma linha fictícia marcada como teste; isso não comprova uso editorial real.
 
 ## Executar a primeira entrega local
 
@@ -69,4 +69,4 @@ Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consu
 
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 
-**Próximo passo do autor:** criar/preencher Meses e realizar T015; [validação da 003](specs/003-planejamento-mensal/validacao.md).
+**Próximo passo:** uso real antes de decidir 004/005; evidências e limites na [validação da 003](specs/003-planejamento-mensal/validacao.md).

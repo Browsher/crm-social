@@ -1,6 +1,15 @@
 # Validação — 003 Planejamento mensal
 
-## Estado vigente — integração da main após T021
+## Fechamento — T002 e T015
+
+- Aba criada pelo autor.
+- 1 linha fictícia marcada como teste.
+- Card exibido: **passou**.
+- Contagens: **1 linha em Meses**, **1 objetivo exibido**, **3 pautas exibidas**, **0 avisos de Meses**.
+
+## Histórico preservado — verificações anteriores ao fechamento
+
+## Registro histórico — integração da main após T021
 
 A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. T002/criar-preencher Meses e T015/demonstração real permanecem pendentes do autor; testes sintéticos não comprovam integração real da aba.
 

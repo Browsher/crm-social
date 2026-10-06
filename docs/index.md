@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](../specs/001-consulta-local-producao/validacao.md). A captura histórica da 001 mantém seu limite; tipagem da coleta direta resolvida na T021, com categorias remanescentes na validação da 002. A 003 consulta Meses opcional com fixtures; demonstração real pendente do autor.
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](../specs/001-consulta-local-producao/validacao.md). A captura histórica da 001 mantém seu limite; tipagem da coleta direta resolvida na T021, com categorias remanescentes na validação da 002. A 003 está concluída, 15/15 tarefas; demonstração pelo CRM conferida com uma linha fictícia marcada como teste, sem publicar conteúdo.
 
 ## Ordem de leitura
 
@@ -71,7 +71,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 T021 demonstrada; implementação, provas sintéticas e resultados reais sanitizados na validação da 002.
 
-## Feature 003 — Consulta mensal (implementada/testada localmente; demonstração real pendente)
+## Feature 003 — Consulta mensal (concluída, 15/15)
 
 | Documento | Uso |
 | --- | --- |
@@ -79,12 +79,12 @@ T021 demonstrada; implementação, provas sintéticas e resultados reais sanitiz
 | [Plano](../specs/003-planejamento-mensal/plan.md) | Extensão mínima dos módulos atuais; cinco camadas verificadas localmente |
 | [Pesquisa](../specs/003-planejamento-mensal/research.md) | Código existente e documentação oficial da API consultada via Context7 |
 | [Modelo](../specs/003-planejamento-mensal/data-model.md) / [Contrato](../specs/003-planejamento-mensal/contracts/meses.md) | Quatro mínimos, optionalidade/hash legado, linha física, avisos e consulta |
-| [Tarefas](../specs/003-planejamento-mensal/tasks.md) | 15 tarefas; preparação/demonstração manuais pendentes independentes dos testes sintéticos |
+| [Tarefas](../specs/003-planejamento-mensal/tasks.md) | 15 tarefas concluídas; preparação do autor e demonstração pelo CRM com registro fictício |
 | [Quickstart](../specs/003-planejamento-mensal/quickstart.md) | Instruções do autor e comandos para repetir ensaios sintéticos executados |
 | [Validação](../specs/003-planejamento-mensal/validacao.md) | RED/GREEN, gate local, revisão, screenshots sintéticos e pendências reais |
-| [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado em leitura; sua espera de implementação foi substituída pela autorização atual registrada em spec/validação/tarefas |
+| [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado; fechamento registrado em spec/validação/tarefas |
 
-Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: gate Windows com 322 PASS sem pulos nas cinco camadas, cobertura 98,3871%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A. [Relatório local da integração](reports/003-integracao-t021-local-gate.json); resultados anteriores são históricos. Os checks e o review vigentes do [PR #15](https://github.com/Browsher/crm-social/pull/15) devem ser conferidos antes de qualquer merge, conforme a [validação da 003](../specs/003-planejamento-mensal/validacao.md). Objetivo definido usa cor principal; pautas restantes usam +N pautas/+1 pauta. T002/T015 pendentes; fixtures não comprovam integração real de Meses.
+Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: gate Windows com 322 PASS sem pulos nas cinco camadas, cobertura 98,3871%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A. [Relatório local da integração](reports/003-integracao-t021-local-gate.json); resultados anteriores são históricos. Código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15); o fechamento documental exige novos checks/review. Evidência na [validação da 003](../specs/003-planejamento-mensal/validacao.md). Objetivo definido usa cor principal; pautas restantes usam +N pautas/+1 pauta. T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real ainda não comprovado. Próximo passo: uso real antes de decidir 004/005.
 
 ## Design e evidência visual
 

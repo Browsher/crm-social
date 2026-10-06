@@ -2,7 +2,7 @@
 
 **Feature Branch**: `003-planejamento-mensal`
 **Created**: 2026-10-05
-**Status**: Reescopo definido pelo autor em 05/10/2026; implementada e testada localmente com dados sintéticos. Evidências e limitações em [validacao.md](validacao.md); demonstração real pendente.
+**Status**: concluída, 15/15 tarefas; código integrado pelo PR #15 e demonstração pelo CRM conferida com uma linha fictícia marcada como teste na aba criada pelo autor. Evidências sanitizadas em [validacao.md](validacao.md). Próximo passo: uso real antes de decidir 004/005.
 **Input**: O CRM pessoal apenas lê a aba opcional `Meses`, preenchida à mão pelo autor, e mostra objetivo e pautas do mês. A decisão substitui integralmente o rascunho anterior. Fluxo de agentes, repasse ao Diretor e migração da meta semanal ficam fora do CRM. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão.
 
 ## Contexto e limites
@@ -77,7 +77,7 @@ Como autor, quero consultar a tabela Meses e localizar linhas duplicadas na mesm
 - **FR-007**: A aba Meses DEVE aparecer na Planilha somente quando capturada, mesmo vazia, com as quatro colunas, contagem NTV e os comportamentos existentes de teclado, foco, seleção e rolagem. Avisos DEVEM ficar no painel existente; nenhum texto de aviso longo no card.
 - **FR-008**: Dados mensais inválidos DEVEM produzir avisos localizados, sem associação inventada; textos DEVEM seguir a triagem/privacidade da consulta existente. Nenhum dado real, identificador de planilha, e-mail de conta ou segredo DEVE entrar em arquivo versionado, exemplo público ou log.
 - **FR-009**: A consulta DEVE preservar navegação mensal, calendário/lista, filtros, gaveta, semanas/peças históricas, selo e Histórico existentes. Reentrada da mesma captura não DEVE duplicar tentativa nem renovar horário; alteração somente em Meses DEVE ser reconhecida.
-- **FR-010**: A tarefa manual do autor DEVE orientar criação da aba e preenchimento do mês atual, sem bloquear implementação ou testes com fixtures sintéticas. Conforme autorização atual do autor, implementação, push e PR da 003 podem avançar; T021/aceite da 002 DEVE ser atendida antes do merge; foi demonstrada e integrada pelo PR #16. O novo head DEVE ter gate/review sem bloqueio de segurança ou regressão. Criação/preenchimento de Meses e demonstração real da 003 continuam tarefas pendentes, sem escrita operacional pelo CRM.
+- **FR-010**: A tarefa manual do autor DEVE orientar criação da aba e preenchimento do mês atual, sem bloquear implementação ou testes com fixtures sintéticas. Conforme autorização atual do autor, implementação, push e PR da 003 podem avançar; T021/aceite da 002 DEVE ser atendida antes do merge; foi demonstrada e integrada pelo PR #16. O novo head DEVE ter gate/review sem bloqueio de segurança ou regressão. Criação/preenchimento de Meses pelo autor e demonstração pelo CRM foram concluídas com uma linha fictícia marcada como teste; sem escrita operacional pelo CRM.
 
 ### Key Entities *(include if feature involves data)*
 

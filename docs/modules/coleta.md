@@ -23,6 +23,6 @@ dataSerial converte números somente em inicio_semana/data_prevista (dia civil i
 
 Envelope source=google-sheets-api; fonte da Central continua google-drive-connector. O [contrato](../../specs/002-consulta-planilhas/contracts/leitura-planilha.md) define o restante. [tests/coleta.test.cjs](../../tests/coleta.test.cjs) usa cliente falso; não consulta a planilha real. Limite: duas observações não são transação remota e não detectam necessariamente uma alteração desfeita entre elas. T021 demonstrada; resultados sanitizados na validação. Tipagem válida não transforma versão distinta em vigente nem comprova mídia.
 
-`mes` conserva o escalar recebido, sem conversão serial ou numérica; validação semântica pertence à triagem. A 003 mantém POST e guardas existentes; presença/ausência, criação/remoção e hash da opcional usam cliente falso, sem comprovar integração real de Meses.
+`mes` conserva o escalar recebido, sem conversão serial ou numérica; validação semântica pertence à triagem. A 003 mantém POST e guardas existentes; presença/ausência, criação/remoção e hash da opcional usam cliente falso, sem substituir a demonstração pelo CRM com uma linha fictícia marcada como teste, registrada na validação da 003.
 
 C04 percorre a coleta completa com metadados `America/Sao_Paulo`, `inicio_semana` e `publicado_em` seriais. Confere a publicação UTC no envelope e os dois hashes sobre os valores convertidos, com resultado esperado literal; essa prova sintética não valida o fuso ou a conta da planilha real.

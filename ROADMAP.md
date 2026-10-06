@@ -1,6 +1,6 @@
 # Roadmap — CRM Social local
 
-Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](specs/001-consulta-local-producao/validacao.md). 003 no PR #15; 004–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
+Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](specs/001-consulta-local-producao/validacao.md). 003 concluída, 15/15 tarefas, com código integrado pelo PR #15; 004–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
@@ -10,7 +10,7 @@ US1–US5, iniciador e escala sintética estão verificados localmente; revisão
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
-As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com T021 demonstrada, 24/24 tarefas; 003 no PR #15, com tarefas manuais do autor pendentes; 004–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
+As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com T021 demonstrada, 24/24 tarefas; 003 concluída, 15/15 tarefas, com código integrado pelo PR #15, com T002/T015 conferidas usando uma linha fictícia marcada como teste; 004–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
 
 ## 001 — Consulta local da produção
 
@@ -22,7 +22,7 @@ As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a
 
 **Resultado visível:** menu com Planejamento, Produção e Planilha. Planejamento mostra calendário com cartões, lista semanal, objetivo **Ainda não definido** e **N sem data**. Clicar no cartão ou no dia abre a gaveta do dia inteiro, com acordeões por peça. Produção organiza as peças em quadro por etapa, com **Outras** preservando valores desconhecidos. Planilha apresenta as seis abas capturadas e Histórico. O selo de status tem quatro estados; no celular, Planejamento usa lista e a gaveta ocupa a tela.
 
-**Dependências:** definir o contrato da captura e conferir os registros disponíveis. Preservar IDs internos, versões e relações entre semana, produção e arquivos. Não há acesso contínuo à fonte nesta feature.
+**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
 
 **Aceite:** os conteúdos da captura aparecem sem duplicação, inclusive semanas que cruzam meses e a imagem B histórica. Calendário, lista, quadro e gaveta concordam entre si; o dia inteiro não é reduzido pelo filtro de formato. **Publicada** exige registro explícito de publicação; **com quem está** mantém `responsavel_atual`, separado de `responsavel_correcao` da revisão vigente. Sem inferir encaminhamentos. Captura antiga, parcial, inválida ou indisponível fica identificada e falha mantém a anterior. **Atualizar dados** apenas relê a captura local. Teclado, Esc e 390 px funcionam sem corte da página; tabelas têm rolagem própria. Nenhuma consulta edita, gera, ativa ou publica.
 
@@ -32,7 +32,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço própria, com chave fora do repositório e nunca enviada ao navegador.
 
-**Dependências:** 001 concluída, emenda 1.1.0 aprovada/aplicada em 05/10. Seis abas existentes, chave externa, JWT nativo sem dependência de aplicação, batchGet duas vezes e mesmo importador. Conta preparada pelo autor; testes continuam falsos/sintéticos. Sem abas auxiliares nesta feature.
+**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
 
 **Aceite:** seis abas tipadas/íntegras, sem escrita Google/Drive, chave fora de Git/browser/log, quatro falhas preservando vigente/data e Central por arquivo. Na 003, objetivo **Ainda não definido** quando falta a linha/objetivo de Meses. T021 demonstrada; estado na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
@@ -40,11 +40,11 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## 003 — Consulta do planejamento mensal
 
-**Estado em 05/10/2026:** [spec reescopada pelo autor](specs/003-planejamento-mensal/spec.md), [plano](specs/003-planejamento-mensal/plan.md) e [tarefas](specs/003-planejamento-mensal/tasks.md); ajustes de apresentação implementados/testados com fixtures/fakes/TEMP, fonte `84ab509`. [Validação](specs/003-planejamento-mensal/validacao.md) e [gate local dos ajustes](docs/reports/003-ajustes-local-gate.json): Node 24.19.0, 320 PASS sem pulos, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos, baseline preservada; Semgrep SKIP por ausência no Windows e audit N/A. O head `fd92f09`, com a fonte de código `84ab509`, tem [gate Linux](https://github.com/Browsher/crm-social/actions/runs/37389043475) e [review publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6005518372) conferidos, sem Critical/Important/segurança/regressão. O código/testes/gate são idênticos entre esses heads; novos commits exigem conferir os checks do PR, sem atribuir-lhes um resultado anterior. Nenhuma integração real comprovada.
+**Estado:** 003 concluída, 15/15 tarefas; código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15). T002 (aba criada pelo autor) e T015 (demonstração pelo CRM) conferidas com uma linha fictícia marcada como teste; [validação sanitizada](specs/003-planejamento-mensal/validacao.md). As provas de fixtures/gates anteriores permanecem históricas. Próximo passo: uso real antes de decidir 004/005.
 
 **Resultado visível:** objetivo e pautas do mês exibido, lidos da aba opcional **Meses** (`mes`, `marca_id`, `objetivo`, `pautas`). Card com objetivo definido na cor principal, até cinco pautas e **+N pautas** ou **+1 pauta** restantes; sem aba/linha, **Ainda não definido** apagado; duplicata por marca/mês, **A confirmar** apagado com aviso na Planilha. Meses aparece na Planilha como as outras tabelas, quando capturada.
 
-**Dependências:** implementação, push, PR e merge autorizados. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. T002/criar-preencher Meses à mão e T015/demonstração real da 003 permanecem pendentes, sem bloquear testes sintéticos ou consulta sem a aba. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas anteriores da Central.
+**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
 
 **Aceite:** consulta somente leitura; Meses opcional sem migração histórica; integridade, falhas, frescor, privacidade e histórico da 002 preservados. Pouco texto, quatro mínimos, sem campos extras, repasse, vínculo mensal com semana ou migração da meta semanal pelo CRM.
 
@@ -54,7 +54,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** o usuário solicita ajustes pelo CRM e acompanha o retorno. Toda solicitação identifica conteúdo, versão de origem e pedido; a Central confere a versão vigente e registra a decisão nos campos autorizados.
 
-**Dependências:** concluir 001–003 e definir o contrato de solicitação, confirmação, conflito e recibo, incluindo tratamento de reenvio.
+**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
 
 **Aceite:** uma solicitação permanece pendente até existir confirmação da Central para a versão correta. Versão divergente produz conflito explícito; reenvio não aplica a mesma mudança duas vezes. O recibo permite conferir o resultado na fonte. Rejeição confirmada bloqueia as dependências pertinentes. A interface não se torna um segundo escritor operacional, e aprovação humana não substitui conferência técnica nem habilita geração ou publicação.
 
@@ -62,7 +62,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** prévias reais dos arquivos autorizados, com origem, versão e relação com o conteúdo. Referências visuais e materiais de produção aparecem identificados; no carrossel, cada página mostra o arquivo efetivamente disponível.
 
-**Dependências:** concluir 001–004, conferir os registros de Biblioteca/Arquivos e definir como disponibilizar localmente os materiais permitidos. A tela **Conteúdos** entra aqui, com prévias somente dos arquivos liberados.
+**Dependências:** T021 atendida pelo PR #16; código da 003 integrado pelo PR #15. T002/criação da aba pelo autor e T015/demonstração pelo CRM concluídas com uma linha fictícia marcada como teste. Atualizar dados lê Meses se existir, preservando as seis obrigatórias e as capturas da Central. Fechamento documental autorizado com gate/review vigentes.
 
 **Aceite:** cada prévia corresponde a um arquivo real e à versão informada. Referência não aparece como peça produzida; arquivo ausente ou inacessível não recebe prévia fictícia. Mídia disponível, conferida e aprovada mantém estados distintos. Não há geração automática, exposição de credenciais nem mudança de permissões públicas do Drive.
 
@@ -80,4 +80,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo do autor:** criar/preencher Meses e realizar T015; [validação da 003](specs/003-planejamento-mensal/validacao.md).
+**Próximo passo:** uso real antes de decidir 004/005; evidências/limites na [validação da 003](specs/003-planejamento-mensal/validacao.md).
