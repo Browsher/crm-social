@@ -9,12 +9,12 @@
 
 ## Global Constraints
 
-- Constituição 1.1.0 aprovada/aplicada; nenhuma escrita remota ou coleta real nesta rodada.
-- Privacidade: só fixtures; RSA gerada em runtime, nunca PEM/email/ID reais versionados. Conta do autor pendente não bloqueia.
+- Constituição 1.1.0 aprovada/aplicada; nenhuma escrita remota. Plano inicial sintético preservado; demonstração real T021 posteriormente autorizada e conferida na validação.
+- Privacidade: só fixtures; RSA gerada em runtime, nunca PEM/email/ID reais versionados. Conta preparada pelo autor; nenhum valor privado nas evidências públicas.
 - Um responsável por arquivo; cinco camadas; código novo precisa teste próprio. .ps1 ASCII.
 - Não alterar configuração/tools/baseline do gate nem instalar pacote de aplicação.
 - Uma trava até concluir await/promoção; recusa/erro preservam vigente/data. Limpeza avisa sem sobrescrever resultado.
-- Um PR, sem merge; evidências de heads/review/checks só em validacao.md.
+- PR original entregue; fechamento da T021 em PR próprio autorizado. Merge condicionado a gate/review vigentes; provas públicas sem identificadores ou valores da fonte.
 
 ## Technical Context
 
@@ -24,7 +24,7 @@
 | Chave | caminho absoluto por env externo lexicalmente à pasta do projeto, JSON service_account/RSA≥2048; sem realpath/junction |
 | Transporte | fetch redirect:error, AbortSignal.timeout 15s por chamada, sem retry automático; JSON bruto nunca logado |
 | Coleta | get metadata com IDs/dimensões/timeZone; dois batchGet com seis ranges alocados, ROWS/UNFORMATTED_VALUE/SERIAL_NUMBER |
-| Tipos/datas | escalares preservados; números de inicio_semana/data_prevista viram dia civil; publicado_em serial vira ISO no fuso metadata via round-trip, inválido recusa |
+| Tipos/datas | escalares preservados, exceto inteiro textual canônico seguro nos campos numéricos declarados antes dos dois hashes; números de inicio_semana/data_prevista viram dia civil; publicado_em serial vira ISO no fuso metadata via round-trip, inválido recusa |
 | Persistência | atualizarCaptura async usa lock existente e promoverComTrava/recibo interno; CLI síncrono preservado |
 | HTTP | POST /api/atualizar {} origem exata/host local, ≤1KiB; GET sem rede; erro/categorias/textos fixos |
 | UI | POST depois GET confirmado, status role=status curto; botão desabilitado; dados anteriores preservados |

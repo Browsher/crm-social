@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 implementada/testada com cliente falso; conta e demonstração reais pendentes: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, implementada e testada localmente; [validação da 003](../specs/003-planejamento-mensal/validacao.md) separa testes sintéticos da demonstração real pendente. Push/PR autorizados; T021/aceite da 002 bloqueia somente o merge.
+001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, implementada e testada com fixtures; [validação da 003](../specs/003-planejamento-mensal/validacao.md) registra a demonstração real pendente. T021 atendida, integração da main em conferência sob gate/review vigentes.
 
 ## Módulos e imports reais
 
@@ -48,7 +48,7 @@ flowchart LR
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
 | projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses opcional | [Projeção](modules/projecao.md) |
 | google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
-| coleta | Duas leituras de seis grades e Meses quando existe, datas, hashes e metadados | [Coleta](modules/coleta.md) |
+| coleta | Duas leituras de seis grades e Meses quando existe, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
 | servidor | HTTP local com cinco rotas fixas, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
 | web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses opcional, Histórico e avisos detalhados; card mensal pelo mês exibido | [Interface](modules/web.md) |
@@ -150,7 +150,7 @@ Por decisão do autor, a triagem em texto livre e recibo substitui somente peda�
 | `CRM_PLAYWRIGHT_MODULE` | Teste de interface resolve Playwright existente; sem ela tenta playwright |
 | `CI=true` / plataforma Linux | Interface faz SKIP com CI=true; iniciador faz SKIP fora de win32. M8: UI fora do LCOV e fronteira UI/PowerShell no Linux, sem substituir aceite Windows |
 
-Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). O [iniciador](modules/iniciador.md) confirma a linha de início do Node em até dez segundos, retorna PID/URL/logDir/orientação de encerramento e mantém logs em `<DataDir>/runtime/`. Em erro encerra somente o filho criado por sua chamada; nunca o ocupante da porta. A 001 foi demonstrada com captura oficial; a leitura direta da 002 ainda aguarda conta/demonstração reais e deve preservar os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); hashes coerentes de fixture não comprovam coleta real.
+Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). O [iniciador](modules/iniciador.md) confirma a linha de início do Node em até dez segundos, retorna PID/URL/logDir/orientação de encerramento e mantém logs em `<DataDir>/runtime/`. Em erro encerra somente o filho criado por sua chamada; nunca o ocupante da porta. A 001 foi demonstrada com captura oficial; a leitura direta da 002 foi demonstrada na T021 e preserva os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); hashes coerentes de fixture não comprovam coleta real.
 
 ## O que já aparece e o que falta
 
@@ -228,7 +228,7 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Avisos de complexidade | Funções do CLI, snapshot, projeção e web; medições atuais somente na validação, manutenção sem retirar validações |
 | Manutenção da montagem do acordeão | acordeaoPeca em src/web/app.js; reúne seções com helpers compactos; preservar testes em futuras extrações, métricas na validação |
-| Fonte/hashes no envelope não são prova de coleta | validarCaptura em src/captura.cjs; Central e captura real ainda devem ser conferidas |
+| Fonte/hashes no envelope não são prova de coleta | validarCaptura em src/captura.cjs; demonstrações da Central/002 conferidas nas respectivas validações; futuras capturas continuam exigindo evidência própria |
 | Custo e limite do review | Limite 60 turnos/20 min na 0.4.9; custo/tempo e teto numérico de arquivos ainda a acompanhar |
 | gerar-testes e retenção remota | Não exercitados no Actions; testes locais do kit não substituem prova remota |
 | UI fora do LCOV e pulos UI/PowerShell no Linux | tests/interface.test.cjs e tests/iniciador.test.cjs; M8; CI/cobertura não substituem execução Windows local |

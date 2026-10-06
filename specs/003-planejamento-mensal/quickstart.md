@@ -1,6 +1,6 @@
 # Executar e conferir — Meses
 
-Data: 2026-10-05. Consulta mensal implementada e testada localmente com fixtures/fakes/TEMP. Ambiente e Node/Playwright existentes conforme o [quickstart da 002](../002-consulta-planilhas/quickstart.md). Evidências na [validação](validacao.md) e no [gate local dos ajustes](../../docs/reports/003-ajustes-local-gate.json); nenhum Google real consultado. O autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge.
+Data: 2026-10-05. Consulta mensal implementada e testada localmente com fixtures/fakes/TEMP. Ambiente e Node/Playwright existentes conforme o [quickstart da 002](../002-consulta-planilhas/quickstart.md). Evidências na [validação](validacao.md) e no [gate local dos ajustes](../../docs/reports/003-ajustes-local-gate.json); nenhum Google real consultado. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão.
 
 ## Tarefa do autor — criar/preencher Meses
 
@@ -11,7 +11,7 @@ Na planilha já usada pelo CRM, à mão:
 3. Formatar **mes** como texto simples e preencher uma única linha do mês atual em **AAAA-MM**, marca **ntv**, objetivo curto e pautas, uma por linha dentro da mesma célula.
 4. Manter apenas uma linha por mês/marca. Não fornecer IDs, e-mails de conta ou chaves em documentos públicos.
 
-O CRM não cria/preenche a aba. T002 permanece tarefa manual pendente e não bloqueia implementação ou testes: sem a aba real, usar as fixtures sintéticas. Preparação não comprova integração. T015/demonstração real também permanece pendente; T021/aceite da 002 bloqueia somente o merge.
+O CRM não cria/preenche a aba. T002 permanece tarefa manual pendente e não bloqueia implementação ou testes: sem a aba real, usar as fixtures sintéticas. Preparação não comprova integração. T015/demonstração real também permanece pendente; A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão.
 
 ## Repetir os ensaios sintéticos
 
@@ -33,7 +33,7 @@ node --test tests/interface.test.cjs tests/atualizacao-interface.test.cjs
 node tools/quality-gate.mjs
 ```
 
-Gate local dos ajustes executado: fonte `84ab509`, Node 24.19.0, 320 testes PASS sem pulos nas cinco camadas, cobertura 98,3660%, drop 0 e complexidade PASS com 17 avisos; objetivoMensal 14, abaixo de 21. Baseline não atualizada; Semgrep SKIP por ausência no Windows, audit N/A sem dependências de aplicação. A seleção U003, incluindo oito novos cenários de interface, teve RED 12 PASS/8 FAIL e GREEN 20 PASS, sem pulos. O [gate inicial de 312 PASS](../../docs/reports/003-local-gate.json) permanece histórico. Consultar [validacao.md](validacao.md) para RED/GREEN e limites. O head `fd92f09`, com a fonte de código `84ab509`, tem [gate Linux](https://github.com/Browsher/crm-social/actions/runs/37389043475) e [review publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6005518372) conferidos, sem Critical/Important/segurança/regressão. O código/testes/gate são idênticos entre esses heads; novos commits exigem conferir os checks do PR, sem atribuir-lhes um resultado anterior. Um novo head exige nova conferência; pulos UI/PowerShell no Linux não substituem a prova Windows local.
+Gate histórico local dos ajustes executado: fonte `84ab509`, Node 24.19.0, 320 testes PASS sem pulos nas cinco camadas, cobertura 98,3660%, drop 0 e complexidade PASS com 17 avisos; objetivoMensal 14, abaixo de 21. Baseline não atualizada; Semgrep SKIP por ausência no Windows, audit N/A sem dependências de aplicação. A seleção U003, incluindo oito novos cenários de interface, teve RED 12 PASS/8 FAIL e GREEN 20 PASS, sem pulos. O [gate inicial de 312 PASS](../../docs/reports/003-local-gate.json) permanece histórico. Consultar [validacao.md](validacao.md) para RED/GREEN e limites. O head `fd92f09`, com a fonte de código `84ab509`, tem [gate Linux](https://github.com/Browsher/crm-social/actions/runs/37389043475) e [review publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6005518372) conferidos, sem Critical/Important/segurança/regressão. O código/testes/gate são idênticos entre esses heads; novos commits exigem conferir os checks do PR, sem atribuir-lhes um resultado anterior. Um novo head exige nova conferência; pulos UI/PowerShell no Linux não substituem a prova Windows local.
 
 ## Demonstração privada pendente — T015
 

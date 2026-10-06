@@ -1,5 +1,13 @@
 # Validação — 003 Planejamento mensal
 
+## Estado vigente — integração da main após T021
+
+A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. T002/criar-preencher Meses e T015/demonstração real permanecem pendentes do autor; testes sintéticos não comprovam integração real da aba.
+
+A main integrada contém a correção TDD dos inteiros textuais canônicos nos campos numéricos da 002, seus testes sintéticos e a evidência sanitizada da T021. Meses mantém seus quatro mínimos e não recebe coerção numérica. As verificações locais e remotas anteriores abaixo são históricas; o head integrado exige seu próprio gate/review. Nenhuma demonstração real de Meses foi executada.
+
+## Histórico preservado — rodadas anteriores ao PR #16
+
 ## Autorização e limites — 05/10/2026
 
 O autor autorizou implementação com speckit-implement/TDD, push e abertura de PR para main, sem merge. Essa instrução substitui a espera de implementação registrada no planejamento: T021 da 002 permanece pendente e bloqueia o merge da 003. T002 (criar/preencher Meses) e T015 (demonstração privada) são tarefas do autor, pendentes; fixtures não comprovam integração real.

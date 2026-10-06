@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002/003 implementadas/testadas localmente, com demonstrações reais pendentes; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](../specs/001-consulta-local-producao/validacao.md). A captura histórica da 001 mantém seu limite; tipagem da coleta direta resolvida na T021, com categorias remanescentes na validação da 002. A 003 consulta Meses opcional com fixtures; demonstração real pendente do autor.
 
 ## Ordem de leitura
 
@@ -53,7 +53,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
 
-## Feature 002 — Planilhas (implementada localmente; conta/demonstração reais pendentes)
+## Feature 002 — Planilhas (concluída; T021 demonstrada, 24/24)
 
 | Documento | Uso |
 | --- | --- |
@@ -69,7 +69,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Checklist](../specs/002-consulta-planilhas/checklists/requirements.md) | Qualidade da especificação; não substitui testes ou aprovação |
 | [Análise](../specs/002-consulta-planilhas/analysis.md) | Nova análise reduzida; ajustes antigos corrigidos pelo escopo aprovado |
 
-Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
+T021 demonstrada; implementação, provas sintéticas e resultados reais sanitizados na validação da 002.
 
 ## Feature 003 — Consulta mensal (implementada/testada localmente; demonstração real pendente)
 
@@ -84,7 +84,7 @@ Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
 | [Validação](../specs/003-planejamento-mensal/validacao.md) | RED/GREEN, gate local, revisão, screenshots sintéticos e pendências reais |
 | [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado em leitura; sua espera de implementação foi substituída pela autorização atual registrada em spec/validação/tarefas |
 
-Código/testes dos ajustes da 003 executados com fixtures/fakes/TEMP, fonte `84ab509`; Node 24.19.0, 320 PASS sem pulos e cobertura 98,3660%, drop 0. O autor autorizou implementação, push e PR; T021/aceite da 002 bloqueia somente o merge. T002/preparar Meses e T015/demonstração real permanecem pendentes. O head `fd92f09`, com a fonte de código `84ab509`, tem [gate Linux](https://github.com/Browsher/crm-social/actions/runs/37389043475) e [review publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6005518372) conferidos, sem Critical/Important/segurança/regressão. O código/testes/gate são idênticos entre esses heads; novos commits exigem conferir os checks do PR, sem atribuir-lhes um resultado anterior. A [validação](../specs/003-planejamento-mensal/validacao.md) distingue os resultados de cada head. Um novo head exige nova conferência dos checks. Nenhuma escrita na operação, instalação de perfil, repasse ao Diretor ou mudança de agenda/meta semanal.
+Histórico: código/testes dos ajustes da 003 executados com fixtures/fakes/TEMP, fonte `84ab509`; Node 24.19.0, 320 PASS sem pulos e cobertura 98,3660%, drop 0. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. T002/preparar Meses e T015/demonstração real permanecem pendentes. O head `fd92f09`, com a fonte de código `84ab509`, tem [gate Linux](https://github.com/Browsher/crm-social/actions/runs/37389043475) e [review publicado](https://github.com/Browsher/crm-social/pull/15#issuecomment-6005518372) conferidos, sem Critical/Important/segurança/regressão. O código/testes/gate são idênticos entre esses heads; novos commits exigem conferir os checks do PR, sem atribuir-lhes um resultado anterior. A [validação](../specs/003-planejamento-mensal/validacao.md) distingue os resultados de cada head. Um novo head exige nova conferência dos checks. Nenhuma escrita na operação, instalação de perfil, repasse ao Diretor ou mudança de agenda/meta semanal.
 
 ## Design e evidência visual
 
@@ -191,6 +191,8 @@ Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; ta
 
 [Relatório local dos ajustes do PR #14](reports/002-ajustes-local-gate.json), com head validado explícito; os dois relatórios acima preservam as rodadas anteriores. Aceite Linux e reviews correspondentes na mesma validação.
 
+[Resumo sanitizado do gate local da T021](reports/002-t021-local-gate.json). Resultados reais somente sanitizados na validação da 002; nenhum dado privado neste relatório.
+
 ## Evidência da 003
 
-[Relatório inicial da consulta mensal](reports/003-local-gate.json): 312 PASS, preservado como histórico. [Relatório local dos ajustes](reports/003-ajustes-local-gate.json): fonte validada `84ab509`, 320 PASS, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos, Semgrep SKIP por ausência no Windows, audit N/A e baseline não atualizada. Identifica separadamente `gateProcessHead:f020d26`, pois o gate precedeu o commit de código. [Resumo histórico do gate Linux](reports/003-ci-gate.json): head `9ef4e6b`, Semgrep PASS, extraído dos logs oficiais sem inventar contagem/percentual remotos. [Resumo Linux dos ajustes](reports/003-ajustes-ci-gate.json): head `fd92f09`, gate/review conferidos. Novos commits exigem conferir os checks do PR. Execuções, reviews, doze screenshots sintéticos atuais e pendências reais na [validação](../specs/003-planejamento-mensal/validacao.md). [PR #15](https://github.com/Browsher/crm-social/pull/15) aberto, sem merge até T021/aceite da 002; integração real não comprovada.
+[Relatório inicial da consulta mensal](reports/003-local-gate.json): 312 PASS, preservado como histórico. [Relatório local dos ajustes](reports/003-ajustes-local-gate.json): fonte validada `84ab509`, 320 PASS, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos, Semgrep SKIP por ausência no Windows, audit N/A e baseline não atualizada. Identifica separadamente `gateProcessHead:f020d26`, pois o gate precedeu o commit de código. [Resumo histórico do gate Linux](reports/003-ci-gate.json): head `9ef4e6b`, Semgrep PASS, extraído dos logs oficiais sem inventar contagem/percentual remotos. [Resumo Linux dos ajustes](reports/003-ajustes-ci-gate.json): head `fd92f09`, gate/review conferidos. Novos commits exigem conferir os checks do PR. Execuções, reviews, doze screenshots sintéticos atuais e pendências reais na [validação](../specs/003-planejamento-mensal/validacao.md). [PR #15](https://github.com/Browsher/crm-social/pull/15) em conferência após integrar main; T021 da 002 atendida, merge autorizado sob gate/review vigentes; integração real de Meses não comprovada.

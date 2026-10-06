@@ -1,6 +1,6 @@
 # Contrato — 002, seis abas v1
 
-Decisões aprovadas 2026-10-05. Estende [v1 da 001](../../001-consulta-local-producao/contracts/captura-e-consulta.md) somente para source google-sheets-api; source google-drive-connector continua. Sem captureProfile, exatamente seis abas e 66 mínimos. Tipos/regras/identidade/frescor/no-op/colisão antigos preservados.
+Decisões aprovadas 2026-10-05. Estende [v1 da 001](../../001-consulta-local-producao/contracts/captura-e-consulta.md) para source google-sheets-api e normalização numérica restrita na coleta direta; source google-drive-connector continua. Sem captureProfile, exatamente seis abas e 66 mínimos. Identidade/frescor/no-op/colisão e capturas históricas preservados.
 
 ## Coleta
 
@@ -9,6 +9,22 @@ Metadados antes (sheetId,title,rowCount,columnCount e timeZone) → batchGet com
 Ranges por nome escapado, A1:última coluna/linha alocada; batchGet com UNFORMATTED_VALUE e SERIAL_NUMBER. Número/bool/string permanecem tipos. Só inicio_semana/data_prevista numéricos convertem serial inteiro base1899-12-30 para YYYY-MM-DD; publicado_em numérico converte fração em horário civil no fuso metadata e UTC por round-trip. Serial inválido/horário inexistente recusa; strings mantidas, sem coerção geral. Duas leituras não garantem transação remota ou ausência de mudança transitória revertida.
 
 Envelope startedAt/completedAt/readAt UTC Z, capturaId seguro; tabelas da segunda leitura, metadataBefore/After antigos sem campos extras. Mesma canonicalização hashCelulas e validarCaptura. Não grava leitura bruta; snapshot promove captura/recibo/ponteiro únicos. Novo ID só se instante mais recente, tolerância futuro10min mantida.
+
+## Inteiros textuais nos campos numéricos — T021
+
+Na coleta direta, antes de calcular **cada** hash, texto canônico que corresponda a `^(?:0|[1-9][0-9]*)$` e cujo número seja inteiro seguro é convertido somente nos campos abaixo. Cabeçalhos, IDs, texto livre, datas textuais e campos extras permanecem como recebidos. Número e booleano nativos não sofrem coerção.
+
+| Aba | Campos numéricos |
+| --- | --- |
+| Produções | versao |
+| Páginas | versao, indice |
+| Cenas | versao, indice, inicio_segundos, duracao_segundos |
+| Arquivos | versao |
+| Revisoes | versao |
+
+Espaços, sinal, zero à esquerda, decimal textual, notação exponencial e inteiro além de `Number.MAX_SAFE_INTEGER` não são convertidos. Permanecem na captura e geram os avisos numéricos existentes na consulta quando preenchidos. Vazio continua ausente. A conversão não relaxa a regra do campo: versão/índice exigem inteiro positivo; tempos exigem número finito não negativo, admitindo decimais nativos. Zero textual converte para zero, mas continua inválido para versão/índice. Não se convertem datas textuais em serial nem versões dentro de JSON de origens.
+
+Os hashes cobrem os valores normalizados nas duas leituras, como já ocorre com datas declaradas. Representações canônicas equivalentes de um inteiro têm o mesmo significado numérico; as duas leituras não distinguem uma troca entre essas representações. Importação da Central e leitura de capturas antigas continuam com os tipos/bytes originais, sem migração ou regravação. Tipagem válida permite comparar versões, mas não prova que versões diferentes sejam vigentes nem que exista mídia.
 
 ## Auth e configuração
 
@@ -35,6 +51,6 @@ Preservar vigente/completedAt; confirmar recibo de falha quando possível, para 
 
 GET /api/visao continua sem rede/escrita; estáticos e bind127.0.0.1 iguais. POST /api/atualizar exige Host127.0.0.1:porta e Originhttp://127.0.0.1:porta, JSON{} até1KiB; sem query, extra campo, URL/ID/key do browser. Guardas400/403/413/415/405 e resposta só resultado/mensagem/categoria/avisos/registrada, nunca captura bruta.
 
-UI POST → GET para visão confirmada, botão desabilitado durante ambos; preserva tela anterior se GET falhar. Mensagem curta role=status: Atualizando dados / Dados atualizados / motivo fixo. Origem direta legível; zero Google no navegador. Arquivo da Central continua sem configuração Google. Conta real/demonstração pendentes, não bloqueiam fixtures/fakes.
+UI POST → GET para visão confirmada, botão desabilitado durante ambos; preserva tela anterior se GET falhar. Mensagem curta role=status: Atualizando dados / Dados atualizados / motivo fixo. Origem direta legível; zero Google no navegador. Arquivo da Central continua sem configuração Google. T021 demonstrada; resultado sanitizado na validação. Testes continuam exclusivamente com fixtures/fakes.
 
 Cache é por instância do cliente; o servidor padrão cria uma por POST. Reutiliza token na mesma coleta, não entre cliques.

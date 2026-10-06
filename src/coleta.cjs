@@ -2,6 +2,16 @@ const {randomUUID}=require('node:crypto');
 const {CAMPOS,validarCaptura,hashCelulas,letraColuna}=require('./captura.cjs');
 const {falha}=require('./google.cjs');
 const nomes=Object.keys(CAMPOS), DIA=86400000, EPOCA=Date.parse('1899-12-30T00:00:00Z');
+const NUMERICOS=Object.freeze({
+  'Produções':['versao'], 'Páginas':['versao','indice'],
+  Cenas:['versao','indice','inicio_segundos','duracao_segundos'],
+  Arquivos:['versao'], Revisoes:['versao']
+});
+function inteiroTextual(value){
+  if(typeof value!=='string'||!/^(?:0|[1-9][0-9]*)$/.test(value))return value;
+  const number=Number(value);
+  return Number.isSafeInteger(number)?number:value;
+}
 function exigir(ok){if(!ok)throw falha('dados');}
 function formatador(timeZone){return new Intl.DateTimeFormat('en-CA',{timeZone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',fractionalSecondDigits:3,hourCycle:'h23'});}
 function civilEm(ms,fmt){
@@ -38,7 +48,13 @@ function metadata(body,id){
 function converter(values,nome,timeZone){
   exigir(Array.isArray(values)&&values.length>0&&values.every(Array.isArray));
   const campos=nome==='Semanas'?['inicio_semana']:nome==='Produções'?['data_prevista','publicado_em']:[];
-  return values.map((row,i)=>row.map((value,j)=>i>0&&campos.includes(values[0][j])&&typeof value==='number'?dataSerial(value,timeZone,values[0][j]==='publicado_em'):value));
+  const numericos=NUMERICOS[nome]??[];
+  return values.map((row,i)=>row.map((value,j)=>{
+    if(i===0)return value;
+    const field=values[0][j];
+    if(campos.includes(field)&&typeof value==='number')return dataSerial(value,timeZone,field==='publicado_em');
+    return numericos.includes(field)?inteiroTextual(value):value;
+  }));
 }
 function tabelas(body,id,before,readAt){
   const capturados=Object.keys(before.meta);

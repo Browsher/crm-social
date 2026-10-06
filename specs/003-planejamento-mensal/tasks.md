@@ -1,12 +1,12 @@
 # Tasks: Consulta do planejamento mensal (15 tarefas)
 
 **Input**: [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md), [contrato](contracts/meses.md) e [quickstart](quickstart.md).
-**Status**: 13/15 concluídas em 05/10/2026; gate Linux/review publicado do head `fd92f09` conferidos, com fonte de código `84ab509` idêntica e sem Critical/Important/segurança/regressão. Evidências na validação; novos commits exigem conferir os checks do PR #15. T002/T015 permanecem pendentes do autor e não bloqueiam testes sintéticos. T021 da 002 bloqueia o merge; PR permanece aberto, sem merge.
+**Status**: 13/15 concluídas; T002/T015 permanecem pendentes do autor. T021 da 002 foi demonstrada e integrada pelo PR #16; main integrada na branch da 003. Gate/review do novo head precisam ser conferidos antes do merge autorizado. Resultados históricos e evidência desta integração na [validação](validacao.md).
 **Tests**: TDD obrigatório, RED observado antes do GREEN, nas cinco camadas. Fakes/fixtures/TEMP; nenhum Google real nos testes. Um dono por arquivo; não desfazer edições alheias. Não instalar dependência ou alterar baseline/tools do gate.
 
 ## Fase 1 — Setup e pré-requisito
 
-- [x] T001 Conferir T021 pendente em `specs/002-consulta-planilhas/validacao.md` e registrar em `specs/003-planejamento-mensal/validacao.md` a autorização atual do autor para implementar/publicar PR, mantendo T021 como bloqueio do merge. FR-010.
+- [x] T001 Conferir T021 concluída em `specs/002-consulta-planilhas/validacao.md` e registrar em `specs/003-planejamento-mensal/validacao.md` a autorização atual do autor para implementar/publicar PR, registrando o pré-requisito atendido e o merge autorizado sob gate/review vigentes. FR-010.
 - [ ] T002 [P] **Autor: criar a aba Meses na planilha com as colunas mínimas e preencher o mês atual**, seguindo `specs/003-planejamento-mensal/quickstart.md#tarefa-do-autor--criarpreencher-meses`: título Meses, cabeçalhos mes/marca_id/objetivo/pautas na linha 1, mes como texto AAAA-MM, marca ntv, objetivo curto e uma pauta por linha dentro da célula; uma linha por mês/marca. Não publicar valores/IDs/chaves. Independente de T001 e não bloqueia T003–T014; somente a demonstração T015 precisa dessa preparação. FR-001/010.
 
 ## Fase 2 — Fundamento: captura opcional compatível
@@ -45,13 +45,13 @@
 
 ## Fase final — Qualidade, documentação e demonstração
 
-- [x] T013 Verificar cinco camadas e suite completa com Node/Playwright existentes, rodar `tools/quality-gate.mjs` sem alterar tools/baseline, conferir gate Linux no PR autorizado e obter review publicado sem Critical/segurança/regressão. Registrar evidências/limites em `specs/003-planejamento-mensal/validacao.md`. Não tratar pulos UI/PowerShell do Linux como validação local. Sem merge até T021/aceite da 002. FR-002/003/008/009/010; SC-001–SC-006.
+- [x] T013 Verificar cinco camadas e suite completa com Node/Playwright existentes, rodar `tools/quality-gate.mjs` sem alterar tools/baseline, conferir gate Linux no PR autorizado e obter review publicado sem Critical/segurança/regressão. Registrar evidências/limites em `specs/003-planejamento-mensal/validacao.md`. Não tratar pulos UI/PowerShell do Linux como validação local. T021 atendida; merge autorizado somente com gate/review vigentes sem bloqueio. FR-002/003/008/009/010; SC-001–SC-006.
 - [x] T014 Sincronizar documentação e onboarding pelo perfil `.claude/agents/doc-sync-onboarding.md`, após código/gate: `README.md`, `AGENTS.md`, `ROADMAP.md`, `docs/index.md`, `docs/architecture.md`, módulos captura/coleta/triagem/projecao/web afetados e `specs/003-planejamento-mensal/validacao.md`; conferir design/contrato e estados planejado/implementado/testado/integrado. Fonte operacional continua readonly, sem agentes/meta semanal no CRM. Conferir diff documental final e links; screenshots somente sintéticos quando necessários. FR-001/002/007/008/009/010.
 - [ ] T015 **Autor: demonstração privada após T002 e implementação validada**, conforme `specs/003-planejamento-mensal/quickstart.md#demonstração-privada-pendente--t015`: Atualizar dados, conferir card/tabela do mês atual contra a mesma captura e registrar somente resultado/limites sanitizados em `specs/003-planejamento-mensal/validacao.md`, sem duplicata deliberada na planilha real. Não bloqueia testes sintéticos; não inventar conclusão. FR-001/003/004/005/007/008/010.
 
 ## Dependencies & Execution Order
 
-T001 (autorização atual registrada; T021 bloqueia merge) → T003 → T004 → US1 T005–T008 → US2 T009–T010 → US3 T011–T012 → T013 → T014 → T015. T002 manual pode ocorrer independentemente; somente T015 depende dela.
+T001 (autorização atual registrada; T021 atendida) → T003 → T004 → US1 T005–T008 → US2 T009–T010 → US3 T011–T012 → T013 → T014 → T015. T002 manual pode ocorrer independentemente; somente T015 depende dela.
 
 ## Parallel Opportunities
 
@@ -61,4 +61,4 @@ T001 (autorização atual registrada; T021 bloqueia merge) → T003 → T004 →
 
 ## Implementation Strategy
 
-MVP primeiro: fundamento + US1 por captura local, depois US2 e US3. RED/GREEN observado e regressões das 001–002; teste que já passa é regressão, não RED inventado. Execução autorizada; merge suspenso até T021/aceite real da 002.
+MVP primeiro: fundamento + US1 por captura local, depois US2 e US3. RED/GREEN observado e regressões das 001–002; teste que já passa é regressão, não RED inventado. Execução e merge autorizados; T021 atendida, gate/review do head integrado ainda precisam ser conferidos.

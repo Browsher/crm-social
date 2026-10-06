@@ -82,3 +82,57 @@ test('C03 datas a milissegundo, Sao Paulo, vazio/texto e DST ambiguo/inexistente
   assert.throws(()=>coleta.dataSerial(46296.5,'UTC',false),e=>e.categoria==='dados');
 });
 module.exports={fake};
+
+test('C05 T021 inteiros textuais canonicos nos campos numericos resolvem vigencia sem regravar legado',async t=>{
+  const {temporario,mapaQuadroValido,recalcularHashes}=require('./fixtures.cjs');
+  const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
+  const {projetarVisao}=require('../src/projecao.cjs');
+  const raw=capturaValida(),dir=temporario(t);
+  promoverCaptura(raw,dir);
+  const oldFile=path.join(dir,'capturas',raw.capturaId+'.json'),oldBytes=fs.readFileSync(oldFile);
+  for(const [aba,fields] of [['Produções',['versao']],['Páginas',['versao','indice']],['Cenas',['versao','indice','inicio_segundos','duracao_segundos']],['Arquivos',['versao']],['Revisoes',['versao']]]) {
+    const table=raw.tables[aba];
+    for(const row of table.values.slice(1))for(const field of fields){const i=table.values[0].indexOf(field);row[i]=String(row[i]);}
+  }
+  mudarCelula(raw,'Produções',1,'titulo','123');
+  mudarCelula(raw,'Produções',1,'data_prevista','46296');
+  mudarCelula(raw,'Cenas',1,'texto','456');
+  const before=JSON.stringify(raw);
+  const result=await coleta.coletarCaptura(fake(raw),{now:()=>new Date('2026-10-05T12:00:00Z'),capturaId:'tipagem-sintetica'});
+  const accepted=validarCaptura(result);
+  assert.equal(accepted.producoes[0].versao,1);
+  assert.equal(accepted.paginas[0].versao,1);assert.equal(accepted.paginas[0].indice,1);
+  assert.equal(accepted.cenas[0].versao,1);assert.equal(accepted.cenas[0].indice,1);
+  assert.equal(accepted.cenas[0].inicio_segundos,0);assert.equal(accepted.cenas[0].duracao_segundos,5);
+  assert.equal(accepted.arquivos[0].versao,1);assert.equal(accepted.revisoes[0].versao,1);
+  assert.equal(accepted.producoes[0].titulo,'123');assert.equal(accepted.producoes[0].data_prevista,'46296');assert.equal(accepted.cenas[0].texto,'456');
+  const expected=capturaValida();
+  mudarCelula(expected,'Produções',1,'titulo','123');mudarCelula(expected,'Produções',1,'data_prevista','46296');mudarCelula(expected,'Cenas',1,'texto','456');
+  recalcularHashes(expected);
+  assert.equal(result.firstReadSha256,expected.firstReadSha256);assert.equal(result.secondReadSha256,expected.secondReadSha256);
+  assert.equal(JSON.stringify(raw),before);
+  assert.equal(promoverCaptura(result,dir).resultado,'completa');
+  const state=lerEstado(dir),view=projetarVisao(state,'2026-10-05T12:01:00Z',mapaQuadroValido());
+  assert.equal(view.producoes.find(p=>p.slot==='carrossel').detalhes.paginas[0].vigente,true);
+  assert.equal(view.producoes.find(p=>p.slot==='reels').detalhes.cenas[0].vigente,true);
+  assert.equal(view.avisos.filter(a=>/^(Inteiro positivo inválido|Tempo inválido);/.test(a.motivo)).length,0);
+  assert.equal(view.estado,'atualizada_hoje');assert.equal(state.historico.length,2);
+  assert.deepEqual(fs.readFileSync(oldFile),oldBytes);
+});
+
+test('C06 T021 rejeita coercoes gerais e conserva avisos dos valores fora da regra',async()=>{
+  const {projetarVisao}=require('../src/projecao.cjs');
+  const {mapaQuadroValido}=require('./fixtures.cjs');
+  for(const value of ['01',' 1','1 ','1\n','1\r','1\r\n','1\t','+1','-1','1.0','1,0','1e2','outro','9007199254740993',true,-1,1.5,'0']) {
+    const raw=capturaValida();mudarCelula(raw,'Páginas',1,'versao',value);
+    const result=await coleta.coletarCaptura(fake(raw),{now:()=>new Date('2026-10-05T12:00:00Z'),capturaId:'invalida-sintetica'});
+    const captura=validarCaptura(result);
+    assert.equal(captura.paginas[0].versao,value==='0'?0:value);
+    const view=projetarVisao({captura,historico:[],ultimaTentativa:null},'2026-10-05T12:01:00Z',mapaQuadroValido());
+    assert.ok(view.avisos.some(a=>a.aba==='Páginas'&&a.campo==='versao'&&a.motivo.startsWith('Inteiro positivo inválido;')));
+    assert.equal(view.producoes.find(p=>p.slot==='carrossel').detalhes.paginas[0].vigente,false);
+  }
+  const raw=capturaValida();mudarCelula(raw,'Cenas',1,'duracao_segundos',2.5);
+  const result=await coleta.coletarCaptura(fake(raw),{now:()=>new Date('2026-10-05T12:00:00Z'),capturaId:'decimal-nativo-sintetico'});
+  assert.equal(validarCaptura(result).cenas[0].duracao_segundos,2.5);
+});
