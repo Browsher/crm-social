@@ -38,3 +38,7 @@ Gate histórico local dos ajustes executado: fonte `84ab509`, Node 24.19.0, 320 
 ## Demonstração privada — T015
 
 Autor conclui preparação manual e usa **Atualizar dados** após o aceite da 002 e implementação da 003. Conferir objetivo/pautas do mês atual e a tabela Meses contra a mesma captura vigente. Não criar duplicata deliberadamente na fonte real para testar: esses casos são sintéticos. Guardar apenas resultado/limites sanitizados, sem linha real, identificador de planilha, e-mail ou segredo em screenshot/relatório público.
+
+## Uso real antes de decidir 004/005
+
+A linha fictícia permanece na captura conferida. Para iniciar o uso real, o autor substitui o registro de teste pelo objetivo e pelas pautas que pretende usar; o CRM continua somente consulta. Usar a aplicação na rotina antes de decidir 004/005.
