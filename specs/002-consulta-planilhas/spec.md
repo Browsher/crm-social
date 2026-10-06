@@ -1,7 +1,7 @@
 # Feature Specification: 002 — Planilhas
 
 **Branch:** `002-consulta-planilhas`. **Created:** 2026-10-05.
-**Status:** escopo reduzido aprovado; constituição 1.1.0 aplicada. Implementação e aceite serão registrados somente em [validacao.md](validacao.md).
+**Status:** 002 concluída localmente, 24/24 tarefas; T021 demonstrada em 05/10/2026, após normalização restrita autorizada. Constituição 1.1.0 aplicada. Evidências, categorias remanescentes e limites em [validacao.md](validacao.md); merge do PR de fechamento condicionado a gate/review vigentes.
 **Input:** leitura pessoal da planilha pelo servidor local, sem dependências e sem escrita remota.
 
 ## User Scenarios & Testing
@@ -14,7 +14,7 @@ O usuário clica **Atualizar dados**; o servidor consulta as seis abas e promove
 **Acceptance Scenarios:**
 1. Dada captura vigente, ao atualizar com fonte estável, a nova captura completa e tipada substitui a anterior; selo e três telas concordam.
 2. Durante a leitura, botão desabilitado e dados anteriores visíveis; após promoção há mensagem curta de sucesso.
-3. Números/booleanos da fonte permanecem tipos nativos; texto numérico permanece texto. Versões/índices numéricos válidos resolvem a ambiguidade por tipagem da 001.
+3. Números/booleanos da fonte permanecem tipos nativos; texto numérico permanece texto, exceto inteiro canônico seguro nos campos numéricos declarados do contrato, normalizado antes dos dois hashes. Versões/índices numéricos válidos resolvem a ambiguidade por tipagem da 001.
 
 ### US2 — Falha preserva dados (P1)
 
@@ -34,12 +34,12 @@ O usuário clica **Atualizar dados**; o servidor consulta as seis abas e promove
 - **FR-001:** botão → POST local → seis abas Semanas, Produções, Páginas, Cenas, Arquivos, Revisoes; A1 até última linha/coluna alocadas; metadados antes/depois e batchGet duas vezes; hashes calculados em código e iguais antes da promoção.
 - **FR-002:** JWT RS256 nativo com node:crypto, escopo readonly único, aud/endpoint fixos https://oauth2.googleapis.com/token, exp−iat≤3600; fetch sem redirect, timeout; token apenas em memória. Sheets somente GET em sheets.googleapis.com.
 - **FR-003:** chave por CRM_GOOGLE_CREDENTIALS_FILE fora da pasta do projeto; CRM_SPREADSHEET_ID privado no servidor. Nenhuma chave/token/email/ID da fonte no navegador, arquivo versionado, erro ou log. Sem testes de links/junções.
-- **FR-004:** envelope schemaVersion 1, exatamente seis abas/66 mínimos e mesmo validador/importador/promoção; preservar tipos, IDs, regras de frescor e bytes legados. Sem perfil novo. Datas numéricas declaradas convertidas deterministicamente antes dos hashes.
+- **FR-004:** envelope schemaVersion 1, exatamente seis abas/66 mínimos e mesmo validador/importador/promoção; preservar tipos, IDs, regras de frescor e bytes legados. Sem perfil novo. Datas numéricas declaradas e inteiros textuais canônicos seguros nos campos numéricos do contrato são convertidos deterministicamente antes dos hashes; regra positiva de versão/índice e não negativa de tempo preservada.
 - **FR-005:** quatro categorias de falha, um teste por categoria; preservar vigente/data. Recibo confirmado informa falha ao selo/Histórico; falha de I/O sem recibo e lock ocupado não fingem confirmação. Aviso de liberação de trava usa texto fixo na resposta/UI, sem mudar resultado original.
 - **FR-006:** manter uma trava durante await e promoção, sem writer paralelo ou reacquisição aninhada; GET exclusivamente local; loopback e origem local obrigatória no POST.
 - **FR-007:** botão desabilitado enquanto atualiza, mensagem curta, recuperação e três telas existentes sem regressão em 1440/390. Fonte direta tem rótulo legível.
-- **FR-008:** arquivo da Central continua importável e consultável sem configurar Google. Conta real é tarefa pendente do autor, não bloqueia testes/PR; demonstração real fora desta rodada.
-- **FR-009:** TDD cinco camadas com fixtures/fakes e RSA gerada no teste; nenhuma dependência/package.json de aplicação; um PR para a 002 inteira, gate Linux verde e review publicado, sem merge autorizado.
+- **FR-008:** arquivo da Central continua importável e consultável sem configurar Google. Conta preparada pelo autor e demonstração T021 conferida; manter dados reais somente em armazenamento privado, com resultados sanitizados na validação.
+- **FR-009:** TDD cinco camadas com fixtures/fakes e RSA gerada no teste; nenhuma dependência/package.json de aplicação; PR original da implementação preservado; PR de fechamento da T021 autorizado com merge somente após gate Linux verde e review publicado sem bloqueios.
 
 ## Success Criteria
 
@@ -50,6 +50,6 @@ O usuário clica **Atualizar dados**; o servidor consulta as seis abas e promove
 
 ## Edge Cases e limites
 
-Abas/cabeçalhos/intervalos ausentes, hashes/meta diferentes, escalar inválido, captura futura >10min ou não mais recente: recusar, manter vigente. Textos numéricos reais não são convertidos. Dupla leitura não é transação remota; alteração desfeita entre observações pode não ser detectada. API batchGet omite finais vazios legitimamente; range declarado deve cobrir a grade inteira.
+Abas/cabeçalhos/intervalos ausentes, hashes/meta diferentes, escalar inválido, captura futura >10min ou não mais recente: recusar, manter vigente. Somente inteiros textuais canônicos seguros dos campos numéricos declarados são convertidos na coleta direta; outros textos preservam tipos e avisos. Dupla leitura não é transação remota; alteração desfeita entre observações pode não ser detectada, inclusive troca entre representações numéricas equivalentes. API batchGet omite finais vazios legitimamente; range declarado deve cobrir a grade inteira.
 
-Fora: Agentes/Controle/Execucoes (v2, visual ilustrativo), escala de 500 peças, links/junções, perfil nove, polling, escrita Google/Drive/fila/n8n/mídia e objetivo mensal (003). Nenhuma coleta real nesta rodada.
+Fora: Agentes/Controle/Execucoes (v2, visual ilustrativo), escala de 500 peças, links/junções, perfil nove, polling, escrita Google/Drive/fila/n8n/mídia e objetivo mensal (003). Testes continuam sintéticos; demonstração real autorizada somente no aceite T021, sem escrita na fonte.

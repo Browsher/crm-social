@@ -1,5 +1,7 @@
 # Validação — 002 Planilhas
 
+**Estado vigente:** 24/24 tarefas, T021 demonstrada e concluída localmente em 05/10/2026. A regra numérica e os resultados sanitizados estão no fechamento abaixo. Pendências/limites de rodadas anteriores permanecem históricos; merge do fechamento exige gate e review do head vigente.
+
 ## Decisões do autor — 2026-10-05
 
 - Emenda aprovada/aplicada: princípioVI, versão1.1.0, Last Amended2026-10-05; trecho de abas auxiliares retirado. I–V e Ratified preservados.
@@ -71,3 +73,57 @@ Commit `b37a06c5a1755c8c3b77df47ea17be7ae3dc5389`: autor e committer noreply, se
 [Novo review](https://github.com/Browsher/crm-social/actions/runs/37353418555) SUCCESS e [comentário publicado](https://github.com/Browsher/crm-social/pull/14#issuecomment-6000286967): nenhum Critical, segurança ou regressão no código. Seu único Important foi a falta de evidência versionada do gate desse head e a referência ao relatório local antigo. Resolvido documentalmente pelo run acima e pelo [relatório local completo dos ajustes](../../docs/reports/002-ajustes-local-gate.json), que identifica validatedHead=b37a06c e registra 273 testes/cobertura/complexidade dessa rodada. `002-local-gate.json` continua preservado como relatório histórico de 267 testes; `002-ci-gate.json` continua o resumo histórico de 0eb7aca, não evidência do head atual.
 
 Minor permanecem não bloqueantes: dependência de constantes snapshot→Google, maior janela da trava durante rede, consumo do corpo até o fim e cobertura adicional HTTP/UI. Configuração ausente confirma falha/selo por decisão explícita do autor. Na T021, conferir IDs textuais retornados como strings, ranges reais e datas históricas com DST; recusa conservadora continua prevista, sem coerção geral. Merge ainda não executado neste registro: a revisão e o gate do commit documental final serão conferidos antes da integração. A T021 permanece aberta.
+
+## T021 — regra numérica e fechamento, 05/10/2026
+
+Autorização atual: conta configurada pelo autor, demonstração privada e correção condicionada ao diagnóstico, com push/PR/merge após gate e review sem bloqueios. A primeira captura direta foi aceita, mas a conferência de tipagem falhou. Nenhuma validação foi alterada para ocultar esse resultado.
+
+| Aba | Campo | Categoria recebida | Contagem |
+| --- | --- | --- | --- |
+| Arquivos | versao | texto com inteiro exato | 21 |
+| Cenas | versao | texto com inteiro exato | 4 |
+| Páginas | versao | texto com inteiro exato | 5 |
+| Revisoes | versao | texto com inteiro exato | 4 |
+| Total | numéricos | texto com inteiro exato | 34 |
+
+Todos passaram pela condição autorizada. Na coleta direta, apenas os campos numéricos declarados aceitam texto canônico de inteiro seguro sem espaços, sinal ou zero à esquerda; normalização antes de ambos os hashes. Demais textos preenchidos mantêm os avisos existentes. Versão/índice exigem positivo; tempo exige finito não negativo. Vazio permanece ausente; números nativos preservados. Contrato e modelo atualizados; capturas históricas e JSON de origens não são convertidos.
+
+TDD sintético: C05/C06 observaram RED natural, **2 falharam**, por inteiro textual não convertido; GREEN, **6 passaram** na suíte da coleta. O bloqueio inicial do sandbox na persistência não foi contado como RED. Regressões sintéticas cobrem campos declarados, texto livre/data textual preservados, hashes sobre valores normalizados, vigência por versão igual, bytes/Histórico legados, zero por regra, decimal textual, sinais, espaços/controles, zero à esquerda, booleano, exponencial e limite seguro. A checagem adicional de espaços/controles passou sem nova mudança de código; não é apresentada como RED natural.
+
+### Demonstração real — somente contagens, resultado e categorias
+
+| Aba | Central anterior | Direta atual | Resultado |
+| --- | --- | --- | --- |
+| Semanas | 1 | 1 | passou |
+| Produções | 4 | 4 | passou |
+| Páginas | 5 | 5 | passou |
+| Cenas | 4 | 4 | passou |
+| Arquivos NTV | 51 | 51 | passou |
+| Revisoes | 5 | 5 | passou |
+
+| Categoria conferida | Resultado | Contagem |
+| --- | --- | --- |
+| Captura direta aceita pelo mesmo importador | passou | 1 |
+| Duas leituras com hashes iguais e recomputação válida | passou | 2 |
+| Selo atualizado hoje na API e interface | passou | 2 |
+| Tipagem numérica: avisos anteriores / atuais | passou | 34 / 0 |
+| Produções com versão numérica válida | passou | 4 |
+| Unidades com versão numérica válida | passou | 9 |
+| Captura da Central preservada byte a byte | passou | 1 |
+| Histórico preservado, anterior / atual | passou | 2 / 3 |
+| Requisições externas no navegador | passou | 0 |
+| Erros de interface | passou | 0 |
+| Categoria remanescente: vínculo/versão incompatível | aviso | 4 |
+| Categoria remanescente: arquivos empatados | aviso | 4 |
+| Categoria remanescente: mídia ausente | aviso | 4 |
+| Unidades com versão distinta da produção | aviso | 9 |
+
+### Qualidade e limites
+
+Gate Windows local com Node 24.19.0 e Playwright existente: **275 PASS**, cobertura **98,3402489626556%**, drop 0, complexidade PASS com 16 avisos, exit 0, baselineUpdated:false. Semgrep SKIP por ausência no Windows; audit N/A. Fonte e testes da correção, cinco camadas sintéticas; nenhum dado real em testes, logs públicos ou screenshots. O [resumo local sanitizado](../../docs/reports/002-t021-local-gate.json) preserva a prova desta rodada. Gate Linux estrito e review do head enviado serão conferidos no PR antes do merge autorizado; resultados anteriores não provam este código.
+
+T021 concluída pela captura aceita e pelos tipos válidos, sem exigir que versões distintas sejam iguais. A tipagem da coleta direta foi resolvida; vínculos/versões incompatíveis, empates e mídia ausente continuam avisos da fonte. A captura histórica da 001 conserva seus bytes e limite original. A consulta não comprova arquivos de mídia, aprovação ou publicação. Nenhuma escrita no Google/Drive/n8n; nenhuma captura ou screenshot real versionado. T002/T015 da 003 continuam pendentes do autor.
+
+Gate final repetido após ampliar as bordas sintéticas de espaços/controles: **275 PASS**, cobertura **98,3402489626556%**, drop 0, complexidade PASS com 16 avisos, exit 0 e baselineUpdated:false; Semgrep SKIP Windows/audit N/A. Nenhuma mudança de tools/configuração/CI/baseline. Doc-sync-onboarding aplicado aos resumos, índice/arquitetura, módulo coleta e documentos canônicos da 002; **256 links relativos passaram**, nenhuma cerca desbalanceada, diff/privacidade passaram.
+
+Review independente local: **0 Critical, 0 Important, 0 Minor** nos recortes fornecidos. Limite explícito: avaliou diff/requisitos/evidências entregues pelo coordenador; não leu autonomamente arquivos integrais nem executou testes/scanners ou consultou dados reais. Gate Linux e review publicado serão conferidos no PR vigente antes do merge, sem promover esse parecer local a prova remota.

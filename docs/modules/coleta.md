@@ -7,10 +7,10 @@ coletarCaptura(client,{now,capturaId}) recebe cliente injetado e produz envelope
 ```mermaid
 flowchart TD
   Antes[Metadados antes] --> Primeira[batchGet das seis grades]
-  Primeira --> Tipos[Datas declaradas; escalares preservados]
+  Primeira --> Tipos[Datas e inteiros textuais declarados]
   Tipos --> Hash1[hashCelulas]
   Hash1 --> Segunda[batchGet das seis grades novamente]
-  Segunda --> Hash2[Datas e segundo hash]
+  Segunda --> Hash2[Normalização e segundo hash]
   Hash2 --> Depois[Metadados depois]
   Depois --> Iguais{Hashes e metadados iguais?}
   Iguais -->|sim| Validador[validarCaptura v1]
@@ -19,8 +19,8 @@ flowchart TD
 
 O cliente pede ROWS, UNFORMATTED_VALUE e SERIAL_NUMBER. Ranges/respostas incompletos, cabeçalho obrigatório ausente, escalar inválido e mudanças são recusados. Finais vazios omitidos pela API são permitidos dentro da grade. hashCelulas e letraColuna são os helpers do validador existente, não uma segunda definição do formato.
 
-dataSerial converte números somente em inicio_semana/data_prevista (dia civil inteiro) e publicado_em (instante no fuso da planilha). Textos numéricos continuam texto; versões/índices numéricos continuam números. Época 1899-12-30, precisão de milissegundo. Round-trip do horário civil exige um instante único: horário ambíguo/inexistente em DST recusa. Nenhuma data é inferida de outro campo.
+dataSerial converte números somente em inicio_semana/data_prevista (dia civil inteiro) e publicado_em (instante no fuso da planilha). Textos canônicos com inteiro seguro são convertidos somente nos campos numéricos do contrato antes dos dois hashes; outros textos continuam originais/com aviso quando preenchidos. Números nativos permanecem números. Datas textuais não são convertidas. Época 1899-12-30, precisão de milissegundo. Round-trip do horário civil exige um instante único: horário ambíguo/inexistente em DST recusa. Nenhuma data é inferida de outro campo.
 
-Envelope source=google-sheets-api; fonte da Central continua google-drive-connector. O [contrato](../../specs/002-consulta-planilhas/contracts/leitura-planilha.md) define o restante. [tests/coleta.test.cjs](../../tests/coleta.test.cjs) usa cliente falso; não consulta a planilha real. Limite: duas observações não são transação remota e não detectam necessariamente uma alteração desfeita entre elas. Conta real/demonstração seguem pendentes.
+Envelope source=google-sheets-api; fonte da Central continua google-drive-connector. O [contrato](../../specs/002-consulta-planilhas/contracts/leitura-planilha.md) define o restante. [tests/coleta.test.cjs](../../tests/coleta.test.cjs) usa cliente falso; não consulta a planilha real. Limite: duas observações não são transação remota e não detectam necessariamente uma alteração desfeita entre elas. T021 demonstrada; resultados sanitizados na validação. Tipagem válida não transforma versão distinta em vigente nem comprova mídia.
 
 C04 percorre a coleta completa com metadados `America/Sao_Paulo`, `inicio_semana` e `publicado_em` seriais. Confere a publicação UTC no envelope e os dois hashes sobre os valores convertidos, com resultado esperado literal; essa prova sintética não valida o fuso ou a conta da planilha real.

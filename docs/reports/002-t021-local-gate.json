@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "count": 275
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "percent": 98.3402489626556,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "warningCount": 16
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP"
+    },
+    {
+      "name": "audit",
+      "state": "N/A"
+    }
+  ],
+  "provenance": "Gate Windows local da correcao T021: cinco camadas sinteticas. Semgrep SKIP Windows, audit N/A. CI/Linux e review do head vigente devem ser conferidos no PR antes de merge. Nenhum dado privado neste resumo."
+}

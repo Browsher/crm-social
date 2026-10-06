@@ -1,6 +1,6 @@
 # Documentação
 
-Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas; resultados e limitações na [validação](../specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](../specs/001-consulta-local-producao/validacao.md). A captura histórica da 001 mantém seu limite; tipagem da coleta direta resolvida na T021, com categorias remanescentes na validação da 002.
 
 ## Ordem de leitura
 
@@ -53,7 +53,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [validacao.md](../specs/001-consulta-local-producao/validacao.md) | Execuções reais RED/GREEN, revisão, regressões, gate e limitações |
 | [Checklist e análise](../specs/001-consulta-local-producao/checklists/requirements.md) | Revisão documental anterior; não substitui testes do aplicativo |
 
-## Feature 002 — Planilhas (implementada localmente; conta/demonstração reais pendentes)
+## Feature 002 — Planilhas (concluída; T021 demonstrada, 24/24)
 
 | Documento | Uso |
 | --- | --- |
@@ -69,7 +69,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Checklist](../specs/002-consulta-planilhas/checklists/requirements.md) | Qualidade da especificação; não substitui testes ou aprovação |
 | [Análise](../specs/002-consulta-planilhas/analysis.md) | Nova análise reduzida; ajustes antigos corrigidos pelo escopo aprovado |
 
-Nenhuma coleta real; implementação e provas sintéticas da002 na validação.
+T021 demonstrada; implementação, provas sintéticas e resultados reais sanitizados na validação da 002.
 
 ## Design e evidência visual
 
@@ -169,3 +169,5 @@ Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; ta
 [Relatório completo do gate local](reports/002-local-gate.json) e [resumo do gate Linux extraído dos logs oficiais](reports/002-ci-gate.json). Heads, execuções, review e aceites somente na [validação](../specs/002-consulta-planilhas/validacao.md).
 
 [Relatório local dos ajustes do PR #14](reports/002-ajustes-local-gate.json), com head validado explícito; os dois relatórios acima preservam as rodadas anteriores. Aceite Linux e reviews correspondentes na mesma validação.
+
+[Resumo sanitizado do gate local da T021](reports/002-t021-local-gate.json). Resultados reais somente sanitizados na validação da 002; nenhum dado privado neste relatório.

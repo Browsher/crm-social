@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da produção, o CRM apresenta uma captura da operação para localizar as peças da NTV neste computador. Sheets e Drive continuam sendo as fontes operacionais; o desenho aprovado orienta a interface.
 
-001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; implementação da 002 em aceite; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
@@ -12,10 +12,10 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Estado da entrega
 
-- **Planejado:** 003–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A [002](specs/002-consulta-planilhas/spec.md) tem emenda 1.1.0 aplicada e aguarda conta/demonstração reais.
+- **Planejado:** 003–005 no [roadmap](ROADMAP.md); Equipe/Workflow somente v2 ilustrativo. A [002](specs/002-consulta-planilhas/spec.md) tem emenda 1.1.0 aplicada e concluiu a demonstração T021.
 - **Implementado:** 001 e leitura direta da 002, JWT/fetch nativos, seis abas tipadas e POST local; importação manual preservada.
 - **Testado:** 001 demonstrada com captura real; 002 com cinco camadas, RSA gerada e transporte falso. Evidências da 002 na [validação](specs/002-consulta-planilhas/validacao.md).
-- **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Leitura Google implementada com cliente falso; conta/demonstração reais pendentes. Sem escrita editorial ou comprovação de mídia/publicação. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; limites e decisão pendente estão na [validação](specs/001-consulta-local-producao/validacao.md).
+- **Integrado:** captura da Central aceita pelo importador e consultada no CRM local. Leitura Google demonstrada na T021; testes com cliente falso; T021 demonstrada, 24/24 tarefas. Sem escrita editorial ou comprovação de mídia/publicação. A limitação de tipagem da captura histórica permanece registrada; a nova captura direta resolve os tipos numéricos, sem afirmar vigência de versões distintas ou mídia existente.
 
 ## Onde começar
 
@@ -43,7 +43,7 @@ A [gaveta compacta](docs/design/mockups/gaveta-v2.html) reúne o dia inteiro em 
 
 Planilha apresenta seis abas com os 66 mínimos triados, contagens de linhas NTV e Histórico final com todas as tentativas confirmadas, recentes primeiro. Setas esquerda/direita, Home e End alternam as abas com foco; cada tabela tem rolagem própria. A releitura conserva a aba disponível selecionada. O painel de avisos mostra Aba/Linha/Campo/Motivo; menu, selo e **Todos os avisos** restauram a visão geral dos avisos, enquanto as seis tabelas sempre mantêm o conjunto NTV completo. Sem captura, aparece somente Histórico e orientação à Central. Células dedicadas de URL recusadas exibem **link não permitido**; o marcador de supressão e os textos livres legítimos permanecem. Nenhum valor da tabela navega ou carrega mídia automaticamente.
 
-A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; conta e demonstração reais continuam pendentes. A 003 tratará o objetivo mensal e a meta de uma imagem, um carrossel e um vídeo semanais, preservando as peças históricas existentes. Até lá, o objetivo do mês mostra **Ainda não definido**.
+A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; demonstração T021 foi conferida. A 003 no PR #15 consulta a aba opcional Meses; criação/preenchimento e demonstração permanecem pendentes do autor. Fluxo de agentes e migração da meta semanal ficam fora do CRM. Até integrar a 003, o objetivo do mês mostra **Ainda não definido**.
 
 ## Executar a primeira entrega local
 
@@ -68,4 +68,4 @@ Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consu
 
 Testes locais: `node --test`, com Node 24.19.0 selecionado também à frente do PATH e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE`; gate: `node tools/quality-gate.mjs`. Nenhuma instalação nova é necessária. No Linux, UI/PowerShell têm pulos explícitos; a UI fora do LCOV e essa fronteira de aplicabilidade são a pendência M8. CLI, dados, persistência, projeção e HTTP permanecem cobertos e obrigatórios.
 
-**Próximo passo:** o autor prepara a conta leitora conforme o [quickstart da 002](specs/002-consulta-planilhas/quickstart.md). Demonstração real pendente; implementação, testes e aceite remoto na [validação da 002](specs/002-consulta-planilhas/validacao.md). Nenhuma coleta real nesta rodada.
+**Próximo passo:** fechar o PR da T021 somente após gate/review vigentes; atualizar a branch da 003 com main e conferir seus checks antes do merge autorizado. Meses e demonstração da 003 continuam pendências do autor. Evidências da 002 na [validação](specs/002-consulta-planilhas/validacao.md).
