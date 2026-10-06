@@ -1,6 +1,6 @@
 # Roadmap — CRM Social local
 
-Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; implementação da 002 em aceite; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). 002 implementada localmente; 003–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão na validação já vinculada.
+Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados e limitações na [validação](specs/001-consulta-local-producao/validacao.md). 003 no PR #15; 004–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
@@ -10,7 +10,7 @@ US1–US5, iniciador e escala sintética estão verificados localmente; revisão
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
-As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com conta/demonstração reais pendentes; 003–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
+As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com T021 demonstrada, 24/24 tarefas; 003 no PR #15, com tarefas manuais do autor pendentes; 004–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
 
 ## 001 — Consulta local da produção
 
@@ -18,7 +18,7 @@ As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a
 
 **Implementação final local:** o [iniciador](docs/modules/iniciador.md) usa Node existente, processo oculto e logs privados. Leitura valida os recibos confirmados; projeção recusa identidade/vínculo alterado pela triagem e mantém mídia vigente a confirmar quando falta versão válida. Revisão e cenário sintético de escala têm evidência na [validação](specs/001-consulta-local-producao/validacao.md).
 
-**Entregue na 001:** demonstração e limites na [validação](specs/001-consulta-local-producao/validacao.md). A leitura tipada da 002 está implementada/testada com fonte falsa; seu aceite real aguarda conta e demonstração pelo autor.
+**Entregue na 001:** demonstração e limites na [validação](specs/001-consulta-local-producao/validacao.md). A leitura tipada da 002 está implementada/testada com fonte falsa; seu aceite real T021 foi conferido, com regra numérica restrita e registro sanitizado na validação da 002.
 
 **Resultado visível:** menu com Planejamento, Produção e Planilha. Planejamento mostra calendário com cartões, lista semanal, objetivo **Ainda não definido** e **N sem data**. Clicar no cartão ou no dia abre a gaveta do dia inteiro, com acordeões por peça. Produção organiza as peças em quadro por etapa, com **Outras** preservando valores desconhecidos. Planilha apresenta as seis abas capturadas e Histórico. O selo de status tem quatro estados; no celular, Planejamento usa lista e a gaveta ocupa a tela.
 
@@ -32,9 +32,9 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Resultado visível:** **Atualizar dados** busca diretamente no Google pelo servidor local, somente leitura. Conta de serviço própria, com chave fora do repositório e nunca enviada ao navegador.
 
-**Dependências:** 001 concluída, emenda 1.1.0 aprovada/aplicada em 05/10. Seis abas existentes, chave externa, JWT nativo sem dependência de aplicação, batchGet duas vezes e mesmo importador. Conta do autor pendente não bloqueia testes falsos. Sem abas auxiliares nesta feature.
+**Dependências:** 001 concluída, emenda 1.1.0 aprovada/aplicada em 05/10. Seis abas existentes, chave externa, JWT nativo sem dependência de aplicação, batchGet duas vezes e mesmo importador. Conta preparada pelo autor; testes continuam falsos/sintéticos. Sem abas auxiliares nesta feature.
 
-**Aceite:** seis abas tipadas/íntegras, sem escrita Google/Drive, chave fora de Git/browser/log, quatro falhas preservando vigente/data e Central por arquivo. Objetivo **Ainda não definido** até 003. Conta/demonstração real pendentes; estado na [validação da 002](specs/002-consulta-planilhas/validacao.md).
+**Aceite:** seis abas tipadas/íntegras, sem escrita Google/Drive, chave fora de Git/browser/log, quatro falhas preservando vigente/data e Central por arquivo. Objetivo **Ainda não definido** até 003. T021 demonstrada; estado na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
 **002 reduzida:** [24 tarefas](specs/002-consulta-planilhas/tasks.md), tipos nativos, datas declaradas e mesmo v1 sem perfil novo; [emenda aplicada](specs/002-consulta-planilhas/constitution-proposal.md). Não converter captura histórica. Estado somente na [validação](specs/002-consulta-planilhas/validacao.md).
 
@@ -76,4 +76,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo:** o autor prepara a conta leitora conforme o [quickstart da 002](specs/002-consulta-planilhas/quickstart.md). Demonstração real pendente; implementação, testes e aceite remoto na [validação da 002](specs/002-consulta-planilhas/validacao.md). Nenhuma coleta real nesta rodada.
+**Próximo passo:** fechar o PR da T021 somente após gate/review vigentes; atualizar a branch da 003 com main e conferir seus checks antes do merge autorizado. Meses e demonstração da 003 continuam pendências do autor. Evidências da 002 na [validação](specs/002-consulta-planilhas/validacao.md).

@@ -1,6 +1,6 @@
 # Tasks — 002 Planilhas (24 tarefas)
 
-Spec/plan/contrato vigentes nesta pasta. TDD com RED observado antes de GREEN; cinco camadas, dados sintéticos, nenhum Google real. Dependências na ordem abaixo; um dono por arquivo. Conta do autor pendente não bloqueia. Um PR, sem merge.
+Spec/plan/contrato vigentes nesta pasta. TDD com RED observado antes de GREEN; cinco camadas, dados sintéticos, nenhum Google real. Dependências na ordem abaixo; um dono por arquivo. Conta preparada e demonstração T021 conferida; 24/24 tarefas. PR original preservado; fechamento em PR autorizado com merge condicionado a gate/review vigentes.
 
 ## Fase1 — Governança
 - [x] T001 Registrar decisões em validacao.md, aplicar constituiçãoVI/1.1.0/Last Amended2026-10-05, reduzir spec/plan/contrato/modelo/pesquisa/quickstart/tasks, adiar auxiliares no ROADMAP e repetir speckit-analyze: só LOW pode sobrar. FR-008/009.
@@ -31,7 +31,7 @@ Spec/plan/contrato vigentes nesta pasta. TDD com RED observado antes de GREEN; c
 - [x] T018 Verificar importador/GET legado sem chave/rede e suíte cinco camadas sintética em tests/; nenhum pacote de aplicação. FR-008/009, SC-003/004.
 - [x] T019 Gerar screenshots sintéticos1440/390 para atualizando/sucesso/falha em docs/design/screenshots e vincular somente em validacao.md. SC-004.
 - [x] T020 Revisão independente dos riscos do plan e análise consistente; corrigir Critical/Important/segurança/regressão com RED, resto LOW registrado em validacao.md. FR-009.
-- [ ] T021 AUTOR prepara conta/read-only/chave externa/compartilhamento conforme quickstart.md; marcar pendente até confirmação. Não bloqueia implementação/testes/PR; demonstração real fora desta rodada. FR-008.
+- [x] T021 Conta/read-only/chave externa/compartilhamento preparados pelo autor; demonstração real autorizada e conferida em 05/10/2026. Inteiros textuais canônicos dos campos numéricos normalizados na coleta direta após RED/GREEN sintético; contagens, hashes, selo, tipagem e Histórico passaram. Categorias remanescentes preservadas, sem valores privados; evidência em validacao.md. FR-008.
 - [x] T022 Penúltima etapa técnica: node --test e node tools/quality-gate.mjs locais verdes com config vigente; registrar estados reais em validacao.md sem afrouxar baseline/checks. FR-009, SC-004.
 - [x] T023 Última etapa técnica: doc-sync-onboarding para README/AGENTS fora do bloco/ROADMAP/índice/arquitetura/módulos/project-structure≤60; estado real/limites e links de validação. FR-009.
 - [x] T024 Commit/push002 e UM PR sem merge; gate Linux verde e review publicado do head, links/comentário/checks em validacao.md. FR-009, SC-004.
@@ -40,4 +40,4 @@ Spec/plan/contrato vigentes nesta pasta. TDD com RED observado antes de GREEN; c
 
 FR-001:T004–T007/T012–T013/T016–T017; FR-002:T002–T005; FR-003:T002–T005/T012; FR-004:T006–T007/T014–T015; FR-005:T008–T011; FR-006:T008–T009/T012–T013; FR-007:T014–T019; FR-008:T001/T018/T021; FR-009:T001/T018/T020/T022–T024. SC-001:T006–T009; SC-002:T010–T011/T016–T017; SC-003:T002–T005/T012–T013/T018; SC-004:T016–T020/T022–T024.
 
-Pares RED→GREEN sequenciais; T021 independente/pendente. Testes existentes já verdes contam como cobertura reaproveitada, nunca fabricar RED. Cada tarefa concluída marca[x] e registra prova; nenhuma conta real é necessária. ConcluirPR não autoriza merge/demonstração.
+Pares RED→GREEN sequenciais; T021 concluída no aceite real autorizado; evidências sanitizadas na validação. Testes existentes já verdes contam como cobertura reaproveitada, nunca fabricar RED. Cada tarefa concluída marca[x] e registra prova; nenhuma conta real é necessária para os testes automatizados. Autorização atual da T021 permite demonstração e merge nas condições registradas; limites anteriores permanecem históricos.
