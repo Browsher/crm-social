@@ -190,7 +190,7 @@ Evidências e limites permanecem na [validação](../../../specs/001-consulta-lo
 
 ## 003 — objetivo mensal e Meses opcional
 
-Doze capturas atuais de 05/10/2026 mostram os ajustes da aplicação em loopback com fixtures sintéticas e estado em TEMP: dez screenshots da 003 regenerados e dois novos para o singular **+1 pauta**. Objetivo definido aparece na cor principal; só **Ainda não definido**/**A confirmar** usam tom apagado. As capturas das features anteriores permanecem históricas; não houve consulta real de Meses. Testes, procedência e limitações na [validação da 003](../../../specs/003-planejamento-mensal/validacao.md), com [gate local dos ajustes](../../reports/003-ajustes-local-gate.json).
+Doze capturas atuais de 05/10/2026 mostram os ajustes da aplicação em loopback com fixtures sintéticas e estado em TEMP: dez screenshots da 003 regenerados e dois novos para o singular **+1 pauta**. Objetivo definido aparece na cor principal; só **Ainda não definido**/**A confirmar** usam tom apagado. As imagens continuam evidência sintética da rodada anterior; a demonstração posterior de Meses não gerou screenshot versionado. Testes, procedência e limitações na [validação da 003](../../../specs/003-planejamento-mensal/validacao.md), com [gate local dos ajustes](../../reports/003-ajustes-local-gate.json).
 
 | Vista | Desktop 1440 | Celular 390 |
 | --- | --- | --- |
@@ -201,4 +201,4 @@ Doze capturas atuais de 05/10/2026 mostram os ajustes da aplicação em loopback
 | A confirmar por duplicata | [Abrir](003-confirmar-1440.png) | [Abrir](003-confirmar-390.png) |
 | Meses na Planilha | [Abrir](003-planilha-1440.png) | [Abrir](003-planilha-390.png) |
 
-Screenshots comprovam apresentação com dados fictícios; não comprovam conta/planilha real, integração, decisão editorial, mídia ou publicação. T002/preparar Meses e T015/demonstrar a 003 permanecem pendentes. T021/aceite da 002 bloqueia somente o merge da 003.
+Screenshots comprovam apresentação com dados fictícios; não comprovam conta/planilha real, integração, decisão editorial, mídia ou publicação. T002/T015 foram concluídas em demonstração posterior pelo CRM com uma linha fictícia marcada como teste; somente contagens/resultado na validação da 003. T021 atendida pelo PR #16 e código da 003 integrado pelo PR #15. Nenhum screenshot dessa demonstração foi acrescentado.

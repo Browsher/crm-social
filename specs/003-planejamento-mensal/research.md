@@ -32,4 +32,4 @@ Data: 2026-10-05. Decisões de planejamento preservadas e conferidas na implemen
 **Motivo:** preserva tipos recebidos e não converte serial/bool em intenção mensal; trata duplicata como dúvida de dados, sem falha estrutural. Aba real ausente não bloqueia fixtures.
 **Alternativas:** coagir mes/data ou fabricar objetivo perde informação; criar aba via CRM concederia escrita não autorizada.
 
-Não há dúvida técnica de planejamento pendente. Implementação e testes locais executados; integração real não comprovada. O autor autorizou push e PR da 003; T021/aceite da 002 permanece bloqueio somente do merge. Preparação manual de Meses e demonstração real da 003 continuam pendentes.
+Nota histórica desta pesquisa: implementação e testes locais haviam sido executados, e preparação manual/demonstração ainda estavam pendentes. Esse estado foi superado: código integrado pelo PR #15 e T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real. Uso editorial real não comprovado; evidência sanitizada na [validação](validacao.md).

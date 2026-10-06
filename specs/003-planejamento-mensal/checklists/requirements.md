@@ -34,3 +34,5 @@
 - Reescopo do autor em 05/10/2026 substitui a proposta anterior: 16/16 itens de qualidade documental passam; nenhuma pergunta de produto pendente. Clarify adicional dispensado.
 - **Nota histórica do planejamento (substituída):** esse resultado não comprovava implementação ou testes; naquela etapa T021/aceite da 002 bloqueava a implementação da 003.
 - Meses é opcional, criada/preenchida pelo autor; sua tarefa manual não bloqueia fixtures sintéticas. Operação de agentes e migração de meta ficam fora do CRM.
+
+- Fechamento posterior: 003 concluída, 15/15 tarefas; T002/T015 conferidas com a aba criada pelo autor e uma linha fictícia marcada como teste. Evidência sanitizada na [validação](../validacao.md). Uso real antes de decidir 004/005.

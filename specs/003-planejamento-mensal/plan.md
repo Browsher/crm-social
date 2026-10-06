@@ -1,6 +1,6 @@
 # Consulta do planejamento mensal — Implementation Plan
 
-> **For agentic workers:** implementação executada por tarefas e testes de comportamento; evidências em [validacao.md](validacao.md). A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão. Preparação manual de Meses e demonstração real continuam pendentes.
+> **For agentic workers:** implementação executada por tarefas e testes de comportamento; evidências em [validacao.md](validacao.md). A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O código da 003 foi integrado pelo PR #15. O fechamento documental exige gate/review vigentes sem bloqueio de segurança ou regressão. T002/T015 concluídas com aba criada pelo autor e uma linha fictícia marcada como teste; uso real antes de decidir 004/005.
 
 **Branch**: `003-planejamento-mensal` | **Date**: 2026-10-05 | **Spec**: [spec.md](spec.md)
 **Goal**: ler Meses opcional e apresentar objetivo/pautas mensais sem escrever na operação.
@@ -17,7 +17,7 @@ Preservar as seis obrigatórias e seu descriptor `CAMPOS`; criar descriptor sepa
 - Somente consulta local NTV; quatro mínimos: `mes`, `marca_id`, `objetivo`, `pautas`. CRM nunca escreve no Google, Drive, n8n ou agentes.
 - Meses é opcional; captura antiga não sofre migração, regravação ou novo hash. Seis obrigatórias e 66 mínimos permanecem intactos.
 - Card: objetivo definido na cor principal; até cinco pautas, restante `+N pautas`/`+1 pauta`; sem aba/linha/objetivo, `Ainda não definido`; duplicata, `A confirmar` e nenhum texto escolhido. Apenas esses dois estados usam tom apagado.
-- A preparação manual de Meses é do autor; não bloqueia implementação ou testes com fakes/fixtures/TEMP. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O merge da 003 foi autorizado e exige gate/review do head integrado sem bloqueio de segurança ou regressão.
+- A preparação manual de Meses é do autor; não bloqueia implementação ou testes com fakes/fixtures/TEMP. A T021 da 002 foi demonstrada e integrada pelo [PR #16](https://github.com/Browsher/crm-social/pull/16); o pré-requisito da 003 foi atendido. O código da 003 foi integrado pelo PR #15. O fechamento documental exige gate/review vigentes sem bloqueio de segurança ou regressão.
 - Não alterar tools/configuração/baseline do gate, autenticação, endpoints ou dependências. Nenhum perfil, agenda, meta semanal ou vínculo mês/semana novo.
 - Sem dados reais, IDs privados, e-mails de conta ou segredo em Git/relatórios/logs. Aplicação/testes locais usam somente fixtures e TEMP; nenhuma consulta real nesta implementação.
 - Commits com noreply do autor, sem coautoria. Push, PR e merge autorizados; o pré-requisito T021 foi atendido, e o novo head exige gate/review vigentes sem bloqueio.
@@ -74,7 +74,7 @@ Conferido antes da pesquisa e novamente após o desenho: sem exceção ou emenda
 2. US1: `selecionarNtv(captura, avisos, origens, validadeJson)` mantém assinatura/resultado atual e acrescenta `meses` triados quando presentes; `origens` conserva localização física. `projetarVisao(estadoLocal, nowIso, mapaQuadro)` mantém assinatura e raiz/envelope/contagens, acrescentando apenas Meses em `planilha` e avisos existentes. Card deriva estados por `state.mes`, sem usar `semanas[].objetivoMensal` nem ligar semanas ao mês.
 3. US2: `coletarCaptura(client, options)` detecta opcional antes, lê todos os ranges duas vezes, compara hash e metadados finais. Mudança em Meses participa da promoção; falha mantém vigente/recibo/frescor como 002. `POST /api/atualizar {}` e GET mantêm o contrato atual.
 4. US3: renderizar a tabela opcional, avisos localizados e fallback de aba selecionada quando Meses desaparece, preservando seis tabelas/Histórico/atalhos.
-5. Aceite local: cinco camadas e gate local executados; resultados na validação. Gate Linux e review publicado do PR #15 conferidos; evidências na validação. Demonstração mensal privada após autor preparar a aba; isso não bloqueia a execução sintética. T021 atendida; merge autorizado sob gate/review vigentes sem bloqueio.
+5. Aceite local: cinco camadas e gate local executados; resultados na validação. Gate Linux e review publicado do PR #15 conferidos; evidências na validação. Demonstração mensal privada conferida com a aba preparada pelo autor e uma linha fictícia marcada como teste; isso não bloqueia a execução sintética. T021 atendida; merge autorizado sob gate/review vigentes sem bloqueio.
 
 ## Review Focus
 

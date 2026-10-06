@@ -1,6 +1,6 @@
 # Modelo — Meses opcional
 
-Data: 2026-10-05; implementado e testado localmente com dados sintéticos. [Spec](spec.md), [contrato](contracts/meses.md) e [evidências/limites](validacao.md); demonstração real pendente.
+Data: 2026-10-05; implementado e testado localmente com dados sintéticos. [Spec](spec.md), [contrato](contracts/meses.md) e [evidências/limites](validacao.md); T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real não comprovado. Modelo inalterado; próximo passo: uso real antes de decidir 004/005.
 
 ## Linha da aba Meses
 
