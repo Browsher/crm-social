@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "executedAtUtc": "2026-10-07T15:49:29.263Z",
+  "environment": {
+    "platform": "win32",
+    "nodeVersion": "24.19.0",
+    "timezone": "America/Sao_Paulo"
+  },
+  "command": "node tools/quality-gate.mjs",
+  "source": {
+    "baseCommit": "a2dec7373b2928a3a46f2998092c41c8eab2a9e3",
+    "hashFormat": "SHA-256 de UTF-8 com CRLF normalizado para LF",
+    "files": [
+      {
+        "path": "Abrir CRM.cmd",
+        "sha256Utf8Lf": "5c3c4c79b0d81c4ed74b50819597ded7ff8eba071b16c4ae1956d4f50facda60"
+      },
+      {
+        "path": "tests/abrir-crm.test.cjs",
+        "sha256Utf8Lf": "d92406c0fe88135619877fcc15617a508ce4a42977fbf0c75d35bdee0ea85250"
+      }
+    ]
+  },
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 371
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 96.34980988593156,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "warningsCount": 17
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0"
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "launcherSuite": {
+    "command": "node --test tests/abrir-crm.test.cjs",
+    "tests": 18,
+    "pass": 18,
+    "fail": 0,
+    "skipped": 0,
+    "scope": "CMD/PowerShell reais, servidor real sem captura e com Meses sintética, herança de delayed expansion e cópia LF, TEMP/portas efêmeras; navegador interceptado."
+  },
+  "limits": [
+    "Modo normal local; Semgrep ausente (SKIP), audit N/A. O gate estrito remoto do head final permanece obrigatório.",
+    "CI Linux mantém SKIP de interface e PowerShell pela fronteira M8.",
+    "Sem prova de duplo clique manual, dados privados, Google ou escrita operacional.",
+    "Os hashes vinculam a evidência aos arquivos de código/teste; alterações documentais posteriores não fazem parte do código executado."
+  ]
+}
