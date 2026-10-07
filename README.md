@@ -71,7 +71,15 @@ Na raiz do repositório, selecione o Node 24.19.0 existente por `CRM_NODE_PATH` 
 & $env:CRM_NODE_PATH src/servidor.cjs --data-dir $crmDataDir --port 4318
 ```
 
-`$crmCapturePath` identifica um JSON local já coletado e `$crmDataDir`, um diretório privado ou TEMP de demonstração. Sem captura, o servidor apresenta ausência real; não carrega uma demonstração automaticamente. `localhost` não é o Host aceito. O [iniciador PowerShell](docs/modules/iniciador.md) usa o Node existente e inicia o servidor oculto:
+`$crmCapturePath` identifica um JSON local já coletado e `$crmDataDir`, um diretório privado ou TEMP de demonstração. Sem captura, o servidor apresenta ausência real; não carrega uma demonstração automaticamente. `localhost` não é o Host aceito.
+
+**Para abrir no Windows, dê dois cliques em [Abrir CRM.cmd](Abrir%20CRM.cmd)** na pasta do projeto. Ele abre o CRM já disponível ou executa o iniciador PowerShell para criar um servidor oculto. `Iniciar CRM.ps1` pode abrir no Bloco de Notas ao receber duplo clique; use o `.cmd` para abrir o CRM. A associação do `.ps1` e a política global do PowerShell permanecem como estão.
+
+O `.cmd` verifica primeiro a porta 4318. Se estiver ocupada, faz `GET http://127.0.0.1:4318/api/visao` com timeout de dois segundos. Uma resposta HTTP 200 com objeto JSON e `schemaVersion` numérico igual a 1 abre `http://127.0.0.1:4318` no navegador e termina com sucesso, sem resolver Node ou iniciar outro servidor. Outra resposta ou erro mantém a mensagem fixa de falha, aguarda uma tecla e retorna código 1; o ocupante permanece em execução. Essa consulta é local e não lê Google.
+
+Com a porta livre, o `.cmd` usa `CRM_NODE_PATH` quando preenchido; caso contrário, seleciona o primeiro `node.exe` do PATH e passa esse caminho único ao iniciador. Em ambos os caminhos de sucesso, a janela fecha sozinha, sem `pause`. Fechar a aba do navegador não desliga o servidor. Para conservar o PID e a orientação de encerramento de uma nova instância, use o iniciador com parâmetros abaixo; confira que o PID ainda pertence àquela instância antes de encerrá-la.
+
+Para uso avançado, o [iniciador PowerShell](docs/modules/iniciador.md) continua disponível com parâmetros:
 
 ```powershell
 $crmNode = $env:CRM_NODE_PATH
@@ -80,6 +88,8 @@ Start-Process $crmSession.url
 ```
 
 Se `CRM_NODE_PATH` não estiver definido, o iniciador resolve `node.exe` pelo PATH; confirmar Node 24.19.0 antes de iniciar. O retorno informa `processId`, `url`, `logDir` privado e uma orientação `encerrar`. Antes de encerrar, conferir que o PID ainda pertence à instância criada; parar somente esse processo. Porta ocupada não é encerrada pelo script.
+
+A entrada `.cmd` foi implementada/testada em 06/10/2026; seus três testes e o gate de **353 PASS** são históricos. Em **07/10**, a reabertura foi implementada com TDD: **3 PASS/9 FAIL** antes da mudança e **12 PASS, sem pulos**, depois. A suíte usa CMD/PowerShell reais, somente TEMP/portas efêmeras e navegador interceptado; cobre CRM reconhecido, ocupante alheio, respostas inválidas/erro/redirecionamento/timeout, preservação do ocupante e espera por tecla somente na falha. Gate Windows local normal: **365 PASS**, cobertura **96,3498%**, drop **0**, complexidade PASS com **17 avisos**, baseline preservada e exit **0**. O modo estrito local retorna **1** porque Semgrep está ausente (SKIP; audit N/A); os checks estritos e o review do PR próprio condicionam a integração. Não houve prova de duplo clique manual. O [módulo iniciador](docs/modules/iniciador.md#entrada-por-duplo-clique) detalha as verificações e os limites.
 
 Para a Central executar T039, seguir o [roteiro da captura real](specs/001-consulta-local-producao/quickstart.md#leitura-real-e-demonstração-local): preparar JSON esquema 1, seis abas/66 mínimos, duas leituras completas com metadados e hashes concordantes, salvar privadamente em `data/entrada/<capturaId>.json`, importar com `& $crmNode scripts/importar-captura.cjs $crmCapturePath` e comparar os registros no CRM com essa mesma captura. Esse roteiro foi executado com captura real; novas capturas repetem a validação. Nenhuma fixture comprova coleta oficial.
 

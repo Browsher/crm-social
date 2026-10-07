@@ -1,8 +1,38 @@
 # Iniciador local no Windows
 
-Como uma chave que abre somente este álbum, o iniciador escolhe o Node existente e abre uma instância do CRM neste computador. Ele não importa captura, consulta Google ou comanda a produção.
+Como uma chave que abre somente este álbum, a entrada por duplo clique abre o CRM já disponível ou usa o iniciador para criar uma instância neste computador. O iniciador escolhe o Node existente; abrir o CRM não importa captura, consulta Google ou comanda a produção.
 
 Implementado e verificado localmente em T035–T038; evidências e limites na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [Iniciar CRM.ps1](../../Iniciar%20CRM.ps1), para Windows PowerShell 5.1. Demonstração privada e onboarding final concluídos; resultados e limites na validação.
+
+## Entrada por duplo clique
+
+No Windows, dê dois cliques em [Abrir CRM.cmd](../../Abrir%20CRM.cmd), na raiz do projeto. Com a porta 4318 livre, o `.cmd` chama `Iniciar CRM.ps1` da própria pasta e abre no navegador a URL devolvida pelo iniciador. Se a porta já estiver ocupada pelo CRM reconhecido pela resposta abaixo, abre a URL fixa `http://127.0.0.1:4318`, sem iniciar outro servidor. Duplo clique no `.ps1` pode abrir o Bloco de Notas conforme a associação do Windows; o ajuste não altera essa associação.
+
+O despacho usa `powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass` somente para esse processo. A conferência da porta vem antes da escolha do Node. Se livre, usa `CRM_NODE_PATH` quando preenchido; caso contrário, resolve aplicações `node.exe` pelo PATH, seleciona somente a primeira e passa seu caminho por `-NodePath`. Assim, vários Node no PATH não viram um argumento ambíguo no iniciador original, que permanece intacto. Não altera a política global, não instala Node e não muda o servidor ou a captura.
+
+Quando a porta 4318 está ocupada, faz somente `GET /api/visao` em loopback com `HttpClient` do .NET, sem proxy nem redirecionamento. O timeout de dois segundos abrange a resposta e seu corpo. Aceita somente HTTP 200 com objeto JSON e `schemaVersion` numérico igual a 1; texto `"1"`, outra versão, array, JSON inválido, erro HTTP e timeout falham. A URL aberta é fixa e não é extraída da resposta. O ramo reconhecido não resolve Node nem chama `Iniciar CRM.ps1`; GET consulta a captura local, sem Google.
+
+Em sucesso, seja criando ou reaproveitando o CRM, retorna código 0 e a janela fecha sozinha, sem `pause`. Em falha de início ou reconhecimento, mostra a mensagem fixa `Nao foi possivel abrir o CRM. Confira se o Node esta configurado e se a porta 4318 esta livre.`, aguarda uma tecla e retorna código 1. Não expõe a resposta nem detalhes privados do erro e jamais encerra o ocupante. Fechar a aba do navegador mantém o servidor em execução; para conservar a identidade e a orientação de encerramento de uma nova instância, use o iniciador com parâmetros na seção seguinte e confira o PID antes de encerrá-la.
+
+```mermaid
+flowchart TD
+  Duplo[Duplo clique em Abrir CRM.cmd] --> PortaCMD{Porta 4318 ocupada?}
+  PortaCMD -->|não| IniciarCMD[Resolver Node e chamar Iniciar CRM.ps1]
+  PortaCMD -->|sim| ConsultaCMD[GET local /api/visao, timeout de dois segundos]
+  ConsultaCMD --> RespostaCMD{HTTP 200, objeto JSON e schemaVersion numérico 1?}
+  RespostaCMD -->|sim| ReabrirCMD[Abrir URL fixa, sem iniciar servidor]
+  RespostaCMD -->|não ou erro| FalhaCMD[Mensagem fixa, aguardar tecla e código 1]
+  IniciarCMD -->|sucesso| AbrirCMD[Abrir URL devolvida pelo iniciador]
+  IniciarCMD -->|falha| FalhaCMD
+  ReabrirCMD --> SucessoCMD[Código 0, fechar sem pause]
+  AbrirCMD --> SucessoCMD
+```
+
+**Histórico de 06/10/2026:** entrada inicial implementada/testada com três casos de CMD/PowerShell reais em TEMP, caminhos com espaços, `&` e apóstrofo, navegador interceptado e seleção única do primeiro Node no PATH. TDD inicial: 2 FAIL antes do `.cmd`, depois 2 PASS; terceiro caso: 2 PASS/1 FAIL, depois 3 PASS. Gate Windows daquela árvore: **353 PASS**, cobertura **98,3871%**, drop **0**, complexidade PASS com **17 avisos**, baseline preservada e exit **0**; Semgrep SKIP e audit N/A. A prova adicional de seis casos L01/L02 com Node 24.14 já instalado permanece histórica e não altera o runtime oficial.
+
+**Implementado e testado localmente em 07/10/2026:** [tests/abrir-crm.test.cjs](../../tests/abrir-crm.test.cjs) passou de **3 PASS/9 FAIL** no RED para **12 PASS sem pulos**. Usa CMD/PowerShell reais, substituto do iniciador que registra sua chamada e navegador interceptado; a cópia TEMP remapeia 4318 para portas efêmeras e não consulta a porta operacional. Verifica reabertura sem novo servidor, ocupante alheio ainda ativo, versão textual/2, array, JSON inválido, HTTP 503, redirecionamento e silêncio até timeout. O stdin permanece aberto para provar que sucesso dispensa tecla; em falha, confirma a espera por 350 ms antes de enviar a tecla. O helper agora espera `close`, encerrando a observação histórica sobre coleta de stdout em `exit`. Não houve prova de duplo clique manual nem acesso a dados privados ou Google.
+
+Gate Windows local normal, com Node 24.19.0 e Playwright existentes: **365 PASS**, cobertura **96,3498%**, drop **0**, complexidade PASS com **17 avisos**, baseline preservada e exit **0**. Modo estrito local: mesmos resultados, mas exit **1** por Semgrep ausente (SKIP; audit N/A). Integração condicionada ao quality-gate estrito e review vigentes do PR próprio. CI Linux declara SKIP para o iniciador Windows e não substitui esta prova local. A suíte de `Iniciar CRM.ps1` permanece preservada; o script continua recusando porta ocupada quando chamado diretamente.
 
 ## Entrada e escolha do runtime
 

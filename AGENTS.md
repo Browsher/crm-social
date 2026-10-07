@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM consulta capturas locais; estas regras orientam quem mantém esse leitor. Consulte a [arquitetura](docs/architecture.md) e o [índice documental](docs/index.md) para entrar nos módulos implementados.
 
-Quando este repositório estiver dentro do workspace Social Midia, ../AGENTS.md também se aplica; fora dele, ignore esta referência. Ler [README](README.md), [ROADMAP](ROADMAP.md), [constituição](.specify/memory/constitution.md) e apenas os arquivos da feature ativa. `.specify/feature.json` é ponteiro local, não versionado; no checkout remoto, identificar a feature pela branch e sua pasta em specs/. A [002](specs/002-consulta-planilhas/spec.md) está implementada localmente; [emenda](specs/002-consulta-planilhas/constitution-proposal.md) aplicada (1.1.0); concluída localmente, 24/24 tarefas e T021 demonstrada, aceite em [validacao.md](specs/002-consulta-planilhas/validacao.md).
+Este repositório é independente desde 07/10/2026; o AGENTS.md do antigo workspace Social Midia não se aplica automaticamente. Ler [README](README.md), [ROADMAP](ROADMAP.md), [constituição](.specify/memory/constitution.md) e apenas os arquivos da feature ativa. `.specify/feature.json` é ponteiro local, não versionado; no checkout remoto, identificar a feature pela branch e sua pasta em specs/. A [002](specs/002-consulta-planilhas/spec.md) está implementada localmente; [emenda](specs/002-consulta-planilhas/constitution-proposal.md) aplicada (1.1.0); concluída localmente, 24/24 tarefas e T021 demonstrada, aceite em [validacao.md](specs/002-consulta-planilhas/validacao.md).
 
 ## Estado e fronteiras
 
@@ -28,6 +28,8 @@ O ajuste de tema claro/escuro de 06/10/2026 dispensa Spec Kit por instrução do
 
 Usar as skills locais `.agents/skills/speckit-*` e scripts PowerShell oficiais. `spec.md` define requisitos; `plan.md` define solução e interfaces; `tasks.md` organiza execução. Não criar uma especificação paralela para a mesma feature em outra pasta.
 
+O ajuste pequeno do [iniciador](docs/modules/iniciador.md#entrada-por-duplo-clique) em 07/10/2026 dispensa nova feature/Spec Kit: `Abrir CRM.cmd` reconhece o CRM já na porta 4318 por GET local com timeout de dois segundos, HTTP 200, objeto JSON e `schemaVersion` numérico 1; abre URL fixa e sai 0 sem iniciar outro servidor. Resposta alheia/erro mantém mensagem fixa, código 1 e espera por tecla, sem encerrar o ocupante. Sucesso fecha sem `pause`; `Iniciar CRM.ps1` permanece intacto. Testes RED 3 PASS/9 FAIL, GREEN 12 PASS sem pulos, somente TEMP/portas efêmeras e navegador interceptado. Gate normal Windows: 365 PASS, cobertura 96,3498%, drop 0, complexidade PASS/17 avisos, baseline preservada e exit 0; estrito local exit 1 por Semgrep ausente (SKIP; audit N/A). Integração depende de gate estrito/review vigentes no PR próprio; prova local não substitui CI.
+
 Aplicar Superpowers sobre esses documentos: esclarecer decisões novas, implementar em tarefas delimitadas, escrever os testes de comportamento solicitados, fazer revisão independente e verificar antes de declarar conclusão. O desenho amplo já foi aprovado; preserve decisões autorizadas e peça esclarecimento apenas sobre lacunas reais. Não criar fases de aprovação adicional sem necessidade.
 
 Antes de delegar, definir arquivos exclusivos, entrada, interface e aceite. Avisar que outros agentes trabalham no workspace; preservar edições alheias. Coordenador integra arquivos compartilhados e atualiza documentação. Use subagentes da execução, não novos chats ou automações.
@@ -38,7 +40,7 @@ Captura manual da Central permanece disponível. A 002 lê seis abas por conta d
 
 O contrato está em [captura-e-consulta.md](specs/001-consulta-local-producao/contracts/captura-e-consulta.md). O [quickstart](specs/001-consulta-local-producao/quickstart.md) distingue comandos reais de importação/servidor/testes das etapas futuras. As suítes de Node/HTTP/Playwright usam somente TEMP; fixtures são sintéticas e não disparam a fila nem escrevem no Google. A interface usa Playwright existente por `CRM_PLAYWRIGHT_MODULE`; sem `CI=true`, ferramenta ausente falha. Não tratar um resultado Linux anterior como validação de novo head ou da interface. A constituição 1.1.0 autoriza leitura pela 002; CRM_GOOGLE_CREDENTIALS_FILE e CRM_SPREADSHEET_ID são privados no servidor. JWT RS256/fetch nativos, token só em memória; sem dependência de aplicação. Coleta direta normaliza apenas inteiros textuais canônicos seguros nos campos numéricos declarados, antes dos dois hashes; outras entradas preenchidas continuam com avisos. Capturas históricas não são migradas.
 
-Context7 continua obrigatório para dúvidas de biblioteca/API conforme o AGENTS pai. Não adicionar framework ou dependência para uma mudança simples. Node e Playwright existentes foram escolhidos no plano.
+Context7 continua obrigatório para documentação de bibliotecas/API. Não adicionar framework ou dependência para uma mudança simples. Node e Playwright existentes foram escolhidos no plano.
 
 ## Documentação
 

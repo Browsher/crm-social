@@ -8,6 +8,9 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ```mermaid
 flowchart LR
+  Abrir["Abrir CRM.cmd"] -->|porta livre| Iniciador
+  Abrir -->|porta ocupada: GET local /api/visao| Server
+  Abrir -->|CRM reconhecido: URL fixa| Navegador[Navegador local]
   Iniciador["Iniciar CRM.ps1"] -->|Node existente, processo oculto| Server
   CLI["scripts/importar-captura.cjs"] --> Snapshot["src/snapshot.cjs"]
   subgraph Evidencia["Ferramenta sintética de evidência: somente TEMP"]
@@ -59,10 +62,12 @@ flowchart LR
 | google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
 | coleta | Duas leituras de seis grades e Meses quando existe, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
 | servidor | HTTP local com seis rotas fixas, quatro estáticos, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
-| iniciador | Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
+| iniciador | Entrada Abrir CRM.cmd por duplo clique, reconhecimento de instância existente por GET local; Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
 | web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses opcional, Histórico e avisos detalhados; card mensal pelo mês exibido; tema claro/escuro somente visual | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
+
+`Abrir CRM.cmd` confere a porta 4318 antes de escolher Node. Se ocupada, `HttpClient` do .NET faz GET em loopback com timeout de dois segundos, sem proxy nem redirecionamento; HTTP 200 com objeto JSON e `schemaVersion` numérico 1 abre a URL fixa, sem chamar o iniciador. Resposta alheia/erro preserva o ocupante e falha com mensagem fixa/espera por tecla. Sucesso fecha sem `pause`. O GET lê somente a captura local; não altera o fluxo de coleta ou a persistência. `Iniciar CRM.ps1` continua recusando porta ocupada quando chamado diretamente. [Testes e limites](modules/iniciador.md#entrada-por-duplo-clique).
 
 Tema claro/escuro implementado e testado localmente em 06/10/2026; estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18), com merge condicionado ao gate e review vigentes. `theme.js` é carregado de forma síncrona no head antes do CSS; usa `prefers-color-scheme` e a escolha válida `crm-theme`, com leitura/escrita protegidas por try/catch. Sem armazenamento disponível, a escolha manual dura na página aberta. O atributo `data-theme` seleciona somente variáveis visuais de `styles.css`; não modifica captura, recibo, filtros, API ou estado editorial. [Testes e limites](modules/web.md#tema-claro-e-escuro) e [galeria sintética](design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
 

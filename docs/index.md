@@ -36,7 +36,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
 | [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses opcional; Histórico confirmado |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, quatro estáticos e Host/Origin |
-| [Iniciador Windows](modules/iniciador.md) | Iniciar CRM.ps1; Node existente, processo oculto, confirmação, retorno e logs privados |
+| [Iniciador Windows](modules/iniciador.md) | Abrir CRM.cmd por duplo clique, reabertura por GET local e sucesso sem pause; Iniciar CRM.ps1, Node existente, processo oculto, confirmação, retorno e logs privados |
 | [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses opcional/Histórico, card mensal, releitura, avisos por peça e tema claro/escuro local |
 
 ## Feature 001 canônica
