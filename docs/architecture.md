@@ -4,7 +4,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, está concluída e foi demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor; [validação da 003](../specs/003-planejamento-mensal/validacao.md). Código integrado pelo PR #15. Uso real antes de decidir 004/005.
 
-## Módulos e imports reais
+## Módulos, imports e relações de execução
 
 ```mermaid
 flowchart LR
@@ -67,7 +67,7 @@ flowchart LR
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
-`Abrir CRM.cmd` confere a porta 4318 antes de escolher Node. Se ocupada, `HttpClient` do .NET faz GET em loopback com timeout de dois segundos, sem proxy nem redirecionamento; HTTP 200 com objeto JSON e `schemaVersion` numérico 1 abre a URL fixa, sem chamar o iniciador. Resposta alheia/erro preserva o ocupante e falha com mensagem fixa/espera por tecla. Sucesso fecha sem `pause`. O GET lê somente a captura local; não altera o fluxo de coleta ou a persistência. `Iniciar CRM.ps1` continua recusando porta ocupada quando chamado diretamente. [Testes e limites](modules/iniciador.md#entrada-por-duplo-clique).
+`Abrir CRM.cmd` chama o PowerShell pelo caminho explícito do Windows e confere a porta 4318 antes de escolher Node. Se ocupada, `HttpClient` do .NET faz GET em loopback com timeout de dois segundos, sem proxy nem redirecionamento; HTTP 200 com objeto JSON e `schemaVersion` numérico 1 abre a URL fixa, sem chamar o iniciador. É reconhecimento mínimo da resposta, não autenticação do processo. Resposta incompatível/erro, inclusive HTTP 503 do próprio CRM, preserva o ocupante e falha com mensagem fixa/espera por tecla. Sucesso fecha sem `pause`. O GET lê somente a captura local; não altera o fluxo de coleta ou a persistência. `Iniciar CRM.ps1` continua recusando porta ocupada quando chamado diretamente. [Testes e limites](modules/iniciador.md#entrada-por-duplo-clique).
 
 Tema claro/escuro implementado e testado localmente em 06/10/2026; estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18), com merge condicionado ao gate e review vigentes. `theme.js` é carregado de forma síncrona no head antes do CSS; usa `prefers-color-scheme` e a escolha válida `crm-theme`, com leitura/escrita protegidas por try/catch. Sem armazenamento disponível, a escolha manual dura na página aberta. O atributo `data-theme` seleciona somente variáveis visuais de `styles.css`; não modifica captura, recibo, filtros, API ou estado editorial. [Testes e limites](modules/web.md#tema-claro-e-escuro) e [galeria sintética](design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
 

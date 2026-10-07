@@ -129,11 +129,12 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 
 ## Relatórios sanitizados
 
-As evidências têm origem, estado e limites registrados somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+As evidências históricas da 001 têm origem, estado e limites registrados na [validação](../specs/001-consulta-local-producao/validacao.md). A manutenção do iniciador tem relatório próprio e detalhes no [módulo](modules/iniciador.md#entrada-por-duplo-clique).
 
 - [Saída histórica de node:test](reports/001-pr6-node-test.txt).
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
+- [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 369 PASS, suíte `.cmd` com 16 PASS, hashes do código/testes, origem e limites; integração depende dos checks estritos/review vigentes do [PR #19](https://github.com/Browsher/crm-social/pull/19).
 
 ## Evidência histórica da US2
 

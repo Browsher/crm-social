@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "executedAtUtc": "2026-10-07T15:33:57.372Z",
+  "environment": {
+    "platform": "win32",
+    "nodeVersion": "24.19.0",
+    "timezone": "America/Sao_Paulo"
+  },
+  "command": "node tools/quality-gate.mjs",
+  "source": {
+    "baseCommit": "d82f16b78f93c2469c58df4e76209c674c3309f3",
+    "hashFormat": "SHA-256 de UTF-8 com CRLF normalizado para LF",
+    "files": [
+      {
+        "path": "Abrir CRM.cmd",
+        "sha256Utf8Lf": "3ad1e2ed8dd02145bc162a6829c3c5389e4460309607d4bf86a178382ded058c"
+      },
+      {
+        "path": "tests/abrir-crm.test.cjs",
+        "sha256Utf8Lf": "91c6d70620739c2611eb70176606e91ace0f55914a7ffeab24cb081414e7693a"
+      }
+    ]
+  },
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "count": 369,
+      "reason": ""
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "percent": 96.34980988593156,
+      "drop": 0,
+      "reason": ""
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "warningsCount": 17
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0"
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "launcherSuite": {
+    "command": "node --test tests/abrir-crm.test.cjs",
+    "tests": 16,
+    "pass": 16,
+    "fail": 0,
+    "skipped": 0,
+    "scope": "CMD/PowerShell reais, servidor real sem captura e com Meses sintética, TEMP e portas efêmeras; navegador interceptado."
+  },
+  "limits": [
+    "Modo normal local; Semgrep ausente (SKIP), audit N/A. O gate estrito remoto do head final permanece obrigatório.",
+    "CI Linux mantém SKIP de interface e PowerShell pela fronteira M8.",
+    "Sem prova de duplo clique manual, dados privados, Google ou escrita operacional.",
+    "Os hashes vinculam a evidência aos arquivos de código/teste; alterações documentais posteriores não fazem parte do código executado."
+  ]
+}
