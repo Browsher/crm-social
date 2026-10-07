@@ -102,3 +102,11 @@ Sobre `6505fb153b133813459c334d5f5c70677b40389a`, o autor solicitou corrigir o e
 Gate Windows Node 24.19.0: **449 testes PASS**, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. [Relatório dos ajustes](../../docs/reports/004-ajustes-local-gate.json) identifica as fontes por 12 blobs Git; o relatório anterior permanece histórico. Semgrep local SKIP por ausência; audit N/A. O gate publica a contagem, sem resumo de pulos; os resumos sem pulos desta rodada são das duas suítes focadas, não uma nova execução TAP completa. As limitações de LCOV e do modo full permanecem.
 
 Galeria regenerada: 20 PNG, exit 0. Revisor separado inspecionou oito imagens alteradas (card 390, semana-origem 1440/390 e gaveta 1440 nos dois temas); coordenador conferiu as quatro semana-origem. Título, origem e período integralmente legíveis, sem corte visível. Revisão local dos trechos/diffs fornecidos e PNG: nenhum novo Critical/Important/Minor ou indício de regressão/segurança; sem execução própria de comandos. Doc-sync atualizado somente no conteúdo afetado; sem mudança de dependências, arquitetura, gate, CI ou baseline. Gate estrito e review remoto do novo head devem ser conferidos no PR antes do merge; este registro local não antecipa esse resultado.
+
+## Espera pela primeira renderização nos testes
+
+No head `3268c24`, a primeira TAP completa teve 448 PASS/1 FAIL/0 SKIP: U003 conferiu o contador antes do fetch/render; isolado passou. O helper de `tests/interface.test.cjs` agora aguarda, após `goto`, o card mensal **ou** erro visível. A primeira guarda, somente pelo card, revelou timeout no cenário esperado de HTTP 503 inicial; a condição alternativa corrigiu isso. Os dois casos focados passaram. Produção e imagens permaneceram intactas.
+
+TAP completa final, 18 arquivos, Windows/Node 24.19.0: **449 PASS/0 FAIL/0 SKIP**, zero cancelados/TODO. Gate final: **449 testes PASS**, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0 e baseline preservada; Semgrep local SKIP/audit N/A. Fontes e resumo TAP ficam no [relatório dos ajustes](../../docs/reports/004-ajustes-local-gate.json).
+
+Revisor separado conferiu o delta/contexto fornecido, sem comandos: zero Critical/Important/Minor. Gate estrito e review do novo head ainda devem passar antes do merge autorizado; esta prova local não antecipa integração.

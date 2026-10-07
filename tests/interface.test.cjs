@@ -170,6 +170,7 @@ async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixtu
   });
   t.after(()=>{assert.deepEqual(external,[]);assert.deepEqual(errors,[]);});
   await page.goto(origin);
+  await page.locator('#objetivo-mes .month-content, #erro:not([hidden])').first().waitFor({state:'visible'});
   return page;
 }
 test('U05 filtro e clique na segunda peça abrem o dia inteiro em acordeões com Esc/foco', {skip}, async t=>{

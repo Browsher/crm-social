@@ -3,8 +3,8 @@
   "date": "2026-10-07",
   "platform": "Windows",
   "schemaVersion": 1,
-  "sourceParent": "6505fb153b133813459c334d5f5c70677b40389a",
-  "source": "Correção do espaçamento da Lista e dos Minor 1/2; fontes identificadas pelos blobs Git abaixo",
+  "sourceParent": "3268c249ad47b9150cf2f8a8093a1bd0c6650c78",
+  "source": "Correção do espaçamento, Minor 1/2 e espera pelo resultado da primeira leitura no helper de interface; fontes identificadas pelos blobs Git",
   "nodeVersion": "24.19.0",
   "exitCode": 0,
   "baselineUpdated": false,
@@ -189,6 +189,10 @@
     {
       "file": "tests/screenshots-pautas.test.cjs",
       "gitBlob": "aa13f0089b3af3da8f79c21837b6c97ed4b96e33"
+    },
+    {
+      "file": "tests/interface.test.cjs",
+      "gitBlob": "94bfeb38c55530aea820d51519825728ce460a2a"
     }
   ],
   "focusedTests": [
@@ -224,7 +228,21 @@
     "Semgrep ausente no Windows; merge condicionado ao gate estrito remoto do novo head.",
     "UI fora do LCOV; testes de interface executados em Playwright Windows.",
     "Drop 0 no modo full não compara cobertura histórica.",
-    "O gate contabiliza os testes, mas não publica o resumo de pulos; os dois resumos sem pulos acima são das execuções focadas.",
+    "Resumo de pulos obtido na execução TAP completa separada; gate e TAP usam a mesma árvore e os mesmos 18 arquivos de teste.",
     "Prova exclusivamente sintética; nenhuma coleta na fonte operacional."
+  ],
+  "fullTestSummary": {
+    "tests": 449,
+    "pass": 449,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "files": 18,
+    "source": "Execução TAP completa no Windows, mesma árvore do gate, após sincronizar o helper com card renderizado ou erro inicial visível"
+  },
+  "precedingFailures": [
+    "Primeira execução completa: 448 PASS/1 FAIL/0 SKIP; contador U003 consultava o card antes do fetch/render. Caso isolado passou.",
+    "Primeira guarda somente pelo card: 448 PASS/1 FAIL/0 SKIP; não contemplava o teste de erro inicial intencional. Guarda final aguarda card ou erro visível; dois casos focados e suíte completa passaram."
   ]
 }
