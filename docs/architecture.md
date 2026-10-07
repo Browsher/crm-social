@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, está concluída e foi demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor; [validação da 003](../specs/003-planejamento-mensal/validacao.md). Código integrado pelo PR #15. A 004 está implementada/testada localmente com Pautas opcional e origem semanal; [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto para avaliação do autor, sem merge ou integração; resultados por head na validação. [Validação da 004](../specs/004-pautas-planejamento/validacao.md).
+001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, está concluída e foi demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor; [validação da 003](../specs/003-planejamento-mensal/validacao.md). Código integrado pelo PR #15. A 004 está implementada/testada localmente com Pautas opcional e origem semanal; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação da 004](../specs/004-pautas-planejamento/validacao.md).
 
 ## Módulos, imports e relações de execução
 
@@ -241,7 +241,7 @@ como texto segundo o contrato. Células não criam links ou navegação automát
 
 Semanas recebe `pauta_id` e `pautaOrigem` somente quando o cabeçalho opcional foi capturado. A origem exige ID exato, mesma marca e mesmo início, sem dedução por data/tema/ordem; vazio não avisa e preenchido não resolvido fica null com aviso localizado. Planilha conserva todas as linhas NTV triadas de Pautas, inclusive inválidas/duplicadas. Os dois opcionais são independentes e não alteram bytes/hashes de capturas históricas. [Contrato da 004](../specs/004-pautas-planejamento/contracts/pautas.md).
 
-A UI escolhe pautas válidas pelo mês exibido, mantém objetivo de Meses e cria destino de foco para a segunda-feira mesmo sem peças; mês sem pautas válidas usa todo o fallback textual da 003. Semana e gaveta apresentam somente `pautaOrigem` confirmada. Implementação/testes locais e screenshots sintéticos estão na [validação da 004](../specs/004-pautas-planejamento/validacao.md); entrega no [PR #20](https://github.com/Browsher/crm-social/pull/20), sem merge ou integração; resultados por head na validação citada. Sem novos endpoints, env, dependências ou escrita operacional.
+A UI escolhe pautas válidas pelo mês exibido, mantém objetivo de Meses e cria destino de foco para a segunda-feira mesmo sem peças; mês sem pautas válidas usa todo o fallback textual da 003. Semana e gaveta apresentam somente `pautaOrigem` confirmada. Implementação/testes locais e screenshots sintéticos estão na [validação da 004](../specs/004-pautas-planejamento/validacao.md); entrega no [PR #20](https://github.com/Browsher/crm-social/pull/20), com merge condicionado ao gate/review do head vigente; resultados por head na validação citada. Sem novos endpoints, env, dependências ou escrita operacional.
 
 ## Ferramentas de qualidade, evidência e dívidas
 
@@ -254,7 +254,7 @@ flowchart LR
   Gate --> Security["gate-security.mjs"]
 ```
 
-O gate e seus imports estão em `tools/`; ESLint/lock são isolados da aplicação. `quality-gate.config.json` define Node 24.19.0, runner node --test e modo full. A UI fica fora do LCOV (pendência M8) e seus testes continuam obrigatórios no computador. Os resultados históricos ficam na [validação da 001](../specs/001-consulta-local-producao/validacao.md); a árvore da 004 tem [validação própria](../specs/004-pautas-planejamento/validacao.md) e [relatório local sanitizado](reports/004-local-gate.json).
+O gate e seus imports estão em `tools/`; ESLint/lock são isolados da aplicação. `quality-gate.config.json` define Node 24.19.0, runner node --test e modo full. A UI fica fora do LCOV (pendência M8) e seus testes continuam obrigatórios no computador. Os resultados históricos ficam na [validação da 001](../specs/001-consulta-local-producao/validacao.md); a árvore da 004 tem [validação própria](../specs/004-pautas-planejamento/validacao.md) e [relatório local dos ajustes](reports/004-ajustes-local-gate.json).
 
 CI ativo com quality-gate obrigatório e review por comentário; histórico e estado corrente na [validação](../specs/001-consulta-local-producao/validacao.md). Dados, I/O, CLI, projeção e HTTP são obrigatórios no Linux; UI/PowerShell têm pulos explícitos e não comprovam aceite remoto dessas camadas. CLI está coberta; M8 refere-se à UI fora do LCOV e à fronteira UI/PowerShell no Linux.
 

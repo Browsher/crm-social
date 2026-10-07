@@ -2,8 +2,8 @@
 
 **Feature Branch**: `codex/004-pautas-planejamento`
 **Created**: 2026-10-07
-**Status**: Implementada, testada e entregue no PR #20; 15/15 tarefas, gate estrito e review do código conferidos; sem merge. Checks vigentes no PR.
-**Input**: Consulta opcional de Pautas e origem semanal no CRM pessoal; até 15 tarefas, fixtures sintéticas e um PR sem merge.
+**Status**: Implementada, testada e entregue no PR #20; 15/15 tarefas. Ajuste de layout e sugestões triviais conferidos localmente; merge autorizado após gate/review do novo head. Estado da integração no PR.
+**Input**: Consulta opcional de Pautas e origem semanal no CRM pessoal; até 15 tarefas, fixtures sintéticas e um PR. Após a entrega inicial, o autor autorizou correções, merge condicionado aos checks e exclusão da branch.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -55,7 +55,7 @@ O autor consulta Pautas na Planilha e continua usando capturas antigas.
 - **FR-006**: Preservar integridade, hashes/bytes históricos, falhas, frescor, histórico, separação entre marcas e redação de dados sensíveis.
 - **FR-007**: Temas claro/escuro, 1440/390, acesso por teclado e sem corte horizontal da página.
 - **FR-008**: CRM local somente observador, sem agenda, escrita operacional, dependências novas, leitura de notas ou cópia do contrato externo da operação.
-- **FR-009**: Somente fixtures sintéticas; um PR com gate/review e screenshots; sem merge.
+- **FR-009**: Somente fixtures sintéticas; um PR com gate/review e screenshots. Merge e exclusão da branch autorizados após gate verde e review sem Critical, problema de segurança ou regressão.
 
 ### Key Entities
 - **Pauta**: identidade, marca, mês, ordinal, início, tema, mensagem, modelo, oferta, origem, status e observação capturados.

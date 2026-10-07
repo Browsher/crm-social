@@ -83,6 +83,32 @@ test('U004 calendário e gaveta reúnem todas as origens únicas do dia, sem inf
   assert.match(await page.locator('#avisos-tabela').textContent(),/Semanas.*pauta_id/s);
 });
 
+for(const width of [1440,390])for(const scheme of ['light','dark'])test('U004 semana destacada na lista conserva folga e texto integral '+width+' '+scheme,{skip},async t=>{
+  const page=await abrir(t,{width,scheme});
+  if(width===1440)await page.getByRole('button',{name:'Lista',exact:true}).click();
+  const week=page.locator('#lista [data-inicio-semana="2026-11-09"]');
+  const before=await week.evaluate(n=>({width:n.offsetWidth,height:n.offsetHeight,padding:getComputedStyle(n).padding}));
+  await page.locator('#objetivo-mes .pauta-link').nth(1).focus();await page.keyboard.press('Enter');
+  assert.equal(await week.evaluate(n=>document.activeElement===n),true,'A navegação conserva o foco na semana');
+  assert.equal(await week.locator('header small').textContent(),'09 de nov. – 15 de nov.');
+  assert.equal(await week.locator('.pauta-origin').textContent(),'Pauta S2 de novembro');
+  const layout=await week.evaluate(n=>{
+    const style=getComputedStyle(n),box=n.getBoundingClientRect();
+    const texts=[...n.querySelectorAll('header h3,header small,.pauta-origin')].map(child=>{
+      const range=document.createRange();range.selectNodeContents(child);
+      return {text:child.textContent,rects:[...range.getClientRects()].map(r=>({left:r.left-box.left,right:box.right-r.right,top:r.top-box.top,bottom:box.bottom-r.bottom}))};
+    });
+    return {width:n.offsetWidth,height:n.offsetHeight,padding:style.padding,left:parseFloat(style.paddingLeft),right:parseFloat(style.paddingRight),
+      outline:parseFloat(style.outlineWidth),peers:[...n.parentElement.querySelectorAll('.agenda-week')].filter(p=>p!==n).map(p=>getComputedStyle(p).padding),texts};
+  });
+  assert.deepEqual({width:layout.width,height:layout.height,padding:layout.padding},before,'Focar não desloca nem redimensiona a semana');
+  assert.ok(layout.left>=8&&layout.right>=8,'Todas as semanas reservam folga interna para título, origem e data');
+  assert.ok(layout.left>layout.outline&&layout.right>layout.outline,'A moldura de foco não cobre o conteúdo');
+  assert.ok(layout.peers.length>0&&layout.peers.every(p=>p===layout.padding),'A semana destacada usa o mesmo espaçamento das demais');
+  for(const text of layout.texts)for(const rect of text.rects)assert.ok(rect.left>=layout.left-.5&&rect.right>=layout.right-.5&&rect.top>=layout.outline&&rect.bottom>=layout.outline,'Texto integral dentro da moldura: '+text.text);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Página sem corte horizontal');
+});
+
 test('U004 semana atravessando mês conserva origem e não cria pauta no mês seguinte',{skip},async t=>{
   const raw=capturaPautas();const row=Object.fromEntries(camposPautas.map((c,i)=>[c,raw.tables.Pautas.values[1][i]]));
   adicionarPautas(raw,[{...row,pauta_id:'pauta-setembro-4',mes:'2026-09',semana:4,inicio_semana:'2026-09-28'}]);

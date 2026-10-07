@@ -1,7 +1,7 @@
 # Validação — 004 Pautas no Planejamento
 
 ## Escopo e fonte
-Solicitação de 07/10/2026: consulta de Pautas opcional e Semanas.pauta_id opcional; [spec](spec.md), [plano](plan.md), [15 tarefas](tasks.md). Base local `4c9af22e3b57a135218ab5504e7da0e2472ffdca`, após integração do iniciador. Branch `codex/004-pautas-planejamento`. Um PR, sem merge autorizado.
+Solicitação de 07/10/2026: consulta de Pautas opcional e Semanas.pauta_id opcional; [spec](spec.md), [plano](plan.md), [15 tarefas](tasks.md). Base local `4c9af22e3b57a135218ab5504e7da0e2472ffdca`, após integração do iniciador. Branch `codex/004-pautas-planejamento`. Entrega inicial sem merge; após avaliá-la, o autor autorizou os ajustes descritos ao final, merge condicionado ao gate/review do novo head e exclusão da branch.
 
 ## Decisões registradas
 - Reutilizar v1 e incluir opcionais somente quando capturadas; nenhuma migração de capturas antigas.
@@ -13,7 +13,7 @@ Solicitação de 07/10/2026: consulta de Pautas opcional e Semanas.pauta_id opci
 - Context7 conferido para Sheets e Playwright; nenhuma dependência instalada. Ausência de mapa Graphify neste checkout conferida.
 
 ## Estado
-**15/15 tarefas concluídas para entrega em PR, sem merge.** Implementação, testes e screenshots concluídos; correções conferidas pela revisão independente. [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto para avaliação do autor. Código `15567a0` com gate estrito aprovado e review sem Critical/Important ou regressão de segurança. Fechamento posterior é somente documental; checks do head vigente ficam no PR. Este registro não comprova uso editorial real. Toda evidência desta entrega usa fixtures sintéticas, cliente remoto falso e TEMP; nenhuma coleta na fonte operacional.
+**15/15 tarefas concluídas para entrega no PR.** Implementação, testes e screenshots concluídos; ajustes posteriores descritos ao final. O [PR #20](https://github.com/Browsher/crm-social/pull/20) registra os checks vigentes e o estado da integração autorizada. Rodadas anteriores de gate/review não substituem a conferência do novo head. Este registro não comprova uso editorial real. Toda evidência desta entrega usa fixtures sintéticas, cliente remoto falso e TEMP; nenhuma coleta na fonte operacional.
 
 ## TDD e regressões parciais
 Backend: RED inicial 6 PASS/32 FAIL pela ausência do suporte a Pautas; implementação e casos adicionais terminaram com 190 PASS/0 FAIL/0 SKIP nos arquivos pautas, coleta, projecao, snapshot e servidor (41 testes P004). A invocação também continha o padrão inexistente captura.test.cjs, ignorado pelo runner; não foi contado como teste executado. O coordenador executou separadamente `node --test tests/dados.test.cjs`: 25 PASS/0 FAIL/0 SKIP, incluindo hashes legados literais. Gate integrado ainda pendente nesta fase.
@@ -89,3 +89,16 @@ Fonte final de código/testes/imagens: `15567a0fddcda8f602fdf11bc86e13b413c74c15
 - M3, seletor de data: mantido o invariante já validado no backend e coberto por testes. O próprio review o reconhece seguro no código atual; não há entrada arbitrária nesse seletor. Escape defensivo adicional fica como melhoria não bloqueante.
 
 As ressalvas de LCOV, pulos do CI Linux e duas guardas de coluna opcional permanecem explícitas. A prova Windows tem 441 testes sem pulos. Os três reviews remotos são comentários, sem autorização de merge. O fechamento posterior altera somente documentação/relatório; os checks do novo head devem permanecer verdes antes de encerrar a entrega. [Galeria final de 20 screenshots sintéticos](../../docs/design/screenshots/LEIA-ME.md#004--pautas-no-planejamento).
+
+## Ajustes solicitados após a entrega inicial
+
+Sobre `6505fb153b133813459c334d5f5c70677b40389a`, o autor solicitou corrigir o espaçamento da semana destacada na Lista e somente as sugestões triviais do [review anterior](https://github.com/Browsher/crm-social/pull/20#issuecomment-6045959906). Autorizou push, merge após gate verde e review sem Critical, problema de segurança ou regressão, e exclusão da branch; autoria noreply, sem coautoria. Esta autorização substitui a restrição inicial de merge.
+
+- **Layout:** a moldura interna de 3 px sobrepunha o conteúdo porque `.agenda-week` não tinha padding. Espaçamento comum de 12 px preserva o tamanho ao focar e afasta título, origem e período da borda. RED: quatro falhas por falta de folga, nos dois temas em 1440/390. GREEN: 18 U004, sem falhas ou pulos, incluindo geometria dos textos, igualdade de espaçamento entre semanas, foco e ausência de overflow.
+- **M1:** compatibilidade de início só é conferida quando mês/ordinal definem uma segunda-feira esperada. Três testes RED comprovavam aviso em cascata; GREEN: 56 P004, sem falhas ou pulos, preservando a rejeição da pauta, avisos próprios e registros na Planilha.
+- **M2:** ano `0000-11` incluído no teste de valores inválidos. O comportamento já passava antes; não houve RED artificial.
+- **M3/M4 adiados:** preferência pelo grupo com vínculo exato entre semanas capturadas da mesma data e testes puros adicionais do módulo. A navegação atual foca o primeiro grupo da data correta, que pode não ser o grupo com origem confirmada. Melhorias não bloqueantes, mantidas fora desta rodada enxuta.
+
+Gate Windows Node 24.19.0: **449 testes PASS**, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. [Relatório dos ajustes](../../docs/reports/004-ajustes-local-gate.json) identifica as fontes por 12 blobs Git; o relatório anterior permanece histórico. Semgrep local SKIP por ausência; audit N/A. O gate publica a contagem, sem resumo de pulos; os resumos sem pulos desta rodada são das duas suítes focadas, não uma nova execução TAP completa. As limitações de LCOV e do modo full permanecem.
+
+Galeria regenerada: 20 PNG, exit 0. Revisor separado inspecionou oito imagens alteradas (card 390, semana-origem 1440/390 e gaveta 1440 nos dois temas); coordenador conferiu as quatro semana-origem. Título, origem e período integralmente legíveis, sem corte visível. Revisão local dos trechos/diffs fornecidos e PNG: nenhum novo Critical/Important/Minor ou indício de regressão/segurança; sem execução própria de comandos. Doc-sync atualizado somente no conteúdo afetado; sem mudança de dependências, arquitetura, gate, CI ou baseline. Gate estrito e review remoto do novo head devem ser conferidos no PR antes do merge; este registro local não antecipa esse resultado.

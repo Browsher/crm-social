@@ -1,0 +1,230 @@
+{
+  "feature": "004-pautas-planejamento",
+  "date": "2026-10-07",
+  "platform": "Windows",
+  "schemaVersion": 1,
+  "sourceParent": "6505fb153b133813459c334d5f5c70677b40389a",
+  "source": "Correção do espaçamento da Lista e dos Minor 1/2; fontes identificadas pelos blobs Git abaixo",
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "mode": "full",
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 449
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 93.87483355525966,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "warnings": [
+        {
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12
+        },
+        {
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11
+        },
+        {
+          "file": "src/google.cjs",
+          "line": 9,
+          "value": 18
+        },
+        {
+          "file": "src/google.cjs",
+          "line": 27,
+          "value": 12
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 31,
+          "value": 14
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 37,
+          "value": 13
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 53,
+          "value": 11
+        },
+        {
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12
+        },
+        {
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16
+        },
+        {
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 35,
+          "value": 13
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 96,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 108,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 174,
+          "value": 13
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 239,
+          "value": 12
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 321,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 353,
+          "value": 15
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 389,
+          "value": 15
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 557,
+          "value": 11
+        },
+        {
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12
+        }
+      ]
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0"
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "sourceBlobs": [
+    {
+      "file": "src/captura.cjs",
+      "gitBlob": "435ee43c41a12eccdaf5f96db460317b35cd0674"
+    },
+    {
+      "file": "src/coleta.cjs",
+      "gitBlob": "8d122e22f1d156277ebf5c41bb213b5f0ddaf7dd"
+    },
+    {
+      "file": "src/triagem.cjs",
+      "gitBlob": "ca23fdbc0ef5bca65831fdcfc2ead886b5ee2ac4"
+    },
+    {
+      "file": "src/projecao.cjs",
+      "gitBlob": "e10ade6a73fde12f7511824341593e1f1c7f519b"
+    },
+    {
+      "file": "src/pautas.cjs",
+      "gitBlob": "e245041de6e8f37389192c87f5685f03829b7804"
+    },
+    {
+      "file": "src/web/app.js",
+      "gitBlob": "8da65ec54b75785f8e35c31b0bacf8170cbded23"
+    },
+    {
+      "file": "src/web/styles.css",
+      "gitBlob": "c982c136c5b4c667c648ee1dc6a7dd24590d3f59"
+    },
+    {
+      "file": "scripts/screenshots-pautas.cjs",
+      "gitBlob": "a0bbf02b87d9fdb0436ceabd2da31f4ad17d968d"
+    },
+    {
+      "file": "tests/pautas-fixtures.cjs",
+      "gitBlob": "d083d5e73a4e2f7c0aedf5240fa445c24e73cb77"
+    },
+    {
+      "file": "tests/pautas.test.cjs",
+      "gitBlob": "af1d5a3863c730890d79ef3239f42a0ea910fbb8"
+    },
+    {
+      "file": "tests/pautas-interface.test.cjs",
+      "gitBlob": "0ddc11126ee07c1646badfc38ac7506f79414472"
+    },
+    {
+      "file": "tests/screenshots-pautas.test.cjs",
+      "gitBlob": "aa13f0089b3af3da8f79c21837b6c97ed4b96e33"
+    }
+  ],
+  "focusedTests": [
+    {
+      "suite": "P004",
+      "pass": 56,
+      "fail": 0,
+      "skipped": 0,
+      "red": "Três falhas por aviso de início em cascata. Ano zero já era recusado antes da inclusão do teste."
+    },
+    {
+      "suite": "U004",
+      "pass": 18,
+      "fail": 0,
+      "skipped": 0,
+      "red": "Quatro falhas por falta de espaçamento: 1440/390, claro/escuro."
+    }
+  ],
+  "screenshots": {
+    "count": 20,
+    "exitCode": 0,
+    "source": "Somente fixtures sintéticas, TEMP e servidor loopback",
+    "inspected": "Oito imagens alteradas: card 390, semana-origem 1440/390 e gaveta 1440 nos dois temas"
+  },
+  "review": {
+    "scope": "Delta de código/testes fornecido e oito PNG inspecionados; sem executar comandos",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "remote": "Conferir gate estrito e review do novo head no PR #20 antes do merge"
+  },
+  "limits": [
+    "Semgrep ausente no Windows; merge condicionado ao gate estrito remoto do novo head.",
+    "UI fora do LCOV; testes de interface executados em Playwright Windows.",
+    "Drop 0 no modo full não compara cobertura histórica.",
+    "O gate contabiliza os testes, mas não publica o resumo de pulos; os dois resumos sem pulos acima são das execuções focadas.",
+    "Prova exclusivamente sintética; nenhuma coleta na fonte operacional."
+  ]
+}

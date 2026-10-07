@@ -65,7 +65,7 @@ As falhas temporais são motivos fixos do recibo `falhou` e preservam a captura 
 
 ## Verificação e limites
 
-A extensão da [004](../../specs/004-pautas-planejamento/validacao.md) está implementada/testada localmente com [tests/pautas.test.cjs](../../tests/pautas.test.cjs): quatro combinações Meses/Pautas, aba vazia com cabeçalhos, mínimos obrigatórios, metadados incompletos e hashes/bytes legados. Apenas evidência sintética/TEMP; entrega no [PR #20](https://github.com/Browsher/crm-social/pull/20), sem merge ou integração. Resultados por head na validação da 004 citada acima.
+A extensão da [004](../../specs/004-pautas-planejamento/validacao.md) está implementada/testada localmente com [tests/pautas.test.cjs](../../tests/pautas.test.cjs): quatro combinações Meses/Pautas, aba vazia com cabeçalhos, mínimos obrigatórios, metadados incompletos e hashes/bytes legados. Apenas evidência sintética/TEMP; entrega no [PR #20](https://github.com/Browsher/crm-social/pull/20), com merge condicionado ao gate/review do head vigente. Resultados por head na validação da 004 citada acima.
 
 [tests/dados.test.cjs](../../tests/dados.test.cjs) cobre reordenação, mínimos, IDs, dimensões, células, metadados, intervalos, duas marcas, hash e etapa desconhecida. Resultados executados ficam em [validacao.md](../../specs/001-consulta-local-producao/validacao.md); esta documentação não reexecuta a suíte. Regressões da opcional, linha física e hash legado foram executadas na [003](../../specs/003-planejamento-mensal/validacao.md); T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real, sem comprovar uso editorial real. A demonstração de consulta não altera as regras de validação do envelope.
 

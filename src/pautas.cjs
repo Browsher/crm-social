@@ -15,7 +15,7 @@ function conferirCalendario(p,invalidar) {
   if(!segundaDoMes(p.mes,1))invalidar('mes','Mês da pauta inválido');
   if(!Number.isInteger(p.semana)||p.semana<1||p.semana>4)invalidar('semana','Ordinal da pauta inválido; esperado inteiro de 1 a 4');
   const esperado=segundaDoMes(p.mes,p.semana);
-  if(!esperado||p.inicio_semana!==esperado)invalidar('inicio_semana','Início incompatível com a segunda-feira ordinal do mês');
+  if(esperado&&p.inicio_semana!==esperado)invalidar('inicio_semana','Início incompatível com a segunda-feira ordinal do mês');
 }
 function conferirPauta(p,counts,avisar) {
   let valida=true;

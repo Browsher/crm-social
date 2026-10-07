@@ -39,12 +39,21 @@ test('P004 quatro pautas e vínculo exato preservam IDs opacos e mínimos',()=>{
   assert.deepEqual(visao.planilha.at(-1).cabecalhos,camposPautas);
   assert.equal(visao.planilha[0].cabecalhos.at(-1),'pauta_id');assert.doesNotMatch(JSON.stringify(visao),/sentinela-nao-publicar|spreadsheetId/);
 });
-for(const [campo,value] of [['pauta_id',''],['pauta_id',42],['mes','2026-13'],['mes',46300],['semana','2'],['semana',0],['semana',5],['semana',2.5],['inicio_semana','2026-02-30'],['inicio_semana','2026-11-10'],['inicio_semana','2026-12-09'],['inicio_semana','2026-11-30']]) {
+for(const [campo,value] of [['pauta_id',''],['pauta_id',42],['mes','2026-13'],['mes','0000-11'],['mes',46300],['semana','2'],['semana',0],['semana',5],['semana',2.5],['inicio_semana','2026-02-30'],['inicio_semana','2026-11-10'],['inicio_semana','2026-12-09'],['inicio_semana','2026-11-30']]) {
   test('P004 inválido '+campo+' '+value+' permanece conferível sem origem',()=>{
     const raw=capturaPautas();mudarCelula(raw,'Pautas',2,campo,value);
     const v=view(raw);assert.equal(v.pautas.length,3);assert.equal(v.semanas[0].pautaOrigem,null);
     assert.equal(v.planilha.at(-1).linhas[1][campo],value);
     assert.ok(v.avisos.some(a=>a.aba==='Pautas'&&a.linha===3&&a.campo===campo));
+  });
+}
+for(const [mes,semana,campos] of [['2026-13',2,['mes']],['2026-11',5,['semana']],['2026-13',5,['mes','semana']]]) {
+  test('P004 review calendário inválido '+mes+' S'+semana+' não acusa início por cascata',()=>{
+    const raw=capturaPautas();mudarCelula(raw,'Pautas',2,'mes',mes);mudarCelula(raw,'Pautas',2,'semana',semana);
+    const v=view(raw);assert.equal(v.pautas.length,3);assert.equal(v.semanas[0].pautaOrigem,null);
+    const avisos=v.avisos.filter(a=>a.aba==='Pautas'&&a.linha===3);
+    assert.deepEqual(avisos.map(a=>a.campo),campos);
+    assert.equal(v.planilha.at(-1).linhas[1].inicio_semana,'2026-11-09');
   });
 }
 for(const tipo of ['id','inicio']) test('P004 conflito '+tipo+' exclui todas as linhas sem escolher primeira',()=>{
