@@ -69,7 +69,7 @@ As regressões em 1440/390 verificam a cor ao navegar por objetivos/ausências/d
 
 `origemPauta` mostra **Pauta S2 de novembro** somente para `pautaOrigem` confirmada pela API. Calendário/lista usam a origem da semana; a gaveta reúne uma vez cada origem das semanas representadas pelas peças. Em dia vazio, usa as origens já confirmadas das semanas capturadas cujo período abrange a data. Esse recorte por dia não associa pauta por data: o vínculo continua resolvido exclusivamente pelo backend por ID/marca/início.
 
-Implementação e testes da 004 são locais/sintéticos; [tests/pautas-interface.test.cjs](../../tests/pautas-interface.test.cjs) confere navegação/foco sem peças, fallback, origens, órfãos, leitura/teclado da Planilha, temas e contraste. [Validação da 004](../../specs/004-pautas-planejamento/validacao.md) e [20 screenshots](../design/screenshots/LEIA-ME.md#004--pautas-no-planejamento) registram resultados e limites; PR/gate estrito/review ainda pendentes.
+Implementação e testes da 004 são locais/sintéticos; [tests/pautas-interface.test.cjs](../../tests/pautas-interface.test.cjs) confere navegação/foco sem peças, fallback, origens, órfãos, leitura/teclado da Planilha, temas e contraste. [Validação da 004](../../specs/004-pautas-planejamento/validacao.md) e [20 screenshots](../design/screenshots/LEIA-ME.md#004--pautas-no-planejamento) registram resultados e limites; entrega no [PR #20](https://github.com/Browsher/crm-social/pull/20), aberto para avaliação do autor, sem merge ou integração; resultados por head na validação citada.
 
 ## Calendário, lista e Sem data
 
@@ -88,7 +88,7 @@ Valor desconhecido permanece exatamente o original, sem substituir sublinhados, 
 
 Tema aparece no início da semana. Para múltiplas peças, apresenta o primeiro cartão de formato selecionado e **+N no dia**. Clicar cartão, dia ou contador abre todas as peças desse dia, sem aplicar o filtro de formato ao grupo. A grade começa na segunda-feira da primeira semana que contém o dia 1 e termina no domingo da última semana que contém dia do mês; pode ter 28, 35 ou 42 células conforme o calendário.
 
-A lista agrupa pelo tema/período da semana de origem. `pecaVisivel` considera a data civil da peça no mês escolhido; conserva também peças dentro do período de uma semana que cruza aquele mês. Peça remarcada para outro mês aparece no novo mês sem mudar sua semana registrada. Sem data permanece acessível independentemente do mês; filtro de formato continua valendo na lista comum.
+A lista agrupa pelo tema/período da semana de origem e conserva a ordem física recebida quando não acrescenta destinos visuais de pautas. Somente ao acrescentar esses destinos sem semana capturada ordena o conjunto por início civil. Capturas antigas e a lista Sem data preservam sua ordem anterior. `pecaVisivel` considera a data civil da peça no mês escolhido; conserva também peças dentro do período de uma semana que cruza aquele mês. Peça remarcada para outro mês aparece no novo mês sem mudar sua semana registrada. Sem data permanece acessível independentemente do mês; filtro de formato continua valendo na lista comum.
 
 **N sem data** conta globalmente a captura NTV e abre lista dedicada por semana, sem filtro de mês/formato; o link fica oculto quando N é zero. O total **peças registradas** também é global, não a quantidade visível naquele filtro.
 

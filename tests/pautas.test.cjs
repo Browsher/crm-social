@@ -54,6 +54,25 @@ for(const tipo of ['id','inicio']) test('P004 conflito '+tipo+' exclui todas as 
   const v=view(raw);assert.equal(v.pautas.length,2);assert.equal(v.semanas[0].pautaOrigem,null);
   for(const linha of [3,4])assert.ok(v.avisos.some(a=>a.aba==='Pautas'&&a.linha===linha&&/repetid/.test(a.motivo)));
 });
+for(const [tipo,id] of [['vazio',''],['espaços','   '],['número',42],['booleano',false]]) {
+  test('P004 review IDs inválidos repetidos '+tipo+' avisam somente identidade inválida',()=>{
+    const raw=capturaPautas();
+    for(const row of [1,2])mudarCelula(raw,'Pautas',row,'pauta_id',id);
+    const v=view(raw);assert.equal(v.pautas.length,2);assert.equal(v.semanas[0].pautaOrigem,null);
+    for(const linha of [2,3]) {
+      const avisos=v.avisos.filter(a=>a.aba==='Pautas'&&a.linha===linha&&a.campo==='pauta_id');
+      assert.deepEqual(avisos.map(a=>a.motivo),['Identidade da pauta inválida']);
+    }
+    assert.equal(v.planilha.at(-1).linhas[0].pauta_id,id);
+  });
+}
+test('P004 review ID opaco conserva espaços sem fundir identidades distintas',()=>{
+  const raw=capturaPautas(),id=' pauta-novembro-2 ';
+  mudarCelula(raw,'Pautas',1,'pauta_id',id);
+  const v=view(raw);assert.equal(v.pautas.length,4);assert.equal(v.pautas[0].pauta_id,id);
+  assert.equal(v.semanas[0].pautaOrigem.pauta_id,'pauta-novembro-2');
+  assert.equal(v.avisos.some(a=>a.aba==='Pautas'&&a.campo==='pauta_id'),false);
+});
 test('P004 duplicata inválida também impede confirmação da pauta válida',()=>{
   for(const campo of ['pauta_id','inicio_semana']) {
     const raw=capturaPautas();mudarCelula(raw,'Pautas',1,campo,campo==='pauta_id'?'pauta-novembro-2':'2026-11-09');

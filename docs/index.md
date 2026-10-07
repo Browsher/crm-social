@@ -4,7 +4,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 ## Ordem de leitura
 
-Feature ativa: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; PR/gate estrito/review pendentes. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
+Feature ativa: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto para avaliação do autor, sem merge ou integração; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
 
 1. [README](../README.md): resultado atual e comandos de entrada.
 2. [Roadmap](../ROADMAP.md), [AGENTS](../AGENTS.md) e [constituição](../.specify/memory/constitution.md): escopo e fronteiras.
@@ -206,7 +206,7 @@ Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; ta
 
 ## Feature 004 — Pautas no Planejamento
 
-Implementada/testada localmente, com **428 PASS** no gate Windows, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. Drop 0 é do modo full, sem comparação histórica; Semgrep SKIP por ferramenta ausente/audit N/A. PR/gate estrito/review remotos pendentes; prova local e screenshots não demonstram operação editorial real.
+Implementada/testada localmente, com **434 PASS** no gate Windows, cobertura **93,8708%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. Drop 0 é do modo full, sem comparação histórica; Semgrep SKIP por ferramenta ausente/audit N/A. [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto para avaliação do autor, sem merge ou integração; resultados de gate/review por head na [validação da 004](../specs/004-pautas-planejamento/validacao.md); prova local e screenshots não demonstram operação editorial real.
 
 - [Spec](../specs/004-pautas-planejamento/spec.md), [plano](../specs/004-pautas-planejamento/plan.md), [tarefas](../specs/004-pautas-planejamento/tasks.md) e [checklist](../specs/004-pautas-planejamento/checklists/requirements.md).
 - [Pesquisa](../specs/004-pautas-planejamento/research.md), [modelo](../specs/004-pautas-planejamento/data-model.md), [contrato](../specs/004-pautas-planejamento/contracts/pautas.md) e [quickstart](../specs/004-pautas-planejamento/quickstart.md).

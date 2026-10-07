@@ -2,7 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {temporario,mapaQuadroValido,capturaMeses,mudarCelula,adicionarRegistro,recalcularHashes,redefinirHorario}=require('./fixtures.cjs');
+const {temporario,mapaQuadroValido,capturaValida,capturaMeses,mudarCelula,adicionarRegistro,recalcularHashes,redefinirHorario}=require('./fixtures.cjs');
 const {capturaPautas,adicionarPautas,camposPautas}=require('./pautas-fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
@@ -165,4 +165,19 @@ test('U004 dia vazio usa só origem confirmada da semana capturada que cobre a d
     assert.equal(await page.locator('#dia-pecas [data-peca], #dia-pecas [data-documentos-dia]').count(),0);
     await page.keyboard.press('Escape');
   }
+});
+
+test('U004 captura antiga preserva ordem física das semanas na lista e em Sem data',{skip},async t=>{
+  const raw=capturaValida();
+  mudarCelula(raw,'Semanas',1,'inicio_semana','2026-11-16');mudarCelula(raw,'Semanas',1,'tema','Semana física A');
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-invalida',marca_id:'ntv',inicio_semana:'data inválida',tema:'Semana sem início válido'});
+  adicionarRegistro(raw,'Semanas',{semana_id:'semana-antecipada',marca_id:'ntv',inicio_semana:'2026-11-02',tema:'Semana física B'});
+  mudarCelula(raw,'Produções',2,'semana_id','semana-invalida');mudarCelula(raw,'Produções',3,'semana_id','semana-antecipada');
+  for(let i=1;i<=4;i++)mudarCelula(raw,'Produções',i,'data_prevista','');
+  const page=await abrir(t,{width:390,raw});await page.locator('#abrir-sem-data').click();
+  assert.deepEqual({lista:await page.locator('#lista .agenda-week>header h3').allTextContents(),
+    semData:await page.locator('#lista-sem-data .agenda-week>header h3').allTextContents()},
+  {lista:['Semana física A','Semana sem início válido','Semana física B'],
+    semData:['Semana física A','Semana sem início válido','Semana física B']});
+  assert.match(await page.locator('#lista .agenda-week').nth(1).textContent(),/Período não identificado/);
 });

@@ -348,7 +348,7 @@ function lista(semData=false) {
   if(!semData)for(const pauta of pautas) {
     if(!weeks.some(w=>w.periodo.inicio===pauta.inicio_semana))weeks.push({tema:pauta.tema,ids:[],periodo:{inicio:pauta.inicio_semana,fim:dataMais(pauta.inicio_semana,6)}});
   }
-  weeks.sort((a,b)=>(a.periodo.inicio??'z').localeCompare(b.periodo.inicio??'z'));
+  if(weeks.length>state.view.semanas.length)weeks.sort((a,b)=>(a.periodo.inicio??'z').localeCompare(b.periodo.inicio??'z'));
   for (const week of weeks) {
     const pecas=idsParaPecas(week.ids).filter(p=>semData?p.dataCivil===null:aceito(p) && pecaVisivel(p,week));
     const temPauta=!semData && pautas.some(p=>p.inicio_semana===week.periodo.inicio);

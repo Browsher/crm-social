@@ -21,7 +21,7 @@ function conferirPauta(p,counts,avisar) {
   let valida=true;
   const invalidar=(campo,motivo)=>{valida=false;avisar(p,campo,motivo);};
   if(typeof p.pauta_id!=='string'||!p.pauta_id.trim())invalidar('pauta_id','Identidade da pauta inválida');
-  if(counts.ids.get(p.pauta_id)>1)invalidar('pauta_id','Identidade da pauta repetida');
+  else if(counts.ids.get(p.pauta_id)>1)invalidar('pauta_id','Identidade da pauta repetida');
   if(counts.inicios.get(JSON.stringify([p.marca_id,p.inicio_semana]))>1)invalidar('inicio_semana','Marca e início repetidos');
   conferirCalendario(p,invalidar);
   return valida;

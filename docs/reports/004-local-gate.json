@@ -3,7 +3,7 @@
   "date": "2026-10-07",
   "platform": "Windows",
   "sourceBase": "4c9af22e3b57a135218ab5504e7da0e2472ffdca",
-  "source": "árvore local da feature após correção do review; código, testes e screenshots estabilizados",
+  "source": "árvore local após os ajustes do review remoto de 35ad236; código, testes e screenshots estabilizados",
   "schemaVersion": 1,
   "nodeVersion": "24.19.0",
   "exitCode": 0,
@@ -14,13 +14,13 @@
       "name": "tests",
       "state": "PASS",
       "reason": "",
-      "count": 428
+      "count": 434
     },
     {
       "name": "coverage",
       "state": "PASS",
       "reason": "",
-      "percent": 93.87483355525966,
+      "percent": 93.8707528314457,
       "drop": 0
     },
     {
@@ -111,7 +111,7 @@
         {
           "file": "src/web/app.js",
           "line": 345,
-          "value": 17
+          "value": 18
         },
         {
           "file": "src/web/app.js",
@@ -142,18 +142,128 @@
     }
   ],
   "limits": [
-    "Semgrep ausente no Windows; gate estrito de segurança pendente no CI.",
+    "Semgrep ausente no Windows; conferir o gate estrito do head no PR. O gate remoto de 35ad236 teve Semgrep PASS.",
     "Cobertura UI fora do LCOV; UI exercitada em Playwright Windows.",
     "drop 0 no modo full não é comparação com o percentual histórico.",
     "Somente fixtures, falsos clientes e TEMP; nenhuma evidência operacional real."
   ],
   "testSummary": {
-    "tests": 428,
-    "pass": 428,
+    "tests": 434,
+    "pass": 434,
     "fail": 0,
     "cancelled": 0,
     "skipped": 0,
     "todo": 0,
-    "source": "execução TAP completa após a correção do review, mesma árvore do gate"
+    "source": "execução TAP/LCOV completa após os ajustes do review remoto, mesma árvore e configuração do gate"
+  },
+  "coverageDetails": {
+    "schemaVersion": 1,
+    "source": "LCOV Windows da árvore após os ajustes do review remoto; mesma configuração de inclusão/exclusão do gate",
+    "aggregate": {
+      "lines": 1501,
+      "covered": 1409,
+      "percent": 93.8707528314457
+    },
+    "files": [
+      {
+        "file": "scripts/screenshots-pautas.cjs",
+        "lines": 96,
+        "covered": 52,
+        "percent": 54.166666666666664,
+        "uncovered": [
+          27,
+          28,
+          29,
+          30,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          81,
+          82
+        ]
+      },
+      {
+        "file": "src/captura.cjs",
+        "lines": 140,
+        "covered": 140,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/coleta.cjs",
+        "lines": 85,
+        "covered": 85,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/pautas.cjs",
+        "lines": 50,
+        "covered": 50,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/projecao.cjs",
+        "lines": 308,
+        "covered": 308,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/triagem.cjs",
+        "lines": 101,
+        "covered": 101,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "tests/pautas-fixtures.cjs",
+        "lines": 23,
+        "covered": 23,
+        "percent": 100,
+        "uncovered": []
+      }
+    ],
+    "limits": [
+      "UI executada em navegador não entra no LCOV.",
+      "Percentual agregado não compara a cobertura por arquivo da main histórica.",
+      "O CLI do gerador roda em subprocesso; esse subprocesso não herda cobertura do processo pai."
+    ]
   }
 }
