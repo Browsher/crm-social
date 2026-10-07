@@ -5,7 +5,7 @@ const nomes=Object.keys(CAMPOS), DIA=86400000, EPOCA=Date.parse('1899-12-30T00:0
 const NUMERICOS=Object.freeze({
   'Produções':['versao'], 'Páginas':['versao','indice'],
   Cenas:['versao','indice','inicio_segundos','duracao_segundos'],
-  Arquivos:['versao'], Revisoes:['versao']
+  Arquivos:['versao'], Revisoes:['versao'], Pautas:['semana']
 });
 function inteiroTextual(value){
   if(typeof value!=='string'||!/^(?:0|[1-9][0-9]*)$/.test(value))return value;
@@ -36,7 +36,7 @@ function metadata(body,id){
   const timeZone=body.properties?.timeZone;
   formatador(timeZone);exigir(typeof timeZone==='string');
   const result={};
-  const capturados=body.sheets.some(s=>s?.properties?.title==='Meses')?[...nomes,'Meses']:nomes;
+  const capturados=[...nomes,...['Meses','Pautas'].filter(nome=>body.sheets.some(s=>s?.properties?.title===nome))];
   for(const nome of capturados){
     const matches=body.sheets.filter(s=>s?.properties?.title===nome);exigir(matches.length===1);
     const p=matches[0].properties,g=p.gridProperties;
@@ -47,7 +47,7 @@ function metadata(body,id){
 }
 function converter(values,nome,timeZone){
   exigir(Array.isArray(values)&&values.length>0&&values.every(Array.isArray));
-  const campos=nome==='Semanas'?['inicio_semana']:nome==='Produções'?['data_prevista','publicado_em']:[];
+  const campos=['Semanas','Pautas'].includes(nome)?['inicio_semana']:nome==='Produções'?['data_prevista','publicado_em']:[];
   const numericos=NUMERICOS[nome]??[];
   return values.map((row,i)=>row.map((value,j)=>{
     if(i===0)return value;

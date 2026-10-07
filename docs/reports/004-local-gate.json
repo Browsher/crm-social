@@ -1,0 +1,159 @@
+{
+  "feature": "004-pautas-planejamento",
+  "date": "2026-10-07",
+  "platform": "Windows",
+  "sourceBase": "4c9af22e3b57a135218ab5504e7da0e2472ffdca",
+  "source": "árvore local da feature após correção do review; código, testes e screenshots estabilizados",
+  "schemaVersion": 1,
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "mode": "full",
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 428
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 93.87483355525966,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "warnings": [
+        {
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12
+        },
+        {
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11
+        },
+        {
+          "file": "src/google.cjs",
+          "line": 9,
+          "value": 18
+        },
+        {
+          "file": "src/google.cjs",
+          "line": 27,
+          "value": 12
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 31,
+          "value": 14
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 37,
+          "value": 13
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 53,
+          "value": 11
+        },
+        {
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12
+        },
+        {
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16
+        },
+        {
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 35,
+          "value": 13
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 96,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 108,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 174,
+          "value": 13
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 239,
+          "value": 12
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 321,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 345,
+          "value": 17
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 385,
+          "value": 15
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 553,
+          "value": 11
+        },
+        {
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12
+        }
+      ]
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0"
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "limits": [
+    "Semgrep ausente no Windows; gate estrito de segurança pendente no CI.",
+    "Cobertura UI fora do LCOV; UI exercitada em Playwright Windows.",
+    "drop 0 no modo full não é comparação com o percentual histórico.",
+    "Somente fixtures, falsos clientes e TEMP; nenhuma evidência operacional real."
+  ],
+  "testSummary": {
+    "tests": 428,
+    "pass": 428,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "source": "execução TAP completa após a correção do review, mesma árvore do gate"
+  }
+}

@@ -11,9 +11,13 @@ const CAMPOS = Object.freeze({
 const nomes = Object.keys(CAMPOS);
 const saidas = ['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 const CAMPOS_MESES=Object.freeze(['mes','marca_id','objetivo','pautas']);
+const CAMPOS_PAUTAS=Object.freeze('pauta_id marca_id mes semana inicio_semana tema mensagem modelo_carrossel oferta origem status observacao'.split(' '));
 const linhasMeses=new WeakMap();
 const linhaMensal=record=>linhasMeses.get(record);
-const nomesCapturados=tables=>Object.hasOwn(tables,'Meses')?[...nomes,'Meses']:nomes;
+const linhasPautas=new WeakMap();
+const linhaPauta=record=>linhasPautas.get(record);
+const opcionais={Meses:CAMPOS_MESES,Pautas:CAMPOS_PAUTAS};
+const nomesCapturados=tables=>[...nomes,...Object.keys(opcionais).filter(nome=>Object.hasOwn(tables,nome))];
 const vazio = value => value === '' || value === null;
 const objeto = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const idSeguro = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,100}$/.test(value);
@@ -75,7 +79,7 @@ function conferirCabecalhos(headers,nome) {
     exigir(!seen.has(h),nome+' cabeçalho duplicado');
     seen.add(h);
   }
-  for (const field of nome==='Meses'?CAMPOS_MESES:CAMPOS[nome]) exigir(seen.has(field),nome+' '+field);
+  for (const field of opcionais[nome] ?? CAMPOS[nome]) exigir(seen.has(field),nome+' '+field);
 }
 function registros(table,nome) {
   const [headers,...rows]=table.values;
@@ -85,6 +89,7 @@ function registros(table,nome) {
     if (row.every(vazio)) return;
     const record=Object.fromEntries(headers.filter(h=>!vazio(h)).map(h=>[h,row[headers.indexOf(h)] ?? '']));
     if(nome==='Meses') linhasMeses.set(record,index+2);
+    else if(nome==='Pautas') linhasPautas.set(record,index+2);
     else {
       const id=record[key];
       exigir(typeof id==='string' && id.trim()!=='' && !seen.has(id),nome+' linha '+(index+2)+' '+key);
@@ -121,7 +126,7 @@ function validarCaptura(raw) {
     exigir(table.range==='A1:'+letraColuna(meta.columnCount)+meta.rowCount,nome+' range');
     exigir(instanteUtc(table.readAt) && Date.parse(table.readAt)>=Date.parse(raw.startedAt) && Date.parse(table.readAt)<=Date.parse(raw.completedAt),nome+' readAt');
     conferirMatriz(table,meta,nome);
-    result[nome==='Meses'?'meses':saidas[index]]=registros(table,nome);
+    result[Object.hasOwn(opcionais,nome)?nome.toLowerCase():saidas[index]]=registros(table,nome);
   });
   exigir(typeof raw.secondReadSha256==='string' && /^[a-f0-9]{64}$/.test(raw.secondReadSha256),'hash');
   exigir(raw.firstReadSha256===raw.secondReadSha256 && raw.secondReadSha256===hashCelulas(raw.tables),'hash');
@@ -132,4 +137,4 @@ function validarTempoImportacao(completedAt,nowIso,completedAtVigente=null) {
   if (fim>Date.parse(nowIso)+10*60*1000) throw new Error('captura inválida: completedAt excede o relógio local em mais de 10 minutos');
   if (completedAtVigente!==null && fim<=Date.parse(completedAtVigente)) throw new Error('captura desatualizada: completedAt igual ou anterior ao da vigente');
 }
-module.exports={validarCaptura,validarTempoImportacao,CAMPOS,CAMPOS_MESES,linhaMensal,idSeguro,instanteUtc,hashCelulas,letraColuna};
+module.exports={validarCaptura,validarTempoImportacao,CAMPOS,CAMPOS_MESES,CAMPOS_PAUTAS,linhaMensal,linhaPauta,idSeguro,instanteUtc,hashCelulas,letraColuna};

@@ -2,7 +2,7 @@
 
 Como o índice de um álbum que separa só as fotografias da NTV, a projeção seleciona registros permitidos e os reúne por semana/data. Ela não transforma registros em aprovação, atividade de agente ou mídia conferida.
 
-Projeção, detalhes, quadro, seis tabelas, Meses opcional e regressões de identidade/versão implementados e verificados localmente; evidências na [validação](../../specs/001-consulta-local-producao/validacao.md). Fonte: [src/projecao.cjs](../../src/projecao.cjs). Demonstração privada e onboarding final concluídos; limites na validação.
+Projeção, detalhes, quadro, seis tabelas e regressões de identidade/versão implementados e verificados localmente; evidências históricas na [validação da 001](../../specs/001-consulta-local-producao/validacao.md). Meses opcional veio na 003; Pautas opcional e origem semanal estão implementadas/testadas localmente na [004](../../specs/004-pautas-planejamento/validacao.md), com PR/gate estrito/review pendentes. Fonte: [src/projecao.cjs](../../src/projecao.cjs). A demonstração privada anterior não comprova uso real de Pautas.
 
 Funções de entrada e fronteira: `reciboPublico` e `projetarVisao`; `redigirTexto` e `selecionarNtv` vêm do módulo compartilhado [triagem](triagem.md). Organização: `planejar`, `agruparDias`, `aplicarFrescor` e `montarPlanilha`. Detalhes e quadro: `detalhar`, `unidades`, `revisoes`, `documentosSemana`, `pendenciasMidia`, `colunaProducao` e `montarQuadro`. Usar os nomes da função na fonte, sem depender de linhas que mudam entre entregas.
 
@@ -10,20 +10,21 @@ Funções de entrada e fronteira: `reciboPublico` e `projetarVisao`; `redigirTex
 
 Export real: `projetarVisao(estadoLocal, nowIso, mapaQuadro)`, conforme a interface do plano. `nowIso` e `captura.completedAt` determinam frescor em `America/Sao_Paulo`; a data das linhas não decide o selo. O mapa validado recebido do servidor é aplicado na classificação da US4.
 
-Imports: `CAMPOS` de [captura](captura.md), `COLUNAS` de [quadro-config](quadro-config.md) e `chaves`/`redigirTexto`/`selecionarNtv` de [triagem](triagem.md). Não há I/O, rota própria, variável de ambiente ou escrita na entrada. A seleção NTV/66 mínimos e as regras de redação são compartilhadas com a validação anterior à promoção; não houve mudança no recorte ou nos formatos reconhecidos.
+Imports: `CAMPOS`/`CAMPOS_PAUTAS` de [captura](captura.md), `projetarPautas` de [pautas](pautas.md), `COLUNAS` de [quadro-config](quadro-config.md) e `chaves`/`redigirTexto`/`selecionarNtv` de [triagem](triagem.md). Não há I/O, rota própria, variável de ambiente ou escrita na entrada. A seleção NTV dos mínimos e opcionais e as regras de redação são compartilhadas com a validação anterior à promoção; não houve mudança no recorte ou nos formatos reconhecidos.
 
 | Campo de saída | Comportamento atual |
 | --- | --- |
 | `schemaVersion` / `fonte` | 1 e rótulo Captura pela Central ou Leitura direta pelo servidor local, por source permitido |
 | `captura` | null sem captura; senão capturaId, completedAt, período e contagens NTV |
 | `estado` / `selo` | Quatro estados contratuais abaixo; destino planilha em todos eles |
-| `semanas` | Mínimos selecionados + período civil de sete dias, objetivo mensal indefinido e IDs ordinais |
+| `semanas` | Mínimos selecionados + período civil de sete dias, objetivo mensal indefinido e IDs ordinais; `pauta_id`/`pautaOrigem` somente quando o cabeçalho opcional foi capturado |
+| `pautas` | Propriedade somente quando a aba foi capturada; cópias NTV com identidade/calendário válidos e unívocos, inclusive vocabulários desconhecidos com aviso |
 | `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null, formato por slot, detalhes e `quadro:{coluna,pendencias}` |
 | `dias` | Grupos por data civil; sem data agrupado por semanaId, inclusive null |
 | `quadro` | `colunas:[{nome}]` e `semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]`; oito colunas por semana, inclusive semanaId null; IDs ordinais |
-| `planilha` | Sem captura, lista vazia; com captura, seis abas `{nome,cabecalhos,quantidadeLinhas,linhas}` com cópias dos mínimos triados e contagens NTV; Meses acrescentada somente se capturada, com quatro mínimos |
+| `planilha` | Sem captura, lista vazia; com captura, seis abas `{nome,cabecalhos,quantidadeLinhas,linhas}` com cópias dos mínimos triados e contagens NTV; Meses/quatro mínimos e Pautas/doze mínimos acrescentadas independentemente se capturadas; todas as pautas NTV triadas permanecem conferíveis |
 | `historico` / `ultimaTentativa` | Todos os recibos confirmados selecionados, recentes primeiro; Histórico final na Planilha, sem órfãos/no-op duplicado |
-| `avisos` | Mês/texto mensal inválido e duplicatas de Meses; data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
+| `avisos` | Identidade/calendário/texto/vocabulário/duplicatas de Pautas e vínculo semanal não confirmado; mês/texto mensal inválido e duplicatas de Meses; data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
 
 | Precedência | `estado` | Texto / cor |
 | --- | --- | --- |
@@ -38,9 +39,9 @@ Semanas/produções exigem `marca_id=ntv`. Páginas, cenas e revisões são sele
 
 Somente campos mínimos explícitos são considerados; envelope, metadados/hash de coleta, extras arbitrários e mapa bruto não são servidos. Recibo público contém apenas tentativaId, concluidaEm, resultado e motivoResumo.
 
-## Seis tabelas de consulta
+## Tabelas de consulta e opcionais
 
-`montarPlanilha` (`src/projecao.cjs`) percorre `CAMPOS` na ordem Semanas,
+`montarPlanilha(ntv, captura)` (`src/projecao.cjs`) percorre `CAMPOS` na ordem Semanas,
 Produções, Páginas, Cenas, Arquivos e Revisoes. Como cópias de folhas já selecionadas,
 as linhas carregam somente os mínimos triados, sem herdar os dados calculados das
 outras telas.
@@ -48,12 +49,12 @@ outras telas.
 | Campo | Regra |
 | --- | --- |
 | `nome` | Nome literal da aba |
-| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 no total |
+| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 obrigatórios, `Semanas.pauta_id` somente quando capturado, quatro de Meses e doze de Pautas se presentes |
 | `quantidadeLinhas` | Comprimento da lista de linhas NTV, não a alocação da fonte |
-| `linhas` | Objetos novos com somente chaves de `CAMPOS` e os valores já triados |
+| `linhas` | Objetos com somente mínimos e opcionais contratuais capturados, já triados; nenhum campo calculado da semana ou da produção |
 
-A cópia ocorre antes de `planejar`, `detalhar` e `montarQuadro`, isolando as linhas
-de períodos/IDs calculados, `detalhes`, `quadro`, envelope e extras. Cabeçalhos e
+A cópia ocorre depois de `projetarPautas` e antes de `planejar`, `detalhar` e `montarQuadro`, isolando as linhas
+de `pautaOrigem`, períodos/IDs calculados, `detalhes`, `quadro`, envelope e extras. Cabeçalhos e
 objetos de linha não são compartilhados com os registros enriquecidos. Semanas
 sem `marca_id=ntv`, produções de outra marca e seus registros relacionados não
 entram na consulta; arquivo semanal sem produção usa vínculo à semana NTV.
@@ -70,6 +71,8 @@ visual podem permanecer na API; a célula da interface mostra **link não permit
 Texto livre legítimo segue a redação parcial, sem aplicar a allowlist a toda frase.
 
 ## Datas, formatos e agrupamento
+
+`projetarPautas` trabalha depois da triagem NTV, antes da montagem das tabelas e enriquecimentos. Devolve cópias com identidade/calendário válidos para `visao.pautas` e acrescenta `pautaOrigem` à semana somente quando existe coluna `pauta_id`. A origem é cópia da pauta encontrada por ID exato, mesma marca e início, ou null; ponteiro vazio não avisa e preenchido não confirmado avisa em Semanas/pauta_id. Nenhum vínculo é inferido por data ou tema. A tabela Pautas mantém inclusive linhas inválidas/duplicadas; a raiz válida é destinada à navegação, sem alterar a captura ou resolver produção. [Contrato](../../specs/004-pautas-planejamento/contracts/pautas.md) e [regras do helper](pautas.md).
 
 | Regra | Resultado real |
 | --- | --- |

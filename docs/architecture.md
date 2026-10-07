@@ -2,7 +2,7 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
-001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, está concluída e foi demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor; [validação da 003](../specs/003-planejamento-mensal/validacao.md). Código integrado pelo PR #15. Uso real antes de decidir 004/005.
+001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, está concluída e foi demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor; [validação da 003](../specs/003-planejamento-mensal/validacao.md). Código integrado pelo PR #15. A 004 está implementada/testada localmente com Pautas opcional e origem semanal; PR/gate estrito/review pendentes, sem integração declarada. [Validação da 004](../specs/004-pautas-planejamento/validacao.md).
 
 ## Módulos, imports e relações de execução
 
@@ -15,9 +15,14 @@ flowchart LR
   CLI["scripts/importar-captura.cjs"] --> Snapshot["src/snapshot.cjs"]
   subgraph Evidencia["Ferramenta sintética de evidência: somente TEMP"]
     Screenshots["scripts/screenshots-tema.cjs"] --> Fixtures["tests/fixtures.cjs"]
+    ScreenshotsPautas["scripts/screenshots-pautas.cjs"] --> FixturesPautas["tests/pautas-fixtures.cjs"]
+    ScreenshotsPautas --> Fixtures
+    FixturesPautas --> Fixtures
   end
   Screenshots -->|promove somente fixtures em TEMP| Snapshot
   Screenshots -->|cria servidor isolado, porta efêmera| Server
+  ScreenshotsPautas -->|promove somente fixtures em TEMP| Snapshot
+  ScreenshotsPautas -->|cria servidor isolado, porta efêmera| Server
   Snapshot --> Captura["src/captura.cjs"]
   Snapshot --> Triagem["src/triagem.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
@@ -33,8 +38,10 @@ flowchart LR
   Google --> Fetch["fetch nativo / OAuth e Sheets somente leitura"]
   Server --> Quadro["src/quadro-config.cjs"]
   Projecao --> Captura
+  Projecao --> Pautas["src/pautas.cjs: identidade, calendário e origem"]
+  Pautas --> Captura
   Projecao --> Triagem
-  Triagem -->|CAMPOS, CAMPOS_MESES e linhaMensal| Captura
+  Triagem -->|CAMPOS, opcionais e linhas físicas| Captura
   Projecao --> Quadro
   Server -->|define caminho padrão| Config["config/quadro-etapas.json"]
   Quadro -.->|lê caminho recebido| Config
@@ -53,27 +60,30 @@ flowchart LR
 
 | Módulo | Responsabilidade atual | Documento |
 | --- | --- | --- |
-| captura | Seis abas obrigatórias/66 mínimos e Meses opcional/quatro mínimos, identidades, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
-| triagem | Seleção NTV/66 mínimos e quatro mínimos mensais opcionais, avisos semânticos por linha física, redação conservadora e validação de identidades antes da promoção; sem I/O ou mapa do quadro | [Triagem](modules/triagem.md) |
+| captura | Seis abas obrigatórias/66 mínimos; Meses/quatro mínimos e Pautas/doze mínimos opcionais independentes; estrutura, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
+| triagem | Seleção NTV dos mínimos e opcionais capturados, avisos por linha física, redação conservadora e validação de identidades antes da promoção; sem I/O ou mapa do quadro | [Triagem](modules/triagem.md) |
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
 | quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
-| projecao | Usa seleção/triagem compartilhada e reúne semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses opcional | [Projeção](modules/projecao.md) |
+| projecao | Usa seleção/triagem compartilhada e resolve pautas antes de reunir semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses/Pautas opcionais | [Projeção](modules/projecao.md) |
+| pautas | Confere pautas NTV triadas, calendário/duplicatas e resolve o ponteiro semanal por ID/marca/início, sem I/O | [Pautas](modules/pautas.md) |
 | google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
-| coleta | Duas leituras de seis grades e Meses quando existe, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
+| coleta | Duas leituras de seis grades e Meses/Pautas quando existem, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
 | servidor | HTTP local com seis rotas fixas, quatro estáticos, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Entrada Abrir CRM.cmd por duplo clique, reconhecimento de instância existente por GET local; Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses opcional, Histórico e avisos detalhados; card mensal pelo mês exibido; tema claro/escuro somente visual | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses/Pautas opcionais, Histórico e avisos detalhados; card mensal e navegação/origem de pauta; tema claro/escuro somente visual | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
 `Abrir CRM.cmd` chama o PowerShell pelo caminho explícito do Windows e confere a porta 4318 antes de escolher Node. Se ocupada, `HttpClient` do .NET faz GET em loopback com timeout de dois segundos, sem proxy nem redirecionamento; HTTP 200 com objeto JSON e `schemaVersion` numérico 1 abre a URL fixa, sem chamar o iniciador. É reconhecimento mínimo da resposta, não autenticação do processo. Resposta incompatível/erro, inclusive HTTP 503 do próprio CRM, preserva o ocupante e falha com mensagem fixa/espera por tecla. Sucesso fecha sem `pause`. O GET lê somente a captura local; não altera o fluxo de coleta ou a persistência. `Iniciar CRM.ps1` continua recusando porta ocupada quando chamado diretamente. [Testes e limites](modules/iniciador.md#entrada-por-duplo-clique).
 
-Tema claro/escuro implementado e testado localmente em 06/10/2026; estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18), com merge condicionado ao gate e review vigentes. `theme.js` é carregado de forma síncrona no head antes do CSS; usa `prefers-color-scheme` e a escolha válida `crm-theme`, com leitura/escrita protegidas por try/catch. Sem armazenamento disponível, a escolha manual dura na página aberta. O atributo `data-theme` seleciona somente variáveis visuais de `styles.css`; não modifica captura, recibo, filtros, API ou estado editorial. [Testes e limites](modules/web.md#tema-claro-e-escuro) e [galeria sintética](design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
+Tema claro/escuro implementado e testado localmente em 06/10/2026; integrado pelo [PR #18](https://github.com/Browsher/crm-social/pull/18). `theme.js` é carregado de forma síncrona no head antes do CSS; usa `prefers-color-scheme` e a escolha válida `crm-theme`, com leitura/escrita protegidas por try/catch. Sem armazenamento disponível, a escolha manual dura na página aberta. O atributo `data-theme` seleciona somente variáveis visuais de `styles.css`; não modifica captura, recibo, filtros, API ou estado editorial. [Testes e limites](modules/web.md#tema-claro-e-escuro) e [galeria sintética](design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
 
-O [gerador de screenshots](../scripts/screenshots-tema.cjs) é ferramenta de evidência sintética, externa à operação: usa `tests/fixtures.cjs`, promove somente em TEMP e cria sua própria instância do servidor. Nunca usa o CRM do autor ou Google. Em 07/10, [três testes do script real](../tests/screenshots-tema.test.cjs) passaram localmente: dois VM recusam limpeza fora de TEMP/prefixo permitido; um CLI gera 16 PNG em cópia TEMP e preserva diretório alheio. No CI, os dois VM executam e o CLI de navegador mantém SKIP pela M8. Esta rodada não mudou código de produção, PNG, configuração de CI/gate ou baseline; integração depende dos checks/review do novo head do PR #18.
+O [gerador de screenshots](../scripts/screenshots-tema.cjs) é ferramenta de evidência sintética, externa à operação: usa `tests/fixtures.cjs`, promove somente em TEMP e cria sua própria instância do servidor. Nunca usa o CRM do autor ou Google. Em 07/10, [três testes do script real](../tests/screenshots-tema.test.cjs) passaram localmente: dois VM recusam limpeza fora de TEMP/prefixo permitido; um CLI gera 16 PNG em cópia TEMP e preserva diretório alheio. No CI, os dois VM executam e o CLI de navegador mantém SKIP pela M8. Esta rodada não mudou código de produção, PNG, configuração de CI/gate ou baseline; a integração posterior foi concluída pelo PR #18.
 
-`.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch e sua pasta de specs (por exemplo, `003-planejamento-mensal`); o ponteiro não é pré-requisito do importador/servidor.
+O [gerador da 004](../scripts/screenshots-pautas.cjs) usa `tests/pautas-fixtures.cjs` e os helpers de `tests/fixtures.cjs`, além de snapshot/servidor. Produz 20 imagens de cinco cenários em 1440/390 e claro/escuro, com relógio fixo sintético, estado em TEMP e porta efêmera; bloqueia acesso externo e confere erros do navegador. A limpeza fecha navegador/servidor e confere diretório TEMP/prefixo antes de remover somente a pasta criada. Quatro testes próprios verificam guardas, falha do navegador e CLI em cópia TEMP. [Galeria](design/screenshots/LEIA-ME.md#004--pautas-no-planejamento) e [validação da 004](../specs/004-pautas-planejamento/validacao.md); nenhum dado operacional ou instância do autor é usado.
+
+`.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch e sua pasta de specs (por exemplo, `004-pautas-planejamento`); o ponteiro não é pré-requisito do importador/servidor. Não há mapa Graphify neste checkout; o diagrama acima registra os imports pertinentes.
 
 ## Entrada, persistência e confirmação
 
@@ -177,7 +187,7 @@ Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” glo
 
 US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
 
-Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas obrigatórias, Meses opcional quando capturada depois de Revisoes e Histórico final. Meses acompanha teclado/rolagem e retorna à primeira aba disponível se desaparecer; falhas da opcional usam mensagem legível no Histórico. **Atualizar dados** desabilita o botão durante POST /api/atualizar e o GET posterior; role=status informa atualização/sucesso/falha e aviso fixo da trava, quando houver. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
+Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas obrigatórias, Meses/Pautas opcionais nessa ordem depois de Revisoes e Histórico final. As opcionais acompanham teclado/rolagem, com retorno à primeira aba disponível se a selecionada desaparecer; falhas usam mensagem legível no Histórico. **Atualizar dados** desabilita o botão durante POST /api/atualizar e o GET posterior; role=status informa atualização/sucesso/falha e aviso fixo da trava, quando houver. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
@@ -191,13 +201,14 @@ completa; o atalho da gaveta localiza os avisos relacionados à peça.
 ```mermaid
 flowchart TD
   Estado[Estado confirmado por lerEstado] --> Selecionar[selecionarNtv e triagem dos mínimos]
-  Selecionar --> Copiar[montarPlanilha copia CAMPOS e Meses triada se presente]
-  Selecionar --> Enriquecer[Planejamento, detalhes e quadro]
+  Selecionar --> Pautas[projetarPautas confere identidade/calendário e origem semanal]
+  Pautas --> Copiar[montarPlanilha copia mínimos e opcionais capturados]
+  Pautas --> Enriquecer[Planejamento, detalhes e quadro]
   Estado --> Recibos[base seleciona recibos confirmados recentes primeiro]
   Copiar --> API[GET /api/visao existente]
   Enriquecer --> API
   Recibos --> API
-  API --> Abas[Seis abas NTV, Meses opcional e Histórico]
+  API --> Abas[Seis abas NTV, Meses/Pautas opcionais e Histórico]
   API --> Avisos[Avisos gerais e detalhes.avisos da peça]
   Gaveta[ver na Planilha da gaveta] -->|fecha, abre Produções e dá foco| Filtro[Somente avisos da peça]
   Avisos --> Filtro
@@ -206,7 +217,8 @@ flowchart TD
 ```
 
 `montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
-triados antes dos enriquecimentos, evitando `quadro`, `detalhes`, envelope e extras.
+triados, depois da resolução de pautas e antes de planejar/detalhar o quadro, evitando
+`pautaOrigem`, `quadro`, `detalhes`, envelope e extras nas tabelas.
 Contagens são das linhas NTV, não da alocação no Google. Normalização null→string
 vazia permanece nos mínimos, exceto `etapa_producao`; o original fica privado.
 Histórico mostra todas as tentativas confirmadas, sem órfãos nem novo recibo por
@@ -223,6 +235,14 @@ avisos restauram os avisos gerais. Painel fica oculto em Histórico ou sem aviso
 URL já triada fora da allowlist visual; textos livres legítimos mantêm suas URLs
 como texto segundo o contrato. Células não criam links ou navegação automática.
 
+## Pautas: identidade, calendário e origem
+
+`src/pautas.cjs` importa somente `CAMPOS_PAUTAS` de captura e é chamado pela projeção com linhas NTV já triadas. A raiz `pautas` existe somente quando a aba foi capturada, com cópias de pautas cuja identidade/calendário são válidos e unívocos. Duplicatas de ID ou marca/início em qualquer linha NTV invalidam os destinos envolvidos; outras marcas não participam desse índice nem criam avisos. Mês, ordinal inteiro 1–4 e segunda-feira correspondente são conferidos sem inferir uma quinta pauta. Texto/modelo/origem/status desconhecidos geram aviso e permanecem dados da fonte; não mudam a produção.
+
+Semanas recebe `pauta_id` e `pautaOrigem` somente quando o cabeçalho opcional foi capturado. A origem exige ID exato, mesma marca e mesmo início, sem dedução por data/tema/ordem; vazio não avisa e preenchido não resolvido fica null com aviso localizado. Planilha conserva todas as linhas NTV triadas de Pautas, inclusive inválidas/duplicadas. Os dois opcionais são independentes e não alteram bytes/hashes de capturas históricas. [Contrato da 004](../specs/004-pautas-planejamento/contracts/pautas.md).
+
+A UI escolhe pautas válidas pelo mês exibido, mantém objetivo de Meses e cria destino de foco para a segunda-feira mesmo sem peças; mês sem pautas válidas usa todo o fallback textual da 003. Semana e gaveta apresentam somente `pautaOrigem` confirmada. Implementação/testes locais e screenshots sintéticos estão na [validação da 004](../specs/004-pautas-planejamento/validacao.md); PR/gate estrito/review ainda pendentes. Sem novos endpoints, env, dependências ou escrita operacional.
+
 ## Ferramentas de qualidade, evidência e dívidas
 
 ```mermaid
@@ -234,7 +254,7 @@ flowchart LR
   Gate --> Security["gate-security.mjs"]
 ```
 
-O gate e seus imports estão em `tools/`; ESLint/lock são isolados da aplicação. `quality-gate.config.json` define Node 24.19.0, runner node --test e modo full. A UI fica fora do LCOV (pendência M8) e seus testes continuam obrigatórios no computador. Os resultados do gate estão somente na [validação](../specs/001-consulta-local-producao/validacao.md).
+O gate e seus imports estão em `tools/`; ESLint/lock são isolados da aplicação. `quality-gate.config.json` define Node 24.19.0, runner node --test e modo full. A UI fica fora do LCOV (pendência M8) e seus testes continuam obrigatórios no computador. Os resultados históricos ficam na [validação da 001](../specs/001-consulta-local-producao/validacao.md); a árvore da 004 tem [validação própria](../specs/004-pautas-planejamento/validacao.md) e [relatório local sanitizado](reports/004-local-gate.json).
 
 CI ativo com quality-gate obrigatório e review por comentário; histórico e estado corrente na [validação](../specs/001-consulta-local-producao/validacao.md). Dados, I/O, CLI, projeção e HTTP são obrigatórios no Linux; UI/PowerShell têm pulos explícitos e não comprovam aceite remoto dessas camadas. CLI está coberta; M8 refere-se à UI fora do LCOV e à fronteira UI/PowerShell no Linux.
 
