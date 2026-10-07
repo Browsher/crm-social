@@ -1,6 +1,6 @@
 # Roadmap — CRM Social local
 
-Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](specs/001-consulta-local-producao/validacao.md). 003 concluída, 15/15 tarefas, com código integrado pelo PR #15; 004–005 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
+Como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](specs/001-consulta-local-producao/validacao.md). 003 concluída, 15/15 tarefas, com código integrado pelo PR #15; 004 implementada/testada localmente, no [PR #20](https://github.com/Browsher/crm-social/pull/20), com integração condicionada ao gate/review do head vigente; 005–006 continuam planejadas; Equipe/Workflow somente v2 ilustrativo; a [constituição](.specify/memory/constitution.md) permanece vigente. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 
 CI ativo: quality-gate obrigatório, review por comentário e geração opcional pelo rótulo `gerar-testes`; estado e evidências na [validação](specs/001-consulta-local-producao/validacao.md).
 
@@ -10,7 +10,7 @@ US1–US5, iniciador e escala sintética estão verificados localmente; revisão
 
 O desenho aprovado orienta um CRM acessível somente neste computador, começando pela NTV. A planilha continua sendo a fonte de fila, versões e decisões; o Drive mantém documentos e mídias. As [decisões das telas](docs/design/telas.md), o [mockup v2](docs/design/mockups/telas-v2.html) e o [desenho histórico](docs/design/desenho.md) descrevem a intenção, sem representar funcionalidades entregues.
 
-As cinco features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com T021 demonstrada, 24/24 tarefas; 003 concluída, 15/15 tarefas, com código integrado pelo PR #15, com T002/T015 conferidas usando uma linha fictícia marcada como teste; 004–005 continuam backlog; Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006.
+As seis features do v1 serão construídas em sequência. A 001 foi entregue; a [002](specs/002-consulta-planilhas/spec.md) está implementada/testada localmente, com T021 demonstrada, 24/24 tarefas; 003 concluída, 15/15 tarefas, com código integrado pelo PR #15, com T002/T015 conferidas usando uma linha fictícia marcada como teste. A 004 está implementada/testada localmente, no [PR #20](https://github.com/Browsher/crm-social/pull/20), com integração condicionada ao gate/review do head vigente; revisões e biblioteca são backlog 005/006. Equipe/Workflow saíram do v1 para v2 ilustrativo. Critérios futuros não são resultados verificados. Em 03/10 a nova 002 Planilhas deslocou as antigas 002–005 para 003–006; em 07/10, Pautas assumiu a 004 e deslocou revisões/biblioteca para 005/006.
 
 ## 001 — Consulta local da produção
 
@@ -40,7 +40,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## 003 — Consulta do planejamento mensal
 
-**Estado:** 003 concluída, 15/15 tarefas; código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15). T002 (aba criada pelo autor) e T015 (demonstração pelo CRM) conferidas com uma linha fictícia marcada como teste; [validação sanitizada](specs/003-planejamento-mensal/validacao.md). As provas de fixtures/gates anteriores permanecem históricas. Próximo passo: uso real antes de decidir 004/005.
+**Estado:** 003 concluída, 15/15 tarefas; código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15). T002 (aba criada pelo autor) e T015 (demonstração pelo CRM) conferidas com uma linha fictícia marcada como teste; [validação sanitizada](specs/003-planejamento-mensal/validacao.md). As provas de fixtures/gates anteriores permanecem históricas. Essa era a orientação ao concluir a 003; a 004 foi autorizada em 07/10 e está descrita abaixo.
 
 **Resultado visível:** objetivo e pautas do mês exibido, lidos da aba opcional **Meses** (`mes`, `marca_id`, `objetivo`, `pautas`). Card com objetivo definido na cor principal, até cinco pautas e **+N pautas** ou **+1 pauta** restantes; sem aba/linha, **Ainda não definido** apagado; duplicata por marca/mês, **A confirmar** apagado com aviso na Planilha. Meses aparece na Planilha como as outras tabelas, quando capturada.
 
@@ -50,19 +50,29 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 **Operação (fora do CRM):** o preenchimento de Meses pode ser assumido pelo Estrategista ou pela Central no futuro, sem mudar o CRM. Fluxo dos agentes, repasse ao Diretor e migração da meta semanal são operação externa, com escopo/autorização/evidência próprios.
 
-## 004 — Revisões e pedidos de ajuste
+## 004 — Pautas no Planejamento
+
+**Estado:** implementada e testada localmente em 07/10/2026; [spec](specs/004-pautas-planejamento/spec.md), [plano](specs/004-pautas-planejamento/plan.md) e [15 tarefas](specs/004-pautas-planejamento/tasks.md). [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente. Resultados de gate/review por head na [validação da 004](specs/004-pautas-planejamento/validacao.md). Esta prioridade desloca revisões e biblioteca para 005/006; registros históricos das entregas anteriores conservam sua numeração de época.
+
+**Resultado implementado:** card conserva o objetivo de Meses e mostra pautas válidas do mês, uma linha por semana com tema/modelo/status e selo do autor; cada linha leva à segunda-feira com foco, mesmo sem peças. Calendário/lista e gaveta identificam a pauta confirmada da semana. Planilha apresenta Pautas opcional com todas as linhas NTV triadas e Semanas.pauta_id somente quando capturado. Pautas independe de Meses; mês sem pautas válidas mantém o card completo da 003.
+
+**Verificação local:** 56 testes de backend, 18 de interface e quatro do gerador; gate Windows Node 24.19.0 com **449 PASS**, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. Drop 0 é o valor do modo full, sem comparação histórica; Semgrep SKIP por ausência e audit N/A. [Relatório dos ajustes](docs/reports/004-ajustes-local-gate.json), [20 imagens sintéticas](docs/design/screenshots/LEIA-ME.md#004--pautas-no-planejamento) e [validação/limites](specs/004-pautas-planejamento/validacao.md). Prova local não substitui CI/review do novo head nem demonstra uso editorial real.
+
+**Fronteiras:** consulta somente leitura, sem novos fluxos editoriais. Ausência da aba/coluna preserva capturas e comportamento anteriores. Dados incoerentes ou vínculos ambíguos geram avisos, sem associação inventada. Só fixtures sintéticas; um PR com gate/review e screenshots nos dois temas. O autor autorizou merge e exclusão da branch após aprovação do gate/review do head vigente.
+
+## 005 — Revisões e pedidos de ajuste
 
 **Resultado visível:** o usuário solicita ajustes pelo CRM e acompanha o retorno. Toda solicitação identifica conteúdo, versão de origem e pedido; a Central confere a versão vigente e registra a decisão nos campos autorizados.
 
-**Dependências:** concluir 001–003 e definir o contrato de solicitação, confirmação, conflito e recibo, incluindo tratamento de reenvio.
+**Dependências:** concluir 001–004 e definir o contrato de solicitação, confirmação, conflito e recibo, incluindo tratamento de reenvio.
 
 **Aceite:** uma solicitação permanece pendente até existir confirmação da Central para a versão correta. Versão divergente produz conflito explícito; reenvio não aplica a mesma mudança duas vezes. O recibo permite conferir o resultado na fonte. Rejeição confirmada bloqueia as dependências pertinentes. A interface não se torna um segundo escritor operacional, e aprovação humana não substitui conferência técnica nem habilita geração ou publicação.
 
-## 005 — Materiais e biblioteca visual
+## 006 — Materiais e biblioteca visual
 
 **Resultado visível:** prévias reais dos arquivos autorizados, com origem, versão e relação com o conteúdo. Referências visuais e materiais de produção aparecem identificados; no carrossel, cada página mostra o arquivo efetivamente disponível.
 
-**Dependências:** concluir 001–004, conferir os registros de Biblioteca/Arquivos e definir como disponibilizar localmente os materiais permitidos. A tela **Conteúdos** entra aqui, com prévias somente dos arquivos liberados.
+**Dependências:** concluir 001–005, conferir os registros de Biblioteca/Arquivos e definir como disponibilizar localmente os materiais permitidos. A tela **Conteúdos** entra aqui, com prévias somente dos arquivos liberados.
 
 **Aceite:** cada prévia corresponde a um arquivo real e à versão informada. Referência não aparece como peça produzida; arquivo ausente ou inacessível não recebe prévia fictícia. Mídia disponível, conferida e aprovada mantém estados distintos. Não há geração automática, exposição de credenciais nem mudança de permissões públicas do Drive.
 
@@ -76,13 +86,13 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## Manutenção de interface — tema claro e escuro
 
-Ajuste pequeno solicitado pelo autor, sem Spec Kit e sem alterar as features 001–005. Em 06/10/2026, tema aplicado antes do CSS, botão acessível e preferência visual local implementados/testados nas telas existentes; gate Windows histórico com 350 PASS. Em 07/10, botão ajustado para indicar a ação (claro → Escuro; escuro → Claro), com aria-label correspondente e sem aria-pressed; 27 testes de tema PASS sem pulos e 16 screenshots sintéticos regenerados em 1440/390 nos dois temas. Gate final da árvore local com 356 PASS, incluindo três testes preexistentes do iniciador fora do PR, cobertura 96,3498% (antes 98,3871%, com escopo agora ampliado pelo gerador no LCOV) e baseline preservada. Três novos testes do gerador passaram localmente; no CI, dois VM executam e o CLI com navegador mantém SKIP. Estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18); merge condicionado ao gate e review vigentes. [Uso e limites](README.md#tema-claro-e-escuro--ajuste-de-interface), [interface](docs/modules/web.md#tema-claro-e-escuro) e [galeria](docs/design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
+Ajuste pequeno solicitado pelo autor, sem Spec Kit e sem alterar as features 001–005. Em 06/10/2026, tema aplicado antes do CSS, botão acessível e preferência visual local implementados/testados nas telas existentes; gate Windows histórico com 350 PASS. Em 07/10, botão ajustado para indicar a ação (claro → Escuro; escuro → Claro), com aria-label correspondente e sem aria-pressed; 27 testes de tema PASS sem pulos e 16 screenshots sintéticos regenerados em 1440/390 nos dois temas. Gate final da árvore local com 356 PASS, incluindo três testes preexistentes do iniciador fora do PR, cobertura 96,3498% (antes 98,3871%, com escopo agora ampliado pelo gerador no LCOV) e baseline preservada. Três novos testes do gerador passaram localmente; no CI, dois VM executam e o CLI com navegador mantém SKIP. Integrado pelo [PR #18](https://github.com/Browsher/crm-social/pull/18); medições anteriores permanecem históricas. [Uso e limites](README.md#tema-claro-e-escuro--ajuste-de-interface), [interface](docs/modules/web.md#tema-claro-e-escuro) e [galeria](docs/design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
 
 ## Manutenção do iniciador — reabrir o CRM
 
 Ajuste pequeno solicitado pelo autor, sem nova feature ou Spec Kit. A entrada por duplo clique de 06/10/2026 foi ampliada em 07/10: [Abrir CRM.cmd](Abrir%20CRM.cmd) confere primeiro a porta 4318 e, quando ocupada, reconhece HTTP 200 com objeto JSON e `schemaVersion` numérico 1 por GET local com timeout de dois segundos. Reabre a URL fixa sem iniciar outro servidor; outro ocupante ou erro conserva a mensagem fixa e a espera por tecla, sem encerrar o processo. Sucessos fecham a janela sem `pause`. `Iniciar CRM.ps1` continua intacto.
 
-Implementado/testado localmente: RED inicial com 3 PASS/9 FAIL, suíte final com 18 PASS sem pulos em CMD/PowerShell reais, TEMP e portas efêmeras, incluindo servidor real sem captura/com Meses sintética e PowerShell por caminho explícito do Windows. [Gate normal Windows final](docs/reports/019-iniciador-local-gate.json): 371 PASS, cobertura 96,3498%, drop 0, complexidade PASS/17 avisos, baseline preservada e exit 0; Semgrep SKIP/audit N/A. A tentativa estrita local anterior terminou com exit 1 por Semgrep ausente; a integração depende do gate estrito e review vigentes do [PR #19](https://github.com/Browsher/crm-social/pull/19). Sem prova de duplo clique manual. [Uso](README.md#executar-a-primeira-entrega-local) e [detalhes/limites](docs/modules/iniciador.md#entrada-por-duplo-clique).
+Implementado/testado localmente: RED inicial com 3 PASS/9 FAIL, suíte final com 18 PASS sem pulos em CMD/PowerShell reais, TEMP e portas efêmeras, incluindo servidor real sem captura/com Meses sintética e PowerShell por caminho explícito do Windows. [Gate normal Windows final](docs/reports/019-iniciador-local-gate.json): 371 PASS, cobertura 96,3498%, drop 0, complexidade PASS/17 avisos, baseline preservada e exit 0; Semgrep SKIP/audit N/A. A tentativa estrita local anterior terminou com exit 1 por Semgrep ausente; a integração foi concluída pelo [PR #19](https://github.com/Browsher/crm-social/pull/19). Sem prova de duplo clique manual. [Uso](README.md#executar-a-primeira-entrega-local) e [detalhes/limites](docs/modules/iniciador.md#entrada-por-duplo-clique).
 
 ## Como vamos construir
 
@@ -90,4 +100,4 @@ Cada feature terá um registro canônico em `specs/<id>-<nome>/`: `spec.md` desc
 
 A cada entrega, registraremos separadamente o que está planejado, implementado, testado e integrado, com evidência e limitações. Multimarcas, servidor remoto e publicação automática ficam fora deste ciclo. A preparação documental não altera a produção existente.
 
-**Próximo passo:** uso real antes de decidir 004/005; evidências/limites na [validação da 003](specs/003-planejamento-mensal/validacao.md).
+**Integração autorizada:** o autor autorizou merge do [PR #20](https://github.com/Browsher/crm-social/pull/20) e exclusão da branch após gate e review aprovados no head vigente; resultados de gate/review por head, evidências e limites na [validação da 004](specs/004-pautas-planejamento/validacao.md).

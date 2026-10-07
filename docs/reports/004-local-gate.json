@@ -1,0 +1,335 @@
+{
+  "feature": "004-pautas-planejamento",
+  "date": "2026-10-07",
+  "platform": "Windows",
+  "sourceBase": "4c9af22e3b57a135218ab5504e7da0e2472ffdca",
+  "source": "árvore local após ajustes do review remoto de f0c2b6b; fontes identificadas por sourceBlobs",
+  "schemaVersion": 1,
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "mode": "full",
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 441
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 93.87483355525966,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "warnings": [
+        {
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12
+        },
+        {
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11
+        },
+        {
+          "file": "src/google.cjs",
+          "line": 9,
+          "value": 18
+        },
+        {
+          "file": "src/google.cjs",
+          "line": 27,
+          "value": 12
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 31,
+          "value": 14
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 37,
+          "value": 13
+        },
+        {
+          "file": "src/servidor.cjs",
+          "line": 53,
+          "value": 11
+        },
+        {
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12
+        },
+        {
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16
+        },
+        {
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 35,
+          "value": 13
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 96,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 108,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 174,
+          "value": 13
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 239,
+          "value": 12
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 321,
+          "value": 11
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 353,
+          "value": 15
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 389,
+          "value": 15
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 557,
+          "value": 11
+        },
+        {
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12
+        }
+      ]
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0"
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "limits": [
+    "Semgrep ausente no Windows; o gate estrito remoto do sourceCommit teve Semgrep PASS. Conferir checks do head vigente no PR.",
+    "Cobertura UI fora do LCOV; UI exercitada em Playwright Windows.",
+    "drop 0 no modo full não é comparação com o percentual histórico.",
+    "Somente fixtures, falsos clientes e TEMP; nenhuma evidência operacional real."
+  ],
+  "testSummary": {
+    "tests": 441,
+    "pass": 441,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "source": "execução TAP/LCOV completa após os ajustes do review remoto, mesmas fontes/configuração do gate"
+  },
+  "coverageDetails": {
+    "schemaVersion": 1,
+    "source": "LCOV Windows da árvore após os ajustes do review remoto; mesma configuração de inclusão/exclusão do gate",
+    "aggregate": {
+      "lines": 1502,
+      "covered": 1410,
+      "percent": 93.87483355525966
+    },
+    "files": [
+      {
+        "file": "scripts/screenshots-pautas.cjs",
+        "lines": 96,
+        "covered": 52,
+        "percent": 54.166666666666664,
+        "uncovered": [
+          27,
+          28,
+          29,
+          30,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          81,
+          82
+        ]
+      },
+      {
+        "file": "src/captura.cjs",
+        "lines": 140,
+        "covered": 140,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/coleta.cjs",
+        "lines": 85,
+        "covered": 85,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/pautas.cjs",
+        "lines": 51,
+        "covered": 51,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/projecao.cjs",
+        "lines": 308,
+        "covered": 308,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "src/triagem.cjs",
+        "lines": 101,
+        "covered": 101,
+        "percent": 100,
+        "uncovered": []
+      },
+      {
+        "file": "tests/pautas-fixtures.cjs",
+        "lines": 23,
+        "covered": 23,
+        "percent": 100,
+        "uncovered": []
+      }
+    ],
+    "limits": [
+      "UI executada em navegador não entra no LCOV.",
+      "Percentual agregado não compara a cobertura por arquivo da main histórica.",
+      "O CLI do gerador roda em subprocesso; esse subprocesso não herda cobertura do processo pai."
+    ]
+  },
+  "sourceParent": "f0c2b6bad9880a16820b8699a51e6fdae56f7785",
+  "sourceBlobs": [
+    {
+      "file": "src/captura.cjs",
+      "gitBlob": "435ee43c41a12eccdaf5f96db460317b35cd0674"
+    },
+    {
+      "file": "src/coleta.cjs",
+      "gitBlob": "8d122e22f1d156277ebf5c41bb213b5f0ddaf7dd"
+    },
+    {
+      "file": "src/triagem.cjs",
+      "gitBlob": "ca23fdbc0ef5bca65831fdcfc2ead886b5ee2ac4"
+    },
+    {
+      "file": "src/projecao.cjs",
+      "gitBlob": "e10ade6a73fde12f7511824341593e1f1c7f519b"
+    },
+    {
+      "file": "src/pautas.cjs",
+      "gitBlob": "254bf7c595387cfc14bc0642cbcf5a23aa495e25"
+    },
+    {
+      "file": "src/web/app.js",
+      "gitBlob": "8da65ec54b75785f8e35c31b0bacf8170cbded23"
+    },
+    {
+      "file": "src/web/styles.css",
+      "gitBlob": "19e93570d3f7f580e285c6652b00b9c3a5ddd619"
+    },
+    {
+      "file": "scripts/screenshots-pautas.cjs",
+      "gitBlob": "a0bbf02b87d9fdb0436ceabd2da31f4ad17d968d"
+    },
+    {
+      "file": "tests/pautas-fixtures.cjs",
+      "gitBlob": "d083d5e73a4e2f7c0aedf5240fa445c24e73cb77"
+    },
+    {
+      "file": "tests/pautas.test.cjs",
+      "gitBlob": "23d85fb38576170bcae84e28dd7b5be5fb1888de"
+    },
+    {
+      "file": "tests/pautas-interface.test.cjs",
+      "gitBlob": "77dbb2664b4909d36d90a08ac904f4ac90b8e313"
+    },
+    {
+      "file": "tests/screenshots-pautas.test.cjs",
+      "gitBlob": "aa13f0089b3af3da8f79c21837b6c97ed4b96e33"
+    }
+  ],
+  "sourceCommit": "15567a0fddcda8f602fdf11bc86e13b413c74c15",
+  "remoteCodeGate": {
+    "commit": "15567a0fddcda8f602fdf11bc86e13b413c74c15",
+    "url": "https://github.com/Browsher/crm-social/actions/runs/37678876658/job/112989401162",
+    "source": "resumo extraído do log do job Executar gate estrito",
+    "tests": "PASS",
+    "coverage": "PASS",
+    "complexity": "PASS",
+    "complexityWarnings": 20,
+    "semgrep": "PASS",
+    "audit": "N/A",
+    "exitCode": 0,
+    "baselineUpdated": false,
+    "limits": "CI Linux mantém pulos de UI/PowerShell; prova Windows é separada."
+  }
+}

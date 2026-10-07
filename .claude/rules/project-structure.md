@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/15), T002/T015 conferidas com registro fictício, uso real antes de decidir 004/005; 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
+T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/15), T002/T015 conferidas com registro fictício, 004 implementada/testada localmente, [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente, resultados por head na [validação da 004](../../specs/004-pautas-planejamento/validacao.md); 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
 - .specify/feature.json é ponteiro local; remoto usa branch/specs da feature ativa.
@@ -9,24 +9,24 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - docs/design/telas.md define telas; mockups/ e prototype/ são demonstrações históricas.
 - docs/design/screenshots/ mostra aplicação real com fixture fictícia, nunca produção.
 - docs/index.md é o índice; docs/architecture.md documenta o código e suas fronteiras.
-- docs/modules/ detalha captura, triagem, snapshot, importador, quadro-config, projeção, servidor, iniciador e web.
+- docs/modules/ detalha captura, coleta, google, triagem, pautas, snapshot, importador, quadro-config, projeção, servidor, iniciador e web.
 - EntryPoint real: scripts/importar-captura.cjs <arquivo-local> [--data-dir <diretorio>].
 - EntryPoint real: src/servidor.cjs [--data-dir <diretorio>] [--port <porta>].
 - EntryPoint Windows: Iniciar CRM.ps1 [-DataDir <diretorio>] [-Port <porta>] [-NodePath <exe>].
 - Iniciador resolve -NodePath/CRM_NODE_PATH/PATH, usa Node oculto, confirma stdout em dez segundos e retorna PID/URL/logDir/encerrar.
 - Porta 0–65535, data/ e 4318 padrão; logs privados em DataDir/runtime; erro encerra só filho criado, nunca ocupante.
-- src/captura.cjs valida seis abas/66 mínimos; src/snapshot.cjs confirma estado privado.
+- src/captura.cjs valida seis abas/66 mínimos e Meses/Pautas opcionais independentes; src/snapshot.cjs confirma estado privado.
 - validarTempoImportacao confere candidata sob trava: futuro até 10 min; fim posterior ao vigente.
 - Falha temporal confirma recibo e mantém vigente; no-op de ID aceito precede essa regra.
 - GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
 - lerRecibo valida objeto/tipos/IDs/data ISO real com fuso dos recibos confirmados; inválido recusa leitura sem escrever.
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
 - src/triagem.cjs seleciona NTV/66 mínimos e redige; snapshot valida identidades antes do no-op/gravação, sem mapa do quadro.
-- src/projecao.cjs usa triagem para detalhes/quadro/tabelas; sem versão positiva, mídia vigente a confirmar.
+- src/projecao.cjs usa triagem e pautas.cjs para origem/detalhes/quadro/tabelas; sem versão positiva, mídia vigente a confirmar.
 - config/quadro-etapas.json é aplicado na projeção; nove etapas e liberação/revisão vazias.
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas: GET/HEAD estáticos/visão; POST /api/atualizar {} com Origin obrigatório e ≤1KiB.
-- src/web/ entrega Planejamento, selo/releitura, gaveta, Produção e seis abas/Histórico em Planilha.
+- src/web/ entrega Planejamento com navegação/origem de Pautas, gaveta, Produção e seis abas/Meses/Pautas/Histórico em Planilha.
 - Gaveta compacta: primeira aberta, dados preenchidos, versões/texto/Histórico recolhidos; Esc devolve foco.
 - Resumo distingue revisão vigente/a confirmar/ausência; IDs técnicos da revisão só na API.
 - Cena: três slots inicial/final/vídeo; aviso de mídia agregado, validações numéricas independentes.
@@ -53,7 +53,7 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - US4: primeira pendência/+N visíveis; mídia oculta no cartão de Planejamento/Redação/Visual; semanaId declarada no estado.
 - US5: abas por teclado/foco, rolagem própria e Histórico confirmado; releitura conserva aba disponível.
 - T039 captura real, T040 gate e T041 onboarding concluídos; resultados/limites só na validação.
-- Google/coleta: JWT/fetch nativos, seis abas tipadas e hashes; POST adquire lock durante await.
+- Google/coleta: JWT/fetch nativos, seis abas e Meses/Pautas opcionais, hashes; POST adquire lock durante await.
 - Chave externa/env CRM_GOOGLE_CREDENTIALS_FILE e CRM_SPREADSHEET_ID; sem browser/log.
 - 002 concluída com T021 demonstrada; [validação](../../specs/002-consulta-planilhas/validacao.md).
 - Preservar tools/gate, agentes oficiais e operação n8n.

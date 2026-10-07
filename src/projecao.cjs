@@ -1,4 +1,5 @@
-const {CAMPOS}=require('./captura.cjs');
+const {CAMPOS,CAMPOS_PAUTAS}=require('./captura.cjs');
+const {projetarPautas}=require('./pautas.cjs');
 const {COLUNAS}=require('./quadro-config.cjs');
 const {chaves,redigirTexto,selecionarNtv}=require('./triagem.cjs');
 function reciboPublico(receipt) {
@@ -277,21 +278,25 @@ function montarQuadro(result,mapaQuadro) {
   result.quadro.semanas=result.semanas.map(s=>({semanaId:s.semana_id,
     colunas:COLUNAS.map(nome=>colunaSemana(nome,result.producoes.filter(p=>p.semanaId===s.semana_id)))}));
 }
-function montarPlanilha(ntv) {
+function montarPlanilha(ntv,captura) {
   const result=Object.entries(CAMPOS).map(([nome,cabecalhos],i)=>{
+    if(nome==='Semanas'&&captura.envelope.tables.Semanas.values[0].includes('pauta_id'))cabecalhos=[...cabecalhos,'pauta_id'];
     const linhas=ntv[chaves[i]].map(record=>Object.fromEntries(cabecalhos.map(campo=>[campo,record[campo]])));
     return {nome,cabecalhos:[...cabecalhos],quantidadeLinhas:linhas.length,linhas};
   });
   if(Object.hasOwn(ntv,'meses')) result.push({nome:'Meses',cabecalhos:['mes','marca_id','objetivo','pautas'],quantidadeLinhas:ntv.meses.length,linhas:ntv.meses});
+  if(Object.hasOwn(ntv,'pautas')) result.push({nome:'Pautas',cabecalhos:[...CAMPOS_PAUTAS],quantidadeLinhas:ntv.pautas.length,linhas:ntv.pautas.map(p=>({...p}))});
   return result;
 }
 function projetarVisao(estadoLocal,nowIso,mapaQuadro) {
   const result=base(estadoLocal), captura=estadoLocal.captura;
   if (!captura) return result;
   const origens=new WeakMap(),validadeJson=new WeakMap(),ntv=selecionarNtv(captura,result.avisos,origens,validadeJson);
+  const pautas=projetarPautas(ntv,result.avisos,origens);
+  if(Object.hasOwn(ntv,'pautas'))result.pautas=pautas;
   result.semanas=ntv.semanas;
   result.producoes=ntv.producoes;
-  result.planilha=montarPlanilha(ntv);
+  result.planilha=montarPlanilha(ntv,captura);
   result.captura={capturaId:captura.envelope.capturaId,completedAt:captura.envelope.completedAt,
     periodo:{inicio:null,fim:null},contagens:Object.fromEntries(chaves.map(k=>[k,ntv[k].length]))};
   planejar(result,origens);

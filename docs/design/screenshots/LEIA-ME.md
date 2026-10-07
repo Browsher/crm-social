@@ -223,3 +223,25 @@ Doze capturas atuais de 05/10/2026 mostram os ajustes da aplicação em loopback
 | Meses na Planilha | [Abrir](003-planilha-1440.png) | [Abrir](003-planilha-390.png) |
 
 Screenshots comprovam apresentação com dados fictícios; não comprovam conta/planilha real, integração, decisão editorial, mídia ou publicação. T002/T015 foram concluídas em demonstração posterior pelo CRM com uma linha fictícia marcada como teste; somente contagens/resultado na validação da 003. T021 atendida pelo PR #16 e código da 003 integrado pelo PR #15. Nenhum screenshot dessa demonstração foi acrescentado.
+
+## 004 — Pautas no Planejamento
+
+20 screenshots de 07/10/2026, exclusivamente sintéticos, gerados por `scripts/screenshots-pautas.cjs` com servidor próprio em TEMP, porta efêmera e relógio fixo fictício em novembro de 2026. Quatro pautas, quatro modelos, status variados e S2 do autor; dezembro demonstra fallback do resumo textual de Meses. Nenhuma leitura da planilha operacional. A galeria anterior foi preservada.
+
+| Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Card com 4 pautas | [Abrir](pautas-light-card-1440.png) | [Abrir](pautas-light-card-390.png) | [Abrir](pautas-dark-card-1440.png) | [Abrir](pautas-dark-card-390.png) |
+| Semana com origem e foco | [Abrir](pautas-light-semana-origem-1440.png) | [Abrir](pautas-light-semana-origem-390.png) | [Abrir](pautas-dark-semana-origem-1440.png) | [Abrir](pautas-dark-semana-origem-390.png) |
+| Gaveta com origem | [Abrir](pautas-light-gaveta-1440.png) | [Abrir](pautas-light-gaveta-390.png) | [Abrir](pautas-dark-gaveta-1440.png) | [Abrir](pautas-dark-gaveta-390.png) |
+| Mês sem pautas | [Abrir](pautas-light-mes-sem-pautas-1440.png) | [Abrir](pautas-light-mes-sem-pautas-390.png) | [Abrir](pautas-dark-mes-sem-pautas-1440.png) | [Abrir](pautas-dark-mes-sem-pautas-390.png) |
+| Pautas na Planilha | [Abrir](pautas-light-planilha-1440.png) | [Abrir](pautas-light-planilha-390.png) | [Abrir](pautas-dark-planilha-1440.png) | [Abrir](pautas-dark-planilha-390.png) |
+
+As tabelas têm rolagem horizontal própria, sem corte da página. Testes de comportamento, contraste, integridade e limites estão na [validação da 004](../../../specs/004-pautas-planejamento/validacao.md); imagens não comprovam operação editorial ou coleta real.
+
+Reprodução com Node/Playwright existentes configurados, na raiz do repositório:
+
+```powershell
+& $env:CRM_NODE_PATH scripts/screenshots-pautas.cjs
+```
+
+O [gerador](../../../scripts/screenshots-pautas.cjs) importa a [fixture de pautas](../../../tests/pautas-fixtures.cjs) e os helpers sintéticos existentes; substitui somente os 20 `pautas-*.png` da galeria. Bloqueia requisições externas, confere erros do navegador e fecha sua instância; a limpeza exige TEMP e prefixo próprios antes de remover a pasta criada. [Quatro testes do script real](../../../tests/screenshots-pautas.test.cjs) cobrem as guardas, falha do navegador e CLI em cópia TEMP. Galeria regenerada após o ajuste do espaço interno da semana na Lista; gate Windows da rodada atual **449 PASS**. Oito PNG alterados foram inspecionados: card 390, semana com origem 1440/390 e gaveta 1440, nos dois temas; o coordenador também conferiu as quatro imagens de semana com origem, sem corte. A [validação](../../../specs/004-pautas-planejamento/validacao.md) e o [relatório dos ajustes](../../reports/004-ajustes-local-gate.json) registram procedência e limites. [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados de gate/review por head na [validação da 004](../../../specs/004-pautas-planejamento/validacao.md); a prova visual é distinta dos testes de comportamento e da integração.

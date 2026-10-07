@@ -17,14 +17,14 @@ O HTML carrega `/theme.js` de forma síncrona antes de `/styles.css`, seguido de
 | Até 720 px | Lista inicial, menu recolhido; seletor visual Calendário/Lista fica oculto |
 | Menu | Exatamente Planejamento, Produção e Planilha |
 | Produção | Quadro por semana/tema, setas, oito colunas/vazias, pendências e Outras com título/contador da API |
-| Planilha | Fonte, fim em São Paulo, cobertura, releitura, seis abas de mínimos NTV, Meses opcional com quatro mínimos, Histórico final e painel detalhado de avisos |
+| Planilha | Fonte, fim em São Paulo, cobertura, releitura, seis abas de mínimos NTV, Meses/Pautas opcionais, `Semanas.pauta_id` quando capturado, Histórico final e painel detalhado de avisos |
 | Filtros | Todos, Imagem, Carrossel e Reels, com aria-pressed |
 | Mês anterior/próximo | Troca somente o mês apresentado |
 | Selo | Quatro textos/cores contratuais da API em todas as telas; clique abre Planilha |
 | Atualizar dados | POST {} e depois GET; botão desabilitado até o fim, mensagem curta role=status |
 | Erro de consulta | Mensagem local; visão/selo já carregados são preservados e botão é liberado; sem visão anterior mostra Consulta indisponível |
 | Captura ausente | Peça a primeira leitura à Central, sem fallback fictício |
-| Objetivo mensal | Mês exibido em `state.mes`: objetivo definido na cor principal e até cinco pautas/+N pautas (singular +1 pauta); Ainda não definido se ausente/vazio e A confirmar em duplicatas, ambos apagados; sem botão Plano do mês |
+| Objetivo mensal | Mês exibido em `state.mes`: objetivo de Meses definido na cor principal, Ainda não definido se ausente/vazio e A confirmar em duplicatas; pautas estruturadas válidas em linhas navegáveis ou fallback textual da 003; sem botão Plano do mês |
 | Tema | Botão ao lado de Neste computador, rótulo da ação (claro → Escuro; escuro → Claro), preferência inicial do sistema e escolha manual local persistida quando armazenamento está disponível |
 
 Os handlers são instalados uma vez antes da primeira consulta, com Planejamento como tela inicial. `reler` consulta a API, atualiza `state.view` após uma resposta bem-sucedida e renderiza sem trocar a tela escolhida. O botão é liberado em `finally`, inclusive após 503, permitindo nova tentativa. Sem visão anterior, `render` retorna sem acessar dados: filtros continuam seguros após a primeira falha e `#erro` fica visível junto a **Consulta indisponível**. Abrir/reler GET não grava ou consulta Google; somente o POST explícito inicia leitura pelo servidor.
@@ -33,7 +33,7 @@ Em Planilha, `detalhesCaptura` mostra **Captura pela Central** ou **Leitura dire
 
 ## Tema claro e escuro
 
-Como trocar a iluminação de uma agenda, o tema muda a apresentação e mantém os mesmos registros. Ajuste de 06/10/2026 implementado e testado localmente, sem nova feature Spec Kit, com correção da ação do botão em 07/10/2026; estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18); merge condicionado ao gate e review vigentes. Arquivos: [theme.js](../../src/web/theme.js), [index.html](../../src/web/index.html), [styles.css](../../src/web/styles.css) e classe de formato da lista em [app.js](../../src/web/app.js).
+Como trocar a iluminação de uma agenda, o tema muda a apresentação e mantém os mesmos registros. Ajuste de 06/10/2026 implementado e testado localmente, sem nova feature Spec Kit, com correção da ação do botão em 07/10/2026; integrado pelo [PR #18](https://github.com/Browsher/crm-social/pull/18). Arquivos: [theme.js](../../src/web/theme.js), [index.html](../../src/web/index.html), [styles.css](../../src/web/styles.css) e classe de formato da lista em [app.js](../../src/web/app.js).
 
 | Regra | Implementação e limite |
 | --- | --- |
@@ -49,17 +49,27 @@ O bootstrap externo síncrono mantém `script-src 'self'`, sem script inline ou 
 
 [tests/tema.test.cjs](../../tests/tema.test.cjs) teve **27 PASS sem SKIP** localmente após a correção de 07/10. TDD do ajuste: quatro falhas RED pelo rótulo invertido e duas falhas RED pelo `aria-pressed` contraditório, seguidas de GREEN com texto/aria-label da ação e ausência do atributo. A suíte conserva varredura CSS com teste do próprio scanner (hex/funções/nomes, inclusive media queries), bootstrap antes do CSS/DOM, GET/HEAD protegido, primeira visita nos dois temas, Enter/Espaço e persistência em 1440/390, precedência da escolha, armazenamento bloqueado, mudanças do sistema e tema correto antes da resposta CSS. Nos cenários sintéticos, texto visível habilitado precisa de contraste mínimo **4,5:1** em Planejamento/calendário/lista/objetivo, gaveta, Produção, Planilha/Meses/Histórico, erros e ausência de captura. A aferição combina cores computadas com os fundos ancestrais; não afirma cobrir todo dado ou estado futuro. Testes de navegador usam somente TEMP, bloqueiam requisições externas e exigem ausência de erros de página. Com `CI=true`, continuam declarando SKIP de UI; essa prova local não é executada pelo CI Linux.
 
-Gate Windows histórico de 06/10: **350 PASS**. Em 07/10, o gate final da árvore local teve **356 PASS**, incluindo **três testes preexistentes do iniciador fora do PR**; cobertura **96,3498%** (antes **98,3871%**; o LCOV passou a incluir `scripts/screenshots-tema.cjs` pelos dois testes VM, ampliando o escopo medido sem alterar o código da aplicação), complexidade PASS com **17 avisos**, baseline preservada e exit **0**. Semgrep SKIP no Windows/audit N/A; checks Linux e review do novo head precisam ser conferidos no [PR #18](https://github.com/Browsher/crm-social/pull/18). A revisão local anterior do ajuste não encontrou Critical, Important ou Minor nos insumos examinados; o review publicado do head anterior apontou correções de documentação/limpeza sintética, atendidas nesta rodada e ainda sujeitas ao novo review.
+Gate Windows histórico de 06/10: **350 PASS**. Em 07/10, o gate final da árvore local teve **356 PASS**, incluindo **três testes preexistentes do iniciador fora do PR**; cobertura **96,3498%** (antes **98,3871%**; o LCOV passou a incluir `scripts/screenshots-tema.cjs` pelos dois testes VM, ampliando o escopo medido sem alterar o código da aplicação), complexidade PASS com **17 avisos**, baseline preservada e exit **0**. Semgrep SKIP no Windows/audit N/A; a integração posterior foi concluída pelo [PR #18](https://github.com/Browsher/crm-social/pull/18). A revisão local anterior do ajuste não encontrou Critical, Important ou Minor nos insumos examinados; o review publicado do head anterior apontou correções de documentação/limpeza sintética, atendidas na rodada descrita antes da integração.
 
 O gerador tem [três testes próprios](../../tests/screenshots-tema.test.cjs), **3 PASS sem SKIP** localmente. Dois casos VM leem/executam `scripts/screenshots-tema.cjs` real, interrompem antes da captura e comprovam que a limpeza não remove caminho fora de TEMP ou com prefixo inválido. O CLI executa uma cópia em TEMP, gera 16 PNG com larguras 1440/390 e comprova a remoção somente do TEMP criado pelo script, preservando diretório alheio com prefixo semelhante. O CI executa os dois casos VM; o CLI com navegador declara SKIP pela pendência M8. O teste HTTP H02 passou percorrendo os quatro estáticos, inclusive `/theme.js`, com GET/HEAD e MIME correspondente. Nesta rodada não houve alteração do código de produção, PNG, configuração de CI/gate ou baseline. [Galeria de 16 screenshots sintéticos](../design/screenshots/LEIA-ME.md#tema-claro-e-escuro), regenerada por [scripts/screenshots-tema.cjs](../../scripts/screenshots-tema.cjs) com Node/Playwright existentes. Sem nova dependência, polling, alteração dos contratos de captura ou validação editorial.
 
 ## Objetivo e pautas do mês
 
-`objetivoMensal` lê exclusivamente Meses em `state.view.planilha`, selecionando NTV e o `state.mes` exibido. Zero linhas mostra **Ainda não definido**; uma linha mostra objetivo textual não vazio ou esse estado, com pautas textuais divididas por LF/CRLF, trim e descarte das vazias. Mantém ordem/repetições e exibe as primeiras cinco com **+N pautas** para o restante, singular **+1 pauta**. Duas ou mais linhas mostram **A confirmar** sem escolher objetivo/pautas. Número/bool não viram texto artificial no card; a célula completa permanece na tabela. Todos os textos são criados por `textContent`, sem link ou execução, e o card acompanha navegação mensal e POST→GET. Os avisos ficam na Planilha, sem vínculo inferido com temas semanais.
+`objetivoMensal` lê o objetivo exclusivamente de Meses em `state.view.planilha`, selecionando NTV e o `state.mes` exibido. Zero linhas mostra **Ainda não definido**; uma linha mostra objetivo textual não vazio ou esse estado. Duas ou mais linhas mostram **A confirmar** sem escolher objetivo. Número/bool não viram objetivo artificial no card; a célula completa permanece na tabela. Todos os textos são criados por `textContent`, sem execução, e o card acompanha navegação mensal e POST→GET. Os avisos ficam na Planilha.
+
+Na 004, `pautasDoMes` seleciona e ordena por ordinal as linhas válidas recebidas em `state.view.pautas`. Havendo linhas, `listaPautas` mostra botões `S1 · tema · modelo · status`, com selo **do autor** somente para origem `autor`. Os três status contratuais têm rótulos legíveis usando `Object.hasOwn`; desconhecidos permanecem texto da fonte. Modelo/origem/status desconhecidos não inventam transição editorial. Pautas funciona sem Meses: objetivo fica **Ainda não definido**, sem bloquear a lista estruturada.
+
+Sem pautas válidas no mês exibido, permanece o fallback completo da 003: uma linha Meses fornece pautas textuais divididas por LF/CRLF, trim e descarte das vazias, mantendo ordem/repetições, até cinco itens e **+N pautas**/**+1 pauta** restantes. Duplicata Meses não escolhe resumo; o tratamento de objetivo continua igual. O contrato externo da operação e fluxos de agentes não entram na interface.
 
 O booleano `definido` aceita somente objetivo textual não vazio após trim e orienta conteúdo/classe. O parágrafo usa `var(--ink)` na cor principal; apenas os estados **Ainda não definido** e **A confirmar** recebem `month-placeholder`, com `var(--muted)` do tema ativo. A regra `.brief-icon` concentra `flex-shrink:0` junto dos demais estilos do ícone, sem seletor duplicado.
 
 As regressões em 1440/390 verificam a cor ao navegar por objetivos/ausências/duplicatas, **+1 pauta**/**+2 pautas** e ausência de `.more-topics` com até cinco itens, mesmo quando objetivo/pauta contêm `+2` literal. O teste de integração confirma card e avisos de mês: outubro único, novembro duplicado nas linhas físicas 4/6, dezembro com espaços inválido na linha 8; outra marca fica fora. Essa conferência preserva o contrato recebido da API. [Gate local dos ajustes](../reports/003-ajustes-local-gate.json) e [validação](../../specs/003-planejamento-mensal/validacao.md) distinguem o código atual das rodadas anteriores de CI.
+
+`irParaPauta` renderiza o mês da pauta e dá foco/rolagem ao destino `data-inicio-semana` correspondente no calendário ou na lista selecionada. `destinoSemana` usa `tabIndex=-1`, `role=group` e rótulo de semana; no calendário aplica-se apenas às segundas-feiras. Na lista, uma pauta sem semana capturada cria apenas um destino visual com cabeçalho **Pauta S1 de novembro · tema**, período e nenhuma peça. `pautaDestino` existe somente nesse objeto local e fornece o rótulo; não cria registro operacional nem preenche `pautaOrigem`. Origem continua exigindo o vínculo confirmado pela API. Ação funciona com mouse, Enter e Espaço e não depende de peças ou formato selecionado. `.agenda-week` tem `padding:12px` tanto antes como durante o foco, preservando o espaço interno e a geometria do grupo ao destacar a semana.
+
+`origemPauta` mostra **Pauta S2 de novembro** somente para `pautaOrigem` confirmada pela API. Calendário/lista usam a origem da semana; a gaveta reúne uma vez cada origem das semanas representadas pelas peças. Em dia vazio, usa as origens já confirmadas das semanas capturadas cujo período abrange a data. Esse recorte por dia não associa pauta por data: o vínculo continua resolvido exclusivamente pelo backend por ID/marca/início.
+
+Implementação e testes da 004 são locais/sintéticos; [tests/pautas-interface.test.cjs](../../tests/pautas-interface.test.cjs) confere navegação/foco sem peças, fallback, origens, órfãos, leitura/teclado da Planilha, temas e contraste. [Validação da 004](../../specs/004-pautas-planejamento/validacao.md) e [20 screenshots](../design/screenshots/LEIA-ME.md#004--pautas-no-planejamento) registram resultados e limites; entrega no [PR #20](https://github.com/Browsher/crm-social/pull/20), com entrega e integração acompanhadas no PR e merge condicionado ao gate/review do head vigente; resultados por head na validação citada.
 
 ## Calendário, lista e Sem data
 
@@ -78,7 +88,7 @@ Valor desconhecido permanece exatamente o original, sem substituir sublinhados, 
 
 Tema aparece no início da semana. Para múltiplas peças, apresenta o primeiro cartão de formato selecionado e **+N no dia**. Clicar cartão, dia ou contador abre todas as peças desse dia, sem aplicar o filtro de formato ao grupo. A grade começa na segunda-feira da primeira semana que contém o dia 1 e termina no domingo da última semana que contém dia do mês; pode ter 28, 35 ou 42 células conforme o calendário.
 
-A lista agrupa pelo tema/período da semana de origem. `pecaVisivel` considera a data civil da peça no mês escolhido; conserva também peças dentro do período de uma semana que cruza aquele mês. Peça remarcada para outro mês aparece no novo mês sem mudar sua semana registrada. Sem data permanece acessível independentemente do mês; filtro de formato continua valendo na lista comum.
+`semanasComPautas` prepara o conjunto usado por `lista`, acrescentando destinos locais de pautas somente quando necessário. A lista agrupa pelo tema/período da semana de origem e conserva a ordem física recebida quando não acrescenta esses destinos. Somente ao acrescentar esses destinos sem semana capturada ordena o conjunto por início civil. Capturas antigas e a lista Sem data preservam sua ordem anterior. `pecaVisivel` considera a data civil da peça no mês escolhido; conserva também peças dentro do período de uma semana que cruza aquele mês. Peça remarcada para outro mês aparece no novo mês sem mudar sua semana registrada. Sem data permanece acessível independentemente do mês; filtro de formato continua valendo na lista comum.
 
 **N sem data** conta globalmente a captura NTV e abre lista dedicada por semana, sem filtro de mês/formato; o link fica oculto quando N é zero. O total **peças registradas** também é global, não a quantidade visível naquele filtro.
 
@@ -94,7 +104,7 @@ Grid preserva oito colunas em ordem: quatro em 1440 px, duas até 1100 px e uma 
 
 ## Planilha, Histórico e avisos
 
-Como folhas de consulta do mesmo álbum, seis abas mantêm o conjunto NTV completo.
+Como folhas de consulta do mesmo álbum, seis abas obrigatórias e as opcionais capturadas mantêm o conjunto NTV completo.
 O atalho da gaveta localiza somente os avisos relacionados à peça, sem reduzir as
 tabelas. A tela usa `planilha`, `historico`, `avisos` e `detalhes.avisos` da API
 existente; não há nova consulta remota nem escrita.
@@ -103,7 +113,7 @@ existente; não há nova consulta remota nem escrita.
 | --- | --- |
 | Subtítulo | Dados capturados da planilha, por aba; ao voltar às demais telas, Peças registradas, semana a semana. |
 | Origem e atualização | Fonte, fim e cobertura; falha ativa em uma linha e contador de avisos gerais como link, sem repetir os motivos |
-| Abas de dados | Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes; 66 mínimos triados; Meses opcional depois de Revisoes com quatro mínimos; contagem de linhas NTV, sem campos calculados de quadro/gaveta |
+| Abas de dados | Semanas, Produções, Páginas, Cenas, Arquivos e Revisoes; 66 mínimos triados e `Semanas.pauta_id` quando capturado; Meses/quatro mínimos e Pautas/doze mínimos opcionais nessa ordem depois de Revisoes; contagem de linhas NTV, sem campos calculados de quadro/gaveta |
 | Histórico final | Todas as tentativas confirmadas, recentes primeiro; horário em São Paulo, Completa/Falhou e motivo em linguagem de tela; vazio = Nenhuma tentativa confirmada |
 | Teclado de abas | Setas esquerda/direita com retorno nas pontas, Home/End; seleção e foco juntos, somente aba selecionada no Tab |
 | Tabela larga | Região de rolagem horizontal própria com nome/foco; conteúdo como texto e cabeçalhos de coluna |
@@ -114,13 +124,13 @@ existente; não há nova consulta remota nem escrita.
 `tabelaLocal` cria a região focável e tabela por `textContent`;
 `historicoPlanilha` usa toda a lista confirmada, sem inferir novas tentativas
 de GET/no-op nem mostrar órfãos. `renderPlanilha` acrescenta Histórico após
-as seis abas e Meses se capturada; `tabPlanilha` e `escolherAba` sincronizam seleção, foco,
+as seis abas e Meses/Pautas se capturadas; `tabPlanilha` e `escolherAba` sincronizam seleção, foco,
 `aria-selected` e `aria-labelledby`, com rolagem da aba até a área visível. Se a
 aba deixa de existir, a primeira disponível é selecionada.
 
 `avisosPeca` fecha a gaveta, chama `navegar` com a produção, abre
 Produções e dá rolagem/foco a `#avisos-dados`. `renderAvisosPlanilha` usa os
-avisos relacionados da peça; as seis tabelas permanecem globais à captura NTV.
+avisos relacionados da peça; todas as tabelas permanecem globais à captura NTV.
 Menu e selo entram sem filtro; **Todos os avisos** restaura os gerais no painel.
 O link **N avisos de dados** de Origem também restaura os gerais, seleciona Produções
 e dá foco/rolagem ao painel, inclusive ao sair de Histórico. O contador usa a
@@ -134,7 +144,7 @@ e Aba/Linha/Campo. Outros motivos permanecem como recebidos; a API não é alter
 
 `motivoHistorico` traduz falhas para linguagem de tela: **Cenas complete:
 inválido** vira **Aba Cenas incompleta**; outras validações de aba usam **Aba X
-inválida**, incluindo Meses: complete inválido vira **Aba Meses incompleta**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
+inválida**, incluindo Meses/Pautas: complete inválido vira **Aba Meses incompleta** ou **Aba Pautas incompleta**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
 inválido recebem rótulos próprios; motivo desconhecido usa **Captura não pôde ser
 importada**, vazio permanece vazio. Resultado desconhecido usa **Resultado
 desconhecido**. Os motivos originais do recibo continuam na API e na persistência.

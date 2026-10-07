@@ -25,9 +25,32 @@ function abrirDia(data,ids,semanaId=null) {
   $('#dia-titulo').textContent=data?civil(data,{weekday:'long',day:'2-digit',month:'long'}):'Sem data · '+(semana?.tema || 'Semana não identificada');
   $('#dia-quantidade').textContent=ids.length+(ids.length===1?' peça registrada':' peças registradas');
   const registros=idsParaPecas(ids),pecas=registros.map((p,i)=>acordeaoPeca(p,i===0));
+  const origens=origensDoDia(registros,data,semanaId);
   if(pecas.length) pecas.push(documentosDoDia(registros));
-  $('#dia-pecas').replaceChildren(...(pecas.length?pecas:[node('p','Nenhuma peça registrada neste dia.','empty')]));
+  $('#dia-pecas').replaceChildren(...origens,...(pecas.length?pecas:[node('p','Nenhuma peça registrada neste dia.','empty')]));
   $('#dia').showModal();
+}
+function rotuloPauta(pauta) {return 'Pauta S'+pauta.semana+' de '+civil(pauta.mes+'-01',{month:'long'});}
+function origemPauta(week) {return week.pautaOrigem?node('p',rotuloPauta(week.pautaOrigem),'pauta-origin'):null;}
+function origensDoDia(registros,data,semanaId) {
+  const semanas=new Set(registros.map(p=>p.semanaId)),pautas=new Set(),origens=[];
+  if(!registros.length) {
+    for(const week of state.view.semanas) {
+      const pertence=data?week.periodo.inicio && week.periodo.inicio<=data && data<=week.periodo.fim:
+        semanaId!==null && semanaId!==undefined && week.semana_id===semanaId;
+      if(pertence)semanas.add(week.semana_id);
+    }
+  }
+  for(const week of state.view.semanas) {
+    if(!semanas.has(week.semana_id) || !week.pautaOrigem || pautas.has(week.pautaOrigem.pauta_id))continue;
+    pautas.add(week.pautaOrigem.pauta_id);origens.push(origemPauta(week));
+  }
+  return origens;
+}
+function destinoSemana(el,inicio) {
+  if(!inicio)return;
+  el.dataset.inicioSemana=inicio;el.tabIndex=-1;el.setAttribute('role','group');
+  el.setAttribute('aria-label','Semana de '+civil(inicio,{day:'numeric',month:'long',year:'numeric'}));
 }
 function valor(value) {return value===null || value===undefined || (typeof value==='string' && value.trim()==='')?'Não informado':String(value);}
 const preenchido=value=>value!==null && value!==undefined && String(value).trim()!=='';
@@ -223,12 +246,16 @@ function calendario() {
   const last=dataMais(nextMonth.toISOString().slice(0,10),-1), end=dataMais(last,6-((new Date(last+'T12:00:00Z').getUTCDay()+6)%7));
   for (let date=start;date<=end;date=dataMais(date,1)) {
     const outside=!date.startsWith(state.mes), cell=node('div',undefined,'day'+(outside?' outside':''));
+    if(new Date(date+'T12:00:00Z').getUTCDay()===1)destinoSemana(cell,date);
     const dateButton=node('button',String(Number(date.slice(-2))),'date-number');
     dateButton.type='button';dateButton.setAttribute('aria-label',civil(date,{day:'numeric',month:'long'}));
     const group=state.view.dias.find(d=>d.data===date), allIds=group?.ids ?? [];
     dateButton.addEventListener('click',()=>abrirDia(date,allIds));
     cell.append(dateButton);
-    for (const week of state.view.semanas.filter(s=>s.periodo.inicio===date)) cell.append(node('p',week.tema || 'Tema não informado','week-theme'));
+    for (const week of state.view.semanas.filter(s=>s.periodo.inicio===date)) {
+      cell.append(node('p',week.tema || 'Tema não informado','week-theme'));
+      const origem=origemPauta(week);if(origem)cell.append(origem);
+    }
     const filtered=idsParaPecas(allIds).filter(aceito);
     if (filtered.length) cell.append(cartao(filtered[0]));
     if (filtered.length>1) {
@@ -315,18 +342,49 @@ function pecaVisivel(p,week) {
   const cruzaMes=week.periodo.inicio.slice(0,7)<=state.mes && week.periodo.fim.slice(0,7)>=state.mes;
   return cruzaMes && p.dataCivil>=week.periodo.inicio && p.dataCivil<=week.periodo.fim;
 }
+function semanasComPautas(semData,pautas) {
+  const weeks=state.view.semanas.slice();
+  if(!semData)for(const pauta of pautas) {
+    if(!weeks.some(w=>w.periodo.inicio===pauta.inicio_semana))weeks.push({tema:pauta.tema,pautaDestino:pauta,ids:[],periodo:{inicio:pauta.inicio_semana,fim:dataMais(pauta.inicio_semana,6)}});
+  }
+  if(weeks.length>state.view.semanas.length)weeks.sort((a,b)=>(a.periodo.inicio??'z').localeCompare(b.periodo.inicio??'z'));
+  return weeks;
+}
 function lista(semData=false) {
-  const groups=[];
-  for (const week of state.view.semanas) {
+  const groups=[],pautas=pautasDoMes(),weeks=semanasComPautas(semData,pautas);
+  for (const week of weeks) {
     const pecas=idsParaPecas(week.ids).filter(p=>semData?p.dataCivil===null:aceito(p) && pecaVisivel(p,week));
-    if (!pecas.length) continue;
+    const temPauta=!semData && pautas.some(p=>p.inicio_semana===week.periodo.inicio);
+    if (!pecas.length && !temPauta) continue;
     const group=node('section',undefined,'agenda-week'), header=node('header');
-    header.append(node('h3',week.tema || 'Tema não informado'),node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):'Período não identificado'));
+    if(!semData)destinoSemana(group,week.periodo.inicio);
+    const tema=week.tema || 'Tema não informado';
+    header.append(node('h3',week.pautaDestino?rotuloPauta(week.pautaDestino)+' · '+tema:tema),node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):'Período não identificado'));
     const rows=node('div',undefined,'agenda-rows');rows.append(...pecas.map(row));
-    group.append(header,rows);groups.push(group);
+    group.append(header);
+    const origem=origemPauta(week);if(origem)group.append(origem);
+    group.append(pecas.length?rows:node('p','Nenhuma peça neste mês e formato.','pauta-empty'));groups.push(group);
   }
   if (!groups.length) groups.push(node('p',semData?'Nenhuma peça sem data.':'Nenhuma peça neste mês e formato.','empty'));
   (semData?$('#lista-sem-data'):$('#lista')).replaceChildren(...groups);
+}
+function pautasDoMes() {return (state.view.pautas??[]).filter(p=>p.mes===state.mes).sort((a,b)=>a.semana-b.semana);}
+function irParaPauta(pauta) {
+  state.mes=pauta.mes;render();
+  const container=state.modo==='Calendário'?'#calendario':'#lista';
+  const destino=$(container+' [data-inicio-semana="'+pauta.inicio_semana+'"]');
+  if(destino){destino.focus();destino.scrollIntoView({block:'center',behavior:'instant'});}
+}
+function listaPautas(pautas) {
+  const list=node('ul',undefined,'pautas-list');
+  const rotulos={planejada:'Planejada',em_producao:'Em produção',concluida:'Concluída'};
+  for(const pauta of pautas) {
+    const line=node('li'),button=node('button',undefined,'pauta-link');button.type='button';
+    button.append(node('span','S'+pauta.semana+' · '+valor(pauta.tema)+' · '+valor(pauta.modelo_carrossel)+' · '+(Object.hasOwn(rotulos,pauta.status)?rotulos[pauta.status]:valor(pauta.status))));
+    if(pauta.origem==='autor')button.append(node('span','do autor','pauta-author'));
+    button.addEventListener('click',()=>irParaPauta(pauta));line.append(button);list.append(line);
+  }
+  return list;
 }
 function objetivoMensal() {
   const linhas=(state.view.planilha.find(a=>a.nome==='Meses')?.linhas ?? []).filter(r=>r.marca_id==='ntv'&&r.mes===state.mes);
@@ -337,7 +395,9 @@ function objetivoMensal() {
   const conteudo=node('div',undefined,'month-content');
   conteudo.append(node('small','Objetivo do mês'),node('p',objetivo,definido?undefined:'month-placeholder'));
   const pautas=typeof registro?.pautas==='string'?registro.pautas.split(/\r?\n/).map(p=>p.trim()).filter(Boolean):[];
-  if(pautas.length) {
+  const estruturadas=pautasDoMes();
+  if(estruturadas.length)conteudo.append(listaPautas(estruturadas));
+  else if(pautas.length) {
     const lista=node('ul');lista.append(...pautas.slice(0,5).map(p=>node('li',p)));conteudo.append(lista);
     if(pautas.length>5) {
       const restantes=pautas.length-5;
@@ -424,7 +484,7 @@ function historicoPlanilha() {
 }
 function motivoHistorico(motivo) {
   if(!motivo) return '';
-  const aba=motivo.match(/^(Semanas|Produções|Páginas|Cenas|Arquivos|Revisoes|Meses) (.+): inválido$/);
+  const aba=motivo.match(/^(Semanas|Produções|Páginas|Cenas|Arquivos|Revisoes|Meses|Pautas) (.+): inválido$/);
   if(aba) return 'Aba '+aba[1]+(aba[2]==='complete'?' incompleta':' inválida');
   const rotulos={
     'captura inválida: completedAt excede o relógio local em mais de 10 minutos':'Horário da captura mais de 10 minutos no futuro',

@@ -4,6 +4,8 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 ## Ordem de leitura
 
+Feature ativa: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
+
 1. [README](../README.md): resultado atual e comandos de entrada.
 2. [Roadmap](../ROADMAP.md), [AGENTS](../AGENTS.md) e [constituição](../.specify/memory/constitution.md): escopo e fronteiras.
 3. [Arquitetura](architecture.md) e módulos abaixo: imports, persistência, HTTP e interface reais.
@@ -15,7 +17,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | Documento | Para que serve |
 | --- | --- |
 | [README](../README.md) | Apresentação, estado e comandos reais |
-| [ROADMAP](../ROADMAP.md) | Cinco features do v1 e v2 visual ilustrativo |
+| [ROADMAP](../ROADMAP.md) | Seis features do v1 e v2 visual ilustrativo |
 | [AGENTS](../AGENTS.md) | Regras locais e bloco gerenciado preservado |
 | [CLAUDE](../CLAUDE.md) | Importador das instruções canônicas; não é outra regra de produto |
 | [Constituição 1.1.0](../.specify/memory/constitution.md) | Princípios e limites; emenda VI aprovada/aplicada em05/10 |
@@ -28,16 +30,17 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 | Documento | Código explicado |
 | --- | --- |
 | [Google](modules/google.md) | JWT/fetch nativos, configuração externa e token em memória |
-| [Coleta](modules/coleta.md) | Seis grades obrigatórias e Meses opcional, duas leituras, metadados/hashes e datas |
-| [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos e quatro mensais opcionais, normalização/hash e origem física |
+| [Coleta](modules/coleta.md) | Seis grades obrigatórias, Meses/Pautas opcionais independentes, duas leituras, metadados/hashes e datas |
+| [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, Meses/quatro e Pautas/doze opcionais, normalização/hash e origem física |
 | [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
 | [Importador](modules/importador.md) | scripts/importar-captura.cjs; argumentos/saída e falhas de entrada |
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
-| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses opcional; Histórico confirmado |
+| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses/Pautas opcionais; origem semanal e Histórico confirmado |
+| [Pautas](modules/pautas.md) | src/pautas.cjs; identidade/calendário, duplicatas e origem semanal por ID/marca/início, sem inferência ou I/O |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, quatro estáticos e Host/Origin |
 | [Iniciador Windows](modules/iniciador.md) | Abrir CRM.cmd por duplo clique, reabertura por GET local e sucesso sem pause; Iniciar CRM.ps1, Node existente, processo oculto, confirmação, retorno e logs privados |
-| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses opcional/Histórico, card mensal, releitura, avisos por peça e tema claro/escuro local |
+| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça e tema claro/escuro local |
 
 ## Feature 001 canônica
 
@@ -84,7 +87,7 @@ T021 demonstrada; implementação, provas sintéticas e resultados reais sanitiz
 | [Validação](../specs/003-planejamento-mensal/validacao.md) | RED/GREEN, gates/reviews históricos, screenshots sintéticos e fechamento T002/T015 sanitizado |
 | [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado; fechamento registrado em spec/validação/tarefas |
 
-Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: gate Windows com 322 PASS sem pulos nas cinco camadas, cobertura 98,3871%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A. [Relatório local da integração](reports/003-integracao-t021-local-gate.json); resultados anteriores são históricos. Código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15); o fechamento documental exige novos checks/review. Evidência na [validação da 003](../specs/003-planejamento-mensal/validacao.md). Objetivo definido usa cor principal; pautas restantes usam +N pautas/+1 pauta. T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real ainda não comprovado. Próximo passo: uso real antes de decidir 004/005.
+Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: gate Windows com 322 PASS sem pulos nas cinco camadas, cobertura 98,3871%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A. [Relatório local da integração](reports/003-integracao-t021-local-gate.json); resultados anteriores são históricos. Código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15); o fechamento documental exige novos checks/review. Evidência na [validação da 003](../specs/003-planejamento-mensal/validacao.md). Objetivo definido usa cor principal; pautas restantes usam +N pautas/+1 pauta. T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real ainda não comprovado. Essa orientação pertence ao fechamento da 003; a 004 foi autorizada em 07/10 e está descrita abaixo.
 
 ## Design e evidência visual
 
@@ -92,7 +95,7 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 | --- | --- |
 | [Telas decididas](design/telas.md) | Decisões do autor e nota de implementação parcial |
 | [Screenshots reais/LEIA-ME](design/screenshots/LEIA-ME.md) | Aplicação em execução somente com dados fictícios; origem/limites |
-| [Tema claro/escuro — 16 screenshots](design/screenshots/LEIA-ME.md#tema-claro-e-escuro) | Quatro telas, dois temas, 1440/390; fixtures em TEMP, script reproduzível, implementação/teste local e integração pendente |
+| [Tema claro/escuro — 16 screenshots](design/screenshots/LEIA-ME.md#tema-claro-e-escuro) | Quatro telas, dois temas, 1440/390; fixtures em TEMP, script reproduzível, provas sintéticas locais; tema integrado pelo PR #18 |
 | [Planejamento 1440](design/screenshots/001-planejamento-1440.png) / [390](design/screenshots/001-planejamento-390.png) | Capturas sintéticas desktop/mobile |
 | [Selo hoje 1440](design/screenshots/001-us2-hoje-1440.png) / [390](design/screenshots/001-us2-hoje-390.png) | Verde pelo fim da captura em São Paulo |
 | [Selo anterior 1440](design/screenshots/001-us2-anterior-1440.png) / [390](design/screenshots/001-us2-anterior-390.png) | Âmbar para outro dia civil |
@@ -134,7 +137,7 @@ As evidências históricas da 001 têm origem, estado e limites registrados na [
 - [Saída histórica de node:test](reports/001-pr6-node-test.txt).
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
-- [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 371 PASS, suíte `.cmd` com 18 PASS, hashes do código/testes, origem e limites; integração depende dos checks estritos/review vigentes do [PR #19](https://github.com/Browsher/crm-social/pull/19).
+- [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 371 PASS, suíte `.cmd` com 18 PASS, hashes do código/testes, origem e limites; iniciador integrado pelo [PR #19](https://github.com/Browsher/crm-social/pull/19), com essas medições preservadas como histórico.
 
 ## Evidência histórica da US2
 
@@ -200,3 +203,13 @@ Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; ta
 [Relatório inicial da consulta mensal](reports/003-local-gate.json): 312 PASS, preservado como histórico. [Relatório local dos ajustes](reports/003-ajustes-local-gate.json): fonte validada `84ab509`, 320 PASS, cobertura 98,3660%, drop 0, complexidade PASS com 17 avisos, Semgrep SKIP por ausência no Windows, audit N/A e baseline não atualizada. Identifica separadamente `gateProcessHead:f020d26`, pois o gate precedeu o commit de código. [Resumo histórico do gate Linux](reports/003-ci-gate.json): head `9ef4e6b`, Semgrep PASS, extraído dos logs oficiais sem inventar contagem/percentual remotos. [Resumo Linux dos ajustes](reports/003-ajustes-ci-gate.json): head `fd92f09`, gate/review conferidos. Novos commits exigem conferir os checks do PR. Execuções e reviews históricos, doze screenshots sintéticos e fechamento T002/T015 na [validação](../specs/003-planejamento-mensal/validacao.md). [PR #15](https://github.com/Browsher/crm-social/pull/15) integrado. T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real não comprovado. O fechamento documental exige seus próprios checks/review.
 
 [Relatório completo do gate da integração após T021](reports/003-integracao-t021-local-gate.json); fonte, processo, revisão e limites na [validação da 003](../specs/003-planejamento-mensal/validacao.md).
+
+## Feature 004 — Pautas no Planejamento
+
+Implementada/testada localmente, com **449 PASS** no gate Windows, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. Drop 0 é do modo full, sem comparação histórica; Semgrep SKIP por ferramenta ausente/audit N/A. [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados de gate/review por head na [validação da 004](../specs/004-pautas-planejamento/validacao.md); prova local e screenshots não demonstram operação editorial real.
+
+- [Spec](../specs/004-pautas-planejamento/spec.md), [plano](../specs/004-pautas-planejamento/plan.md), [tarefas](../specs/004-pautas-planejamento/tasks.md) e [checklist](../specs/004-pautas-planejamento/checklists/requirements.md).
+- [Pesquisa](../specs/004-pautas-planejamento/research.md), [modelo](../specs/004-pautas-planejamento/data-model.md), [contrato](../specs/004-pautas-planejamento/contracts/pautas.md) e [quickstart](../specs/004-pautas-planejamento/quickstart.md).
+- [Validação e limites](../specs/004-pautas-planejamento/validacao.md) e [módulo Pautas](modules/pautas.md).
+- [Relatório histórico do gate Windows](reports/004-local-gate.json), [relatório atual dos ajustes](reports/004-ajustes-local-gate.json) e [galeria dos 20 screenshots](design/screenshots/LEIA-ME.md#004--pautas-no-planejamento).
+- [Gerador sintético](../scripts/screenshots-pautas.cjs), [fixture compartilhada](../tests/pautas-fixtures.cjs), [testes de dados/I/O/projeção/HTTP](../tests/pautas.test.cjs), [testes de interface](../tests/pautas-interface.test.cjs) e [testes do gerador](../tests/screenshots-pautas.test.cjs).
