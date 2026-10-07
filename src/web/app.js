@@ -240,7 +240,7 @@ function calendario() {
   $('#calendario').replaceChildren(header,grid);
 }
 function row(p) {
-  const el=node('button',undefined,'agenda-row');
+  const el=node('button',undefined,'agenda-row '+p.formato.toLowerCase());
   el.type='button';el.dataset.producaoId=p.producao_id;
   el.append(node('small',p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'short'}):'Sem data'),
     node('strong',p.titulo || 'Título não informado'),node('small',p.formato,'row-format'),node('small',statusLegivel(p.status),'row-status'));

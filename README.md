@@ -46,6 +46,22 @@ Planilha apresenta seis abas com os 66 mínimos triados, Meses opcional com quat
 
 A 002 implementa leitura direta pelo servidor local, com a emenda 1.1.0 aprovada e chave externa; demonstração T021 foi conferida e integrada pelo PR #16. A 003 consulta objetivo/pautas da aba opcional Meses, preenchida à mão pelo autor. O card acompanha o mês exibido, mostra objetivo definido na cor principal e até cinco pautas; o restante usa **+N pautas** ou **+1 pauta**. Ausência/objetivo vazio mostra **Ainda não definido**, duplicata mostra **A confirmar**, ambos apagados, com avisos de mês/tipo/duplicatas por linha física na Planilha. Textos usam `textContent`. As capturas antigas mantêm hash e bytes; Meses participa do hash ordenado por nome só quando presente. Nenhuma escrita ou fluxo de agentes; migração da meta semanal permanece operação externa. A demonstração da leitura pela fonte real usou uma linha fictícia marcada como teste; isso não comprova uso editorial real.
 
+## Tema claro e escuro — ajuste de interface
+
+Implementado e testado localmente em 06/10/2026, com ajuste do botão em 07/10/2026, sem nova feature Spec Kit. Ao lado de **Neste computador**, o botão indica a ação: no tema claro, **☾ Escuro** com `aria-label="Ativar tema escuro"`; no escuro, **☀ Claro** com `aria-label="Ativar tema claro"`. Funciona com mouse, Enter e Espaço, sem `aria-pressed`, pois oferece a troca em vez de anunciar um estado pressionado. Na primeira visita, acompanha a preferência do sistema até uma escolha manual. A escolha válida fica em `localStorage` como `crm-theme`; se o armazenamento estiver bloqueado, a alternância continua funcionando durante a página aberta. O tema é aplicado antes do CSS, evitando carregar a página com a paleta errada.
+
+Todas as cores de `src/web/styles.css` usam variáveis de `:root`, redefinidas em `[data-theme=dark]`. A paleta escura azulada cobre calendário/lista, objetivo mensal, gaveta, Produção, tabelas/abas/avisos/Histórico, selos, erros e estados vazios. Imagem mantém verde, carrossel âmbar e Reels roxo nos dois temas. A preferência altera somente a apresentação neste navegador.
+
+TDD com fixtures sintéticas: **27 testes de tema passaram sem pulos** após o ajuste, incluindo texto/aria-label da ação, ausência de `aria-pressed`, teclado, persistência após recarga, preferência do sistema, armazenamento bloqueado, aplicação antes da resposta CSS, rota GET/HEAD e varredura de cores fixas. Os cenários de contraste verificaram texto visível com razão mínima **4,5:1** nas quatro telas em 1440/390, Meses/Histórico, erro e ausência de captura. Gate Windows histórico de 06/10: **350 PASS**. Em 07/10, o gate final da árvore local teve **356 PASS**, incluindo **3 testes preexistentes do iniciador fora deste PR**; cobertura **96,3498%** (antes **98,3871%**; o LCOV passou a incluir `scripts/screenshots-tema.cjs` pelos dois testes VM, ampliando o escopo medido sem alterar o código da aplicação), complexidade PASS com **17 avisos**, baseline preservada e exit **0**; Semgrep SKIP no Windows e audit N/A. O CI Linux mantém pulos explícitos de UI/PowerShell; gate Linux e review do novo head são verificações separadas. O gerador ganhou **3 testes PASS sem pulos localmente**: dois VM executam o script real e recusam limpeza fora do TEMP/prefixo permitido; um CLI gera os 16 PNG em cópia TEMP e preserva diretório alheio. No CI, os dois VM executam e o CLI de navegador mantém SKIP pela M8. **Estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18); merge condicionado ao gate e review vigentes.**
+
+[Galeria dos 16 screenshots sintéticos](docs/design/screenshots/LEIA-ME.md#tema-claro-e-escuro) e [comportamento técnico](docs/modules/web.md#tema-claro-e-escuro). Para reproduzir as imagens, com Node e Playwright existentes configurados:
+
+```powershell
+& $env:CRM_NODE_PATH scripts/screenshots-tema.cjs
+```
+
+O script resolve Playwright por `CRM_PLAYWRIGHT_MODULE` (ou `playwright` já disponível), cria servidor/estado em TEMP e substitui somente os 16 arquivos `tema-*.png` da galeria. Não usa o CRM do autor nem lê a planilha.
+
 ## Executar a primeira entrega local
 
 Na raiz do repositório, selecione o Node 24.19.0 existente por `CRM_NODE_PATH` e siga o [quickstart](specs/001-consulta-local-producao/quickstart.md). Os entrypoints reais são:

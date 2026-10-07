@@ -32,7 +32,7 @@ async function ambiente(t,captura=true,options={}) {
   const root=temporario(t), webDir=path.join(root,'web'), dataDir=path.join(root,'privado'), quadroConfigPath=path.join(root,'mapa.json');
   fs.mkdirSync(webDir); fs.mkdirSync(dataDir);
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroValido()));
-  for (const name of ['index.html','app.js','styles.css','extra.txt']) fs.writeFileSync(path.join(webDir,name),'estático sintético '+name);
+  for (const name of ['index.html','app.js','theme.js','styles.css','extra.txt']) fs.writeFileSync(path.join(webDir,name),'estático sintético '+name);
   if (captura) promoverCaptura(capturaValida(),dataDir);
   const server=criarServidor({dataDir,port:0,webDir,quadroConfigPath,...options});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
@@ -47,6 +47,19 @@ function request(port,url='/',method='GET',headers={},body='') {
     req.on('error',reject);req.end(body);
   });
 }
+test('Htema script externo permitido, HEAD e guards com CSP preservada',async t=>{
+  const {port}=await ambiente(t,false);
+  const response=await request(port,'/theme.js');
+  assert.equal(response.status,200);
+  assert.equal(response.body,'estático sintético theme.js');
+  assert.match(response.headers['content-type'],/text\/javascript/);
+  assert.match(response.headers['content-security-policy'],/script-src 'self';/);
+  assert.doesNotMatch(response.headers['content-security-policy'],/unsafe-inline/);
+  const head=await request(port,'/theme.js','HEAD');
+  assert.equal(head.status,200);assert.equal(head.body,'');
+  assert.equal((await request(port,'/theme.js','POST')).status,405);
+  assert.equal((await request(port,'/theme.js','GET',{Host:'externo.invalid'})).status,403);
+});
 test('H01 consulta real seleciona campos e não escreve no estado', async t => {
   const {port,dataDir,server}=await ambiente(t);
   assert.equal(server.address().address,'127.0.0.1');
@@ -218,9 +231,9 @@ test('H-review I1 JSON de /api/visao não entrega credenciais em URLs registrada
   assert.equal(body.producoes[0].detalhes.arquivos[0].url,'[conteúdo suprimido]');
   }
 });
-test('H02 três estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos', async t => {
+test('H02 quatro estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos', async t => {
   const {port}=await ambiente(t);
-  for (const [url,file] of [['/','index.html'],['/app.js','app.js'],['/styles.css','styles.css']]) {
+  for (const [url,file] of [['/','index.html'],['/app.js','app.js'],['/theme.js','theme.js'],['/styles.css','styles.css']]) {
     const get=await request(port,url);
     assert.equal(get.status,200); assert.equal(get.body,'estático sintético '+file);
     const head=await request(port,url,'HEAD');

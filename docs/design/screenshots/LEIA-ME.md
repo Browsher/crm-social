@@ -2,6 +2,27 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
+## Tema claro e escuro
+
+Registro local de 06/10/2026, regenerado em 07/10/2026: **16 screenshots da aplicação executável**, exclusivamente com fixtures sintéticas em TEMP, nos temas claro/escuro e larguras 1440/390. O botão agora indica a ação: **☾ Escuro** no tema claro e **☀ Claro** no escuro, com aria-label correspondente e sem aria-pressed. Doze imagens mudaram; as quatro gavetas permaneceram iguais porque o diálogo oculta o botão. Estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18); merge condicionado ao gate e review vigentes. As imagens não representam o CRM privado do autor. Planejamento inclui objetivo sintético e três pautas; Produção inclui os três formatos, e Planilha mostra avisos e abas/Histórico da captura fictícia. Datas/horários são controlados em 04/10/2026 para a apresentação reproduzível, com duas capturas sintéticas de 02/10 e 03/10. A gaveta registra a janela de 1050 px de altura; as outras telas usam fullPage, conservando largura e a rolagem própria dos componentes. Sem montagem ou alteração da imagem.
+
+| Tela | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Planejamento | [Abrir](tema-light-planejamento-1440.png) | [Abrir](tema-light-planejamento-390.png) | [Abrir](tema-dark-planejamento-1440.png) | [Abrir](tema-dark-planejamento-390.png) |
+| Gaveta do dia | [Abrir](tema-light-gaveta-1440.png) | [Abrir](tema-light-gaveta-390.png) | [Abrir](tema-dark-gaveta-1440.png) | [Abrir](tema-dark-gaveta-390.png) |
+| Produção | [Abrir](tema-light-producao-1440.png) | [Abrir](tema-light-producao-390.png) | [Abrir](tema-dark-producao-1440.png) | [Abrir](tema-dark-producao-390.png) |
+| Planilha | [Abrir](tema-light-planilha-1440.png) | [Abrir](tema-light-planilha-390.png) | [Abrir](tema-dark-planilha-1440.png) | [Abrir](tema-dark-planilha-390.png) |
+
+Reprodução, na raiz do repositório com Node existente definido por `CRM_NODE_PATH` e Playwright existente resolvido por `CRM_PLAYWRIGHT_MODULE` (ou `playwright` disponível):
+
+```powershell
+& $env:CRM_NODE_PATH scripts/screenshots-tema.cjs
+```
+
+O [script](../../../scripts/screenshots-tema.cjs) cria servidor loopback/porta efêmera, estado e mapa sintéticos em diretório TEMP próprio, bloqueia requisições externas e confere ausência de erros do navegador; fecha a instância criada e remove somente seu TEMP ao terminar. Substitui os 16 arquivos `tema-*.png` acima, sem usar a instância do autor, `data/` real, Google ou mídia remota. Os testes de teclado, persistência, preferência inicial, aplicação antes do CSS e contraste são provas distintas da aparência: [comportamento e resultados locais](../../modules/web.md#tema-claro-e-escuro). Gate Linux/review correntes serão conferidos no PR; UI/PowerShell mantêm SKIP explícito no CI. A segurança/reprodução do script também foi verificada em 07/10 por [três testes](../../../tests/screenshots-tema.test.cjs): dois VM do script real impedem limpeza fora de TEMP/prefixo permitido, e um CLI gera 16 PNG em cópia TEMP preservando diretório alheio. Os três passaram localmente; no CI, VM executa e CLI com navegador declara SKIP pela M8. Esses testes não reescreveram os PNG versionados nesta rodada. Gate final da árvore local: 356 PASS, incluindo três testes preexistentes do iniciador fora do PR; cobertura 96,3498%, agora incluindo o gerador no LCOV (antes 98,3871% com escopo menor). Imagens anteriores permanecem históricas.
+
+## Histórico das primeiras entregas
+
 Registro histórico das imagens de 04/10/2026: evidência visual local de T001–T034/US1–US5. Na geração destas imagens, as sete tarefas finais ainda não tinham sido executadas. Hoje T001–T041 estão concluídas; resultados e limites ficam na validação, sem imagens da captura privada. As duas imagens originais da US1 foram refeitas após a revisão da US1; oito imagens adicionais registram os quatro selos da US2. O coordenador gerou as imagens com servidor/estado em diretório temporário e Playwright existente. Não houve leitura Google, captura operacional, importação em `data/` real ou mídia carregada remotamente. Consulte o [registro de validação](../../../specs/001-consulta-local-producao/validacao.md).
 
 | Arquivo | O que mostra |

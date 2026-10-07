@@ -535,15 +535,19 @@ não promete detectar todos os segredos possíveis nem comprova acesso a mídia.
 
 ## HTTP e inicialização local
 
-- `GET /`, `/app.js`, `/styles.css`: somente esses três estáticos conhecidos. HEAD
+- `GET /`, `/app.js`, `/theme.js`, `/styles.css`: somente esses quatro estáticos conhecidos. HEAD
   mantém controles e nenhum corpo. Métodos restantes 405; rotas desconhecidas 404.
   Não há endpoint de escrita/importação, geração, aprovação ou ação Google.
 - `criarServidor({dataDir, port, webDir, quadroConfigPath})` carrega e valida o mapa
   antes de iniciar; `quadroConfigPath` opcional é argumento confiável para testes,
   padrão `config/quadro-etapas.json`, nunca parâmetro HTTP. Admite `webDir` somente como
-  argumento do chamador confiável, padrão `src/web/`. Testes HTTP usam três estáticos
-  sintéticos em diretório temporário próprio, antes da implementação da interface.
+  argumento do chamador confiável, padrão `src/web/`. Testes HTTP usam quatro estáticos
+  sintéticos em diretório temporário próprio; os três originais pertencem ao recorte histórico da 001.
   A allowlist permanece fixa; nenhum parâmetro HTTP seleciona diretório ou arquivo.
+- Manutenção de tema de 06/10/2026: `/theme.js` foi acrescentado explicitamente à
+  allowlist e carrega antes do CSS. A preferência é apenas visual/local no navegador;
+  CSP, controles de Host/Origin e recusa de arquivos arbitrários permanecem iguais.
+  Não amplia ações ou dados da 001; evolução da leitura direta permanece no contrato da 002.
 - Bind padrão `127.0.0.1:4318`; porta local explícita em teste. Host corresponde ao
   loopback/porta configurados; Origin, se presente, é a própria origem. Sem CORS externo.
   Bloquear traversal inclusive codificado; nunca servir `data/`, `.specify/`, `.agents/`
