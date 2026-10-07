@@ -9,7 +9,7 @@ const path=require('node:path');
 const launcher=path.join(__dirname,'..','Abrir CRM.cmd');
 const somenteWindows={skip:process.platform==='win32'?false:'Iniciador de duplo clique exclusivo do Windows.'};
 
-async function executar(t,{falha=false,variosRuntimes=false,ocupante,servidorReal,powershellAlheio=false,esperarTecla=falha}={}) {
+async function executar(t,{falha=false,variosRuntimes=false,ocupante,servidorReal,powershellAlheio=false,delayedExpansion=false,normalizarLF=false,esperarTecla=falha}={}) {
   assert.ok(fs.existsSync(launcher),'Deve existir um iniciador .cmd executável por duplo clique.');
   const requisicoes=[];
   const servidor=servidorReal||http.createServer((req,res)=>{
@@ -47,7 +47,10 @@ async function executar(t,{falha=false,variosRuntimes=false,ocupante,servidorRea
   const original=fs.readFileSync(launcher,'utf8');
   const interceptarNavegador="function global:Start-Process { param([string]$FilePath) [System.IO.File]::WriteAllText($env:CRM_OPEN_TEST_BROWSER, $FilePath) }; ";
   assert.ok(original.includes('-Command "'),'A cópia deve permitir interceptar o navegador antes de qualquer ramo.');
-  fs.writeFileSync(cmd,original.replace(/\b4318\b/g,String(porta)).replace('-Command "','-Command "'+interceptarNavegador));
+  let copia=original.replace(/\b4318\b/g,String(porta)).replace('-Command "','-Command "'+interceptarNavegador);
+  if (delayedExpansion) copia=copia.replace('@echo off','@echo off\r\n>"%CRM_OPEN_TEST_DELAYED_PROBE%" echo !CRM_OPEN_TEST_DELAYED_VALUE!');
+  if (normalizarLF) copia=copia.replace(/\r\n/g,'\n');
+  fs.writeFileSync(cmd,copia);
   // O iniciador PowerShell real tem sua própria suíte. Aqui o substituto registra
   // o contrato do retorno e intercepta somente a abertura do navegador, sem UI/rede.
   fs.writeFileSync(path.join(destino,'Iniciar CRM.ps1'),[
@@ -59,7 +62,13 @@ async function executar(t,{falha=false,variosRuntimes=false,ocupante,servidorRea
   const resultPath=path.join(root,'invocado.txt');
   const browserPath=path.join(root,'navegador.txt');
   const nodePathResult=path.join(root,'runtime.txt');
-  const env={...process.env,CRM_OPEN_TEST_RESULT:resultPath,CRM_OPEN_TEST_BROWSER:browserPath,CRM_OPEN_TEST_NODE:nodePathResult};
+  const delayedProbePath=path.join(root,'delayed expansion.txt');
+  const env={...process.env,CRM_OPEN_TEST_RESULT:resultPath,CRM_OPEN_TEST_BROWSER:browserPath,CRM_OPEN_TEST_NODE:nodePathResult,CRM_OPEN_TEST_DELAYED_PROBE:delayedProbePath,CRM_OPEN_TEST_DELAYED_VALUE:'ativo',CRM_OPEN_TEST_CMD:cmd};
+  let entrada=cmd;
+  if (delayedExpansion) {
+    entrada=path.join(root,'chamador com delayed expansion.cmd');
+    fs.writeFileSync(entrada,'@echo off\r\nsetlocal EnableDelayedExpansion\r\ncall "%CRM_OPEN_TEST_CMD%"\r\nexit /b %errorlevel%\r\n');
+  }
   let primeiroRuntime;
   if (variosRuntimes) {
     const runtimes=['primeiro node','segundo node'].map(nome=>path.join(root,nome));
@@ -69,7 +78,7 @@ async function executar(t,{falha=false,variosRuntimes=false,ocupante,servidorRea
     env.PATH=[...runtimes,process.env.PATH].join(';');
   }
   const result=await new Promise((resolve,reject)=>{
-    const child=spawn(process.env.ComSpec||'cmd.exe',['/d','/s','/c','""'+cmd+'""'],{
+    const child=spawn(process.env.ComSpec||'cmd.exe',['/d',...(delayedExpansion?['/v:on']:[]),'/s','/c','""'+entrada+'""'],{
       cwd,windowsHide:true,windowsVerbatimArguments:true,
       env,
       stdio:['pipe','pipe','pipe'],
@@ -110,7 +119,7 @@ async function executar(t,{falha=false,variosRuntimes=false,ocupante,servidorRea
     });
     child.stdin.on('error',()=>{});
   });
-  return {...result,destino,resultPath,browserPath,nodePathResult,primeiroRuntime,porta,requisicoes,servidor};
+  return {...result,destino,resultPath,browserPath,nodePathResult,primeiroRuntime,delayedProbePath,porta,requisicoes,servidor};
 }
 
 async function confirmarOcupanteVivo(result) {
@@ -158,6 +167,7 @@ test('L03 vários Node no PATH selecionam um único executável para o iniciador
 test('L03 powershell.exe alheio no diretório atual não substitui o PowerShell do Windows',somenteWindows,async t=>{
   const result=await executar(t,{powershellAlheio:true,esperarTecla:true});
   assert.equal(result.code,0,result.stdout+'\n'+result.stderr);
+  assert.equal(result.aguardouTecla,false,'Usar o PowerShell do Windows deve terminar sem pausa.');
   assert.equal(fs.readFileSync(result.resultPath,'utf8'),result.destino);
   assert.equal(fs.readFileSync(result.browserPath,'utf8'),'http://127.0.0.1:4318');
 });
@@ -176,6 +186,28 @@ test('L03 CRM já na porta abre o navegador e termina sem iniciar outro servidor
   const result=await executar(t,{ocupante:{body:'{"schemaVersion":1,"dados":"sinteticos"}'}});
   assert.equal(result.code,0,result.stdout+'\n'+result.stderr);
   assert.equal(fs.existsSync(result.resultPath),false,'O CRM reconhecido deve dispensar o iniciador PowerShell.');
+  assert.equal(fs.readFileSync(result.browserPath,'utf8'),`http://127.0.0.1:${result.porta}`);
+  assert.deepEqual(result.requisicoes,[{method:'GET',url:'/api/visao'}]);
+  await confirmarOcupanteVivo(result);
+});
+
+test('L03 reabre o CRM com delayed expansion do CMD ativa sem iniciar servidor nem pausar',somenteWindows,async t=>{
+  const result=await executar(t,{ocupante:{body:'{"schemaVersion":1,"dados":"sinteticos"}'},delayedExpansion:true,esperarTecla:true});
+  assert.equal(fs.readFileSync(result.delayedProbePath,'utf8').trim(),'ativo','A cópia deve receber delayed expansion ativa pelo CALL do chamador.');
+  assert.equal(result.code,0,result.stdout+'\n'+result.stderr);
+  assert.equal(result.aguardouTecla,false,'A reabertura deve terminar sem pausa mesmo com CMD /v:on.');
+  assert.equal(fs.existsSync(result.resultPath),false,'O CRM reconhecido deve dispensar o iniciador PowerShell.');
+  assert.equal(fs.existsSync(result.nodePathResult),false,'A reabertura deve dispensar também a seleção de Node.');
+  assert.equal(fs.readFileSync(result.browserPath,'utf8'),`http://127.0.0.1:${result.porta}`);
+  assert.deepEqual(result.requisicoes,[{method:'GET',url:'/api/visao'}]);
+  await confirmarOcupanteVivo(result);
+});
+
+test('L03 cópia do iniciador normalizada para LF reabre o CRM sem iniciar servidor nem pausar',somenteWindows,async t=>{
+  const result=await executar(t,{ocupante:{body:'{"schemaVersion":1,"dados":"sinteticos"}'},normalizarLF:true});
+  assert.equal(result.code,0,result.stdout+'\n'+result.stderr);
+  assert.equal(result.aguardouTecla,false,'O arquivo com LF deve encerrar sem pausa.');
+  assert.equal(fs.existsSync(result.resultPath),false,'O arquivo com LF deve reconhecer o CRM sem chamar o iniciador.');
   assert.equal(fs.readFileSync(result.browserPath,'utf8'),`http://127.0.0.1:${result.porta}`);
   assert.deepEqual(result.requisicoes,[{method:'GET',url:'/api/visao'}]);
   await confirmarOcupanteVivo(result);

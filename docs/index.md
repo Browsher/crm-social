@@ -134,7 +134,7 @@ As evidências históricas da 001 têm origem, estado e limites registrados na [
 - [Saída histórica de node:test](reports/001-pr6-node-test.txt).
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
-- [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 369 PASS, suíte `.cmd` com 16 PASS, hashes do código/testes, origem e limites; integração depende dos checks estritos/review vigentes do [PR #19](https://github.com/Browsher/crm-social/pull/19).
+- [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 371 PASS, suíte `.cmd` com 18 PASS, hashes do código/testes, origem e limites; integração depende dos checks estritos/review vigentes do [PR #19](https://github.com/Browsher/crm-social/pull/19).
 
 ## Evidência histórica da US2
 

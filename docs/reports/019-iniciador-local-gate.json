@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "executedAtUtc": "2026-10-07T15:33:57.372Z",
+  "executedAtUtc": "2026-10-07T15:49:29.263Z",
   "environment": {
     "platform": "win32",
     "nodeVersion": "24.19.0",
@@ -8,16 +8,16 @@
   },
   "command": "node tools/quality-gate.mjs",
   "source": {
-    "baseCommit": "d82f16b78f93c2469c58df4e76209c674c3309f3",
+    "baseCommit": "a2dec7373b2928a3a46f2998092c41c8eab2a9e3",
     "hashFormat": "SHA-256 de UTF-8 com CRLF normalizado para LF",
     "files": [
       {
         "path": "Abrir CRM.cmd",
-        "sha256Utf8Lf": "3ad1e2ed8dd02145bc162a6829c3c5389e4460309607d4bf86a178382ded058c"
+        "sha256Utf8Lf": "5c3c4c79b0d81c4ed74b50819597ded7ff8eba071b16c4ae1956d4f50facda60"
       },
       {
         "path": "tests/abrir-crm.test.cjs",
-        "sha256Utf8Lf": "91c6d70620739c2611eb70176606e91ace0f55914a7ffeab24cb081414e7693a"
+        "sha256Utf8Lf": "d92406c0fe88135619877fcc15617a508ce4a42977fbf0c75d35bdee0ea85250"
       }
     ]
   },
@@ -27,15 +27,15 @@
     {
       "name": "tests",
       "state": "PASS",
-      "count": 369,
-      "reason": ""
+      "reason": "",
+      "count": 371
     },
     {
       "name": "coverage",
       "state": "PASS",
+      "reason": "",
       "percent": 96.34980988593156,
-      "drop": 0,
-      "reason": ""
+      "drop": 0
     },
     {
       "name": "complexity",
@@ -56,11 +56,11 @@
   ],
   "launcherSuite": {
     "command": "node --test tests/abrir-crm.test.cjs",
-    "tests": 16,
-    "pass": 16,
+    "tests": 18,
+    "pass": 18,
     "fail": 0,
     "skipped": 0,
-    "scope": "CMD/PowerShell reais, servidor real sem captura e com Meses sintética, TEMP e portas efêmeras; navegador interceptado."
+    "scope": "CMD/PowerShell reais, servidor real sem captura e com Meses sintética, herança de delayed expansion e cópia LF, TEMP/portas efêmeras; navegador interceptado."
   },
   "limits": [
     "Modo normal local; Semgrep ausente (SKIP), audit N/A. O gate estrito remoto do head final permanece obrigatório.",
