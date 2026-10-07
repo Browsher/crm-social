@@ -73,6 +73,23 @@ test('P004 review ID opaco conserva espaços sem fundir identidades distintas',(
   assert.equal(v.semanas[0].pautaOrigem.pauta_id,'pauta-novembro-2');
   assert.equal(v.avisos.some(a=>a.aba==='Pautas'&&a.campo==='pauta_id'),false);
 });
+for(const [tipo,inicio] of [['vazio',''],['número',46300],['impossível','2026-02-30'],['não canônico','2026-11-9'],['timestamp','2026-11-09T00:00:00Z']]) {
+  test('P004 review inícios inválidos repetidos '+tipo+' avisam somente calendário inválido',()=>{
+    const raw=capturaPautas();
+    for(const row of [1,2])mudarCelula(raw,'Pautas',row,'inicio_semana',inicio);
+    const v=view(raw);assert.equal(v.pautas.length,2);assert.equal(v.semanas[0].pautaOrigem,null);
+    for(const linha of [2,3]) {
+      const avisos=v.avisos.filter(a=>a.aba==='Pautas'&&a.linha===linha&&a.campo==='inicio_semana');
+      assert.deepEqual(avisos.map(a=>a.motivo),['Início incompatível com a segunda-feira ordinal do mês']);
+    }
+    assert.equal(v.planilha.at(-1).linhas[0].inicio_semana,inicio);
+  });
+}
+test('P004 review data canônica duplicada com mês inválido impede confirmar ambas',()=>{
+  const raw=capturaPautas();mudarCelula(raw,'Pautas',1,'inicio_semana','2026-11-09');mudarCelula(raw,'Pautas',1,'mes','mês inválido');
+  const v=view(raw);assert.equal(v.pautas.length,2);assert.equal(v.semanas[0].pautaOrigem,null);
+  for(const linha of [2,3])assert.ok(v.avisos.some(a=>a.aba==='Pautas'&&a.linha===linha&&a.campo==='inicio_semana'&&a.motivo==='Marca e início repetidos'));
+});
 test('P004 duplicata inválida também impede confirmação da pauta válida',()=>{
   for(const campo of ['pauta_id','inicio_semana']) {
     const raw=capturaPautas();mudarCelula(raw,'Pautas',1,campo,campo==='pauta_id'?'pauta-novembro-2':'2026-11-09');

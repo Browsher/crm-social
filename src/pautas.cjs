@@ -1,4 +1,4 @@
-const {CAMPOS_PAUTAS}=require('./captura.cjs');
+const {CAMPOS_PAUTAS,instanteUtc}=require('./captura.cjs');
 const enums={modelo_carrossel:['cabo','faixa','formas','virada'],origem:['estrategista','autor'],status:['planejada','em_producao','concluida']};
 const preenchido=value=>value!==''&&!(typeof value==='string'&&value.trim()==='');
 function segundaDoMes(mes,semana) {
@@ -22,7 +22,8 @@ function conferirPauta(p,counts,avisar) {
   const invalidar=(campo,motivo)=>{valida=false;avisar(p,campo,motivo);};
   if(typeof p.pauta_id!=='string'||!p.pauta_id.trim())invalidar('pauta_id','Identidade da pauta inválida');
   else if(counts.ids.get(p.pauta_id)>1)invalidar('pauta_id','Identidade da pauta repetida');
-  if(counts.inicios.get(JSON.stringify([p.marca_id,p.inicio_semana]))>1)invalidar('inicio_semana','Marca e início repetidos');
+  const inicioValido=typeof p.inicio_semana==='string'&&instanteUtc(p.inicio_semana+'T00:00:00Z');
+  if(inicioValido&&counts.inicios.get(JSON.stringify([p.marca_id,p.inicio_semana]))>1)invalidar('inicio_semana','Marca e início repetidos');
   conferirCalendario(p,invalidar);
   return valida;
 }

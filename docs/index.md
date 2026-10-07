@@ -206,7 +206,7 @@ Regras de escrita: analogia e visão leiga primeiro, depois detalhe técnico; ta
 
 ## Feature 004 — Pautas no Planejamento
 
-Implementada/testada localmente, com **434 PASS** no gate Windows, cobertura **93,8708%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. Drop 0 é do modo full, sem comparação histórica; Semgrep SKIP por ferramenta ausente/audit N/A. [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto para avaliação do autor, sem merge ou integração; resultados de gate/review por head na [validação da 004](../specs/004-pautas-planejamento/validacao.md); prova local e screenshots não demonstram operação editorial real.
+Implementada/testada localmente, com **441 PASS** no gate Windows, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0 e baseline preservada. Drop 0 é do modo full, sem comparação histórica; Semgrep SKIP por ferramenta ausente/audit N/A. [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto para avaliação do autor, sem merge ou integração; resultados de gate/review por head na [validação da 004](../specs/004-pautas-planejamento/validacao.md); prova local e screenshots não demonstram operação editorial real.
 
 - [Spec](../specs/004-pautas-planejamento/spec.md), [plano](../specs/004-pautas-planejamento/plan.md), [tarefas](../specs/004-pautas-planejamento/tasks.md) e [checklist](../specs/004-pautas-planejamento/checklists/requirements.md).
 - [Pesquisa](../specs/004-pautas-planejamento/research.md), [modelo](../specs/004-pautas-planejamento/data-model.md), [contrato](../specs/004-pautas-planejamento/contracts/pautas.md) e [quickstart](../specs/004-pautas-planejamento/quickstart.md).

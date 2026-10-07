@@ -3,7 +3,7 @@
   "date": "2026-10-07",
   "platform": "Windows",
   "sourceBase": "4c9af22e3b57a135218ab5504e7da0e2472ffdca",
-  "source": "árvore local após os ajustes do review remoto de 35ad236; código, testes e screenshots estabilizados",
+  "source": "árvore local após ajustes do review remoto de f0c2b6b; fontes identificadas por sourceBlobs",
   "schemaVersion": 1,
   "nodeVersion": "24.19.0",
   "exitCode": 0,
@@ -14,13 +14,13 @@
       "name": "tests",
       "state": "PASS",
       "reason": "",
-      "count": 434
+      "count": 441
     },
     {
       "name": "coverage",
       "state": "PASS",
       "reason": "",
-      "percent": 93.8707528314457,
+      "percent": 93.87483355525966,
       "drop": 0
     },
     {
@@ -110,17 +110,17 @@
         },
         {
           "file": "src/web/app.js",
-          "line": 345,
-          "value": 18
-        },
-        {
-          "file": "src/web/app.js",
-          "line": 385,
+          "line": 353,
           "value": 15
         },
         {
           "file": "src/web/app.js",
-          "line": 553,
+          "line": 389,
+          "value": 15
+        },
+        {
+          "file": "src/web/app.js",
+          "line": 557,
           "value": 11
         },
         {
@@ -142,27 +142,27 @@
     }
   ],
   "limits": [
-    "Semgrep ausente no Windows; conferir o gate estrito do head no PR. O gate remoto de 35ad236 teve Semgrep PASS.",
+    "Semgrep ausente no Windows; conferir gate estrito do head no PR. Os gates remotos de 35ad236 e f0c2b6b tiveram Semgrep PASS.",
     "Cobertura UI fora do LCOV; UI exercitada em Playwright Windows.",
     "drop 0 no modo full não é comparação com o percentual histórico.",
     "Somente fixtures, falsos clientes e TEMP; nenhuma evidência operacional real."
   ],
   "testSummary": {
-    "tests": 434,
-    "pass": 434,
+    "tests": 441,
+    "pass": 441,
     "fail": 0,
     "cancelled": 0,
     "skipped": 0,
     "todo": 0,
-    "source": "execução TAP/LCOV completa após os ajustes do review remoto, mesma árvore e configuração do gate"
+    "source": "execução TAP/LCOV completa após os ajustes do review remoto, mesmas fontes/configuração do gate"
   },
   "coverageDetails": {
     "schemaVersion": 1,
     "source": "LCOV Windows da árvore após os ajustes do review remoto; mesma configuração de inclusão/exclusão do gate",
     "aggregate": {
-      "lines": 1501,
-      "covered": 1409,
-      "percent": 93.8707528314457
+      "lines": 1502,
+      "covered": 1410,
+      "percent": 93.87483355525966
     },
     "files": [
       {
@@ -233,8 +233,8 @@
       },
       {
         "file": "src/pautas.cjs",
-        "lines": 50,
-        "covered": 50,
+        "lines": 51,
+        "covered": 51,
         "percent": 100,
         "uncovered": []
       },
@@ -265,5 +265,56 @@
       "Percentual agregado não compara a cobertura por arquivo da main histórica.",
       "O CLI do gerador roda em subprocesso; esse subprocesso não herda cobertura do processo pai."
     ]
-  }
+  },
+  "sourceParent": "f0c2b6bad9880a16820b8699a51e6fdae56f7785",
+  "sourceBlobs": [
+    {
+      "file": "src/captura.cjs",
+      "gitBlob": "435ee43c41a12eccdaf5f96db460317b35cd0674"
+    },
+    {
+      "file": "src/coleta.cjs",
+      "gitBlob": "8d122e22f1d156277ebf5c41bb213b5f0ddaf7dd"
+    },
+    {
+      "file": "src/triagem.cjs",
+      "gitBlob": "ca23fdbc0ef5bca65831fdcfc2ead886b5ee2ac4"
+    },
+    {
+      "file": "src/projecao.cjs",
+      "gitBlob": "e10ade6a73fde12f7511824341593e1f1c7f519b"
+    },
+    {
+      "file": "src/pautas.cjs",
+      "gitBlob": "254bf7c595387cfc14bc0642cbcf5a23aa495e25"
+    },
+    {
+      "file": "src/web/app.js",
+      "gitBlob": "8da65ec54b75785f8e35c31b0bacf8170cbded23"
+    },
+    {
+      "file": "src/web/styles.css",
+      "gitBlob": "19e93570d3f7f580e285c6652b00b9c3a5ddd619"
+    },
+    {
+      "file": "scripts/screenshots-pautas.cjs",
+      "gitBlob": "a0bbf02b87d9fdb0436ceabd2da31f4ad17d968d"
+    },
+    {
+      "file": "tests/pautas-fixtures.cjs",
+      "gitBlob": "d083d5e73a4e2f7c0aedf5240fa445c24e73cb77"
+    },
+    {
+      "file": "tests/pautas.test.cjs",
+      "gitBlob": "23d85fb38576170bcae84e28dd7b5be5fb1888de"
+    },
+    {
+      "file": "tests/pautas-interface.test.cjs",
+      "gitBlob": "77dbb2664b4909d36d90a08ac904f4ac90b8e313"
+    },
+    {
+      "file": "tests/screenshots-pautas.test.cjs",
+      "gitBlob": "aa13f0089b3af3da8f79c21837b6c97ed4b96e33"
+    }
+  ]
 }

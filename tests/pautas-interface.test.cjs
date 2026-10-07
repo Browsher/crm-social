@@ -181,3 +181,17 @@ test('U004 captura antiga preserva ordem física das semanas na lista e em Sem d
     semData:['Semana física A','Semana sem início válido','Semana física B']});
   assert.match(await page.locator('#lista .agenda-week').nth(1).textContent(),/Período não identificado/);
 });
+
+test('U004 destino sintético identifica a pauta sem se apresentar como semana capturada',{skip},async t=>{
+  const page=await abrir(t,{width:390});await page.locator('.pauta-link').first().click();
+  const destino=page.locator('#lista [data-inicio-semana="2026-11-02"]');
+  assert.equal(await destino.locator('h3').textContent(),'Pauta S1 de novembro · Tema sintético 1');
+  assert.equal(await destino.evaluate(n=>document.activeElement===n),true);
+  assert.equal(await destino.locator('.pauta-origin').count(),0);
+  const capturada=page.locator('#lista [data-inicio-semana="2026-11-09"]');
+  assert.equal(await capturada.locator('h3').textContent(),'Conexões do cotidiano');
+  assert.equal(await capturada.locator('.pauta-origin').textContent(),'Pauta S2 de novembro');
+  await page.locator('#selo').click();
+  assert.equal(await page.locator('#dados-planilha tbody tr').count(),1);
+  assert.equal(await page.locator('#dados-planilha tbody tr td').first().textContent(),'semana-01');
+});

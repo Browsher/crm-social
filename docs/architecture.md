@@ -39,7 +39,7 @@ flowchart LR
   Server --> Quadro["src/quadro-config.cjs"]
   Projecao --> Captura
   Projecao --> Pautas["src/pautas.cjs: identidade, calendário e origem"]
-  Pautas --> Captura
+  Pautas -->|CAMPOS_PAUTAS e instanteUtc| Captura
   Projecao --> Triagem
   Triagem -->|CAMPOS, opcionais e linhas físicas| Captura
   Projecao --> Quadro
@@ -237,7 +237,7 @@ como texto segundo o contrato. Células não criam links ou navegação automát
 
 ## Pautas: identidade, calendário e origem
 
-`src/pautas.cjs` importa somente `CAMPOS_PAUTAS` de captura e é chamado pela projeção com linhas NTV já triadas. A raiz `pautas` existe somente quando a aba foi capturada, com cópias de pautas cuja identidade/calendário são válidos e unívocos. Duplicatas de ID textual não vazio ou marca/início em qualquer linha NTV invalidam os destinos envolvidos; ID inválido repetido recebe apenas o aviso de identidade inválida, sem aviso adicional de identidade repetida; outras marcas não participam desse índice nem criam avisos. Mês, ordinal inteiro 1–4 e segunda-feira correspondente são conferidos sem inferir uma quinta pauta. Texto/modelo/origem/status desconhecidos geram aviso e permanecem dados da fonte; não mudam a produção.
+`src/pautas.cjs` importa `CAMPOS_PAUTAS` e `instanteUtc` de captura e é chamado pela projeção com linhas NTV já triadas. A raiz `pautas` existe somente quando a aba foi capturada, com cópias de pautas cuja identidade/calendário são válidos e unívocos. Duplicatas de ID textual não vazio ou marca/início civil válido em qualquer linha NTV invalidam os destinos envolvidos, inclusive quando a linha é inválida em outro campo; ID inválido repetido recebe apenas o aviso de identidade inválida, sem aviso adicional de identidade repetida, e início vazio/não textual/impossível não recebe aviso adicional de duplicidade; outras marcas não participam desse índice nem criam avisos. Mês, ordinal inteiro 1–4 e segunda-feira correspondente são conferidos sem inferir uma quinta pauta. Texto/modelo/origem/status desconhecidos geram aviso e permanecem dados da fonte; não mudam a produção.
 
 Semanas recebe `pauta_id` e `pautaOrigem` somente quando o cabeçalho opcional foi capturado. A origem exige ID exato, mesma marca e mesmo início, sem dedução por data/tema/ordem; vazio não avisa e preenchido não resolvido fica null com aviso localizado. Planilha conserva todas as linhas NTV triadas de Pautas, inclusive inválidas/duplicadas. Os dois opcionais são independentes e não alteram bytes/hashes de capturas históricas. [Contrato da 004](../specs/004-pautas-planejamento/contracts/pautas.md).
 

@@ -1,6 +1,8 @@
 # Validação rápida — 004
 Usar Node 24.19.0 existente, seu diretório primeiro no PATH e Playwright existente em CRM_PLAYWRIGHT_MODULE. Não definir CI no Windows. Todos os testes usam fixtures/cliente falso e TEMP.
 
+A fonte deve fornecer `mes` como texto `AAAA-MM` e `pauta_id` como texto opaco, inclusive em Semanas. Manter essas colunas como texto simples; números/datas seriais não são convertidos nesses campos. Nenhuma formatação é escrita pelo CRM.
+
 ```powershell
 & $env:CRM_NODE_PATH --test tests/pautas.test.cjs
 & $env:CRM_NODE_PATH --test tests/pautas-interface.test.cjs

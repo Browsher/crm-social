@@ -13,7 +13,7 @@ Solicitação de 07/10/2026: consulta de Pautas opcional e Semanas.pauta_id opci
 - Context7 conferido para Sheets e Playwright; nenhuma dependência instalada. Ausência de mapa Graphify neste checkout conferida.
 
 ## Estado
-Spec/plano/tarefas definidos. Implementação, testes e screenshots concluídos localmente; correções conferidas pela revisão independente. [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto, gate estrito aprovado no primeiro head e três Minor atendidos. T012–T014 reconferidas com gate de 434 testes e doc-sync final; T015 aguarda checks/review do head atualizado. Este registro não comprova uso editorial real. Toda evidência desta entrega usa fixtures sintéticas, cliente remoto falso e TEMP; nenhuma coleta na fonte operacional.
+Spec/plano/tarefas definidos. Implementação, testes e screenshots concluídos localmente; correções conferidas pela revisão independente. [PR #20](https://github.com/Browsher/crm-social/pull/20) aberto, dois heads anteriores com gate estrito aprovado e reviews sem Critical/Important. T012–T014 reconferidas com gate de 441 testes e doc-sync final; T015 aguarda checks/review do head atualizado. Este registro não comprova uso editorial real. Toda evidência desta entrega usa fixtures sintéticas, cliente remoto falso e TEMP; nenhuma coleta na fonte operacional.
 
 ## TDD e regressões parciais
 Backend: RED inicial 6 PASS/32 FAIL pela ausência do suporte a Pautas; implementação e casos adicionais terminaram com 190 PASS/0 FAIL/0 SKIP nos arquivos pautas, coleta, projecao, snapshot e servidor (41 testes P004). A invocação também continha o padrão inexistente captura.test.cjs, ignorado pelo runner; não foi contado como teste executado. O coordenador executou separadamente `node --test tests/dados.test.cjs`: 25 PASS/0 FAIL/0 SKIP, incluindo hashes legados literais. Gate integrado ainda pendente nesta fase.
@@ -23,7 +23,7 @@ UI: RED inicial 1 PASS/8 FAIL; regressão de interface/tema/atualização 148 PA
 
 Gerador: RED por ausência de PNG; GREEN 4 PASS sem pulos (guardas de exclusão, falha do navegador e CLI real em cópia TEMP). Geração exit 0, 20 PNG, todos inspecionados pelo responsável e seis amostras pelo coordenador. [Galeria](../../docs/design/screenshots/LEIA-ME.md#004--pautas-no-planejamento). As imagens mantêm a galeria anterior e não mostram dados reais.
 
-Primeiro `node tools/quality-gate.mjs`, Node 24.19.0, Windows com Playwright existente: **427 testes PASS**, cobertura **93,8748%**, complexidade PASS/19 avisos, exit **0**, baseline preservada. Execução TAP completa confirmou 427 PASS/0 FAIL/0 SKIP. [Resumo sanitizado](../../docs/reports/004-local-gate.json). O modo é full: drop 0 é o valor desse modo, não comparação com os 96,3498% históricos. O percentual medido agora inclui o novo módulo/fixture/gerador; a UI continua fora do LCOV. Semgrep SKIP por ferramenta ausente; audit N/A sem dependências do app. Gate estrito remoto e review ainda pendentes, separados da prova Windows.
+Primeiro `node tools/quality-gate.mjs`, Node 24.19.0, Windows com Playwright existente: **427 testes PASS**, cobertura **93,8748%**, complexidade PASS/19 avisos, exit **0**, baseline preservada. Execução TAP completa confirmou 427 PASS/0 FAIL/0 SKIP. Esta é uma rodada histórica, registrada somente neste texto; o relatório JSON versionado corresponde à última rodada descrita adiante. O modo é full: drop 0 é o valor desse modo, não comparação com os 96,3498% históricos. O percentual inclui o novo módulo/fixture/gerador; a UI continua fora do LCOV. Semgrep SKIP por ferramenta ausente; audit N/A sem dependências do app. Gate estrito remoto e review ainda estavam pendentes nesta rodada.
 
 Varredura final de 36 arquivos textuais alterados/criados após a correção e o doc-sync: sem correspondência para e-mail de conta de serviço, URL privada de planilha, chave privada completa ou cópia/caminho do contrato operacional. Limite: padrões conservadores não comprovam ausência de todo segredo possível. Nenhum arquivo de output/ preexistente foi incluído.
 
@@ -32,7 +32,7 @@ Revisor separado, seguindo `.claude/agents/reviewer.md`, examinou os documentos,
 
 Teste RED: 1 FAIL; GREEN U004: 12 PASS/0 FAIL/0 SKIP. Limites inclusivos, dias fora do período e ponteiro órfão cobertos. Revisor conferiu patch/teste e encerrou sem Critical, Important pendente ou problema concreto de segurança no material recebido, condicionado ao gate após a correção. Limites: não examinou diretamente todo o diff ou os PNGs; review remoto do futuro head continua necessário. Nenhuma autorização de merge.
 
-Gate final após a correção: **428 testes PASS**, cobertura **93,8748%**, complexidade PASS/**20 avisos**, exit **0**, baseline preservada. Execução TAP completa da mesma árvore confirmou **428 PASS/0 FAIL/0 SKIP**, sem cancelados ou TODO. `origensDoDia` ficou com complexidade 13, abaixo do limiar de reprovação 21. Limitações de Semgrep/audit/LCOV/modo full permanecem as registradas acima. [Relatório final sanitizado](../../docs/reports/004-local-gate.json). Galeria regenerada nessa árvore: 20 PNG, exit 0, seis amostras visuais cobrindo ambos os temas e larguras sem alterações inesperadas.
+Rodada após a correção local: **428 testes PASS**, cobertura **93,8748%**, complexidade PASS/**20 avisos**, exit **0**, baseline preservada. Execução TAP completa da mesma árvore confirmou **428 PASS/0 FAIL/0 SKIP**, sem cancelados ou TODO. `origensDoDia` ficou com complexidade 13, abaixo do limiar de reprovação 21. Limitações de Semgrep/audit/LCOV/modo full permanecem as registradas acima. Rodada histórica preservada neste texto. Galeria regenerada nessa árvore: 20 PNG, exit 0, seis amostras visuais cobrindo ambos os temas e larguras sem alterações inesperadas.
 
 ## Documentação
 Doc-sync-onboarding concluído após estabilizar o código/gate, em 14 Markdown de onboarding/produto/arquitetura/módulos/galeria. Links locais conferidos, cercas balanceadas, índice documental atualizado e `git diff --check` sem erros. Não houve alteração em templates, skills, gate, CI ou baseline. Sem mapa Graphify existente. Documentos diferenciam implementação/teste local de integração.
@@ -52,7 +52,7 @@ Correções dos três Minor:
 Revisor local separado conferiu esses deltas e as evidências encaminhadas, sem executar comandos, e não encontrou novo Critical, Important ou problema de segurança. Gate Windows após os ajustes: **434 PASS**, cobertura **93,8708%**, complexidade PASS/20 avisos, exit 0, baseline preservada; Semgrep local SKIP e audit N/A. Execução TAP/LCOV confirmou **434 PASS/0 FAIL/0 SKIP**, sem cancelados/TODO. Galeria regenerada: 20 PNG e exit 0, amostras dos dois temas/larguras conferidas.
 
 ### Cobertura por arquivo solicitada no review
-LCOV Windows com os mesmos includes/excludes do gate; agregado idêntico ao relatório: **1.409/1.501 linhas (93,8708%)**. Resumo sanitizado e linhas não cobertas em `coverageDetails` do [relatório](../../docs/reports/004-local-gate.json); LCOV bruto com caminhos locais não é publicado.
+LCOV Windows final com os mesmos includes/excludes do gate; agregado idêntico ao relatório: **1.410/1.502 linhas (93,8748%)**. Resumo sanitizado e linhas não cobertas em `coverageDetails` do [relatório](../../docs/reports/004-local-gate.json); LCOV bruto com caminhos locais não é publicado. `sourceParent` identifica a base dos últimos ajustes e `sourceBlobs` identifica por hash Git cada um dos 12 arquivos de código/testes/estilo da entrega, conferidos novamente após executar o gate e o LCOV. Os números intermediários permanecem somente nos relatos históricos acima.
 
 | Arquivo | Linhas cobertas/medidas | Percentual |
 | --- | --- | --- |
@@ -60,8 +60,21 @@ LCOV Windows com os mesmos includes/excludes do gate; agregado idêntico ao rela
 | src/coleta.cjs | 85/85 | 100% |
 | src/triagem.cjs | 101/101 | 100% |
 | src/projecao.cjs | 308/308 | 100% |
-| src/pautas.cjs | 50/50 | 100% |
+| src/pautas.cjs | 51/51 | 100% |
 | tests/pautas-fixtures.cjs | 23/23 | 100% |
 | scripts/screenshots-pautas.cjs | 52/96 | 54,1667% |
 
 As 44 linhas não cobertas do novo gerador respondem por 44 das 92 linhas não cobertas do agregado. O CLI real foi executado e verificado em subprocesso, cuja cobertura não é incorporada à do processo pai; os testes VM medem preparação/falhas/limpeza. Os cinco módulos de backend alterados têm 100% das linhas medidas cobertas, o que não equivale a 100% dos ramos. UI permanece exercitada no navegador, fora do LCOV. Não foi refeita a medição por arquivo da main histórica, portanto o percentual agregado anterior não serve como comparação direta de ramos.
+
+### Review do commit f0c2b6b
+[Gate estrito](https://github.com/Browsher/crm-social/actions/runs/37676734525/job/112982060691) de `f0c2b6bad9880a16820b8699a51e6fdae56f7785`: tests/coverage/complexity/Semgrep PASS, 20 avisos, audit N/A, exit 0, baseline preservada. [Review desse head](https://github.com/Browsher/crm-social/pull/20#issuecomment-6045578137): sem Critical/Important, seis Minor.
+
+Tratamento:
+- Minor 1: destino visual sem Semana capturada passa a se identificar como `Pauta S1 de novembro · tema`, sem criar `pautaOrigem` ou linha na Planilha. RED 1 FAIL; GREEN Pautas/interface 116 PASS/0 FAIL/0 SKIP, incluindo 14 U004.
+- Minor 2: início inválido repetido não avisa duplicidade. Datas civis canônicas repetidas continuam contadas mesmo quando outro campo da pauta é inválido. Reutiliza `instanteUtc` de captura. RED 5 FAIL/1 PASS; GREEN Pautas/projeção/dados 153 PASS/0 FAIL/0 SKIP, incluindo 52 P004.
+- Minor 3: contrato/quickstart explicam `mes` textual `AAAA-MM` e IDs textuais opacos, sem alterar formatação na fonte.
+- Minor 4: preparação/ordenação da lista extraída para `semanasComPautas`, preservando ordem física quando não há destinos novos e sempre em Sem data.
+- Minor 5: limitação do modo full e cobertura do subprocesso ficam explícitas. Mantido o escopo do gate; não excluir o gerador nem alterar baseline para aumentar o percentual. Pendência M8 permanece documentada, com prova Windows separada.
+- Minor 6: mantidas as duas guardas locais da coluna opcional, sem divergência demonstrada. As combinações de presença/ausência são verificadas nos testes de projeção/Planilha. Extração de helper adicional fica como melhoria não bloqueante, fora desta entrega enxuta.
+
+As sugestões 5/6 não apontam falha de segurança, perda de dados ou regressão demonstrada. Revisor local separado conferiu os deltas 1–4 e a reutilização de `instanteUtc`, sem novo Critical/Important ou problema de segurança no material encaminhado. Gate Windows da árvore ajustada: **441 testes PASS**, cobertura **93,8748%**, complexidade PASS/20 avisos, exit 0, baseline preservada; execução TAP/LCOV confirmou **441 PASS/0 FAIL/0 SKIP**, sem cancelados/TODO. `lista` passou de 18 para 15 e `semanasComPautas` tem 5. Semgrep local SKIP/audit N/A permanecem. Galeria regenerada: 20 PNG, exit 0 e oito amostras de card/lista/semana em 1440/390 e claro/escuro conferidas, incluindo os novos títulos em tela pequena. Checks remotos ainda devem conferir o head enviado; evidência anterior não os substitui.

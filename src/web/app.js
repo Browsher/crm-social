@@ -342,20 +342,24 @@ function pecaVisivel(p,week) {
   const cruzaMes=week.periodo.inicio.slice(0,7)<=state.mes && week.periodo.fim.slice(0,7)>=state.mes;
   return cruzaMes && p.dataCivil>=week.periodo.inicio && p.dataCivil<=week.periodo.fim;
 }
-function lista(semData=false) {
-  const groups=[];
-  const pautas=pautasDoMes(),weeks=state.view.semanas.slice();
+function semanasComPautas(semData,pautas) {
+  const weeks=state.view.semanas.slice();
   if(!semData)for(const pauta of pautas) {
-    if(!weeks.some(w=>w.periodo.inicio===pauta.inicio_semana))weeks.push({tema:pauta.tema,ids:[],periodo:{inicio:pauta.inicio_semana,fim:dataMais(pauta.inicio_semana,6)}});
+    if(!weeks.some(w=>w.periodo.inicio===pauta.inicio_semana))weeks.push({tema:pauta.tema,pautaDestino:pauta,ids:[],periodo:{inicio:pauta.inicio_semana,fim:dataMais(pauta.inicio_semana,6)}});
   }
   if(weeks.length>state.view.semanas.length)weeks.sort((a,b)=>(a.periodo.inicio??'z').localeCompare(b.periodo.inicio??'z'));
+  return weeks;
+}
+function lista(semData=false) {
+  const groups=[],pautas=pautasDoMes(),weeks=semanasComPautas(semData,pautas);
   for (const week of weeks) {
     const pecas=idsParaPecas(week.ids).filter(p=>semData?p.dataCivil===null:aceito(p) && pecaVisivel(p,week));
     const temPauta=!semData && pautas.some(p=>p.inicio_semana===week.periodo.inicio);
     if (!pecas.length && !temPauta) continue;
     const group=node('section',undefined,'agenda-week'), header=node('header');
     if(!semData)destinoSemana(group,week.periodo.inicio);
-    header.append(node('h3',week.tema || 'Tema não informado'),node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):'Período não identificado'));
+    const tema=week.tema || 'Tema não informado';
+    header.append(node('h3',week.pautaDestino?rotuloPauta(week.pautaDestino)+' · '+tema:tema),node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):'Período não identificado'));
     const rows=node('div',undefined,'agenda-rows');rows.append(...pecas.map(row));
     group.append(header);
     const origem=origemPauta(week);if(origem)group.append(origem);
