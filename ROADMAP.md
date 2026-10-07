@@ -76,7 +76,7 @@ Registro detalhado: `specs/001-consulta-local-producao/spec.md`.
 
 ## Manutenção de interface — tema claro e escuro
 
-Ajuste pequeno solicitado pelo autor, sem Spec Kit e sem alterar as features 001–005. Em 06/10/2026, tema aplicado antes do CSS, botão acessível e preferência visual local implementados/testados nas telas existentes. Gate Windows final com 350 PASS, cobertura 98,3871%, baseline preservada; 16 screenshots sintéticos em 1440/390 nos dois temas. **Integração pendente**, condicionada aos checks/review publicados; merge não autorizado nesta entrega. [Uso e limites](README.md#tema-claro-e-escuro--ajuste-de-interface), [interface](docs/modules/web.md#tema-claro-e-escuro) e [galeria](docs/design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
+Ajuste pequeno solicitado pelo autor, sem Spec Kit e sem alterar as features 001–005. Em 06/10/2026, tema aplicado antes do CSS, botão acessível e preferência visual local implementados/testados nas telas existentes; gate Windows histórico com 350 PASS. Em 07/10, botão ajustado para indicar a ação (claro → Escuro; escuro → Claro), com aria-label correspondente e sem aria-pressed; 27 testes de tema PASS sem pulos e 16 screenshots sintéticos regenerados em 1440/390 nos dois temas. Gate final da árvore local com 353 PASS, incluindo três testes preexistentes do iniciador fora do PR, cobertura 98,3871% e baseline preservada. **Integração pendente**, condicionada aos checks e review vigentes do [PR #18](https://github.com/Browsher/crm-social/pull/18). [Uso e limites](README.md#tema-claro-e-escuro--ajuste-de-interface), [interface](docs/modules/web.md#tema-claro-e-escuro) e [galeria](docs/design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
 
 ## Como vamos construir
 

@@ -102,24 +102,34 @@ async function abrir(t,{scheme='light',stored,width=1440,storageThrows=false,bef
 for(const scheme of ['dark','light'])test('Tema: primeira visita respeita prefers-color-scheme '+scheme,{skip},async t=>{
   const page=await abrir(t,{scheme});
   assert.equal(await page.locator('html').getAttribute('data-theme'),scheme);
-  assert.equal(await page.locator('#theme-toggle').textContent(),scheme==='dark'?'☾ Escuro':'☀ Claro');
-  assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'),String(scheme==='dark'));
+  assert.equal(await page.locator('#theme-toggle').textContent(),scheme==='dark'?'☀ Claro':'☾ Escuro');
+  assert.equal(await page.locator('#theme-toggle').getAttribute('aria-label'),scheme==='dark'?'Ativar tema claro':'Ativar tema escuro');
+  assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'),null,'Ação não anuncia estado de botão pressionado');
 });
 for(const width of [1440,390])test('Tema: teclado alterna e ambos os temas persistem após reload em '+width,{skip},async t=>{
   const page=await abrir(t,{scheme:'light',width}),button=page.locator('#theme-toggle');
   assert.equal(await button.isVisible(),true);
-  assert.match(await button.getAttribute('aria-label'),/tema/i);
+  assert.equal(await button.textContent(),'☾ Escuro');
+  assert.equal(await button.getAttribute('aria-label'),'Ativar tema escuro');
   const rect=await button.boundingBox();assert.ok(rect.x>=0&&rect.x+rect.width<=width);
   await button.focus();await page.keyboard.press('Enter');
   assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
-  assert.equal(await button.getAttribute('aria-pressed'),'true');
+  assert.equal(await button.getAttribute('aria-pressed'),null);
+  assert.equal(await button.textContent(),'☀ Claro');
+  assert.equal(await button.getAttribute('aria-label'),'Ativar tema claro');
   assert.equal(await page.evaluate(()=>localStorage.getItem('crm-theme')),'dark');
   await page.reload();assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
+  assert.equal(await button.textContent(),'☀ Claro');
+  assert.equal(await button.getAttribute('aria-label'),'Ativar tema claro');
   await button.focus();await page.keyboard.press('Space');
   assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
-  assert.equal(await button.getAttribute('aria-pressed'),'false');
+  assert.equal(await button.getAttribute('aria-pressed'),null);
+  assert.equal(await button.textContent(),'☾ Escuro');
+  assert.equal(await button.getAttribute('aria-label'),'Ativar tema escuro');
   assert.equal(await page.evaluate(()=>localStorage.getItem('crm-theme')),'light');
   await page.reload();assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+  assert.equal(await button.textContent(),'☾ Escuro');
+  assert.equal(await button.getAttribute('aria-label'),'Ativar tema escuro');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 });
 test('Tema: escolha salva sobrepõe preferência do sistema',{skip},async t=>{

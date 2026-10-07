@@ -11,8 +11,8 @@
     const button=document.querySelector('#theme-toggle');
     if(!button)return;
     const dark=root.dataset.theme==='dark';
-    button.textContent=dark?'☾ Escuro':'☀ Claro';
-    button.setAttribute('aria-pressed',String(dark));
+    button.textContent=dark?'☀ Claro':'☾ Escuro';
+    button.setAttribute('aria-label',dark?'Ativar tema claro':'Ativar tema escuro');
   }
   system.addEventListener('change',event=>{
     if(chosen)return;
