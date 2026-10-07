@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/004-pautas-planejamento`
 **Created**: 2026-10-07
-**Status**: Implementada e testada localmente; PR #20 aberto, ajustes do review atendidos e sujeitos aos checks do novo head; sem merge
+**Status**: Implementada, testada e entregue no PR #20; 15/15 tarefas, gate estrito e review do código conferidos; sem merge. Checks vigentes no PR.
 **Input**: Consulta opcional de Pautas e origem semanal no CRM pessoal; até 15 tarefas, fixtures sintéticas e um PR sem merge.
 
 ## User Scenarios & Testing *(mandatory)*

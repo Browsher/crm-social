@@ -30,7 +30,7 @@ Aceite independente: importação/POST/GET sem rede, tabela opcional e falhas pr
 - [x] T012 Conferir regressão/contraste/segurança e revisão independente do diff; registrar ajustes e resultados em `specs/004-pautas-planejamento/validacao.md`.
 - [x] T013 Executar `node tools/quality-gate.mjs` Windows sem pulos/baseline alterada; guardar evidência sanitizada em `docs/reports/004-local-gate.json`.
 - [x] T014 Executar doc-sync-onboarding e atualizar `README.md`, `ROADMAP.md`, `AGENTS.md`, `docs/index.md`, `docs/architecture.md`, módulos e estado desta feature.
-- [ ] T015 Commit com noreply autorizado, push e abrir único PR em Browsher/crm-social; conferir gate estrito/review do head e entregar link/review/screenshots em `validacao.md`, sem merge.
+- [x] T015 Commit com noreply autorizado, push e abrir único PR em Browsher/crm-social; conferir gate estrito/review do head e entregar link/review/screenshots em `validacao.md`, sem merge.
 
 ## Dependencies & Execution Order
 T001 → T002 → T003 → T004; T005 em paralelo após fixture/interface definida. T006 depois do RED e API. T007 depende T004; T008 após T006/T007. T009 após backend; T010 após UI. T011 após integrações; T012–T015 sequenciais. Correções reabrem testes/gate afetados.

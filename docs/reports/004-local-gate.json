@@ -142,7 +142,7 @@
     }
   ],
   "limits": [
-    "Semgrep ausente no Windows; conferir gate estrito do head no PR. Os gates remotos de 35ad236 e f0c2b6b tiveram Semgrep PASS.",
+    "Semgrep ausente no Windows; o gate estrito remoto do sourceCommit teve Semgrep PASS. Conferir checks do head vigente no PR.",
     "Cobertura UI fora do LCOV; UI exercitada em Playwright Windows.",
     "drop 0 no modo full não é comparação com o percentual histórico.",
     "Somente fixtures, falsos clientes e TEMP; nenhuma evidência operacional real."
@@ -316,5 +316,20 @@
       "file": "tests/screenshots-pautas.test.cjs",
       "gitBlob": "aa13f0089b3af3da8f79c21837b6c97ed4b96e33"
     }
-  ]
+  ],
+  "sourceCommit": "15567a0fddcda8f602fdf11bc86e13b413c74c15",
+  "remoteCodeGate": {
+    "commit": "15567a0fddcda8f602fdf11bc86e13b413c74c15",
+    "url": "https://github.com/Browsher/crm-social/actions/runs/37678876658/job/112989401162",
+    "source": "resumo extraído do log do job Executar gate estrito",
+    "tests": "PASS",
+    "coverage": "PASS",
+    "complexity": "PASS",
+    "complexityWarnings": 20,
+    "semgrep": "PASS",
+    "audit": "N/A",
+    "exitCode": 0,
+    "baselineUpdated": false,
+    "limits": "CI Linux mantém pulos de UI/PowerShell; prova Windows é separada."
+  }
 }

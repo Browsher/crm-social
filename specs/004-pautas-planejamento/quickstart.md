@@ -3,6 +3,8 @@ Usar Node 24.19.0 existente, seu diretório primeiro no PATH e Playwright existe
 
 A fonte deve fornecer `mes` como texto `AAAA-MM` e `pauta_id` como texto opaco, inclusive em Semanas. Manter essas colunas como texto simples; números/datas seriais não são convertidos nesses campos. Nenhuma formatação é escrita pelo CRM.
 
+Pautas é opcional quando ausente. Se presente, deve ter os 12 cabeçalhos do contrato; estrutura incompleta recusa toda a nova captura e preserva a anterior. A falha de dados pelo botão é genérica: conferir também nomes/cabeçalhos das abas opcionais. Na importação local por arquivo, o motivo fixo pode identificar a aba inválida. A validação desta feature usa somente fontes sintéticas.
+
 ```powershell
 & $env:CRM_NODE_PATH --test tests/pautas.test.cjs
 & $env:CRM_NODE_PATH --test tests/pautas-interface.test.cjs
