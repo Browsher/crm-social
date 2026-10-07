@@ -231,9 +231,9 @@ test('H-review I1 JSON de /api/visao não entrega credenciais em URLs registrada
   assert.equal(body.producoes[0].detalhes.arquivos[0].url,'[conteúdo suprimido]');
   }
 });
-test('H02 três estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos', async t => {
+test('H02 quatro estáticos fixos têm bytes/HEAD corretos, extras nunca são servidos', async t => {
   const {port}=await ambiente(t);
-  for (const [url,file] of [['/','index.html'],['/app.js','app.js'],['/styles.css','styles.css']]) {
+  for (const [url,file] of [['/','index.html'],['/app.js','app.js'],['/theme.js','theme.js'],['/styles.css','styles.css']]) {
     const get=await request(port,url);
     assert.equal(get.status,200); assert.equal(get.body,'estático sintético '+file);
     const head=await request(port,url,'HEAD');

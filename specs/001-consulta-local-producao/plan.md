@@ -43,7 +43,7 @@ O retrato de 02/10 mostrou quatro peças em uma semana; esse número não fica f
 | Plataforma | Windows, um operador, NTV |
 | Interface | Identidade e componentes do protótipo; comportamento vigente em `docs/design/telas.md` e referência demonstrativa em `docs/design/mockups/telas-v2.html` |
 | Armazenamento | Capturas e tentativas imutáveis em `data/`, ignorado e fora dos arquivos servidos |
-| HTTP | Uma rota de consulta `/api/visao` e três estáticos permitidos; nenhum endpoint de importação/escrita |
+| HTTP | Recorte da 001: uma rota de consulta `/api/visao`, nenhum endpoint de importação/escrita; manutenção visual de 06/10/2026 amplia de três para quatro estáticos explícitos (`/`, `/app.js`, `/theme.js`, `/styles.css`), sem mudar as guardas/CSP |
 | Atualização | Central coleta; importador promove; botão relê localmente sem alterar a tentativa ou o instante da captura |
 | Datas | Datas editoriais civis preservadas; frescor e horários por `captura.completedAt` em `America/Sao_Paulo` |
 | Celular | Em 390 px, lista semanal inicial, menu recolhido e gaveta em tela cheia; tabelas com rolagem horizontal própria |

@@ -10,6 +10,11 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 flowchart LR
   Iniciador["Iniciar CRM.ps1"] -->|Node existente, processo oculto| Server
   CLI["scripts/importar-captura.cjs"] --> Snapshot["src/snapshot.cjs"]
+  subgraph Evidencia["Ferramenta sintética de evidência: somente TEMP"]
+    Screenshots["scripts/screenshots-tema.cjs"] --> Fixtures["tests/fixtures.cjs"]
+  end
+  Screenshots -->|promove somente fixtures em TEMP| Snapshot
+  Screenshots -->|cria servidor isolado, porta efêmera| Server
   Snapshot --> Captura["src/captura.cjs"]
   Snapshot --> Triagem["src/triagem.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
@@ -59,7 +64,9 @@ flowchart LR
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
-Tema claro/escuro implementado e testado localmente em 06/10/2026, com integração pendente. `theme.js` é carregado de forma síncrona no head antes do CSS; usa `prefers-color-scheme` e a escolha válida `crm-theme`, com leitura/escrita protegidas por try/catch. Sem armazenamento disponível, a escolha manual dura na página aberta. O atributo `data-theme` seleciona somente variáveis visuais de `styles.css`; não modifica captura, recibo, filtros, API ou estado editorial. [Testes e limites](modules/web.md#tema-claro-e-escuro) e [galeria sintética](design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
+Tema claro/escuro implementado e testado localmente em 06/10/2026; estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18), com merge condicionado ao gate e review vigentes. `theme.js` é carregado de forma síncrona no head antes do CSS; usa `prefers-color-scheme` e a escolha válida `crm-theme`, com leitura/escrita protegidas por try/catch. Sem armazenamento disponível, a escolha manual dura na página aberta. O atributo `data-theme` seleciona somente variáveis visuais de `styles.css`; não modifica captura, recibo, filtros, API ou estado editorial. [Testes e limites](modules/web.md#tema-claro-e-escuro) e [galeria sintética](design/screenshots/LEIA-ME.md#tema-claro-e-escuro).
+
+O [gerador de screenshots](../scripts/screenshots-tema.cjs) é ferramenta de evidência sintética, externa à operação: usa `tests/fixtures.cjs`, promove somente em TEMP e cria sua própria instância do servidor. Nunca usa o CRM do autor ou Google. Em 07/10, [três testes do script real](../tests/screenshots-tema.test.cjs) passaram localmente: dois VM recusam limpeza fora de TEMP/prefixo permitido; um CLI gera 16 PNG em cópia TEMP e preserva diretório alheio. No CI, os dois VM executam e o CLI de navegador mantém SKIP pela M8. Esta rodada não mudou código de produção, PNG, configuração de CI/gate ou baseline; integração depende dos checks/review do novo head do PR #18.
 
 `.specify/feature.json` é ponteiro local não versionado. Checkout remoto identifica a feature pela branch e sua pasta de specs (por exemplo, `003-planejamento-mensal`); o ponteiro não é pré-requisito do importador/servidor.
 
