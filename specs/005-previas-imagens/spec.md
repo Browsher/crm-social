@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-08
 
-**Status**: Implementada e testada localmente; 21 tarefas aprovadas pelo autor em 2026-10-08. Gate Windows da fonte `392e109` com 577 PASS e 12 screenshots sintéticos inspecionados; entrega e checks/review por head acompanhados no PR #23 e na validação. T002 do autor permanece pendente, sem bloquear os testes. Sem integração ou merge. Evidências em [validacao.md](validacao.md).
+**Status**: Implementada e testada localmente; 21 tarefas aprovadas pelo autor em 2026-10-08. Gate Windows da fonte `84aae5e` com 578 PASS e cobertura 95,0828%; [CI estrito dessa fonte](https://github.com/Browsher/crm-social/actions/runs/37812480393) PASS, inclusive Semgrep. A rodada inicial de 577 PASS e os 12 screenshots sintéticos inspecionados da fonte `392e109` permanecem históricos; entrega e checks/review por head acompanhados no PR #23 e na validação. T002 do autor permanece pendente, sem bloquear os testes. Sem integração ou merge. Evidências em [validacao.md](validacao.md).
 
 **Input**: Solicitação do autor em 08/10/2026: imagens na gaveta, ampliação e falha localizada mantendo o Drive; leitura privada pelo servidor. Início após tarefa 1 integrada: [PR #22](https://github.com/Browsher/crm-social/pull/22), main `b90980a15fad653937fd024ac3c9bb2738e9d99a`.
 

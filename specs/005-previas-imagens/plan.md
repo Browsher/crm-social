@@ -8,7 +8,7 @@
 
 A gaveta ganha uma folha de contato das imagens vinculadas à peça e um visualizador maior. O navegador pede somente um arquivo interno; o servidor consulta a captura vigente, reutiliza bytes locais válidos ou lê o Drive. Falha de prévia preserva texto, links e estado editorial.
 
-O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. Após a parada prevista e a apresentação do [peso](tasks.md#rastreabilidade-e-peso), o autor aprovou esse escopo em 2026-10-08. Implementação realizada com TDD na ordem de tasks.md. Gate Windows da fonte `392e109` passou com 577 testes sem pulos; 12 screenshots sintéticos inspecionados. Entrega e checks/review por head são acompanhados no PR #23 e na validação; nenhum merge autorizado. [Evidências](validacao.md).
+O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. Após a parada prevista e a apresentação do [peso](tasks.md#rastreabilidade-e-peso), o autor aprovou esse escopo em 2026-10-08. Implementação realizada com TDD na ordem de tasks.md. Gate Windows da fonte `84aae5e` passou com 578 testes sem pulos e cobertura 95,0828%; [CI estrito dessa fonte](https://github.com/Browsher/crm-social/actions/runs/37812480393) PASS, inclusive Semgrep. A rodada inicial de 577 PASS e os 12 screenshots sintéticos inspecionados da fonte `392e109` permanecem históricos. Entrega e checks/review por head são acompanhados no PR #23 e na validação; nenhum merge autorizado. [Evidências](validacao.md).
 
 ## Technical Context
 
@@ -16,7 +16,7 @@ O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. Após a p
 
 **Primary Dependencies**: Somente APIs nativas: node:crypto, node:fs, node:path, node:http e fetch. JWT RS256 e cliente nativo da 002 reutilizados. Playwright existente apenas para testes locais, sem instalar dependências.
 
-**Storage**: Captura existente em data/ permanece somente leitura; novo cache privado data/midias/ ignorado por Git. Diretórios TEMP exclusivos nos testes.
+**Storage**: Captura existente em data/ permanece somente leitura; novo cache privado data/midias/ ignorado por Git, com ACL herdada e sem eviction/quota/expiração. Diretórios TEMP exclusivos nos testes. Cada prévia faz duas leituras síncronas integrais da captura para conferir a referência antes e depois dos bytes.
 
 **Testing**: node:test + node:assert/strict; transporte falso com Response/ReadableStream e imagens sintéticas geradas em teste; HTTP real em loopback/porta efêmera; Playwright local. Preservar suites de Google/coleta/servidor/Pronta/versões/tema.
 

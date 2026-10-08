@@ -94,7 +94,7 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 
 ## Feature 005 — Prévias de imagens
 
-Implementada/testada localmente: galeria e ampliação das imagens vinculadas à peça aberta, com leitura Drive sob demanda pelo servidor e cache privado. A geração de 21 tarefas provocou a parada inicial; o autor aprovou todas em 08/10/2026. T002, compartilhar a pasta como Leitor, permanece externa/pendente. Gate Windows da fonte `392e109`: 577 PASS, sem pulos locais; 12 screenshots inspecionados. Entrega e checks/review vigentes no PR #23, sem integração ou merge.
+Implementada/testada localmente: galeria e ampliação das imagens vinculadas à peça aberta, com leitura Drive sob demanda pelo servidor e cache privado. A geração de 21 tarefas provocou a parada inicial; o autor aprovou todas em 08/10/2026. T002, compartilhar a pasta como Leitor e conferir o tipo de Drive, permanece externa/pendente. Gate Windows da fonte `84aae5e`: 578 PASS, sem pulos locais; [CI estrito dessa fonte](https://github.com/Browsher/crm-social/actions/runs/37812480393) PASS, inclusive Semgrep. A rodada inicial de 577 PASS e os 12 screenshots inspecionados da fonte `392e109` permanecem históricos. Entrega e checks/review vigentes no PR #23, sem integração ou merge.
 
 | Documento | Uso |
 | --- | --- |

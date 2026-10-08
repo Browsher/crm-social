@@ -14,9 +14,11 @@ Como conferir uma folha de contato antes de usá-la, este roteiro separa o desen
 | `CRM_PLAYWRIGHT_MODULE` | Playwright já disponível no computador; fora de `CI=true` para aceite de UI |
 | Diretório de dados de teste | TEMP exclusivo, com captura sintética e cache próprio; não usar `data/` operacional |
 | Cliente Google nos testes | Fetch/transporte injetado; chaves RSA geradas em RAM/TEMP; não usar credencial real ou PEM literal em fixture |
-| Preparação real do autor | Compartilhar a pasta Produções da NTV como Leitor com a conta de serviço; tarefa externa, não executada pelo agente nem necessária aos testes falsos |
+| Preparação real do autor | Compartilhar a pasta Produções da NTV como Leitor com a conta de serviço e conferir o tipo de Drive; tarefa externa, não executada pelo agente nem necessária aos testes falsos |
 
 O cliente Drive implementado não exige `CRM_SPREADSHEET_ID`; credencial real fica externa, privada, apenas no servidor. Não registrar e-mail, ID, URL privada ou conteúdo operacional na evidência compartilhável.
+
+Na T002, conferir se Produções é uma pasta compartilhada de um Drive pessoal ou pertence a um **Shared drive**: são conceitos distintos. O cliente atual não envia `supportsAllDrives`, parâmetro descrito na [documentação Google de Shared drives](https://developers.google.com/workspace/drive/api/guides/enable-shareddrives). Compartilhar como Leitor não comprova suporte a Shared drives; não há prova de acesso operacional nesta entrega. Registrar somente o resultado sanitizado e o limite encontrado, sem valores privados. O cache herda as permissões/ACL de `data/`, sem criar ACL própria, e não possui eviction, quota ou expiração automática.
 
 ## Repetir os testes sintéticos
 
@@ -45,7 +47,7 @@ Essa variável permite escrever somente os 12 `previas-*.png` sintéticos em `do
 | Regras de registro/bytes | Imagem válida com tipo declarado divergente; versão/id_drive ausentes ou inválidos; SHA ausente, inválido e divergente | Assinatura dos bytes decide o tipo, sem exigir tipo declarado imagem na rota; SHA ausente ainda exige tipo/tamanho; falha sem dados privados |
 | Tipo e tamanho | PNG/JPEG/WEBP, assinaturas truncadas, SVG/GIF/ZIP/vídeo/HTML/JSON; limite exato e +1 | Tipo derivado dos bytes; limite inclusivo 15.000.000; excesso recusado antes de servir/cachear |
 | Transporte/OAuth | Cliente sem spreadsheet ID, scopes separados, redirect, permissão negada, stall no token e no corpo | Factory Drive independente; 15 s em cada fase; nenhum redirect/retry ou corpo Google público |
-| Persistência real TEMP | Hit, corrupção, staging interrompido, erro de disco, referência/versão/hash alterados e pedidos concorrentes | Hit validado sem OAuth/download; inválido pode refetch; bytes novos validados podem ser servidos se cache falhar; sem escrita em captura/recibos |
+| Persistência real TEMP | Hit, corrupção, staging interrompido, erro de disco, referência/versão/hash alterados, pedidos concorrentes e troca do arquivo entre lstat/open sem SHA | Hit validado sem OAuth/download; identidade do descritor divergente recusa o hit, fecha o descritor e baixa bytes corretos; bytes novos validados podem ser servidos se cache falhar; sem escrita em captura/recibos |
 | Serviço/captura | Registro removido/fora da NTV; captura inválida; referência mudando durante download | Sem rede quando recusa inicial; fingerprint final impede bytes anteriores como atuais; cache não contorna captura |
 | HTTP real | Rota/encoding/query inválidos, ID exato/ausente, HEAD/POST, Host/Origin/Sec-Fetch-Site | Status e headers do contrato; GET exclusivo, erros constantes, sem proxy genérico, CORS ou valor privado |
 | Galeria sob demanda | Quadro, dia com peças fechadas, abrir/reabrir uma peça; texto v3/imagens v2/v1/v1/v2/v3 | Zero download das fechadas; somente peça aberta; ordem por índice/ponteiro, reaproveitamento válido e cache sem download extra |
@@ -58,4 +60,4 @@ No teste principal de UI, usar servidor real com transporte remoto falso; não c
 
 ## Limites do aceite
 
-Uma assinatura reconhecida não comprova decodificação completa, aprovação ou conteúdo de pacote. Sem SHA, a referência igual não comprova imutabilidade remota; cache não tem eviction/revalidação periódica. Compartilhamento do autor e demonstração real, se solicitada, têm evidência própria e não são inferidos dos fakes. Implementação, testes locais, gate normal Windows e screenshots estão registrados. Entrega e checks/review por head são acompanhados no PR #23; integração não autorizada.
+Uma assinatura reconhecida não comprova decodificação completa, aprovação ou conteúdo de pacote. Sem SHA, referência ou identidade do descritor iguais não comprovam imutabilidade do conteúdo local/remoto; cache não tem eviction/revalidação periódica. Cada prévia realiza duas leituras síncronas integrais da captura para conferir a referência. Compartilhamento do autor e demonstração real, se solicitada, têm evidência própria e não são inferidos dos fakes. Implementação, testes locais, gate normal Windows e screenshots estão registrados. Entrega e checks/review por head são acompanhados no PR #23; integração não autorizada.

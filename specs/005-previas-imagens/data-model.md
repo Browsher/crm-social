@@ -20,7 +20,7 @@ O ID remoto é restrito a caracteres canônicos `A–Z`, `a–z`, `0–9`, `_`, 
 
 PNG exige assinatura completa de oito bytes; JPEG exige `FF D8 FF`; WEBP exige `RIFF`, marcador `WEBP` e tamanho mínimo para identificação. Não aceitar assinatura truncada, SVG, GIF, vídeo, ZIP, HTML ou JSON. MIME/extensão declarados não decidem o tipo. A validação de assinatura é mínima, não decodificação completa.
 
-Contar bytes efetivos do stream, interrompendo acima de 15.000.000; Content-Length permite recusa antecipada, mas não dispensa contagem. Cache deve ser lido com limite+1 para detectar excesso sem carregar arquivo arbitrariamente grande. SHA preenchido inválido recusa antes de rede; divergência de bytes recusa antes de resposta/promoção. Cache inválido é ignorado/descartado e pode causar novo download.
+Contar bytes efetivos do stream, interrompendo acima de 15.000.000; Content-Length permite recusa antecipada, mas não dispensa contagem. Cache deve ser lido com limite+1 para detectar excesso sem carregar arquivo arbitrariamente grande. Exigir arquivo regular e identidade `dev`/`ino` bigint do descritor aberto igual à do lstat anterior; troca entre conferência e abertura vira miss/refetch e fecha o descritor. SHA preenchido inválido recusa antes de rede; divergência de bytes recusa antes de resposta/promoção. Cache inválido é ignorado/descartado e pode causar novo download.
 
 Promover cache somente após validação, por staging exclusivo e rename; falha remove apenas seu staging. Erro de cache não invalida bytes novos já validados e pode permitir resposta sem persistência. Promessas concorrentes da mesma chave podem ser coalescidas; a entrada em RAM termina com o pedido, sem manter Buffer global. Cache nunca altera capturas, recibos ou estado de coleta.
 
@@ -44,4 +44,4 @@ stateDiagram-v2
 
 Abrir uma peça inicia somente suas posições não solicitadas; sucesso permite ampliação, erro HTTP ou `img.onerror` marca apenas a posição indisponível. Fechar ampliação devolve foco à miniatura e mantém a gaveta; Escape seguinte pode fechar a gaveta. Em Pronta, galeria fica fora da dobra de páginas/cenas e não muda os avisos existentes.
 
-Vigência/retirada/revisões seguem a tarefa 1: nenhum índice é retirado por inferência e a versão da produção continua regendo revisão. Sem SHA declarado, referência igual não comprova imutabilidade remota. Cache não tem limpeza/expiração automática; não há transcodificação, manifesto ZIP ou verificação editorial nova.
+Vigência/retirada/revisões seguem a tarefa 1: nenhum índice é retirado por inferência e a versão da produção continua regendo revisão. Sem SHA declarado, referência ou identidade do descritor iguais não comprovam imutabilidade do conteúdo local/remoto. Cache herda a ACL de `data/` e não tem quota, eviction ou limpeza/expiração automática; não há transcodificação, manifesto ZIP ou verificação editorial nova.

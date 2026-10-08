@@ -65,7 +65,7 @@ Sem as variáveis Google, o POST com composição padrão confirma recibo de fal
 
 ## Rota de prévia — 005
 
-`getMidia` aplica Host/Origin e `Sec-Fetch-Site` antes do método, resolução, cache ou cliente. `cross-site`/`same-site` são recusados; ausência, `none` e `same-origin` mantêm as demais guardas. HEAD/outros métodos recebem 405 com Allow GET, sem consultar serviço. O ID é decodificado uma vez; vazio, `.`/`..`, query, barras, dois-pontos e controles são recusados com 400. ID remoto que não corresponde a um ID interno exato resulta 404.
+`getMidia` aplica Host/Origin e `Sec-Fetch-Site` antes do método, resolução, cache ou cliente. `cross-site`/`same-site` são recusados; ausência, `none` e `same-origin` mantêm as demais guardas. HEAD/outros métodos recebem 405 com Allow GET, sem consultar serviço. O ID é decodificado uma vez; vazio, `.`/`..`, query, `/`, `\`, `:` e controles U+0000–U+001F/U+007F são recusados com 400, inclusive codificados. ID remoto que não corresponde a um ID interno exato resulta 404.
 
 O serviço relê/valida o snapshot e recorta NTV em todo pedido. Resposta 200 usa Content-Type derivado dos bytes; todo erro é texto UTF-8 constante **Prévia indisponível**, sem ID, conta, URL ou mensagem Google. `Cross-Origin-Resource-Policy: same-origin`, no-store/nosniff e CSP acompanham sucesso e falhas; HEAD conserva ausência de corpo. Não há CORS. A captura/recibo não é alterada pela prévia.
 

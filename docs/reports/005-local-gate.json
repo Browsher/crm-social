@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "feature": "005-previas-imagens",
   "date": "2026-10-08",
-  "sourceCommit": "392e1090c02fa4a52ab887c20887a6b79e5aee69",
+  "sourceCommit": "84aae5e406db05c3c8c03f6afc5d35c6334e1263",
   "environment": "Windows local, Node 24.19.0 e Playwright existente; fixtures sinteticas e transporte falso",
   "command": "node tools/quality-gate.mjs",
   "exitCode": 0,
@@ -12,21 +12,170 @@
       "name": "tests",
       "state": "PASS",
       "reason": "",
-      "count": 577
+      "count": 578
     },
     {
       "name": "coverage",
       "state": "PASS",
       "reason": "",
-      "percent": 95.06966773847803,
+      "percent": 95.08284339925174,
       "drop": 0
     },
     {
       "name": "complexity",
       "state": "PASS",
       "metrics": 571,
-      "maximum": 16.0,
-      "warnings": 21
+      "maximum": 16,
+      "warnings": 21,
+      "warningDetails": [
+        {
+          "key": "scripts/importar-captura.cjs::ast::bf89f0c0b0d36c259a50aa54095beae1784420c6257787a296b8f3bfe3ecfd24",
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::acacfd7a3c71352965abfb6402a03e0cbd6da68956c6beb7ec1a0a003d55eabe",
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::e5cdf26f466912a805aadcf1a85da4357d3f518adc84fc2d6b1980e8eb8043a1",
+          "file": "src/google.cjs",
+          "line": 11,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::4be10e827f4b6cdd4b598b92013c5daf6fbcd5958d4a2c735b64ddabd24878fd",
+          "file": "src/google.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::9d6a7c01215bd7dbc99e39796d516dacfd50127cb9a7f11e97e7559f1158a537",
+          "file": "src/servidor.cjs",
+          "line": 32,
+          "value": 14,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::374c8857f4098604ae5a6e74f8a297ecd4474ce0f19c5c21f83b0599a894e5d2",
+          "file": "src/servidor.cjs",
+          "line": 38,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::84c82acc4568b023ba0a6a7aa6565cfe8f3940fd24fc51e950e6d6929f4a4030",
+          "file": "src/servidor.cjs",
+          "line": 74,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::6160a0ed8a70e9bc36fd2cf1abbe39c6254c7f043b17dd58b22f6b2801364878",
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::702d80510ed234619df766294be9c5b3862a2758919fa5c70a09f67d909ae9fd",
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::17bd8b3924ba7188062a62b4875c72848402d9caaa9a85be29d7c7f72d92f2e8",
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::809f7c5bd501a6b9594f40088df62f4d7e8a892f80f8a65dc9d46494a4b4cb3e",
+          "file": "src/web/app.js",
+          "line": 36,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::98333c7ad65cdc212bced0bb83381bb3f3a122fca12977337507855f8f76587e",
+          "file": "src/web/app.js",
+          "line": 161,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
+          "file": "src/web/app.js",
+          "line": 178,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::121b2cd4f6f0e9aba8b96d049909f5418e9d30a8396cc8b7ef467e7b8c4dc5e3",
+          "file": "src/web/app.js",
+          "line": 245,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::8f65dabe2e6dab27bd8e0fdeaf53fba0e328a69651a5bf0c54cb65fd87db04cb",
+          "file": "src/web/app.js",
+          "line": 304,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f45b1ce678b80db07ad5ccba4f12862d1642cb3d6d3791d8923c5413900b5779",
+          "file": "src/web/app.js",
+          "line": 338,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::62ae815236231442491bb35a9532e908372da7cd7c2e86db9b9835bc00ea2ab6",
+          "file": "src/web/app.js",
+          "line": 421,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3af80b21a07fb20cc926d42588a78937bda1c61ef95608814fff4f03a754a1f7",
+          "file": "src/web/app.js",
+          "line": 453,
+          "value": 15,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::9c75b7250eabcff072188ed74ace12d86a67e1a2e0363b689be6ec1af6fc1bba",
+          "file": "src/web/app.js",
+          "line": 489,
+          "value": 15,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::247064941e9cdb1e64d0a141a692b32781e667260ad73e3a6277709fcb742105",
+          "file": "src/web/app.js",
+          "line": 657,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::659233f77fc9ecb0c526480a61d2da6d52ecc3dd4847bf45d97e6c067e2a5208",
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12,
+          "matchable": true
+        }
+      ]
     },
     {
       "name": "semgrep",
@@ -43,23 +192,38 @@
   ],
   "sourceHashes": {
     "src/google.cjs": "bd209a0387c6a9ccc36ba5002876727691e27435cf1508966308f1ceb9bb1c2e",
-    "src/midia.cjs": "2628350b1befaffae5598679ee264ec875fe813548916bfcc74bd372871b0c2b",
+    "src/midia.cjs": "11f266163168f16f488b7a03a23e94b34be9921405f9b7028d258c16389755a6",
     "src/servidor.cjs": "3446dba661b80bd440bdd33e3c1bd0153d8c196e0e0e3b5aa819bcc925417150",
     "src/web/app.js": "0cd46435075ea6f4d8620fa01b339789891b3c3e75d220932451c61a955c8da0",
     "src/web/styles.css": "ee2c7a005f75e6c3e80c0c49a4bcefced4e499bba48c1d730c3623965c4e97d3",
     "tests/google-midia.test.cjs": "ef9911971542953e54b79c672f721388dd9757f09602ed074a235322ab0b2cbb",
-    "tests/midia.test.cjs": "35a4bc3fb5304b43d0883152e9891f02768a15067c2c3d57430dda985c8afae5",
+    "tests/midia.test.cjs": "23192f577e87ccc26ccc1ecaa6a5f766e3b1ce95490ed9b27bacf849374b38ec",
     "tests/midia-http.test.cjs": "46b085879085a721be19c3404344274b1cd6749479952bf5f201e1f456b23af0",
-    "tests/previas-fixtures.cjs": "fb4a012d495afa14f613fad6cda42aaeeef8a420750f2eb210503836ca35cd54",
+    "tests/previas-fixtures.cjs": "f16caf39bdd8866cab7cbb677176b5435dae60b67626a923eb33ad74feaea465",
     "tests/previas-interface.test.cjs": "e528416a7fd38a3dfb3e79fe515bc53ff8f0a8ce52e8f9207ab8f539a6ad23ce",
     "tests/interface.test.cjs": "cbd64f252ed7e99a27cf293520c34b586cd2d6e8d88717a12856b442b9862164",
-    "tests/pronta-interface.test.cjs": "7784557de9b52247a685a46fd1cf2976049b2cd04d4cd33f3b56d4fd82fee91e",
+    "tests/pronta-interface.test.cjs": "0e30076a6e22b5fdf64831be3e81b25f61a7873637bd1af8d34033ca341022f5",
     "tests/tema.test.cjs": "0c9056acb9c8fea90f12769285b552705afb42cdfdf3e076205172ef6f45bfde"
   },
   "limits": [
-    "Semgrep local SKIP por ferramenta ausente; CI estrito precisa passar no head do PR.",
+    "Semgrep local SKIP por ferramenta ausente; CI estrito da fonte 84aae5e PASS, inclusive Semgrep; checks finais no PR.",
     "UI fora do LCOV; CI Linux pula UI/PowerShell.",
     "Drop zero no modo full nao representa comparacao historica.",
-    "Compartilhamento real T002 pendente, nao bloqueante para testes falsos."
-  ]
+    "Compartilhamento real T002 pendente, nao bloqueante para testes falsos.",
+    "Tentativa Windows e7ec1d2 com testes FAIL sem diagnostico; reproducao 578 PASS e duas rodadas oficiais posteriores PASS. Causa inicial nao identificada."
+  ],
+  "remoteStrictGate": {
+    "sourceCommit": "84aae5e406db05c3c8c03f6afc5d35c6334e1263",
+    "url": "https://github.com/Browsher/crm-social/actions/runs/37812480393",
+    "state": "PASS",
+    "semgrep": "PASS",
+    "baselineUpdated": false
+  },
+  "semgrepFixtureException": {
+    "rule": "generic.secrets.security.detected-google-gcm-service-account.detected-google-gcm-service-account",
+    "file": "tests/previas-fixtures.cjs",
+    "line": 47,
+    "scope": "Somente esta regra nesta linha; demais linhas, regras e configuracao preservadas",
+    "reason": "Falso positivo sobre discriminador publico; RSA efemera gerada no teste, dominio reservado e gravacao somente TEMP; literais legiveis"
+  }
 }

@@ -2,7 +2,7 @@
 
 Como conferir uma folha de contato antes de usá-la, este registro separa os testes sintéticos da operação real. O autor aprovou as 21 tarefas em 2026-10-08 e autorizou a implementação no [PR #23](https://github.com/Browsher/crm-social/pull/23), sem merge. Base integrada: `b90980a15fad653937fd024ac3c9bb2738e9d99a`, [tarefa 1 / PR #22](https://github.com/Browsher/crm-social/pull/22).
 
-## Execução em andamento
+## Execução da implementação
 
 Node 24.19.0 e Playwright existentes no computador; somente fixtures sintéticas, transporte falso, diretórios TEMP e portas efêmeras. Nenhuma planilha, credencial ou mídia operacional foi usada. Nenhum resultado anterior da tarefa 1 comprova a 005.
 
@@ -34,17 +34,17 @@ Node 24.19.0 e Playwright existentes no computador; somente fixtures sintéticas
 | T018 — primeira tentativa estrita e reprodução com TAP/cobertura | Exit 1; reprodução 576 PASS / 1 FAIL / 0 pulos. U06 legado exigia zero imagens em toda a gaveta; contou a miniatura legítima. Correção restrita ao escopo do teste XSS e exigência de src local. Complexidade PASS (571 métricas, máximo 16, 21 avisos), baseline preservada; Semgrep SKIP por ferramenta ausente e audit N/A. Não é gate aprovado |
 | T018 — U06 legado, após ajuste do teste | GREEN local filtrado, exit 0, 1 PASS / 0 FAIL / 0 pulos. Título/corpo mantêm HTML literal; campos injetados não criam imagens; miniatura legítima exige src local. Allowlist, hrefs e rel preservados |
 
-## Gate local aprovado — T018
+## Gate local aprovado — T018, rodada inicial histórica
 
-Fonte: `392e1090c02fa4a52ab887c20887a6b79e5aee69`, com autoria/committer noreply e sem coautoria. `node tools/quality-gate.mjs`, Windows, Node 24.19.0 no PATH e Playwright local: exit 0, **577 PASS**, cobertura **95,06966773847803%**, complexidade PASS (**571 métricas, máximo 16, 21 avisos**), baseline preservada. [Relatório sanitizado e hashes das fontes](../../docs/reports/005-local-gate.json).
+Fonte: `392e1090c02fa4a52ab887c20887a6b79e5aee69`, com autoria/committer noreply e sem coautoria. `node tools/quality-gate.mjs`, Windows, Node 24.19.0 no PATH e Playwright local: exit 0, **577 PASS**, cobertura **95,06966773847803%**, complexidade PASS (**571 métricas, máximo 16, 21 avisos**), baseline preservada. [Relatório desta rodada preservado no commit de documentação](https://github.com/Browsher/crm-social/blob/e79c15d1f9546f427103a27864320911e41fbcba/docs/reports/005-local-gate.json). O relatório local corrente acompanha a rodada final abaixo.
 
 Semgrep local SKIP por ferramenta ausente; audit N/A sem dependências da aplicação. A tentativa estrita anterior falhou e não substitui esta rodada normal aprovada; o CI estrito deve passar no head entregue. UI fica fora do LCOV; CI Linux conserva pulos UI/PowerShell e não substitui a prova local. Drop zero no modo full não representa comparação histórica. As cinco camadas foram exercitadas e os 12 screenshots inspecionados. Doc-sync, revisão e entrega remota ainda serão registrados; não há integração da 005.
 
-## Documentação — T019
+## Documentação — T019, rodada inicial histórica
 
 `doc-sync-onboarding` executado após o gate, conforme o agente local: onboarding, arquitetura/imports, módulos, contrato/roteiro e galeria sincronizados. Novo módulo `midia.md` ligado pelo índice, assim como relatório e validação. Conferência documental: 732 links locais, 65 âncoras, 23 pares de cercas, zero erros; regra de estrutura preservada no limite de 60 linhas; `git diff --check` passou. Nenhuma fonte, teste, PNG, gate, CI ou baseline alterada nesta etapa. A documentação distingue implementação/testes de integração e mantém T002 externa pendente.
 
-## Revisão local — T020
+## Revisão local — T020, rodada inicial histórica
 
 Revisor independente do autor das fontes de produção, seguindo `.claude/agents/reviewer.md`, recebeu base `b90980a`, código `392e109`, fontes/diff fornecidos pelo coordenador, contrato, mapa de imports, documentação e resultado do gate. Critical 0, Important confirmado 0, segurança/regressão confirmada 0. Arestas novas correspondem aos imports e o módulo novo é explicitamente exercitado por testes.
 
@@ -58,7 +58,49 @@ Limites: revisão local somente nos pacotes fornecidos, sem shell, filesystem, t
 
 O PR #23 saiu do rascunho no head `e79c15d1f9546f427103a27864320911e41fbcba`, sem merge. [Primeiro CI estrito](https://github.com/Browsher/crm-social/actions/runs/37809663261): testes, cobertura e complexidade PASS; **Semgrep FAIL** por achado médio ou superior, exit 1. O resultado remoto conhecido prevalece sobre o SKIP local; esta rodada não atende ao aceite de segurança.
 
-**Alteração temporária no próprio CI para diagnóstico:** o workflow vigente não publica relatório nem artefato com a localização dos achados. Um passo condicionado à falha exibirá somente regra, arquivo, linha e severidade já sanitizados pelo adaptador. Sem alteração de scanner, versões, packs, configuração, limites, baseline, permissões ou checks. O passo será removido após localizar a causa, antes da entrega final; não é redução de checagens nem correção do achado.
+**Alteração temporária no próprio CI para diagnóstico:** o workflow não publicava relatório nem artefato com a localização dos achados. Em `d40175b`, um passo condicionado à falha exibiu somente regra, arquivo, linha e severidade já sanitizados pelo adaptador. Sem alteração de scanner, versões, packs, configuração, limites, baseline, permissões ou checks. O passo foi removido no commit próprio `e7ec1d218e4df2805274aad8a3834f06a73a3225`; o diff líquido de `.github/`, `tools/`, configuração e baseline em relação à base é vazio. Este registro satisfaz o achado obrigatório **alteração no próprio gate ou CI**, com efeito diagnóstico temporário e efeito líquido zero.
+
+## Correções e triagem dos reviews — T020/T021
+
+Reviews remotos somente leitura: [e79c15d](https://github.com/Browsher/crm-social/pull/23#issuecomment-6064519251), [d40175b](https://github.com/Browsher/crm-social/pull/23#issuecomment-6064626352) e [e7ec1d2](https://github.com/Browsher/crm-social/pull/23#issuecomment-6064754734). O último não encontrou falha de segurança no código; apontou duas pendências Important de evidência/justificativa, tratadas nesta rodada. Seus achados não foram confundidos com aprovação do head posterior.
+
+O [review da fonte 84aae5e](https://github.com/Browsher/crm-social/pull/23#issuecomment-6064910441) confirmou ausência de Critical ou vulnerabilidade confirmada; manteve Important apenas pela documentação de gate/supressão ainda anterior. Ambos recebem nesta entrega causa, escopo da exceção, remoção exata do diagnóstico e provas locais/remotas atuais. Sugestões Minor adicionais não correspondem a defeito confirmado: renovação antecipada de token após revogação, limite de corpo OAuth em host fixo e melhorias futuras de asserções XSS. A renderização atual continua por textContent e os testes exigem texto literal sem elemento injetado nos campos de título/corpo/legenda. O relatório final inclui os 21 avisos de complexidade com identidade AST, arquivo, linha e valor; não infere qual função piorou a partir da diferença de contagens históricas. Nada disso substitui o review do head documental entregue.
+
+**Semgrep, causa sanitizada:** o [diagnóstico d40175b](https://github.com/Browsher/crm-social/actions/runs/37810374189) apontou `generic.secrets.security.detected-google-gcm-service-account.detected-google-gcm-service-account`, `tests/previas-fixtures.cjs:47`, severidade high. A [regra primária](https://github.com/semgrep/semgrep-rules/blob/develop/generic/secrets/security/detected-google-gcm-service-account.yaml) usa regex para o campo type com valor literal de conta de serviço; não exige material de chave. A fixture gera RSA de 2048 bits por `generateKeyPairSync` durante o teste, usa domínio reservado `.invalid` e grava a credencial somente em TEMP. Não havia chave, conta ou segredo operacional versionado. Trata-se de falso positivo de formato, distinto da troca de cache abaixo.
+
+A primeira tentativa (`7bb2bae`) montava o tipo em runtime; embora preservasse a fixture, o review I2 pediu uma justificativa mais auditável. Em `84aae5e406db05c3c8c03f6afc5d35c6334e1263`, os literais foram restaurados e a própria linha recebeu `nosemgrep` **somente para a regra exata**, com comentário justificando a RSA efêmera/TEMP/domínio reservado. Esta é uma exceção explícita de falso positivo: a regra continua ativa nas demais linhas e arquivos, e nenhum pack, configuração, severidade ou baseline foi reduzido. Google/Drive/Sheets: 22 PASS, exit 0, sem falhas ou pulos. O resultado remoto dessa fonte foi conferido na rodada final abaixo.
+
+**Troca de arquivo do cache:** o Minor do primeiro review foi reproduzido antes da correção. `node --test --test-name-pattern='troca entre lstat e open' tests/midia.test.cjs`: RED, exit 1, 0 PASS/1 FAIL. Em TEMP real e sem SHA declarado, outra imagem PNG substituiu o arquivo entre `lstat` e `open`; downloads=0 e bytes substituídos servidos. Em `7bb2bae`, `lerLimitado` passou a conferir tipo/dev/ino, com bigint, do descritor aberto contra a identidade anterior, antes de ler bytes e dentro do try/finally. GREEN mídia+HTTP: 39 PASS, exit 0, sem falhas/pulos; downloads=1, bytes substituídos recusados, descritor fechado/EBADF, captura e recibos idênticos. Isso não promete imutabilidade de conteúdo alterado no mesmo inode; SHA preenchido continua sendo conferido.
+
+| Ponto do review | Tratamento e limite |
+| --- | --- |
+| CI temporário, Semgrep e evidência de head | Remoção registrada acima; diagnóstico separado da correção. [CI estrito e7ec1d2](https://github.com/Browsher/crm-social/actions/runs/37811283482) PASS: testes/cobertura/complexidade/Semgrep, audit N/A, exit 0, baseline preservada. Essa prova anterior não substitui o CI do head final com a exceção explícita |
+| Allowlist/XSS de Pronta | Asserções complementares exigem ausência da URL de pacote recusada em qualquer href da seção e src local em toda imagem legítima. 14 PASS locais, sem falhas/pulos; nenhuma mudança de produção |
+| Dois-pontos e demais formas recusadas de ID | Contrato explicita as restrições já implementadas/testadas; nenhuma ampliação da rota |
+| Custo da leitura síncrona | Duas resoluções completas da captura por prévia permanecem por contrato; dívida documentada, sem memoização que dispense a reconfirmação final |
+| Cache sem limpeza e SHA ausente | Decisões aprovadas preservadas; limpeza futura registrada no roadmap. Mesmo ID/versão/referência sem SHA não comprova conteúdo remoto imutável |
+| Drives compartilhados e T002 | Endpoint atual não anuncia supportsAllDrives; localização da pasta e acesso real não foram demonstrados. Registrar o limite para a preparação do autor, sem confundir pasta compartilhada com Shared drive |
+| Privacidade do diretório de cache | Depende das permissões/ACL locais herdadas de data/; ignorado por Git e inacessível por estático. Não há garantia contra outro processo com acesso à mesma conta do sistema |
+| HEAD e resíduos dos testes RED | GET exclusivo/HEAD 405 é decisão explícita e testada. Substitutos de export mantêm o RED comportamental e não passam se o export desaparecer; melhoria de clareza não bloqueante |
+| Falha posterior da imagem ampliada | Investigação real no Chromium registrada em T020; zero novos GET, falha não reproduzida. Observação de resiliência para outros navegadores, sem afirmar cobertura deles |
+
+**Gate Windows após review, fonte e7ec1d2:** primeira tentativa oficial terminou com testes FAIL e contagem total 578, sem TAP diagnóstico persistido pelo adaptador. A causa dessa tentativa não foi identificada; não foi atribuída à fixture nem considerada corrigida apenas por repetição. Reprodução detalhada com os mesmos includes/excludes e cobertura: 578 PASS, 0 FAIL, 0 pulos, exit 0, 112,999 s. Nova execução oficial, sem alteração de fontes: exit 0, 578 PASS, cobertura 95,08284339925174%, complexidade PASS/571 métricas/21 avisos, baseline preservada; Semgrep local SKIP/audit N/A. Esse episódio intermitente fica registrado como limite da evidência. A rodada final abaixo repete T018/T019 após a alteração auditável da fixture.
+
+## Gate final e repetição da documentação — T018/T019
+
+Fonte final de código/testes: `84aae5e406db05c3c8c03f6afc5d35c6334e1263`. `node tools/quality-gate.mjs`, Windows, Node 24.19.0 no PATH e Playwright existente: **exit 0, 578 PASS, sem pulos locais**, cobertura **95,08284339925174%**, complexidade PASS (**571 métricas, máximo 16, 21 avisos**), baseline preservada. Semgrep local SKIP por ausência; audit N/A. [Relatório sanitizado corrente com 13 hashes de fontes](../../docs/reports/005-local-gate.json). Drop zero no modo full não é comparação histórica; UI fora do LCOV e pulos Linux não substituem os testes locais.
+
+[CI estrito desta mesma fonte](https://github.com/Browsher/crm-social/actions/runs/37812480393): **PASS**, testes/cobertura/complexidade/**Semgrep PASS**, audit N/A, exit 0 e baseline preservada. O scanner manteve a configuração/packs da base e validou a exceção pontual documentada da fixture. Esse resultado encerra o FAIL conhecido daquela regra nessa fonte; não é SKIP ou rebaixamento silencioso de achado operacional.
+
+As cinco camadas voltaram a passar após as correções. Os 12 PNG permanecem na fonte visual `392e109`: nenhum CSS, comportamento de galeria/ampliação ou gerador de bytes das imagens mudou depois deles. A interface foi novamente exercitada pelo gate local final. Todos já haviam sido inspecionados pelo coordenador em 1440/390, nos dois temas. A documentação final e a revisão do head de entrega são conferidas após esta prova; nenhum merge da 005 foi executado.
+
+`doc-sync-onboarding` repetido depois desse gate: 13 Markdown de onboarding, arquitetura, módulos e artefatos ativos sincronizados, preservando os arquivos do coordenador e as provas históricas. Checagem desta rodada: 638 links locais, 56 âncoras, 21 pares de cercas, zero erros; índice cobre os 23 Markdown de docs/, estrutura em 60 linhas e `git diff --check` exit 0. PNG sem diff contra `392e109`. Nenhuma fonte, teste, CI ou baseline alterada na documentação.
+
+## Revisão local após as correções — T020
+
+Revisor independente da produção recebeu os deltas `7bb2bae`/`84aae5e`, os resultados RED/GREEN, gate local final, CI estrito e a justificativa da exceção. Recomendou aprovação no escopo dos pacotes, sem Critical, Important, segurança ou regressão confirmados. Conferiu a recusa por identidade do descritor e seu fechamento, além da supressão estritamente de regra/linha sobre o discriminador público da fixture fictícia.
+
+Limites preservados: não executou shell, testes ou scanners, não releu checkout integral e não reivindicou independência sobre testes/fixtures que havia escrito. O coordenador leu os reforços de allowlist/XSS e o teste de troca real; os reviews remotos completos também os examinaram. A prova local não equivale a acesso operacional ao Drive. Depois da documentação, o coordenador conferiu os 13 hashes: zero divergências e nenhum delta de código/testes em relação à fonte do gate. O review remoto do head documental final continua necessário.
 
 ## Preparação externa do autor
 
