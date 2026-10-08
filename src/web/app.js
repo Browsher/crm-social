@@ -414,14 +414,14 @@ function linhaProjeto(p) {
 }
 function projetoSemana(week) {
   const project=node('section',undefined,'project');project.dataset.semanaId=week.semana_id ?? '';
-  const pecas=idsParaPecas(week.ids),future=week.periodo.inicio>hojeCivil();
+  const pecas=idsParaPecas(week.ids),future=layout.segundaDaSemana(week.periodo.inicio)>layout.segundaDaSemana(hojeCivil());
   if(!pecas.length && future) {
     const header=node('header',undefined,'project-heading');
     header.append(node('small',civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'})));
     project.append(header,node('p','Planejamento na sexta-feira','future-project'));return project;
   }
   const header=node('header',undefined,'project-heading'),title=node('div');
-  title.append(node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):'Sem semana'));
+  title.append(node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):(week.semana_id===null?'Sem semana':'Período não identificado')));
   title.append(node('h2',week.tema || 'Tema não informado'));
   if(week.pautaOrigem)title.append(node('p','S'+week.pautaOrigem.semana+' · '+week.pautaOrigem.tema,'project-topic'));
   header.append(title,progressoProjeto(pecas));project.append(header,...pecas.map(linhaProjeto));return project;
@@ -488,7 +488,7 @@ function cabecalhoPlanejamento() {
   const pauta=(state.view.pautas??[]).find(p=>p.inicio_semana===state.inicioSemana);
   $('#week-title').textContent=semanas.map(w=>w.pautaOrigem?'S'+w.pautaOrigem.semana+' · '+w.pautaOrigem.tema:w.tema).filter(Boolean).join(' · ') ||
     (pauta?'S'+pauta.semana+' · '+pauta.tema:'');
-  $('#week-progress').textContent=progressoTexto(pecasDaSemana());
+  $('#week-progress').textContent=progressoTexto(pecasDaSemana().filter(aceito));
   $('#week-title').hidden=mensal;$('#week-progress').hidden=mensal;
   $('#anterior').setAttribute('aria-label',mensal?'Mês anterior':'Semana anterior');
   $('#proximo').setAttribute('aria-label',mensal?'Próximo mês':'Próxima semana');

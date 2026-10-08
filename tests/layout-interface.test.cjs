@@ -270,6 +270,37 @@ test('Layout A tema aceita semana registrada fora da segunda-feira',{skip},async
   assert.match(await page.locator('.project[data-semana-id="semana-01"] h2').textContent(),/Tema sintético fora da segunda/);
 });
 
+test('Layout A progresso da Semana acompanha o formato filtrado',{skip},async t=>{
+  const {page}=await abrirLayout(t);
+  assert.equal(await page.locator('#week-progress').textContent(),'2 de 5 prontas');
+  await page.locator('[data-formato="Reels"]').click();
+  assert.equal(await page.locator('.layout-card').count(),1);
+  assert.equal(await page.locator('#week-progress').textContent(),'0 de 1 prontas');
+  await navegar(page,'producao');
+  assert.match(await page.locator('.project[data-semana-id="semana-01"]').textContent(),/2 de 4 prontas/,'Produção mantém o projeto inteiro');
+  await navegar(page,'planejamento');await page.locator('[data-formato="Todos"]').click();
+  assert.equal(await page.locator('#week-progress').textContent(),'2 de 5 prontas');
+});
+
+test('Layout A semana atual vazia normaliza início fora da segunda-feira',{skip},async t=>{
+  const {page}=await abrirLayout(t,{editar:raw=>adicionarRegistro(raw,'Semanas',{
+    semana_id:'semana-atual-vazia',marca_id:'ntv',inicio_semana:'2026-10-09',tema:'Semana sintética em curso'
+  })});
+  await navegar(page,'producao');const project=page.locator('.project[data-semana-id="semana-atual-vazia"]');
+  assert.equal(await project.locator('.future-project').count(),0);
+  assert.equal(await project.locator('h2').textContent(),'Semana sintética em curso');
+  assert.equal(await page.locator('.project[data-semana-id="semana-futura"] .future-project').textContent(),'Planejamento na sexta-feira');
+});
+
+test('Layout A semana registrada sem período conserva sua identidade',{skip},async t=>{
+  const {page}=await abrirLayout(t,{editar:raw=>mudarPorId(raw,'Semanas','semana-01','inicio_semana','')});
+  await navegar(page,'producao');const project=page.locator('.project[data-semana-id="semana-01"]');
+  assert.equal(await project.locator('.project-heading small').textContent(),'Período não identificado');
+  assert.match(await project.locator('h2').textContent(),/Oferta sintética de outubro/);
+  assert.equal(await project.locator('.project-row').count(),4);
+  assert.equal(await page.locator('.project[data-semana-id=""] h2').textContent(),'Semana não identificada');
+});
+
 test('Layout A Sem data identifica vínculo e semana ausente',{skip},async t=>{
   const {page}=await abrirLayout(t,{editar:raw=>{
     mudarPorId(raw,'Produções','peca-1','data_prevista','');
