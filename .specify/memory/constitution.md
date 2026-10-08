@@ -31,7 +31,9 @@ Ideia, documento, mídia registrada, mídia conferida, aprovação técnica e pu
 DEVEM ser estados distintos. O código DEVE ter testes proporcionais de identidade,
 versão, captura parcial, dados inválidos e fluxos do usuário; testes de regras de dados
 DEVEM ser escritos antes da implementação correspondente. Consultas e testes locais
-NÃO DEVEM produzir mídia, alterar flags ou publicar. Todo aceite DEVE citar o que foi
+NÃO DEVEM produzir mídia editorial, alterar flags ou publicar. Imagens sintéticas
+geradas exclusivamente como fixtures de teste NÃO constituem produção editorial e
+NÃO DEVEM incorporar dados reais. Todo aceite DEVE citar o que foi
 executado e separar planejado, implementado, testado e integrado.
 
 ### V. Uma feature por vez, com especificação e revisão
@@ -45,15 +47,25 @@ produto por feature; autorizações existentes DEVEM ser preservadas, sem repeti
 ### VI. Leitura remota explícita, mínima e privada
 
 O servidor local PODE ler a planilha configurada por meio de conta de serviço própria,
-com escopo único `https://www.googleapis.com/auth/spreadsheets.readonly` e compartilhamento
-como leitora. A chave DEVE permanecer fora do repositório e NÃO DEVE ser enviada ao navegador.
+com escopo `https://www.googleapis.com/auth/spreadsheets.readonly` e compartilhamento
+como leitora. Para prévias de imagens, também PODE ler arquivos do Drive com o escopo
+`https://www.googleapis.com/auth/drive.readonly`. Cada finalidade DEVE solicitar somente
+seu escopo de leitura. A conta só acessa o que o autor compartilhar com ela; o escopo
+NÃO concede acesso a arquivos não compartilhados. Toda comunicação com o Google DEVE
+ocorrer exclusivamente pelo servidor local; o navegador NÃO DEVE acessar o Google
+para obter prévias. A chave DEVE permanecer fora do repositório e NÃO DEVE ser enviada ao navegador.
 Credenciais, tokens, identificadores privados e dados reais NÃO DEVEM aparecer em arquivos
 versionados, testes, comentários ou logs públicos.
 
-Toda leitura direta DEVE produzir a captura íntegra do contrato vigente, com metadados
+Toda leitura direta da planilha DEVE produzir a captura íntegra do contrato vigente, com metadados
 antes/depois, duas leituras completas e hashes iguais, e passar pelo mesmo importador
 e validação da captura por arquivo. Falha DEVE preservar a última captura válida e sua data.
 O caminho de importação da Central DEVE continuar disponível.
+
+A leitura de mídia DEVE resolver o ID interno pela captura vigente, sem aceitar ID do
+Drive, URL ou caminho fornecido pelo navegador. Cache de bytes DEVE permanecer local,
+privado e fora do versionamento; falha de prévia NÃO DEVE alterar captura, aprovação ou
+publicação. Conferir uma prévia não comprova aprovação editorial ou conteúdo do pacote.
 
 Essa capacidade NÃO concede escrita no Google/Drive, fila, n8n ou mídia, NÃO instala agenda
 e NÃO transforma o CRM em coordenador. Preparação da conta e compartilhamento exigem ação
@@ -92,4 +104,17 @@ de contrato. Incrementar major para quebra de princípios, minor para novo princ
 para esclarecimento. Revisões de implementação DEVEM conferir esta constituição e a spec;
 um desvio exige justificativa concreta, nunca alteração silenciosa do teste para aceitá-lo.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-05
+### Emenda 1.2.0 — leitura de imagens do Drive
+
+O autor aprovou expressamente esta emenda em 2026-10-08, na solicitação da feature 005
+“Prévias de imagens”, após condicionar seu início à integração da tarefa 1 (PR #22).
+O motivo é permitir consultar imagens já registradas sem transferir credenciais ao
+navegador. A expansão do princípio VI autoriza somente leitura pelo servidor local e
+exige compartilhamento prévio pelo autor. A explicitação do princípio IV permite as
+imagens sintéticas geradas em teste solicitadas pelo autor, sem produção editorial.
+Não migra capturas nem autoriza escrita, geração, publicação ou alteração nos agentes.
+As features 001–004 mantêm seus contratos;
+a 005 define a rota, validação e cache de imagens. A versão minor registra a ampliação
+material da capacidade de leitura, preservando os demais princípios.
+
+**Version**: 1.2.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-08

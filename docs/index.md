@@ -4,7 +4,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 ## Ordem de leitura
 
-Manutenção atual: **versões de páginas e cenas**, autorizada sem nova feature Spec Kit, implementada/testada localmente; [uso](../README.md#versões-de-páginas-e-cenas), [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). **Pronta para publicar** integrada pelo [PR #21](https://github.com/Browsher/crm-social/pull/21); o autor informou 001–004 concluídas na main em 08/10/2026. Os registros abaixo preservam as rodadas históricas. A integração desta correção exige gate/review do head final; a 005 permanece no backlog até esse merge.
+Estado atual em 08/10/2026: **versões de páginas e cenas** integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`; [uso](../README.md#versões-de-páginas-e-cenas), [validação e integração](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). **Pronta para publicar** integrada pelo [PR #21](https://github.com/Browsher/crm-social/pull/21); 001–004 concluídas na main conforme o autor. Trabalho atual: [005 — Prévias de imagens](#feature-005--prévias-de-imagens-planejada), somente planejada na branch `codex/005-previas-imagens` a partir desse merge; 21 tarefas geradas; execução parada pelo limite de 20. Constituição 1.2.0 aprovada e aplicada nesta branch, ainda não integrada. Os registros abaixo preservam as rodadas e a numeração históricas; revisões/biblioteca continuam futuras.
 
 Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
 
@@ -19,10 +19,10 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | Documento | Para que serve |
 | --- | --- |
 | [README](../README.md) | Apresentação, estado e comandos reais |
-| [ROADMAP](../ROADMAP.md) | Seis features do v1 e v2 visual ilustrativo |
+| [ROADMAP](../ROADMAP.md) | Entregas do v1, 005 planejada e backlog futuro/v2 ilustrativo |
 | [AGENTS](../AGENTS.md) | Regras locais e bloco gerenciado preservado |
 | [CLAUDE](../CLAUDE.md) | Importador das instruções canônicas; não é outra regra de produto |
-| [Constituição 1.1.0](../.specify/memory/constitution.md) | Princípios e limites; emenda VI aprovada/aplicada em05/10 |
+| [Constituição](../.specify/memory/constitution.md) | 1.2.0 aprovada/aplicada na branch 005 em08/10, ainda não integrada; preserva a emenda 1.1.0 da leitura de planilhas |
 | [Regra curta de estrutura](../.claude/rules/project-structure.md) | EntryPoints/pastas/imports/testes observados, até 60 linhas |
 | [architecture.md](architecture.md) | Mapa de módulos/imports, persistência, rotas/env e dívidas |
 | [Este índice](index.md) | Todos os documentos autorais do projeto e referências de ferramenta |
@@ -90,6 +90,22 @@ T021 demonstrada; implementação, provas sintéticas e resultados reais sanitiz
 | [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado; fechamento registrado em spec/validação/tarefas |
 
 Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: gate Windows com 322 PASS sem pulos nas cinco camadas, cobertura 98,3871%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A. [Relatório local da integração](reports/003-integracao-t021-local-gate.json); resultados anteriores são históricos. Código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15); o fechamento documental exige novos checks/review. Evidência na [validação da 003](../specs/003-planejamento-mensal/validacao.md). Objetivo definido usa cor principal; pautas restantes usam +N pautas/+1 pauta. T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real ainda não comprovado. Essa orientação pertence ao fechamento da 003; a 004 foi autorizada em 07/10 e está descrita abaixo.
+
+## Feature 005 — Prévias de imagens (planejada)
+
+Somente planejamento, sem implementação, testes ou screenshots da 005. Galeria e ampliação das imagens vinculadas à peça aberta, com leitura Drive sob demanda e cache privado; não extrai ZIP nem cria biblioteca. Compartilhamento da pasta é tarefa externa do autor, ainda sem demonstração. A geração resultou em 21 tarefas (20 do agente e uma externa do autor); execução parada antes de código/testes por exceder o limite de 20.
+
+| Documento | Uso planejado |
+| --- | --- |
+| [Spec](../specs/005-previas-imagens/spec.md) | Valor, fronteiras, falhas e aceite futuro |
+| [Plano](../specs/005-previas-imagens/plan.md) | Módulos e interfaces propostos, fases e verificação futura |
+| [Pesquisa](../specs/005-previas-imagens/research.md) | Decisões, justificativas, alternativas e fontes oficiais |
+| [Modelo](../specs/005-previas-imagens/data-model.md) | Referências autorizadas, seleção da galeria, bytes e cache |
+| [Contrato de mídia](../specs/005-previas-imagens/contracts/midia.md) | GET local por ID interno, guardas, status e limites de bytes/transporte |
+| [Quickstart](../specs/005-previas-imagens/quickstart.md) | Preparação do autor e roteiro futuro de ensaios sintéticos |
+| [Checklist](../specs/005-previas-imagens/checklists/requirements.md) | Qualidade da especificação; não comprova implementação |
+| [Tarefas](../specs/005-previas-imagens/tasks.md) | 21 tarefas, rastreabilidade, dependências e peso; execução parada pelo limite de 20 |
+| [Análise independente](../specs/005-previas-imagens/analysis.md) | Rastreabilidade 20/20, ambiguidade LOW corrigida e parada em 21 tarefas; não comprova implementação |
 
 ## Design e evidência visual
 
