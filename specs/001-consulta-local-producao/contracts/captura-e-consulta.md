@@ -315,8 +315,9 @@ versões e vínculos ambíguos ficam no **Histórico**, inicialmente recolhido, 
 correção vigente. Estado desconhecido não é resolução; revisão antiga aberta não
 se aplica automaticamente à versão nova; sem vínculo, impacto a confirmar.
 
-Ordenar páginas/cenas por índice dentro da produção e versão pertinente, sem misturar
-versões para preencher uma sequência. Página mostra versão e indicador de design
+Ordenar páginas/cenas por índice dentro da produção e versão pertinente. A vigência
+de cada índice segue a maior versão registrada da unidade, independentemente da versão
+da produção, conforme a manutenção de versões abaixo. Página mostra versão e indicador de design
 novo: **A confirmar** enquanto não houver classificação explícita documentada para
 aquela página/versão. Nenhum dos 66 mínimos fornece essa flag; arquivo presente,
 template ou estado sozinho não a comprovam. Não inventar coluna ou evidência.
@@ -364,14 +365,14 @@ e [oito imagens sintéticas](../../../docs/design/screenshots/LEIA-ME.md#pronta-
 
 `producoes[].detalhes` é construído pelo servidor a partir dos mínimos e opcionais capturados selecionados,
 sem repassar o envelope privado. Como fichas dentro da mesma pasta, os registros
-conservam a produção, versão e ponteiro que os identifica; não preencher lacunas
-de uma versão com unidades de outra.
+conservam a produção, versão e ponteiro que os identifica; não escolher arquivo
+substituto para um ponteiro ausente ou incompatível.
 
 | Campo adicional | Forma e origem |
 | --- | --- |
 | `responsavelRegistrado` | responsavel_atual preservado; vazio = A confirmar |
 | `publicacaoRegistrada` | booleano derivado somente de publicado_em preenchido; não é consulta remota |
-| `paginas` / `cenas` | mínimos preservados, `vigente` só com versão inteira positiva igual à da peça, `arquivos` ligados ou null; páginas também têm `designNovo:'A confirmar'` |
+| `paginas` / `cenas` | mínimos preservados, `vigente` na maior versão inteira positiva por produção/índice positivo/tipo de unidade, sem comparar com a peça; `arquivos` ligados ou null; páginas também têm `designNovo:'A confirmar'` |
 | Cena `arquivos` / `avisoMidia` | Três slots fixos na ordem imagem inicial/imagem final/vídeo, cada um arquivo ligado ou null; avisoMidia null quando todos ligados, senão string humana fixa das ausências |
 | `revisoes` | `{vigentes,resolvidas,anteriores,ambiguas}`; mínimos selecionados, sem fabricar correção atual |
 | `arquivos` | registros da produção, com `nomeApresentacao` por tipo/papel e fallback Arquivo registrado; todas as versões continuam identificadas |
@@ -379,8 +380,8 @@ de uma versão com unidades de outra.
 | `documentosSemana` | `[{papel,arquivo}]` para Plano, Redação e Visual, ligados pelo ponteiro interno da semana; ausência = null |
 | `avisos` | avisos localizados da peça/unidades/vínculos, com aba/linha física/campo e motivo; conteúdo privado não é anexado |
 
-Ponteiro de página/cena exige arquivo da mesma produção e versão inteira positiva;
-se o arquivo declara pagina_id/cena_id, precisa coincidir com a unidade. Ponteiro
+Ponteiro de página/cena exige arquivo da mesma produção; a versão da mídia pode
+diferir da versão do texto. Se o arquivo declara pagina_id/cena_id, precisa coincidir com a unidade. Ponteiro
 semanal exige a mesma semana. Referência quebrada ou incompatível dá null e aviso,
 sem selecionar outra mídia. Arquivos empatados por papel/versão/unidade geram aviso
 e permanecem como registros separados; `origens_json` é texto preservado, validado
@@ -404,7 +405,7 @@ recusados/ausentes, mostra **link não permitido**, sem exibir a URL bruta. Arqu
 ligado sem link seguro não é tratado como mídia ausente; quando coexistem falta de
 arquivo e link recusado, os motivos ficam juntos em uma única faixa por unidade.
 
-Ausência, referência quebrada ou escopo/versão incompatível geram um único aviso
+Ausência, referência quebrada ou escopo incompatível geram um único aviso
 técnico agregado de mídia por cena, com causas distintas reunidas e origem no
 primeiro ponteiro falho, na ordem inicial/final/vídeo. Validações de índice, tempo
 e versão inválidos continuam independentes, sem serem absorvidas pela agregação.
@@ -435,10 +436,35 @@ a vigência; não inferir revisão atual por ordem visual ou contagem do mockup.
 
 Versões/índices preenchidos inválidos e tempos preenchidos não finitos/negativos
 geram aviso preservando o original; vazio continua desconhecido, nunca zero.
-As unidades são agrupadas por versão, ordenadas numericamente por índice e, no
+As unidades são agrupadas por vigência e versão, ordenadas numericamente por índice e, no
 empate, pelo ID ordinal; valores inválidos ficam depois dos válidos. Na gaveta,
 versão vigente vem primeiro e outras versões ficam recolhidas, com impacto atual
 a confirmar. A marcação de design novo continua A confirmar por ausência de fonte.
+
+### Versões das unidades — manutenção de 08/10/2026
+
+Como uma página cujo texto mudou sem trocar a fotografia, um ponteiro explícito de
+página ou cena pode reaproveitar mídia de outra versão. `arquivo_imagem_id` e os três
+ponteiros de cena resolvem o `arquivo_id` exato, exigindo a mesma produção e, quando
+preenchido no arquivo, o mesmo `pagina_id`/`cena_id`. Campo de unidade vazio no arquivo
+é aceito. Diferença de versão não gera aviso nem ausência de mídia; referência quebrada,
+produção diferente ou unidade diferente continuam retornando null com aviso localizado.
+Versão numérica inválida do arquivo conserva seu aviso independente, sem invalidar
+um vínculo que satisfaz essas identidades. Isso comprova registro, não bytes ou aprovação.
+
+Cada `pagina_id`/`cena_id` identifica um registro exclusivo na captura. A identidade
+lógica entre versões é produção + índice inteiro positivo, separando páginas e cenas;
+não interpretar o formato dos IDs. A maior versão inteira positiva registrada nessa
+identidade é vigente, sem comparação com `Produções.versao`. Empates preservam todos
+os registros, sem escolher vencedor; índice/versão inválidos não comprovam vigência.
+Unidades válidas continuam sustentando avisos de mídia realmente ausente mesmo quando
+a versão da produção é inválida; o fallback de produção sem unidades exige versão válida.
+
+A gaveta separa grupos por vigência e versão: unidades atuais não recebem **impacto
+atual a confirmar**, mesmo com versão distinta da produção. Ao lado de cada página
+com arquivo ligado, mostra **imagem vN** usando a versão original dessa mídia. Histórico,
+ponteiros, regras de revisão, seleção de pacote e recolhimento de Pronta permanecem
+distintos. Não há migração de captura, nova dependência, rota ou operação remota.
 
 Os avisos da US3 usam a linha física do retângulo capturado, inclusive após linhas
 vazias ou registros de outra marca. O mapa de origem permanece privado em WeakMap,

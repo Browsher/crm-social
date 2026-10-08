@@ -112,6 +112,7 @@ function unidadeDetalhe(u,tipo,mostrarAvisos) {
   box.append(node('span',(pagina?'Página ':'Cena ')+valor(u.indice),'unit-number'));
   if(pagina) {
     text.append(node('span',u.titulo || u.corpo || 'Texto não registrado'),node('small','Design novo: '+u.designNovo));
+    if(u.arquivos[0])text.append(node('small','imagem v'+valor(u.arquivos[0].versao),'image-version'));
   } else {
     text.append(node('span',u.texto || 'Texto não registrado'));
     if(preenchido(u.inicio_segundos) || preenchido(u.duracao_segundos)) text.append(node('small',
@@ -124,7 +125,7 @@ function secaoUnidades(records,tipo,mostrarAvisos=true) {
   const section=secaoDetalhe(tipo==='paginas'?'Páginas':'Cenas');section.dataset.unidades=tipo;
   const groups=new Map();
   for(const u of records) {
-    const key=JSON.stringify(u.versao);
+    const key=JSON.stringify([u.vigente,u.versao]);
     if(!groups.has(key)) groups.set(key,[]);groups.get(key).push(u);
   }
   const ordenados=[...groups.values()].sort((a,b)=>Number(b[0].vigente)-Number(a[0].vigente));
