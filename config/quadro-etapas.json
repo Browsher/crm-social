@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "liberacaoPronta": [],
+  "liberacaoPronta": ["liberado"],
   "revisaoEmAndamento": [],
   "etapas": [
     {"rotulo": "arte_aprovada", "coluna": "Visual"},

@@ -3,7 +3,7 @@ const {CAMPOS,validarCaptura,hashCelulas,letraColuna}=require('./captura.cjs');
 const {falha}=require('./google.cjs');
 const nomes=Object.keys(CAMPOS), DIA=86400000, EPOCA=Date.parse('1899-12-30T00:00:00Z');
 const NUMERICOS=Object.freeze({
-  'Produções':['versao'], 'Páginas':['versao','indice'],
+  'Produções':['versao','pacote_versao'], 'Páginas':['versao','indice'],
   Cenas:['versao','indice','inicio_segundos','duracao_segundos'],
   Arquivos:['versao'], Revisoes:['versao'], Pautas:['semana']
 });

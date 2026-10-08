@@ -841,13 +841,14 @@ test('U08 revisão m1 filtra mídia por coluna só no cartão e conserva a API',
   await page.getByRole('button',{name:'Produção',exact:true}).click();
   const view=await page.evaluate(async()=>await (await fetch('/api/visao')).json());
   const casos=[['peca-1','Planejamento',false],['peca-2','Redação',false],['peca-3','Visual',false],
-    ['peca-4','Mídia',true],['peca-7','Revisão',true],['peca-8','Pronta',true],['peca-9','Publicada',true],['peca-10','Outras',true]];
+    ['peca-4','Mídia',true],['peca-7','Revisão',true],['peca-8','Pronta',false],['peca-9','Publicada',true],['peca-10','Outras',true]];
   for(const [id,coluna,visivel] of casos) {
     const p=view.producoes.find(p=>p.producao_id===id);
     assert.equal(p.quadro.coluna,coluna);
     assert.ok(p.quadro.pendencias.some(r=>r.tipo==='midia'),'API conserva mídia em '+coluna);
     const box=page.locator('#quadro [data-producao-id="'+id+'"] .board-pending');
     assert.equal(await box.count(),visivel?1:0,coluna);
+    if(coluna==='Pronta')assert.equal(await page.locator('#quadro [data-producao-id="'+id+'"] .board-ready').textContent(),'Pronta para publicar');
     if(visivel) {
       assert.equal(await box.locator('span').first().textContent(),'Mídia ausente',coluna);
       assert.doesNotMatch(await box.textContent(),/sem arquivo registrado nesta versão/);

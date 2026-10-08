@@ -1,4 +1,4 @@
-const {CAMPOS,CAMPOS_MESES,CAMPOS_PAUTAS,linhaMensal,linhaPauta}=require('./captura.cjs');
+const {CAMPOS,camposCapturados,CAMPOS_MESES,CAMPOS_PAUTAS,linhaMensal,linhaPauta}=require('./captura.cjs');
 const chaves=['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 // Triagem conservadora de conteúdo indevido; não comprova ausência de todo segredo possível.
 const sensivel=/(?:sk-ant-|gh[opsur]_|github_pat_|n8n_api_)[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|ya29\.[A-Za-z0-9._-]{20,}|1\/\/[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----|(?<![A-Za-z0-9_])[A-Za-z]:[\\/]|\/(?:home|Users)\//;
@@ -62,7 +62,7 @@ function selecionarNtv(captura,avisos,origens,validadeJson) {
       // Recupera a célula de etapa em todas as linhas para conservar null:
       // registros normaliza null/undefined; selecionar reaplica a triagem.
       const entrada=nome==='Produções'?{...r,etapa_producao:table.values[origem.linha-1][table.values[0].indexOf('etapa_producao')]}:r;
-      const selecionados=nome==='Semanas'&&table.values[0].includes('pauta_id')?[...fields,'pauta_id']:fields;
+      const selecionados=camposCapturados(nome,table);
       const selected=selecionar(entrada,selecionados,nome,origem.linha,avisos);
       origens.set(selected,origem);
       if(Object.hasOwn(selected,'origens_json')) validadeJson.set(selected,jsonValido(r.origens_json));

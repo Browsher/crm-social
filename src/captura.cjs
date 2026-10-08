@@ -9,6 +9,10 @@ const CAMPOS = Object.freeze({
   Revisoes: 'revisao_id producao_id cena_id pagina_id arquivo_id versao decisao motivo responsavel_correcao estado_tratamento'.split(' ')
 });
 const nomes = Object.keys(CAMPOS);
+const CAMPOS_OPCIONAIS=Object.freeze({Semanas:['pauta_id'],'Produções':['pacote_versao','hashtags'],Arquivos:['extensao']});
+function camposCapturados(nome,table) {
+  return [...CAMPOS[nome],...(CAMPOS_OPCIONAIS[nome] ?? []).filter(campo=>table.values[0].includes(campo))];
+}
 const saidas = ['semanas','producoes','paginas','cenas','arquivos','revisoes'];
 const CAMPOS_MESES=Object.freeze(['mes','marca_id','objetivo','pautas']);
 const CAMPOS_PAUTAS=Object.freeze('pauta_id marca_id mes semana inicio_semana tema mensagem modelo_carrossel oferta origem status observacao'.split(' '));
@@ -137,4 +141,4 @@ function validarTempoImportacao(completedAt,nowIso,completedAtVigente=null) {
   if (fim>Date.parse(nowIso)+10*60*1000) throw new Error('captura inválida: completedAt excede o relógio local em mais de 10 minutos');
   if (completedAtVigente!==null && fim<=Date.parse(completedAtVigente)) throw new Error('captura desatualizada: completedAt igual ou anterior ao da vigente');
 }
-module.exports={validarCaptura,validarTempoImportacao,CAMPOS,CAMPOS_MESES,CAMPOS_PAUTAS,linhaMensal,linhaPauta,idSeguro,instanteUtc,hashCelulas,letraColuna};
+module.exports={validarCaptura,validarTempoImportacao,CAMPOS,camposCapturados,CAMPOS_MESES,CAMPOS_PAUTAS,linhaMensal,linhaPauta,idSeguro,instanteUtc,hashCelulas,letraColuna};
