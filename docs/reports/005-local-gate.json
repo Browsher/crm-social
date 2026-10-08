@@ -222,7 +222,7 @@
   "semgrepFixtureException": {
     "rule": "generic.secrets.security.detected-google-gcm-service-account.detected-google-gcm-service-account",
     "file": "tests/previas-fixtures.cjs",
-    "line": 47,
+    "line": 48,
     "scope": "Somente esta regra nesta linha; demais linhas, regras e configuracao preservadas",
     "reason": "Falso positivo sobre discriminador publico; RSA efemera gerada no teste, dominio reservado e gravacao somente TEMP; literais legiveis"
   }
