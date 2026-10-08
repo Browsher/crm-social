@@ -1,8 +1,8 @@
 # Pesquisa — 005, prévias de imagens
 
-Como uma folha de contato que acompanha os registros, a prévia deve ajudar a reconhecer a imagem sem criar outra fonte editorial. Este documento consolida decisões **planejadas** da [spec](spec.md), do [plano](plan.md) e do [contrato](contracts/midia.md); não comprova implementação, testes ou acesso real ao Drive. Base: tarefa 1 integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), main `b90980a15fad653937fd024ac3c9bb2738e9d99a`.
+Como uma folha de contato que acompanha os registros, a prévia deve ajudar a reconhecer a imagem sem criar outra fonte editorial. Este documento preserva a pesquisa e as decisões de planejamento da [spec](spec.md), do [plano](plan.md) e do [contrato](contracts/midia.md); não comprova implementação, testes ou acesso real ao Drive. Base: tarefa 1 integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), main `b90980a15fad653937fd024ac3c9bb2738e9d99a`.
 
-**Estado da 005:** [21 tarefas geradas](tasks.md), sendo 20 do agente e uma externa do autor; **0 executadas**. O total excede o limite de 20 definido pelo autor. A rodada para em planejamento, antes de implementar, escrever testes da 005, gerar screenshots ou executar gate; a continuidade depende da decisão do autor. Nenhum merge da 005 autorizado.
+**Estado da 005:** a geração inicial de [21 tarefas](tasks.md), 20 do agente e uma externa do autor, provocou a parada prevista no limite de 20. O autor aprovou expressamente esse escopo em 2026-10-08 e a implementação seguiu com TDD. Agora está implementada/testada localmente, com gate e screenshots sintéticos em [validacao.md](validacao.md); entrega e checks/review por head acompanhados no PR #23. T002 do autor segue pendente. Nenhum merge autorizado.
 
 ## Fontes e contexto
 
@@ -12,7 +12,7 @@ Em 08/10/2026, o coordenador consultou Context7 com `/websites/developers_google
 - [Escopos do Drive](https://developers.google.com/workspace/drive/api/guides/api-specific-auth): `drive.readonly` permite leitura/download; `drive.metadata.readonly` limita-se aos metadados.
 - [OAuth de conta de serviço](https://developers.google.com/identity/protocols/oauth2/service-account): JWT assinado com RSA/SHA-256, algoritmo RS256, para obter token no servidor.
 
-A investigação dos módulos atuais está consolidada no plano: `src/google.cjs` já atende Sheets com JWT/fetch nativos; snapshot/triagem definem captura válida e recorte NTV; servidor concentra guardas; projeção/gaveta preservam os ponteiros e versões da tarefa 1. A 005 planeja estender essas fronteiras, sem reaplicar regras editoriais ou alterar capturas. A constituição 1.2.0 foi aprovada pelo autor em 08/10/2026 e aplicada na branch `codex/005-previas-imagens`, ainda não integrada.
+A investigação dos módulos atuais está consolidada no plano: `src/google.cjs` já atende Sheets com JWT/fetch nativos; snapshot/triagem definem captura válida e recorte NTV; servidor concentra guardas; projeção/gaveta preservam os ponteiros e versões da tarefa 1. A 005 estende essas fronteiras, sem reaplicar regras editoriais ou alterar capturas. A constituição 1.2.0 foi aprovada pelo autor em 08/10/2026 e aplicada na branch `codex/005-previas-imagens`, ainda não integrada.
 
 ## Decisões
 
@@ -37,7 +37,7 @@ Os status e a ordem de decisão estão no contrato: 200 para bytes aceitos; 400 
 - Cache hit exige leitura limitada a máximo+1 e nova conferência de assinatura/tamanho/hash. Entrada inválida é ignorada/descartada e permite refetch; registro inválido não inicia rede. A referência é conferida antes e depois de cache/download.
 - O caminho de cache fica confinado à raiz fixa e usa somente o hash calculado pelo servidor. Falha de persistência pode servir bytes novos validados; staging é exclusivo e a limpeza atinge somente o próprio temporário. Pedidos concorrentes podem compartilhar promessa removida ao finalizar, sem guardar Buffer global indefinidamente.
 - O cache não tem eviction, quota ou limpeza automática nesta feature. Remoção local pelo autor é possível sem mudar captura; política de retenção fica futura.
-- “Miniaturas do pacote” adota a hipótese mínima de mostrar imagens das unidades vigentes em Pronta. Não há manifesto ZIP nem extração; a pergunta opcional permanece sem resposta atribuída ao autor.
-- Compartilhar a pasta Produções da NTV como Leitor com a conta é a tarefa externa T002 do autor. O escopo não concede acesso a arquivos não compartilhados; testes falsos futuros não dependem dessa preparação.
+- “Miniaturas do pacote” adota a hipótese mínima de mostrar imagens das unidades vigentes em Pronta. Não há manifesto ZIP nem extração; a pergunta opcional não recebeu resposta específica no planejamento. Depois, o autor aprovou as 21 tarefas como estavam; a implementação mantém a hipótese e não confere o ZIP.
+- Compartilhar a pasta Produções da NTV como Leitor com a conta é a tarefa externa T002 do autor. O escopo não concede acesso a arquivos não compartilhados; testes falsos executados não dependem dessa preparação.
 
-As decisões técnicas estão resolvidas como defaults explícitos no plano. A hipótese de apresentação permanece declarada, sem inventar aceite. As 21 tarefas registram o peso do trabalho: transporte privado, validação/cache, HTTP, galeria, falhas, ampliação e fechamento com cinco camadas, 12 screenshots sintéticos e gate/review. Essas verificações continuam futuras; nenhuma das 21 tarefas foi executada, e a parada por total acima de 20 permanece vigente.
+As decisões técnicas do planejamento foram implementadas mantendo o escopo aprovado: transporte privado, validação/cache, HTTP, galeria, falhas e ampliação. A pesquisa não comprova acesso operacional; execução sintética, gate e 12 screenshots têm evidência própria em [validacao.md](validacao.md). A parada inicial em 21 tarefas é histórica e foi revogada pela aprovação explícita do autor em 2026-10-08.

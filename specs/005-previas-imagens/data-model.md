@@ -1,6 +1,6 @@
 # Modelo de dados — 005, prévias de imagens
 
-Como fichas ligadas a fotografias, cada prévia conserva o registro que autoriza sua leitura. Modelo **planejado**, subordinado à [spec](spec.md), ao [plano](plan.md) e ao [contrato](contracts/midia.md); não acrescenta coluna, migra captura ou cria estado editorial.
+Como fichas ligadas a fotografias, cada prévia conserva o registro que autoriza sua leitura. Modelo **implementado e testado localmente**, subordinado à [spec](spec.md), ao [plano](plan.md) e ao [contrato](contracts/midia.md); não acrescenta coluna, migra captura ou cria estado editorial.
 
 ## Entidades e relações
 
@@ -26,7 +26,7 @@ Promover cache somente após validação, por staging exclusivo e rename; falha 
 
 ```mermaid
 stateDiagram-v2
-  [*] --> Resolver: pedido planejado
+  [*] --> Resolver: pedido local
   Resolver --> Recusar: captura/registro recusado
   Resolver --> ConferirCache: referência válida
   ConferirCache --> ConferirReferencia: bytes válidos

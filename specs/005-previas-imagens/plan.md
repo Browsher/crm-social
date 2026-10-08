@@ -8,7 +8,7 @@
 
 A gaveta ganha uma folha de contato das imagens vinculadas à peça e um visualizador maior. O navegador pede somente um arquivo interno; o servidor consulta a captura vigente, reutiliza bytes locais válidos ou lê o Drive. Falha de prévia preserva texto, links e estado editorial.
 
-Planejamento somente; nenhuma linha de produção/teste da 005 implementada. O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. A execução está parada por exceder o limite de 20; [tasks.md](tasks.md#rastreabilidade-e-peso) apresenta a distribuição. Nenhum merge da 005 autorizado.
+O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. Após a parada prevista e a apresentação do [peso](tasks.md#rastreabilidade-e-peso), o autor aprovou esse escopo em 2026-10-08. Implementação realizada com TDD na ordem de tasks.md. Gate Windows da fonte `392e109` passou com 577 testes sem pulos; 12 screenshots sintéticos inspecionados. Entrega e checks/review por head são acompanhados no PR #23 e na validação; nenhum merge autorizado. [Evidências](validacao.md).
 
 ## Technical Context
 
@@ -40,7 +40,7 @@ Planejamento somente; nenhuma linha de produção/teste da 005 implementada. O s
 | II — fontes/identidades | Resolver pela captura validada e recorte NTV; cache nunca concede acesso a arquivo removido; preserva ponteiros/versões da T1 |
 | III — responsabilidades | Nenhuma escrita remota, geração, publicação, fila ou agente; estados visuais não viram estado editorial |
 | IV — evidência/TDD | RED antes de cada implementação, cinco camadas, imagens sintéticas; preview não comprova aprovação nem ZIP |
-| V — escopo/revisão | Única spec005, tarefas rastreáveis, limite20; review independente e CI final; PR sem merge |
+| V — escopo/revisão | Única spec005, 21 tarefas aprovadas após a parada do limite20; review independente e CI final; PR sem merge |
 | VI — leitura mínima | Emenda1.2.0 aprovada2026-10-08: escopo Drive readonly separado de Sheets, credencial externa, tokenRAM, Google só no servidor |
 
 Emenda aplicada no branch da 005; features001–004 e capturas não são migradas. Pré/pós-desenho: PASS, sem exceção constitucional. Compartilhamento pelo autor pendente e não bloqueante para os testes falsos.
@@ -58,7 +58,8 @@ specs/005-previas-imagens/
 ├── data-model.md
 ├── contracts/midia.md
 ├── quickstart.md
-└── tasks.md
+├── tasks.md
+└── validacao.md
 ```
 
 ### Source Code (repository root)

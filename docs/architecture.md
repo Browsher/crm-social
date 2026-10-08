@@ -6,7 +6,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-Manutenção atual **versões de páginas e cenas**, implementada/testada localmente em 08/10/2026: corrige vigência por índice e vínculo de mídia explícito nos módulos existentes, sem módulo, endpoint, dependência ou escritor editorial novo. **Pronta para publicar** já integrada pelo [PR #21](https://github.com/Browsher/crm-social/pull/21); 001–004 foram informadas como concluídas na main pelo autor. O registro da 004 na introdução preserva sua rodada histórica. [Validação desta manutenção](reports/versoes-unidades-validacao.md); integração depende do gate/review do head final.
+Trabalho atual **005 — Prévias de imagens**, implementado/testado localmente em 08/10/2026, no [PR #23](https://github.com/Browsher/crm-social/pull/23), sem integração ou merge. Acrescenta mídia sob demanda pelo servidor, cache privado e galeria/ampliação na gaveta. O autor aprovou as 21 tarefas após a parada inicial; T002, compartilhamento real da pasta, permanece pendente e não bloqueia fakes. [Validação por fonte e checks/review da entrega](../specs/005-previas-imagens/validacao.md). Versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review; Pronta já integrada pelo PR #21. O registro da 004 na introdução preserva sua rodada histórica.
 
 ```mermaid
 flowchart LR
@@ -31,13 +31,19 @@ flowchart LR
   Server --> Projecao["src/projecao.cjs"]
   Server --> Google["src/google.cjs"]
   Server --> Coleta["src/coleta.cjs"]
+  Server --> Midia["src/midia.cjs"]
+  Midia -->|lerEstado antes/depois dos bytes| Snapshot
+  Midia -->|selecionarNtv| Triagem
+  Midia -->|criarClienteDrive lazy| Google
+  Midia --> FS
+  Midia --> Crypto
   Snapshot -->|MOTIVOS| Google
   Coleta --> Crypto
   Coleta --> Captura
   Coleta -->|falha| Google
   Google --> FS
   Google --> Crypto
-  Google --> Fetch["fetch nativo / OAuth e Sheets somente leitura"]
+  Google --> Fetch["fetch nativo / OAuth, Sheets e Drive somente leitura"]
   Server --> Quadro["src/quadro-config.cjs"]
   Projecao -->|campos contratuais e seleção de cabeçalhos| Captura
   Projecao --> Pautas["src/pautas.cjs: identidade, calendário e origem"]
@@ -53,7 +59,7 @@ flowchart LR
   System["prefers-color-scheme"] --> Theme
   Theme -->|data-theme| CSS
   HTML --> CSS["/styles.css"]
-  JS -->|GET /api/visao e POST /api/atualizar| Server
+  JS -->|GET /api/visao, POST /api/atualizar e img local /api/midia/ID| Server
   Snapshot --> FS["node:fs / node:path"]
   Captura --> Crypto["node:crypto"]
   Snapshot --> Crypto
@@ -69,11 +75,12 @@ flowchart LR
 | quadro-config | Validador genérico; JSON versionado tem nove etapas, liberacaoPronta com liberado e revisaoEmAndamento vazia; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
 | projecao | Usa seleção/triagem compartilhada e resolve pautas antes de reunir semanas/dias/formatos, frescor, detalhes/pacote de publicação/quadro e cópias dos mínimos/opcionais capturados para seis tabelas e Meses/Pautas opcionais | [Projeção](modules/projecao.md) |
 | pautas | Confere pautas NTV triadas, calendário/duplicatas e resolve o ponteiro semanal por ID/marca/início, sem I/O | [Pautas](modules/pautas.md) |
-| google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
+| google | Configuração externa, JWT RS256 com scope por finalidade, tokens separados em RAM; Sheets tipado e Drive binário limitado | [Google](modules/google.md) |
+| midia | Resolve arquivo no snapshot NTV vigente, confere bytes/hash, cache privado e fingerprint final; cliente Drive lazy | [Mídia](modules/midia.md) |
 | coleta | Duas leituras de seis grades e Meses/Pautas quando existem, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
-| servidor | HTTP local com seis rotas fixas, quatro estáticos, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
+| servidor | HTTP local com seis rotas fixas, quatro estáticos e rota dinâmica restrita de mídia; Host/Origin, Sec-Fetch-Site na mídia e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Entrada Abrir CRM.cmd por duplo clique, reconhecimento de instância existente por GET local; Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses/Pautas opcionais, Histórico e avisos detalhados; card mensal e navegação/origem de pauta; Pronta com pacote/legenda/cópia local e tema claro/escuro somente visual | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, Produção, Planilha e gaveta; Pautas, Pronta, tema e galeria local sob demanda com ampliação/fallback | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -145,7 +152,7 @@ A liberação tenta close e unlink separadamente. Avisos transitórios de libera
 
 ## Fluxo HTTP e fronteiras
 
-O ponto de entrada faz bind somente em `127.0.0.1:4318` por padrão. `criarServidor` devolve servidor não iniciado e admite diretórios/configuração confiáveis para testes em TEMP. O mapa é validado antes de criar o handler. Em cada consulta, o estado privado é relido/validado e só a projeção sai.
+O ponto de entrada faz bind somente em `127.0.0.1:4318` por padrão. `criarServidor` devolve servidor não iniciado e admite diretórios/configuração confiáveis para testes em TEMP. O mapa é validado antes de criar o handler. GET /api/visao relê/valida o estado privado e entrega somente a projeção; GET /api/midia resolve o registro vigente e pode ler o Drive pelo servidor, mantendo a captura/recibos inalterados.
 
 | Rota / condição | Método e resposta |
 | --- | --- |
@@ -154,13 +161,14 @@ O ponto de entrada faz bind somente em `127.0.0.1:4318` por padrão. `criarServi
 | /theme.js | GET/HEAD, JS fixo; aplica preferência visual antes do CSS |
 | /styles.css | GET/HEAD, CSS fixo |
 | /api/visao | GET/HEAD, JSON selecionado; sem captura é 200 com ausência estruturada |
+| /api/midia/ID-interno | GET exclusivo; bytes PNG/JPEG/WEBP pelo serviço privado; HEAD/outros 405 sem serviço |
 | /api/atualizar | POST local JSON {}, origem obrigatória e ≤1KiB; leitura/promoção |
-| Outro método com origem válida | 405; Allow POST no atualizador, GET/HEAD nas outras rotas |
+| Outro método com origem válida | 405; Allow POST no atualizador, GET na mídia, GET/HEAD nas outras rotas |
 | Outra rota, privado ou traversal | 404; query não escolhe diretórios |
 | Host/Origin recusados | 403, antes de método/rota |
 | Estado confirmado ilegível | 503 resumido, sem alteração da captura |
 
-Host é exatamente `127.0.0.1:<porta real>`; `localhost` não passa. Origin ausente é permitido somente na consulta; POST exige a própria origem HTTP. Sem CORS externo. CSP restringe scripts/estilos/conexões a self e proíbe imagens/objetos/incorporação. Respostas têm no-store/nosniff; HEAD não inclui corpo.
+Host é exatamente `127.0.0.1:<porta real>`; `localhost` não passa. Origin ausente é permitido na consulta; POST exige a própria origem HTTP. Na mídia, Sec-Fetch-Site cross-site/same-site é recusado antes de método/resolução/cache/rede. Sem CORS externo. A 005 muda somente CSP img-src de none para self; scripts/estilos/conexões continuam self, com objetos/incorporação bloqueados. Respostas têm no-store/nosniff; mídia também tem CORP same-origin em sucesso/falhas. HEAD não inclui corpo.
 
 O servidor não expõe `data/`, configuração bruta, envelope/metadados de coleta, células extras ou qualquer arquivo arbitrário. Texto é renderizado por `textContent`; supressão conservadora protege formatos conhecidos de conteúdo sensível sem confundir HTTPS com caminho Windows. Antes do HTTP, a projeção analisa `Arquivos.url` e `Produções.url_video_final` com `new URL`: usuário ou senha causam **[conteúdo suprimido]** e aviso fixo localizado, sem expor o valor. String não vazia recusada pelo construtor também é suprimida, com motivo fixo **URL inválida suprimida**; vazio/somente espaços é preservado sem esse aviso. Original permanece só na captura privada. Nenhuma URL registrada é carregada automaticamente; a UI também não ecoa URL recusada como texto bruto.
 
@@ -175,8 +183,8 @@ Por decisão do autor, a triagem em texto livre e recibo substitui somente peda�
 | `quadroConfigPath` / `webDir` | Argumentos internos confiáveis de criarServidor, sem controle HTTP |
 | `-DataDir` / `-Port` / `-NodePath` | Iniciador; diretório privado, porta 0–65535 e runtime explícito; defaults data/ e 4318 |
 | `CRM_NODE_PATH` | Iniciador usa se -NodePath estiver vazio; fallback node.exe no PATH; módulos Node não leem essa variável |
-| `CRM_GOOGLE_CREDENTIALS_FILE` | Cliente Google no POST; caminho absoluto privado fora do projeto |
-| `CRM_SPREADSHEET_ID` | Cliente Google no POST; ID privado, sem controle HTTP ou browser |
+| `CRM_GOOGLE_CREDENTIALS_FILE` | Sheets no POST e Drive no primeiro cache miss de mídia; caminho absoluto privado fora do projeto |
+| `CRM_SPREADSHEET_ID` | Somente Sheets no POST; ID privado, sem controle HTTP ou browser; Drive não exige essa variável |
 | `PATH` | Diretório do Node 24.19.0 à frente para subprocessos do gate; ver quickstart |
 | `CRM_PLAYWRIGHT_MODULE` | Teste de interface resolve Playwright existente; sem ela tenta playwright |
 | `CI=true` / plataforma Linux | Interface faz SKIP com CI=true; iniciador faz SKIP fora de win32. M8: UI fora do LCOV e fronteira UI/PowerShell no Linux, sem substituir aceite Windows |
@@ -193,7 +201,7 @@ Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
-A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta nos cartões de Planejamento/Redação/Visual. Pronta troca toda pendência do cartão por Pronta para publicar e recolhe páginas/cenas, sem avisos de mídia nas unidades; detalhes e avisos continuam na API e na Planilha. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico. Iniciador, escala sintética e regressões de T035–T038 foram verificados localmente; captura real, gate após demonstração e onboarding final (T039–T041) concluídos. Evidências e limites ficam somente na validação.
+A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; na 005, abrir a peça inicia suas imagens por rota local, mantendo quadro e peças fechadas sem busca. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. A ampliação usa segundo dialog e o primeiro Escape fecha somente a imagem. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta nos cartões de Planejamento/Redação/Visual. Pronta troca toda pendência do cartão por Pronta para publicar e recolhe páginas/cenas, sem avisos de mídia nas unidades; detalhes e avisos continuam na API e na Planilha. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico. Iniciador, escala sintética e regressões de T035–T038 foram verificados localmente; captura real, gate após demonstração e onboarding final (T039–T041) concluídos. Evidências e limites ficam somente na validação.
 
 ## Planilha: mínimos, avisos e Histórico
 

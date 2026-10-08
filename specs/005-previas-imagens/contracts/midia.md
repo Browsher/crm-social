@@ -1,6 +1,6 @@
-# Contrato planejado de mídia — 005
+# Contrato de mídia — 005
 
-Como uma janela local para uma fotografia registrada, esta rota deve servir somente bytes cuja referência ainda consta da captura válida. Contrato **planejado**, sem endpoint implementado ou validação executada nesta rodada. Fontes: [spec](../spec.md), [plano](../plan.md) e [modelo](../data-model.md).
+Como uma janela local para uma fotografia registrada, esta rota deve servir somente bytes cuja referência ainda consta da captura válida. Contrato **implementado e testado localmente**; fonte `392e109`, com provas sintéticas nas cinco camadas. Entrega e checks/review por head são acompanhados no PR #23; integração não autorizada; [evidências](../validacao.md). Fontes: [spec](../spec.md), [plano](../plan.md) e [modelo](../data-model.md).
 
 ## Pedido público e ordem das guardas
 
@@ -28,9 +28,9 @@ A CSP global deve mudar somente `img-src 'none'` para `img-src 'self'`; scripts/
 
 ## Serviço, autenticação e transporte
 
-Interface interna proposta: `criarServicoMidia({dataDir,criarCliente}).obter(arquivoId) -> Promise<{bytes,contentType}>`. O adaptador HTTP captura falhas assíncronas e converte ao contrato público; não propaga erros do provedor. Resolver registro com versão inteira positiva segura, id_drive canônico e SHA opcional válido. A rota não exige tipo declarado imagem: a assinatura dos bytes é a autoridade; a UI filtra candidatas conforme os ponteiros. Nenhum fallback por URL ou nome.
+Interface interna implementada: `criarServicoMidia({dataDir,criarCliente}).obter(arquivoId) -> Promise<{bytes,contentType}>`. O adaptador HTTP captura falhas assíncronas e converte ao contrato público; não propaga erros do provedor. Resolver registro com versão inteira positiva segura, id_drive canônico e SHA opcional válido. A rota não exige tipo declarado imagem: a assinatura dos bytes é a autoridade; a UI filtra candidatas conforme os ponteiros. Nenhum fallback por URL ou nome.
 
-Factory planejada `criarClienteDrive({env,repoRoot,fetchImpl,now,timeoutMs})`, com `getMidia(idDrive) -> Promise<Buffer>`: reutiliza autenticação RSA/JWT nativa, credencial externa e token em RAM. O transporte não confia no MIME remoto. Não exige `CRM_SPREADSHEET_ID`; Sheets mantém sua configuração/export/comportamento anteriores. Cada factory solicita somente seu scope: Drive `https://www.googleapis.com/auth/drive.readonly`; Sheets `https://www.googleapis.com/auth/spreadsheets.readonly`. Tokens são separados por finalidade; sem delegação de domínio ou escrita.
+Factory implementada `criarClienteDrive({env,repoRoot,fetchImpl,now,timeoutMs})`, com `getMidia(idDrive) -> Promise<Buffer>`: reutiliza autenticação RSA/JWT nativa, credencial externa e token em RAM. O transporte não confia no MIME remoto. Não exige `CRM_SPREADSHEET_ID`; Sheets mantém sua configuração/export/comportamento anteriores. Cada factory solicita somente seu scope: Drive `https://www.googleapis.com/auth/drive.readonly`; Sheets `https://www.googleapis.com/auth/spreadsheets.readonly`. Tokens são separados por finalidade; sem delegação de domínio ou escrita.
 
 Criar cliente somente no primeiro cache miss. OAuth usa destino fixo `https://oauth2.googleapis.com/token`; mídia usa `https://www.googleapis.com/drive/v3/files/<id_drive codificado>?alt=media`, construído exclusivamente pelo servidor. `redirect:error`, sem retries automáticos ou leitura/repasse do corpo de erro Google. Timeout finito: 15.000 ms para token e 15.000 ms para download completo, incluindo leitura do stream depois dos headers. Cancelar ao exceder tamanho ou tempo.
 

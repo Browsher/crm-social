@@ -1,14 +1,14 @@
-# Roteiro planejado de validação — 005
+# Roteiro de uso e repetição da validação — 005
 
-Como conferir uma folha de contato antes de usá-la, este roteiro separa o desenho da evidência. A 005 está **planejada, sem implementação/testes executados** nesta rodada. Consulte [spec](spec.md), [plano](plan.md), [modelo](data-model.md), [pesquisa](research.md) e [contrato](contracts/midia.md). Base: tarefa 1 integrada pelo PR #22, main `b90980a15fad653937fd024ac3c9bb2738e9d99a`.
+Como conferir uma folha de contato antes de usá-la, este roteiro separa o desenho da evidência. A 005 está **implementada e testada localmente**, com gate Windows verde e 12 screenshots sintéticos inspecionados; entrega e checks/review por head acompanhados no PR #23 e na validação. [Evidências por fonte](validacao.md). Consulte [spec](spec.md), [plano](plan.md), [modelo](data-model.md), [pesquisa](research.md) e [contrato](contracts/midia.md). Base: tarefa 1 integrada pelo PR #22, main `b90980a15fad653937fd024ac3c9bb2738e9d99a`.
 
 ## Pré-requisitos e ordem
 
-1. Tarefas geradas: **21, sendo 20 do agente e uma externa do autor; 0 executadas**. Execução parada por exceder o limite de 20. A distribuição está em [tasks.md](tasks.md#rastreabilidade-e-peso); não comprimir tarefas para contornar o limite.
-2. Somente após decisão do autor sobre esse limite, implementar por RED → GREEN → refactor, com Node 24.19.0 e Playwright existentes; nenhuma instalação nova. Usar somente TEMP, portas efêmeras, transporte falso e imagens sintéticas geradas nos testes.
-3. Executar as cinco camadas aplicáveis, inspecionar as 12 imagens, revisar e corrigir. Gate completo é penúltima etapa; doc-sync é a última. Um PR da 005, sem merge.
+1. O autor aprovou em 2026-10-08 as **21 tarefas**, 20 do agente e T002 externa, após a parada inicial no limite de 20. T002 permanece pendente e não bloqueia ensaios falsos; [distribuição e estado](tasks.md#rastreabilidade-e-peso).
+2. A implementação usou RED → GREEN → refactor, Node 24.19.0 e Playwright existentes, sem instalação nova. A repetição usa somente TEMP, portas efêmeras, transporte falso e imagens sintéticas geradas nos testes.
+3. As cinco camadas e o gate passaram localmente; 12 imagens foram inspecionadas. Entrega e checks/review por head são acompanhados no PR #23. O PR #23 não deve ser integrado.
 
-| Entrada | Preparação planejada / limite |
+| Entrada | Preparação / limite |
 | --- | --- |
 | `CRM_NODE_PATH` / `PATH` | Runtime existente 24.19.0; colocar seu diretório à frente para os subprocessos do gate |
 | `CRM_PLAYWRIGHT_MODULE` | Playwright já disponível no computador; fora de `CI=true` para aceite de UI |
@@ -16,11 +16,11 @@ Como conferir uma folha de contato antes de usá-la, este roteiro separa o desen
 | Cliente Google nos testes | Fetch/transporte injetado; chaves RSA geradas em RAM/TEMP; não usar credencial real ou PEM literal em fixture |
 | Preparação real do autor | Compartilhar a pasta Produções da NTV como Leitor com a conta de serviço; tarefa externa, não executada pelo agente nem necessária aos testes falsos |
 
-O cliente Drive planejado não exige `CRM_SPREADSHEET_ID`; credencial real fica externa, privada, apenas no servidor. Não registrar e-mail, ID, URL privada ou conteúdo operacional na evidência compartilhável.
+O cliente Drive implementado não exige `CRM_SPREADSHEET_ID`; credencial real fica externa, privada, apenas no servidor. Não registrar e-mail, ID, URL privada ou conteúdo operacional na evidência compartilhável.
 
-## Comandos previstos após implementar
+## Repetir os testes sintéticos
 
-Os arquivos de teste abaixo são previstos no plano e ainda não existem nesta rodada. Estes comandos são roteiro de repetição, sem resultado atribuído:
+Os comandos abaixo exercitam os arquivos implementados. Resultados anteriores pertencem à fonte registrada em validacao.md; uma nova execução tem evidência própria:
 
 ```powershell
 & $env:CRM_NODE_PATH --test tests/google-midia.test.cjs tests/midia.test.cjs tests/midia-http.test.cjs
@@ -29,9 +29,16 @@ Os arquivos de teste abaixo são previstos no plano e ainda não existem nesta r
 & $env:CRM_NODE_PATH tools/quality-gate.mjs
 ```
 
-Selecionar o runtime também no PATH antes do gate; UI fora do LCOV e pulos Linux UI/PowerShell continuam com seus limites existentes. Nenhuma execução real do Drive é necessária para essas provas. Registre futuramente RED/GREEN, fonte do código, ambiente, gate/review, screenshots e limites numa validação da 005; números históricos da tarefa 1 não comprovam esta entrega.
+Selecionar o runtime também no PATH antes do gate; UI fora do LCOV e pulos Linux UI/PowerShell continuam com seus limites existentes. Nenhuma execução real do Drive é necessária para essas provas. Consulte RED/GREEN, fonte, ambiente, gate e limites em [validacao.md](validacao.md). Números históricos da tarefa 1 não comprovam a 005. Para reproduzir as imagens com opt-in, execute:
 
-## Matriz de conferência planejada
+```powershell
+$env:CRM_SCREENSHOTS_PREVIAS = '1'
+& $env:CRM_NODE_PATH --test tests/previas-interface.test.cjs
+```
+
+Essa variável permite escrever somente os 12 `previas-*.png` sintéticos em `docs/design/screenshots/`; execuções comuns não os gravam.
+
+## Matriz de conferência
 
 | Camada / caso | Ação sintética | Resultado esperado |
 | --- | --- | --- |
@@ -47,8 +54,8 @@ Selecionar o runtime também no PATH antes do gate; UI fora do LCOV e pulos Linu
 | Falha visual | Erro HTTP e bytes com assinatura aceita mas indecodificáveis | Somente a miniatura afetada mostra Prévia indisponível; ampliação indisponível; texto/link/Pronta/avisos preservados |
 | Regressões | Google/Sheets, coleta, visao/atualizar, Pronta, versões, tema e XSS | Contratos existentes preservados; CSP muda somente img-src self; ajustar seletores sem remover provas de segurança |
 
-No teste principal de UI, usar servidor real com transporte remoto falso; não contornar `/api/midia/` por interceptação de resposta da página. Bloquear solicitações externas e conferir erros do navegador. Inspecionar futuro conjunto de **12 PNG sintéticos**: galeria, ampliação e indisponível × claro/escuro × 1440/390, com exportação opt-in e estado em TEMP. Não compartilhar screenshot operacional.
+No teste principal de UI, usar servidor real com transporte remoto falso; não contornar `/api/midia/` por interceptação de resposta da página. Bloquear solicitações externas e conferir erros do navegador. O coordenador inspecionou o conjunto de **12 PNG sintéticos**: galeria, ampliação e indisponível × claro/escuro × 1440/390, com exportação opt-in e estado em TEMP. Não compartilhar screenshot operacional.
 
-## Limites do aceite futuro
+## Limites do aceite
 
-Uma assinatura reconhecida não comprova decodificação completa, aprovação ou conteúdo de pacote. Sem SHA, a referência igual não comprova imutabilidade remota; cache não tem eviction/revalidação periódica. Compartilhamento do autor e demonstração real, se solicitada, têm evidência própria e não são inferidos dos fakes. Implementação, testes, gate, screenshots, review e integração permanecem pendentes.
+Uma assinatura reconhecida não comprova decodificação completa, aprovação ou conteúdo de pacote. Sem SHA, a referência igual não comprova imutabilidade remota; cache não tem eviction/revalidação periódica. Compartilhamento do autor e demonstração real, se solicitada, têm evidência própria e não são inferidos dos fakes. Implementação, testes locais, gate normal Windows e screenshots estão registrados. Entrega e checks/review por head são acompanhados no PR #23; integração não autorizada.

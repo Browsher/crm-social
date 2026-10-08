@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "feature": "005-previas-imagens",
+  "date": "2026-10-08",
+  "sourceCommit": "392e1090c02fa4a52ab887c20887a6b79e5aee69",
+  "environment": "Windows local, Node 24.19.0 e Playwright existente; fixtures sinteticas e transporte falso",
+  "command": "node tools/quality-gate.mjs",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 577
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 95.06966773847803,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "metrics": 571,
+      "maximum": 16.0,
+      "warnings": 21
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0",
+      "findings": [],
+      "missingFiles": []
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "sourceHashes": {
+    "src/google.cjs": "bd209a0387c6a9ccc36ba5002876727691e27435cf1508966308f1ceb9bb1c2e",
+    "src/midia.cjs": "2628350b1befaffae5598679ee264ec875fe813548916bfcc74bd372871b0c2b",
+    "src/servidor.cjs": "3446dba661b80bd440bdd33e3c1bd0153d8c196e0e0e3b5aa819bcc925417150",
+    "src/web/app.js": "0cd46435075ea6f4d8620fa01b339789891b3c3e75d220932451c61a955c8da0",
+    "src/web/styles.css": "ee2c7a005f75e6c3e80c0c49a4bcefced4e499bba48c1d730c3623965c4e97d3",
+    "tests/google-midia.test.cjs": "ef9911971542953e54b79c672f721388dd9757f09602ed074a235322ab0b2cbb",
+    "tests/midia.test.cjs": "35a4bc3fb5304b43d0883152e9891f02768a15067c2c3d57430dda985c8afae5",
+    "tests/midia-http.test.cjs": "46b085879085a721be19c3404344274b1cd6749479952bf5f201e1f456b23af0",
+    "tests/previas-fixtures.cjs": "fb4a012d495afa14f613fad6cda42aaeeef8a420750f2eb210503836ca35cd54",
+    "tests/previas-interface.test.cjs": "e528416a7fd38a3dfb3e79fe515bc53ff8f0a8ce52e8f9207ab8f539a6ad23ce",
+    "tests/interface.test.cjs": "cbd64f252ed7e99a27cf293520c34b586cd2d6e8d88717a12856b442b9862164",
+    "tests/pronta-interface.test.cjs": "7784557de9b52247a685a46fd1cf2976049b2cd04d4cd33f3b56d4fd82fee91e",
+    "tests/tema.test.cjs": "0c9056acb9c8fea90f12769285b552705afb42cdfdf3e076205172ef6f45bfde"
+  },
+  "limits": [
+    "Semgrep local SKIP por ferramenta ausente; CI estrito precisa passar no head do PR.",
+    "UI fora do LCOV; CI Linux pula UI/PowerShell.",
+    "Drop zero no modo full nao representa comparacao historica.",
+    "Compartilhamento real T002 pendente, nao bloqueante para testes falsos."
+  ]
+}

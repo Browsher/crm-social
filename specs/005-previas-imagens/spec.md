@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-08
 
-**Status**: Planejada; 21 tarefas geradas (20 do agente e uma externa do autor), 0 executadas. Implementação parada por exceder o limite de 20.
+**Status**: Implementada e testada localmente; 21 tarefas aprovadas pelo autor em 2026-10-08. Gate Windows da fonte `392e109` com 577 PASS e 12 screenshots sintéticos inspecionados; entrega e checks/review por head acompanhados no PR #23 e na validação. T002 do autor permanece pendente, sem bloquear os testes. Sem integração ou merge. Evidências em [validacao.md](validacao.md).
 
 **Input**: Solicitação do autor em 08/10/2026: imagens na gaveta, ampliação e falha localizada mantendo o Drive; leitura privada pelo servidor. Início após tarefa 1 integrada: [PR #22](https://github.com/Browsher/crm-social/pull/22), main `b90980a15fad653937fd024ac3c9bb2738e9d99a`.
 
@@ -107,9 +107,9 @@ Como autor, quero “Prévia indisponível” somente no lugar da imagem que fal
 
 ## Assumptions
 
-- “Miniaturas do pacote” usa as imagens vinculadas às unidades vigentes na seção Pronta. O contrato identifica ZIP, sem manifesto de conteúdo. Interpretação mínima apresentada ao autor; nenhuma resposta atribuída a ele até esta especificação.
+- “Miniaturas do pacote” usa as imagens vinculadas às unidades vigentes na seção Pronta. O contrato identifica ZIP, sem manifesto de conteúdo. Interpretação registrada no planejamento e incluída no escopo aprovado pelo autor em 2026-10-08.
 - 15 MB = 15.000.000 bytes; timeout do plano abrange corpo completo.
 - Bytes originais, sem transcodificação, geração de derivados ou dependência nova.
 - Task do autor: compartilhar a pasta “Produções” da NTV como Leitor com a conta de serviço. Não bloqueia testes sintéticos, nem será executada pelo agente.
-- Se speckit-tasks gerar mais de 20 tarefas, parar antes de implementar e mostrar peso, sem comprimir tarefas para contornar o limite.
+- A geração de 21 tarefas motivou a parada de planejamento prevista pelo autor. Após receber a distribuição, ele aprovou expressamente esse escopo em 2026-10-08, sem compressão de tarefas.
 - Fora: vídeo, escrita/publicação, extração ZIP, auditoria editorial, novas regras de revisão/retirada/vigência.

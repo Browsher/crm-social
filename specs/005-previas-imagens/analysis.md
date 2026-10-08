@@ -2,7 +2,7 @@
 
 Como conferir um roteiro antes da execução, esta análise verifica a coerência dos documentos; não comprova comportamento implementado.
 
-**Data:** 2026-10-08. **Base integrada:** [PR #22](https://github.com/Browsher/crm-social/pull/22), main `b90980a15fad653937fd024ac3c9bb2738e9d99a`. **Estado:** 21 tarefas geradas, 0 executadas; implementação parada pelo limite de 20 do autor.
+**Data:** 2026-10-08. **Base integrada:** [PR #22](https://github.com/Browsher/crm-social/pull/22), main `b90980a15fad653937fd024ac3c9bb2738e9d99a`. **Estado na análise de planejamento:** 21 tarefas geradas, 0 executadas; implementação então parada pelo limite de 20 do autor. Após receber essa distribuição, o autor aprovou as 21 tarefas e autorizou a implementação em 2026-10-08. O progresso vigente está em [tasks.md](tasks.md).
 
 ## Revisão independente
 
@@ -26,4 +26,4 @@ Escopos separados, captura vigente como autoridade, transporte fixo, bytes/taman
 
 São **20 tarefas do agente e uma externa do autor**. A maior parte está nas três fronteiras distintas de cache/serviço, HTTP e interface, cada uma com provas antes da implementação, além do fechamento exigido. A tarefa externa permanece na contagem; itens não foram agrupados para contornar o limite.
 
-Por determinação do autor, a execução termina no planejamento para apresentar esse peso. Nenhum código, teste, gate de comportamento ou screenshot da 005 foi executado. O PR rascunho de planejamento não conclui T021, que depende da implementação e das provas futuras. Nenhum merge da 005 está autorizado.
+Por determinação do autor, aquela rodada terminou no planejamento para apresentar esse peso, sem código, teste, gate de comportamento ou screenshot da 005. O PR rascunho de planejamento não concluiu T021. A autorização posterior permite implementar e completar o mesmo PR #23, com gate, review e screenshots; as provas ficam na validação da implementação. Nenhum merge da 005 está autorizado.
