@@ -30,7 +30,7 @@ Os comandos acima foram executados nesta rodada; números, fontes e limites some
 
 Relógio fixo em 08/10/2026; semana atual com oferta, carrossel de cinco páginas PNG 1080×1350 e Reels travado; próxima com quatro peças em dias variados; futura vazia; passada publicada; sem data/sem semana; correção vigente/histórica e Meses/Pautas opcionais. Tudo sintético, sem ID, conta ou texto operacional.
 
-Conferir topo único/POST único/falha/no-op, expandir objetivo sem espaço recolhido, navegar pautas/períodos, sete dias e dia inteiro, hoje centrado/rolagem preservada em 390, Mês sem imagens/semana acessível, Produção com X de N/cinco passos/motivo, futura vazia com período/frase, Planilha e seus atalhos. Rede permanece na origem temporária, sem erro JS/overflow da página. O coordenador inspecionou os [12 PNG finais](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-a).
+Conferir topo único/POST único/falha/no-op, expandir objetivo sem espaço recolhido, navegar pautas/períodos, sete dias e dia inteiro, hoje centrado/rolagem preservada em 390, Mês sem imagens/semana acessível com data/título/estado filtrados, navegação Mês→Semana e semanas de borda mantendo mês/objetivo, Sem data com tema/período/fallback, dias/prévias acessíveis e tema com início normalizado, Produção com X de N/cinco passos/motivo, futura vazia com período/frase, Planilha e seus atalhos. Rede permanece na origem temporária, sem erro JS/overflow da página. O coordenador inspecionou os [12 PNG finais](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-a).
 
 ## Parte B — somente planejada
 

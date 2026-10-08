@@ -2,7 +2,7 @@
 
 ## Feature 006 — Layout v3 (Parte A implementada/testada, não integrada)
 
-Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 concluídas na main conforme o autor. O escopo mantém 32 tarefas em duas partes autorizadas. T001–T016 verificadas na A; T017–T023 e fechamento B não iniciados, aguardando ok explícito na A. A mantém Planilha e entrega topo/objetivo/Semana/Mês/projetos; gate final Windows passou; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado após commits/push. Revisão independente, CI e review remoto têm acompanhamento/resultados no PR por head, com aprovação exigida no head final antes de concluir a entrega. Sem merge. Provas antigas abaixo permanecem históricas.
+Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 concluídas na main conforme o autor. O escopo mantém 32 tarefas em duas partes autorizadas. T001–T016 verificadas na A; T017–T023 e fechamento B não iniciados, aguardando ok explícito na A. A mantém Planilha e entrega topo/objetivo/Semana/Mês/projetos; gate final Windows da fonte de testes 7fc1996 passou (673 PASS; código/PNG 5725b9f); [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado após commits/push. Revisão independente, CI e review remoto têm acompanhamento/resultados no PR por head, com aprovação exigida no head final antes de concluir a entrega. Sem merge. Provas antigas abaixo permanecem históricas.
 
 | Documento | Uso |
 | --- | --- |
@@ -14,7 +14,7 @@ Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 co
 | [Tarefas](../specs/006-layout-v3/tasks.md) | 32 IDs, execução A/B e fechamento por recorte |
 | [Quickstart sintético](../specs/006-layout-v3/quickstart.md) | Reprodução da Parte A e cenários futuros da B separados |
 | [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
-| [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate final Windows: 654 PASS, cobertura 95,4072%, baseline preservada |
+| [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate final Windows, fonte 7fc1996: 673 PASS, cobertura 95,5492%, baseline preservada |
 | [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
 | [Checklist](../specs/006-layout-v3/checklists/requirements.md) | Revisão de completude anterior ao plano |
 | [Mockup sanitizado](design/mockups/layout-v3.html) | Referência aprovada, não aplicativo |

@@ -27,7 +27,7 @@ Atual primeiro, próxima semana depois, demais futuras em ordem crescente e pass
 
 ## Objetivo/pautas
 
-Meses continua vindo de view.planilha e Pautas de view.pautas. Mês exibido pela semana selecionada usa sua segunda-feira, inclusive cruzamentos. Na visão Mês usa o mês navegado. Ambiguidade/ausência mantém a regra atual; fallback textual de Meses não recebe S1/tema/modelo inventados.
+Meses continua vindo de view.planilha e Pautas de view.pautas. Alternância Semana/Mês sem navegação preserva a semana selecionada. Setas no Mês selecionam a segunda-feira da primeira linha do mês navegado; abrir uma semana de borda conserva esse mês para objetivo/pautas. Ao navegar por setas na Semana, conservar o mês selecionado enquanto algum dia da semana pertencer a ele; ao sair desse mês, selecionar o mês da quinta-feira da semana (maioria de seus sete dias). Ativar pauta usa pauta.mes explicitamente. Ambiguidade/ausência mantém a regra atual; fallback textual de Meses não recebe S1/tema/modelo inventados.
 
 ## Fila de publicação — planejada para Parte B
 

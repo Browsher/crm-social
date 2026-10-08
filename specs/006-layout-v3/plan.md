@@ -120,7 +120,7 @@ Dialog nativo showModal(), foco inicial em Fechar, ←/→ restritos ao pop-up a
 
 ### Layout e temas
 
-Reutilizar tokens e comportamento de theme.js. Objetivo com botão/aria-expanded e painel hidden. Semana com sete colunas em região rolável, sem rolagem lateral da página. Mês em flex/grid com altura disponível e overflow interno quando necessário. Linhas não são botões contendo outros botões: acionador de gaveta e Ver no Instagram são irmãos. Em 390 px, sidebar permanece acessível via menu e Publicadas/Travadas aparecem abaixo da fila.
+Reutilizar tokens e comportamento de theme.js. Objetivo com botão/aria-expanded e painel hidden. Semana com sete colunas em região rolável, sem rolagem lateral da página; preservar rolagem ao retornar, inclusive após atualização em Produção. Ao navegar semanas, manter o mês selecionado enquanto houver interseção; sem interseção, usar o mês da quinta-feira. Cabeçalho mostra S# · tema somente para pauta confirmada. Mês em flex/grid com altura disponível e overflow interno quando necessário. Linhas não são botões contendo outros botões: acionador de gaveta e Ver no Instagram são irmãos. Em 390 px, sidebar permanece acessível via menu e Publicadas/Travadas aparecem abaixo da fila.
 
 ### Testes e compatibilidade
 
