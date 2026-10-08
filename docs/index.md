@@ -4,7 +4,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 ## Ordem de leitura
 
-Manutenção atual: **Pronta para publicar**, autorizada sem nova feature Spec Kit, implementada/testada localmente; [uso](../README.md#pronta-para-publicar), [validação](reports/pronta-publicar-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#pronta-para-publicar). O autor informou 001–004 concluídas na main em 08/10/2026; os registros de entrega abaixo preservam as rodadas históricas. A integração deste ajuste exige gate/review do head vigente.
+Manutenção atual: **versões de páginas e cenas**, autorizada sem nova feature Spec Kit, implementada/testada localmente; [uso](../README.md#versões-de-páginas-e-cenas), [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). **Pronta para publicar** integrada pelo [PR #21](https://github.com/Browsher/crm-social/pull/21); o autor informou 001–004 concluídas na main em 08/10/2026. Os registros abaixo preservam as rodadas históricas. A integração desta correção exige gate/review do head final; a 005 permanece no backlog até esse merge.
 
 Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
 
@@ -98,6 +98,7 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 | [Telas decididas](design/telas.md) | Decisões do autor e nota de implementação parcial |
 | [Screenshots reais/LEIA-ME](design/screenshots/LEIA-ME.md) | Aplicação em execução somente com dados fictícios; origem/limites |
 | [Pronta para publicar — oito screenshots](design/screenshots/LEIA-ME.md#pronta-para-publicar) | Quadro e gaveta, dois temas, 1440/390; fixture sintética, clipboard em memória e estado em TEMP |
+| [Versões de páginas e cenas — quatro screenshots](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas) | Gaveta Pronta expandida, texto v3 com imagens de versões distintas, dois temas e 1440/390; fixture sintética/TEMP |
 | [Tema claro/escuro — 16 screenshots](design/screenshots/LEIA-ME.md#tema-claro-e-escuro) | Quatro telas, dois temas, 1440/390; fixtures em TEMP, script reproduzível, provas sintéticas locais; tema integrado pelo PR #18 |
 | [Planejamento 1440](design/screenshots/001-planejamento-1440.png) / [390](design/screenshots/001-planejamento-390.png) | Capturas sintéticas desktop/mobile |
 | [Selo hoje 1440](design/screenshots/001-us2-hoje-1440.png) / [390](design/screenshots/001-us2-hoje-390.png) | Verde pelo fim da captura em São Paulo |
@@ -140,6 +141,8 @@ As evidências históricas da 001 têm origem, estado e limites registrados na [
 - [Saída histórica de node:test](reports/001-pr6-node-test.txt).
 - [Validação local de Pronta para publicar](reports/pronta-publicar-validacao.md): opcionais, pacote ZIP, clipboard simulado, 33 testes focados (14 UI), gate Windows com 475 PASS/cobertura 94,0568% e limites da evidência.
 - [Relatório sanitizado do gate de Pronta](reports/pronta-publicar-local-gate.json): fonte eb74b23, 12 hashes de arquivos, métricas de seis funções, todos os 20 avisos e agregados completos; baseline preservada.
+- [Validação local de versões de páginas e cenas](reports/versoes-unidades-validacao.md): ponteiros exatos, vigência por índice, limites de retirada/revisões, rótulos de imagem, 26 testes de versões sem pulos e rodada inicial de 497 PASS preservada como histórica.
+- [Relatório sanitizado vigente do gate de versões](reports/versoes-unidades-local-gate.json): fonte af403ae, seis hashes de arquivos, oito funções destacadas, 501 PASS, cobertura 94,2065%, 491 métricas/máximo 18 e 20 avisos; baseline preservada.
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
 - [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 371 PASS, suíte `.cmd` com 18 PASS, hashes do código/testes, origem e limites; iniciador integrado pelo [PR #19](https://github.com/Browsher/crm-social/pull/19), com essas medições preservadas como histórico.

@@ -105,6 +105,11 @@ function arquivosDaUnidade(records,avisoMidia,mostrarAvisos=true) {
   if(aviso && mostrarAvisos) list.append(node('span',aviso,'notice'));
   return list;
 }
+function adicionarVersaoImagem(text,arquivo) {
+  if(!arquivo)return;
+  const rotulo=Number.isInteger(arquivo.versao) && arquivo.versao>0?'imagem v'+arquivo.versao:'imagem: versão a confirmar';
+  text.append(node('small',rotulo,'image-version'));
+}
 function unidadeDetalhe(u,tipo,mostrarAvisos) {
   const pagina=tipo==='paginas',box=node('article',undefined,'unit-record');
   box.dataset[pagina?'pagina':'cena']=u[pagina?'pagina_id':'cena_id'];
@@ -112,6 +117,7 @@ function unidadeDetalhe(u,tipo,mostrarAvisos) {
   box.append(node('span',(pagina?'Página ':'Cena ')+valor(u.indice),'unit-number'));
   if(pagina) {
     text.append(node('span',u.titulo || u.corpo || 'Texto não registrado'),node('small','Design novo: '+u.designNovo));
+    adicionarVersaoImagem(text,u.arquivos[0]);
   } else {
     text.append(node('span',u.texto || 'Texto não registrado'));
     if(preenchido(u.inicio_segundos) || preenchido(u.duracao_segundos)) text.append(node('small',
@@ -124,7 +130,7 @@ function secaoUnidades(records,tipo,mostrarAvisos=true) {
   const section=secaoDetalhe(tipo==='paginas'?'Páginas':'Cenas');section.dataset.unidades=tipo;
   const groups=new Map();
   for(const u of records) {
-    const key=JSON.stringify(u.versao);
+    const key=JSON.stringify([u.vigente,u.versao]);
     if(!groups.has(key)) groups.set(key,[]);groups.get(key).push(u);
   }
   const ordenados=[...groups.values()].sort((a,b)=>Number(b[0].vigente)-Number(a[0].vigente));

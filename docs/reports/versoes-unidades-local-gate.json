@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "executedAtUtc": "2026-10-08T14:39:42.690Z",
+  "environment": {
+    "platform": "win32",
+    "nodeVersion": "24.19.0",
+    "timezone": "America/Sao_Paulo"
+  },
+  "command": "node tools/quality-gate.mjs",
+  "source": {
+    "baseCommit": "5b296938dde98ff9f5f3b240ff68972870e76b9d",
+    "codeCommit": "af403ae778bfa7eda711f853f00aa5bc1aacdbc0",
+    "hashFormat": "SHA-256 de UTF-8 com CRLF normalizado para LF",
+    "files": [
+      {
+        "path": "src/projecao.cjs",
+        "sha256Utf8Lf": "bb930716280d6bce6691a409bbc3909146c1ff5de7e897d25b0af8c7e78f0355"
+      },
+      {
+        "path": "src/web/app.js",
+        "sha256Utf8Lf": "df9a5fb20898badafcd47acd01adfdba17d59dad6950beb6d0637481102fb9b3"
+      },
+      {
+        "path": "tests/projecao.test.cjs",
+        "sha256Utf8Lf": "32395b144b2ab0724640cbe9a019b0e8ad2ed86b249f8018b5c9101859066e9d"
+      },
+      {
+        "path": "tests/versoes-fixtures.cjs",
+        "sha256Utf8Lf": "20ff7acf36d0ebf33b198f55ca00afc333aaa87266a481f46149ef5a1651a822"
+      },
+      {
+        "path": "tests/versoes-interface.test.cjs",
+        "sha256Utf8Lf": "6a3f8c0b05e36534133364400a78daea58111a540dbd633df68a14c33e1770ce"
+      },
+      {
+        "path": "tests/versoes.test.cjs",
+        "sha256Utf8Lf": "f4fc63570e3cb2d4d95fe2751d7f9ea34ae73b400fab478c3350dbd7d0426339"
+      }
+    ]
+  },
+  "originalReportSha256": "31202841ee699debce2f12513580f39717adfd49fd921bf9a99356331e63df97",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 501
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 94.20654911838791,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "metricsCount": 491,
+      "maximum": 18,
+      "warningsCount": 20,
+      "warnings": [
+        {
+          "key": "scripts/importar-captura.cjs::ast::bf89f0c0b0d36c259a50aa54095beae1784420c6257787a296b8f3bfe3ecfd24",
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::acacfd7a3c71352965abfb6402a03e0cbd6da68956c6beb7ec1a0a003d55eabe",
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::1d0bd6cdb2d58d2b32b71f663e32c9230591a4af23ad9ede598b0448c29d4c0a",
+          "file": "src/google.cjs",
+          "line": 9,
+          "value": 18,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::4be10e827f4b6cdd4b598b92013c5daf6fbcd5958d4a2c735b64ddabd24878fd",
+          "file": "src/google.cjs",
+          "line": 27,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::9d6a7c01215bd7dbc99e39796d516dacfd50127cb9a7f11e97e7559f1158a537",
+          "file": "src/servidor.cjs",
+          "line": 31,
+          "value": 14,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::374c8857f4098604ae5a6e74f8a297ecd4474ce0f19c5c21f83b0599a894e5d2",
+          "file": "src/servidor.cjs",
+          "line": 37,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::db6e76d461bdcaf32aac6e745afaed92ad448184e570d8b80c57b8ba145db9bf",
+          "file": "src/servidor.cjs",
+          "line": 53,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::6160a0ed8a70e9bc36fd2cf1abbe39c6254c7f043b17dd58b22f6b2801364878",
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::702d80510ed234619df766294be9c5b3862a2758919fa5c70a09f67d909ae9fd",
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::17bd8b3924ba7188062a62b4875c72848402d9caaa9a85be29d7c7f72d92f2e8",
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::809f7c5bd501a6b9594f40088df62f4d7e8a892f80f8a65dc9d46494a4b4cb3e",
+          "file": "src/web/app.js",
+          "line": 35,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::98333c7ad65cdc212bced0bb83381bb3f3a122fca12977337507855f8f76587e",
+          "file": "src/web/app.js",
+          "line": 96,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
+          "file": "src/web/app.js",
+          "line": 113,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::121b2cd4f6f0e9aba8b96d049909f5418e9d30a8396cc8b7ef467e7b8c4dc5e3",
+          "file": "src/web/app.js",
+          "line": 180,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f45b1ce678b80db07ad5ccba4f12862d1642cb3d6d3791d8923c5413900b5779",
+          "file": "src/web/app.js",
+          "line": 270,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::62ae815236231442491bb35a9532e908372da7cd7c2e86db9b9835bc00ea2ab6",
+          "file": "src/web/app.js",
+          "line": 353,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3af80b21a07fb20cc926d42588a78937bda1c61ef95608814fff4f03a754a1f7",
+          "file": "src/web/app.js",
+          "line": 385,
+          "value": 15,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::9c75b7250eabcff072188ed74ace12d86a67e1a2e0363b689be6ec1af6fc1bba",
+          "file": "src/web/app.js",
+          "line": 421,
+          "value": 15,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::247064941e9cdb1e64d0a141a692b32781e667260ad73e3a6277709fcb742105",
+          "file": "src/web/app.js",
+          "line": 589,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::659233f77fc9ecb0c526480a61d2da6d52ecc3dd4847bf45d97e6c067e2a5208",
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12,
+          "matchable": true
+        }
+      ],
+      "functions": [
+        {
+          "name": "escopoArquivo",
+          "key": "src/projecao.cjs::ast::e02173718d797b53a059459b1843067694689d90c4ffb681fdc0c39176125ebc",
+          "file": "src/projecao.cjs",
+          "line": 98,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "name": "arquivoLigado",
+          "key": "src/projecao.cjs::ast::591afbf845e71bc3982ce03a06dfad493a5b82a109f4fd9c0626a1555deb0048",
+          "file": "src/projecao.cjs",
+          "line": 104,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "name": "versoesUnidades",
+          "key": "src/projecao.cjs::ast::cdca4754fb37fc3a392a80b7d8919c2093e7ba55dcfb0511c156c1d7e38b869f",
+          "file": "src/projecao.cjs",
+          "line": 135,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "name": "unidades",
+          "key": "src/projecao.cjs::ast::63736705c0a59a265140566e9d1a7cde6a9c262ecc83deabb20316198658b9e8",
+          "file": "src/projecao.cjs",
+          "line": 142,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "name": "pendenciasMidia",
+          "key": "src/projecao.cjs::ast::2add157ce944a99890f8ff72f8820abdb82ddbb5a3fdf321362163d74746bdda",
+          "file": "src/projecao.cjs",
+          "line": 266,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "name": "adicionarVersaoImagem",
+          "key": "src/web/app.js::ast::909f869228fdd511ade9e929bf4aa291720d750ea3810cdd103fd00da3eec0a4",
+          "file": "src/web/app.js",
+          "line": 108,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "name": "unidadeDetalhe",
+          "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
+          "file": "src/web/app.js",
+          "line": 113,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "name": "secaoUnidades",
+          "key": "src/web/app.js::ast::25210040b867cb5b35efa25a393409f3d322d689ac8588d589f5c38dcdabcd32",
+          "file": "src/web/app.js",
+          "line": 129,
+          "value": 10,
+          "matchable": true
+        }
+      ],
+      "scope": "Funções novas e ajustadas destacadas; lista completa de avisos. Agregados abrangem todas as métricas do gate."
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0",
+      "findings": [],
+      "missingFiles": []
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ]
+}

@@ -498,16 +498,16 @@ test('P07 review: publicação inconsistente conserva registro e gera aviso loca
   }
 });
 
-test('P07 ponteiro quebrado, escopo/versão incompatível e revisão órfã não inventam relação', t=>{
+test('P07 ponteiro quebrado, produção incompatível e revisão órfã não inventam relação', t=>{
   const raw=capturaDetalhada();
   mudarCelula(raw,'Páginas',1,'arquivo_imagem_id','arquivo-inexistente');
-  mudarCelula(raw,'Arquivos',2,'versao',1);
+  mudarCelula(raw,'Arquivos',2,'producao_id','peca-4');
   adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-orfa',producao_id:'peca-3',pagina_id:'pagina-inexistente',versao:2,estado_tratamento:'aberta'});
   const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[2].detalhes;
   assert.equal(d.paginas[1].arquivos[0],null);
   assert.equal(d.paginas[2].arquivos[0],null);
   assert.ok(d.avisos.some(a=>a.motivo.includes('Referência quebrada')));
-  assert.ok(d.avisos.some(a=>a.motivo.includes('Escopo ou versão')));
+  assert.ok(d.avisos.some(a=>a.motivo.includes('Escopo incompatível')));
   assert.ok(d.revisoes.ambiguas.some(r=>r.revisao_id==='revisao-orfa'));
   assert.ok(!d.revisoes.vigentes.some(r=>r.revisao_id==='revisao-orfa'));
 });
@@ -552,7 +552,7 @@ test('P-final m-a agregação conserva primeiro ponteiro e causas de referência
   assert.equal(avisos.length,1);
   assert.equal(avisos[0].campo,'arquivo_imagem_inicio_id');
   assert.match(avisos[0].motivo,/Referência quebrada/);
-  assert.match(avisos[0].motivo,/Escopo ou versão incompatível/);
+  assert.match(avisos[0].motivo,/Escopo incompatível/);
   assert.equal(view.avisos.filter(a=>a.aba==='Cenas' && a.linha===3 && a.campo.startsWith('arquivo_')).length,1);
 });
 
@@ -598,7 +598,9 @@ test('P-final m-b versões inválidas em revisões/arquivos conservam original c
     const d=projetarVisao(estado(raw,t),NOW,mapaQuadroValido()).producoes[2].detalhes;
     assert.equal(d.arquivos.find(a=>a.arquivo_id==='arquivo-pagina').versao,valor);
     assert.equal(d.revisoes.ambiguas.find(r=>r.revisao_id==='revisao-atual').versao,valor);
-    assert.equal(d.paginas.find(p=>p.pagina_id==='pagina-02').arquivos[0],null);
+    assert.equal(d.paginas.find(p=>p.pagina_id==='pagina-02').arquivos[0].arquivo_id,'arquivo-pagina');
+    assert.equal(d.paginas.find(p=>p.pagina_id==='pagina-02').arquivos[0].versao,valor);
+    assert.ok(!d.avisos.some(a=>a.aba==='Páginas' && a.campo==='arquivo_imagem_id' && /Escopo/.test(a.motivo)));
     for(const [aba,linha] of [['Arquivos',3],['Revisoes',3]]) {
       assert.ok(d.avisos.some(a=>a.aba===aba && a.linha===linha && a.campo==='versao' && /Inteiro positivo inválido/.test(a.motivo)));
     }

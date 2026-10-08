@@ -97,7 +97,6 @@ function arquivoApresentado(a) {
 }
 function escopoArquivo(a,esperado) {
   return Object.entries(esperado).every(([campo,v])=>{
-    if(campo==='versao' && !(inteiroPositivo(a.versao) && inteiroPositivo(v))) return false;
     if((campo==='pagina_id' || campo==='cena_id') && !preenchido(a[campo])) return true;
     return a[campo]===v;
   });
@@ -107,7 +106,7 @@ function arquivoLigado(record,campo,esperado,ctx) {
   if(!preenchido(id)) {avisoRegistro(record,campo,'Mídia ausente: nenhum arquivo registrado neste ponteiro',ctx);return null;}
   const a=ctx.arquivos.get(id);
   if(!a) {avisoRegistro(record,campo,'Referência quebrada: arquivo não identificado',ctx);return null;}
-  if(!escopoArquivo(a,esperado)) {avisoRegistro(record,campo,'Escopo ou versão incompatível; vínculo a confirmar',ctx);return null;}
+  if(!escopoArquivo(a,esperado)) {avisoRegistro(record,campo,'Escopo incompatível; vínculo a confirmar',ctx);return null;}
   return arquivoApresentado(a);
 }
 function ordenarUnidades(a,b,key) {
@@ -133,12 +132,20 @@ function midiasCena(record,esperado,ctx) {
   }
   return {arquivos,avisoMidia};
 }
+function versoesUnidades(records) {
+  const maiores=new Map();
+  for(const r of records) {
+    if(inteiroPositivo(r.indice) && inteiroPositivo(r.versao)) maiores.set(r.indice,Math.max(maiores.get(r.indice) ?? 0,r.versao));
+  }
+  return maiores;
+}
 function unidades(producao,records,tipo,ctx) {
   const pagina=tipo==='paginas',key=pagina?'pagina_id':'cena_id';
-  return records.filter(r=>r.producao_id===producao.producao_id).map(r=>{
+  const ligadas=records.filter(r=>r.producao_id===producao.producao_id),maiores=versoesUnidades(ligadas);
+  return ligadas.map(r=>{
     validarNumeros(r,['versao','indice'],pagina?[]:['inicio_segundos','duracao_segundos'],ctx);
-    const esperado={producao_id:producao.producao_id,versao:r.versao,[key]:r[key]};
-    return {...r,vigente:inteiroPositivo(r.versao) && r.versao===producao.versao,
+    const esperado={producao_id:producao.producao_id,[key]:r[key]};
+    return {...r,vigente:inteiroPositivo(r.indice) && inteiroPositivo(r.versao) && r.versao===maiores.get(r.indice),
       ...(pagina?{designNovo:'A confirmar',arquivos:[arquivoLigado(r,'arquivo_imagem_id',esperado,ctx)]}:midiasCena(r,esperado,ctx))};
   }).sort((a,b)=>ordenarUnidades(a,b,key));
 }
@@ -257,14 +264,13 @@ function pendenciasRevisao(p) {
   }));
 }
 function pendenciasMidia(p) {
-  if(!inteiroPositivo(p.versao)) return [];
   const paginas=p.detalhes.paginas.filter(u=>u.vigente),cenas=p.detalhes.cenas.filter(u=>u.vigente);
   const pendencias=[
     ...paginas.filter(u=>!u.arquivos[0]).map(u=>({tipo:'midia',texto:'Imagem ausente',unidade:'pagina',unidadeId:u.pagina_id})),
     ...cenas.filter(u=>u.avisoMidia).map(u=>({tipo:'midia',texto:u.avisoMidia,unidade:'cena',unidadeId:u.cena_id}))
   ];
   const arquivoVigente=p.detalhes.arquivos.some(a=>inteiroPositivo(a.versao) && a.versao===p.versao);
-  if(paginas.length===0 && cenas.length===0 && !arquivoVigente) {
+  if(paginas.length===0 && cenas.length===0 && inteiroPositivo(p.versao) && !arquivoVigente) {
     pendencias.push({tipo:'midia',texto:'Mídia ausente: sem arquivo registrado nesta versão'});
   }
   return pendencias;
