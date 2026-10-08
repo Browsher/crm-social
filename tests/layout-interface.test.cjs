@@ -232,6 +232,34 @@ test('Layout A Semana móvel começa mostrando hoje e preserva rolagem ao filtra
   assert.equal(await region.evaluate(n=>n.scrollLeft),0,'rolagem escolhida permanece no mesmo período');
 });
 
+test('Layout A rolagem volta após atualizar pela Produção',{skip},async t=>{
+  const context=await abrirLayout(t,{width:390}),{page}=context,region=page.locator('#lista');
+  await region.evaluate(n=>{n.scrollLeft=137;});
+  await navegar(page,'producao');context.setMode('completa');await atualizar(context);await navegar(page,'planejamento');
+  assert.equal(context.calls(),1);
+  assert.equal(await region.evaluate(n=>n.scrollLeft),137,'retorno restaura posição mesmo com grade recriada em outra tela');
+});
+
+test('Layout A setas conservam mês selecionado enquanto a semana o intersecta',{skip},async t=>{
+  const {page}=await abrirLayout(t);await page.locator('#anterior').click();
+  assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-09-28');
+  assert.match(await page.locator('#objetivo-toggle').textContent(),/Outubro/);
+  await page.locator('#anterior').click();assert.match(await page.locator('#objetivo-toggle').textContent(),/Setembro/);
+  await page.locator('#proximo').click();assert.match(await page.locator('#objetivo-toggle').textContent(),/Setembro/);
+  await page.locator('#proximo').click();assert.match(await page.locator('#objetivo-toggle').textContent(),/Outubro/);
+  await modo(page,'Mês');await page.locator('#proximo').click();
+  await page.locator('.month-week[data-inicio-semana="2026-11-02"]').click();await page.locator('#anterior').click();
+  assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-26');
+  assert.match(await page.locator('#objetivo-toggle').textContent(),/Novembro/);
+});
+
+test('Layout A cabeçalho mostra pauta confirmada da semana',{skip},async t=>{
+  const {page}=await abrirLayout(t);
+  assert.match(await page.locator('#week-title').textContent(),/S1.*Oferta sintética de outubro/);
+  await page.locator('#proximo').click();
+  assert.match(await page.locator('#week-title').textContent(),/S2.*Conexões da próxima semana/);
+});
+
 test('Layout A tema aceita semana registrada fora da segunda-feira',{skip},async t=>{
   const {page}=await abrirLayout(t,{editar:raw=>{
     mudarPorId(raw,'Semanas','semana-01','inicio_semana','2026-10-06');

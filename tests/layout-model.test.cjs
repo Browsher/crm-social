@@ -10,10 +10,7 @@ const {projetarVisao}=require('../src/projecao.cjs');
 const mapa=require('../config/quadro-etapas.json');
 const arquivo=path.resolve(__dirname,'../src/web/layout-model.js');
 const nomes=['estadoSimples','motivoTravado','progresso','imagensDaPeca','segundaDaSemana','ordenarSemanas'];
-// RED mede o resultado ausente sem depender de erro de importação ou sintaxe.
-const layout=fs.existsSync(arquivo)?require(arquivo):Object.fromEntries(nomes.map(nome=>[
-  nome,()=>['imagensDaPeca','ordenarSemanas'].includes(nome)?[]:undefined
-]));
+const layout=require(arquivo);
 function projetar(raw=capturaLayout()) {
   return projetarVisao({captura:validarCaptura(recalcularHashes(raw)),historico:[],ultimaTentativa:null},AGORA,mapa);
 }
@@ -185,7 +182,7 @@ test('Layout fallback Imagem sem unidades exige produção e versão exatas em o
 });
 test('Layout exporta a mesma API no navegador sem DOM, rede ou módulos Node',()=>{
   const context=vm.createContext({});
-  vm.runInContext(fs.existsSync(arquivo)?fs.readFileSync(arquivo,'utf8'):'',context,{filename:arquivo});
+  vm.runInContext(fs.readFileSync(arquivo,'utf8'),context,{filename:arquivo});
   for(const nome of nomes)assert.equal(typeof context.CrmLayout?.[nome],'function',nome);
   assert.equal(context.CrmLayout.estadoSimples(peca('Pronta')),'Pronta');
   assert.equal(context.CrmLayout.segundaDaSemana(HOJE),'2026-10-05');

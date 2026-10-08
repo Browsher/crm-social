@@ -486,7 +486,8 @@ function cabecalhoPlanejamento() {
     civil(state.inicioSemana,{day:'2-digit',month:'long'})+' – '+civil(dataMais(state.inicioSemana,6),{day:'2-digit',month:'long'});
   const semanas=state.view.semanas.filter(w=>layout.segundaDaSemana(w.periodo.inicio)===state.inicioSemana);
   const pauta=(state.view.pautas??[]).find(p=>p.inicio_semana===state.inicioSemana);
-  $('#week-title').textContent=semanas.map(w=>w.tema).filter(Boolean).join(' · ') || pauta?.tema || '';
+  $('#week-title').textContent=semanas.map(w=>w.pautaOrigem?'S'+w.pautaOrigem.semana+' · '+w.pautaOrigem.tema:w.tema).filter(Boolean).join(' · ') ||
+    (pauta?'S'+pauta.semana+' · '+pauta.tema:'');
   $('#week-progress').textContent=progressoTexto(pecasDaSemana());
   $('#week-title').hidden=mensal;$('#week-progress').hidden=mensal;
   $('#anterior').setAttribute('aria-label',mensal?'Mês anterior':'Semana anterior');
@@ -529,7 +530,10 @@ function controles() {
   for (const b of document.querySelectorAll('[data-formato]')) b.addEventListener('click',()=>{state.formato=b.dataset.formato;render();});
   for (const b of document.querySelectorAll('[data-modo]')) b.addEventListener('click',()=>{state.modo=b.dataset.modo;render();});
   for (const [id,n] of [['anterior',-1],['proximo',1]]) $('#'+id).addEventListener('click',()=>{
-    if(state.modo==='Semana') {state.inicioSemana=dataMais(state.inicioSemana,n*7);state.mes=state.inicioSemana.slice(0,7);}
+    if(state.modo==='Semana') {
+      state.inicioSemana=dataMais(state.inicioSemana,n*7);
+      if(state.mes<state.inicioSemana.slice(0,7)||state.mes>dataMais(state.inicioSemana,6).slice(0,7))state.mes=dataMais(state.inicioSemana,3).slice(0,7);
+    }
     else {const date=new Date(state.mes+'-01T12:00:00Z');date.setUTCMonth(date.getUTCMonth()+n);state.mes=date.toISOString().slice(0,7);state.inicioSemana=layout.segundaDaSemana(state.mes+'-01');}
     render();
   });
