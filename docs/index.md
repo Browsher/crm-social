@@ -4,7 +4,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 ## Ordem de leitura
 
-Manutenção atual: **versões de páginas e cenas**, autorizada sem nova feature Spec Kit, implementada/testada localmente; [uso](../README.md#versões-de-páginas-e-cenas), [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). **Pronta para publicar** integrada pelo [PR #21](https://github.com/Browsher/crm-social/pull/21); o autor informou 001–004 concluídas na main em 08/10/2026. Os registros abaixo preservam as rodadas históricas. A integração desta correção exige gate/review do head final; a 005 permanece no backlog até esse merge.
+Estado atual em 08/10/2026: versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`; [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). Pronta integrada pelo PR #21; 001–004 concluídas na main conforme o autor. Trabalho atual: [005 — Prévias de imagens](#feature-005--prévias-de-imagens), implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. As 21 tarefas foram aprovadas pelo autor em 08/10 após a parada inicial e estão concluídas; T002 confirmada pelo autor nessa data, sem teste de acesso real pelo agente. Constituição 1.2.0 aplicada na branch. [Evidência, entrega e checks/review por fonte](../specs/005-previas-imagens/validacao.md). Os demais registros preservam as rodadas e numeração históricas.
 
 Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
 
@@ -19,10 +19,10 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | Documento | Para que serve |
 | --- | --- |
 | [README](../README.md) | Apresentação, estado e comandos reais |
-| [ROADMAP](../ROADMAP.md) | Seis features do v1 e v2 visual ilustrativo |
+| [ROADMAP](../ROADMAP.md) | Entregas do v1, 005 implementada/testada na branch e backlog futuro/v2 ilustrativo |
 | [AGENTS](../AGENTS.md) | Regras locais e bloco gerenciado preservado |
 | [CLAUDE](../CLAUDE.md) | Importador das instruções canônicas; não é outra regra de produto |
-| [Constituição 1.1.0](../.specify/memory/constitution.md) | Princípios e limites; emenda VI aprovada/aplicada em05/10 |
+| [Constituição](../.specify/memory/constitution.md) | 1.2.0 aprovada/aplicada na 005 em 08/10; integração acompanhada no PR #23; preserva a emenda 1.1.0 da leitura de planilhas |
 | [Regra curta de estrutura](../.claude/rules/project-structure.md) | EntryPoints/pastas/imports/testes observados, até 60 linhas |
 | [architecture.md](architecture.md) | Mapa de módulos/imports, persistência, rotas/env e dívidas |
 | [Este índice](index.md) | Todos os documentos autorais do projeto e referências de ferramenta |
@@ -31,7 +31,8 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 
 | Documento | Código explicado |
 | --- | --- |
-| [Google](modules/google.md) | JWT/fetch nativos, configuração externa e token em memória |
+| [Google](modules/google.md) | JWT/fetch nativos, Sheets/Drive readonly por finalidade e tokens separados em RAM |
+| [Mídia](modules/midia.md) | src/midia.cjs; resolução NTV, assinatura/tamanho/hash, cache privado e fingerprint final |
 | [Coleta](modules/coleta.md) | Seis grades obrigatórias, Meses/Pautas opcionais independentes, duas leituras, metadados/hashes e datas |
 | [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, allowlist compartilhada de campos opcionais, Meses/quatro e Pautas/doze opcionais, normalização/hash e origem física |
 | [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
@@ -40,9 +41,9 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
 | [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/pacote de publicação/quadro e cópias dos mínimos/opcionais capturados para seis tabelas e Meses/Pautas opcionais; origem semanal e Histórico confirmado |
 | [Pautas](modules/pautas.md) | src/pautas.cjs; identidade/calendário, duplicatas e origem semanal por ID/marca/início, sem inferência ou I/O |
-| [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, quatro estáticos e Host/Origin |
+| [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, mídia por ID interno, quatro estáticos e guardas de origem |
 | [Iniciador Windows](modules/iniciador.md) | Abrir CRM.cmd por duplo clique, reabertura por GET local e sucesso sem pause; Iniciar CRM.ps1, Node existente, processo oculto, confirmação, retorno e logs privados |
-| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça, Pronta com pacote/legenda/cópia local e tema claro/escuro local |
+| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça, Pronta com pacote/legenda/cópia local e tema claro/escuro local; galeria sob demanda, ampliação e fallback005 |
 
 ## Feature 001 canônica
 
@@ -91,6 +92,25 @@ T021 demonstrada; implementação, provas sintéticas e resultados reais sanitiz
 
 Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: gate Windows com 322 PASS sem pulos nas cinco camadas, cobertura 98,3871%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A. [Relatório local da integração](reports/003-integracao-t021-local-gate.json); resultados anteriores são históricos. Código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15); o fechamento documental exige novos checks/review. Evidência na [validação da 003](../specs/003-planejamento-mensal/validacao.md). Objetivo definido usa cor principal; pautas restantes usam +N pautas/+1 pauta. T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real ainda não comprovado. Essa orientação pertence ao fechamento da 003; a 004 foi autorizada em 07/10 e está descrita abaixo.
 
+## Feature 005 — Prévias de imagens
+
+Implementada/testada localmente: galeria e ampliação das imagens vinculadas à peça aberta, com leitura Drive sob demanda pelo servidor e cache privado. A geração de 21 tarefas provocou a parada inicial; o autor aprovou todas em 08/10/2026. 21/21 tarefas concluídas; o autor confirmou em 08/10 a pasta Produções compartilhada como Leitor (T002), sem acesso real pelo agente. Gate Windows da fonte `4521975`: 578 PASS, sem pulos locais; 12 screenshots 4:5 atuais dessa fonte inspecionados. Rodadas anteriores permanecem históricas. Entrega, integração e checks/review por head no PR #23; merge/exclusão da branch autorizados após gate/review aprovados no head final.
+
+| Documento | Uso |
+| --- | --- |
+| [Spec](../specs/005-previas-imagens/spec.md) | Valor, fronteiras, falhas e critérios de aceite |
+| [Plano](../specs/005-previas-imagens/plan.md) | Solução implementada, interfaces, fases e limites |
+| [Pesquisa](../specs/005-previas-imagens/research.md) | Decisões, justificativas, alternativas e fontes oficiais |
+| [Modelo](../specs/005-previas-imagens/data-model.md) | Referências autorizadas, seleção da galeria, bytes e cache |
+| [Contrato de mídia](../specs/005-previas-imagens/contracts/midia.md) | GET local por ID interno, guardas, status e limites de bytes/transporte |
+| [Quickstart](../specs/005-previas-imagens/quickstart.md) | Preparação pendente do autor e repetição dos ensaios sintéticos |
+| [Checklist](../specs/005-previas-imagens/checklists/requirements.md) | Qualidade da especificação; não comprova implementação |
+| [Tarefas](../specs/005-previas-imagens/tasks.md) | 21 tarefas aprovadas após a parada inicial; rastreabilidade, dependências e estado de execução |
+| [Análise independente](../specs/005-previas-imagens/analysis.md) | Pesquisa/revisão documental do planejamento, com aprovação posterior das 21 tarefas; não substitui teste do código |
+
+| [Validação](../specs/005-previas-imagens/validacao.md) | Fontes, RED/GREEN, cinco camadas, gate, revisão e limites |
+| [Gate local](reports/005-local-gate.json) | Relatório Windows da fonte de código/testes registrada na validação |
+
 ## Design e evidência visual
 
 | Documento / artefato | Para que serve |
@@ -98,6 +118,7 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 | [Telas decididas](design/telas.md) | Decisões do autor e nota de implementação parcial |
 | [Screenshots reais/LEIA-ME](design/screenshots/LEIA-ME.md) | Aplicação em execução somente com dados fictícios; origem/limites |
 | [Pronta para publicar — oito screenshots](design/screenshots/LEIA-ME.md#pronta-para-publicar) | Quadro e gaveta, dois temas, 1440/390; fixture sintética, clipboard em memória e estado em TEMP |
+| [005 — 12 screenshots de prévias](design/screenshots/LEIA-ME.md#005--prévias-de-imagens) | Galeria, ampliação e indisponível, dois temas e 1440/390; imagens geradas sinteticamente, servidor/cliente falso e TEMP |
 | [Versões de páginas e cenas — quatro screenshots](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas) | Gaveta Pronta expandida, texto v3 com imagens de versões distintas, dois temas e 1440/390; fixture sintética/TEMP |
 | [Tema claro/escuro — 16 screenshots](design/screenshots/LEIA-ME.md#tema-claro-e-escuro) | Quatro telas, dois temas, 1440/390; fixtures em TEMP, script reproduzível, provas sintéticas locais; tema integrado pelo PR #18 |
 | [Planejamento 1440](design/screenshots/001-planejamento-1440.png) / [390](design/screenshots/001-planejamento-390.png) | Capturas sintéticas desktop/mobile |

@@ -6,10 +6,11 @@ const {criarClienteGoogle,MOTIVOS}=require('./google.cjs');
 const {coletarCaptura}=require('./coleta.cjs');
 const {projetarVisao}=require('./projecao.cjs');
 const {carregarMapaQuadro}=require('./quadro-config.cjs');
+const {criarServicoMidia}=require('./midia.cjs');
 const STATIC=Object.freeze({'/':['index.html','text/html; charset=utf-8'],'/app.js':['app.js','text/javascript; charset=utf-8'],'/theme.js':['theme.js','text/javascript; charset=utf-8'],'/styles.css':['styles.css','text/css; charset=utf-8']});
 function enviar(req,res,status,type,body,headers={}) {
   res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
-    'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",...headers});
+    'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",...headers});
   res.end(req.method==='HEAD'?'':body);
 }
 function permitida(req,port) {
@@ -48,11 +49,33 @@ async function postAtualizar(req,res,atualizar){
     return enviar(req,res,locked?409:503,'application/json; charset=utf-8',JSON.stringify({resultado:'falhou',mensagem:locked?'Importação em andamento; tente novamente':'Atualização indisponível; última captura não foi alterada',categoria:null,registrada:false,avisos:error?.avisos?.length?['falha ao liberar a trava; confira o estado local']:[]}));
   }
 }
-function criarServidor({dataDir=path.resolve(__dirname,'../data'),port=4318,webDir=path.join(__dirname,'web'),quadroConfigPath=path.resolve(__dirname,'../config/quadro-etapas.json'),atualizar=()=>atualizarCaptura(dataDir,()=>coletarCaptura(criarClienteGoogle()))}={}) {
+function idMidia(url) {
+  if(!url.startsWith('/api/midia/')||url.includes('?'))return null;
+  try {
+    const id=decodeURIComponent(url.slice('/api/midia/'.length));
+    return !id||id==='.'||id==='..'||/[\\/:\u0000-\u001f\u007f]/.test(id)?null:id;
+  } catch {return null;}
+}
+async function getMidia(req,res,port,servico) {
+  const headers={'Cross-Origin-Resource-Policy':'same-origin'};
+  const erro=(status,extras={})=>enviar(req,res,status,'text/plain; charset=utf-8','Prévia indisponível',{...headers,...extras});
+  if(!permitida(req,port)||['cross-site','same-site'].includes(req.headers['sec-fetch-site']))return erro(403);
+  if(req.method!=='GET')return erro(405,{Allow:'GET'});
+  const id=idMidia(req.url);
+  if(id===null)return erro(400);
+  try {
+    const {bytes,contentType}=await servico().obter(id);
+    return enviar(req,res,200,contentType,bytes,headers);
+  } catch(error) {return erro([404,422,503].includes(error?.status)?error.status:503);}
+}
+function criarServidor({dataDir=path.resolve(__dirname,'../data'),port=4318,webDir=path.join(__dirname,'web'),quadroConfigPath=path.resolve(__dirname,'../config/quadro-etapas.json'),atualizar=()=>atualizarCaptura(dataDir,()=>coletarCaptura(criarClienteGoogle())),midia}={}) {
   const mapa=carregarMapaQuadro(quadroConfigPath);
+  const servicoMidia=()=>midia??=criarServicoMidia({dataDir});
   const server=http.createServer((req,res)=>{
-    if (!permitida(req,server.address()?.port ?? port)) return enviar(req,res,403,'text/plain; charset=utf-8','Origem local obrigatória');
     const route=req.url.split('?')[0];
+    const porta=server.address()?.port ?? port;
+    if(route==='/api/midia'||route.startsWith('/api/midia/'))return getMidia(req,res,porta,servicoMidia);
+    if (!permitida(req,porta)) return enviar(req,res,403,'text/plain; charset=utf-8','Origem local obrigatória');
     if(route==='/api/atualizar'){
       if(req.method!=='POST')return enviar(req,res,405,'text/plain; charset=utf-8','Método não permitido',{Allow:'POST'});
       return postAtualizar(req,res,atualizar);

@@ -2,6 +2,25 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
+## 005 — Prévias de imagens
+
+Doze PNG sintéticos atualizados em 08/10/2026 mostram galeria, imagem ampliada e falha localizada em Pronta, nos temas claro/escuro e larguras 1440/390. Fonte do código/testes/PNGs: `452197514b8d10a14bcc466e8bc83bfdfb601e95`; o coordenador inspecionou todos. As cinco páginas têm texto v3 e imagens v2/v1/v1/v2/v3, geradas por [previas-fixtures.cjs](../../../tests/previas-fixtures.cjs) como PNG 1080×1350. Miniaturas usam caixas 4:5 com contain; a ampliação mantém a imagem inteira, proporcional e centralizada, sem corte inferior. Não há conteúdo real. Este conjunto substitui os 12 PNG anteriores da fonte `392e109`; a rodada original permanece histórica na validação.
+
+| Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Galeria em Pronta | [Abrir](previas-light-galeria-1440.png) | [Abrir](previas-light-galeria-390.png) | [Abrir](previas-dark-galeria-1440.png) | [Abrir](previas-dark-galeria-390.png) |
+| Imagem ampliada | [Abrir](previas-light-ampliada-1440.png) | [Abrir](previas-light-ampliada-390.png) | [Abrir](previas-dark-ampliada-1440.png) | [Abrir](previas-dark-ampliada-390.png) |
+| Prévia indisponível | [Abrir](previas-light-indisponivel-1440.png) | [Abrir](previas-light-indisponivel-390.png) | [Abrir](previas-dark-indisponivel-1440.png) | [Abrir](previas-dark-indisponivel-390.png) |
+
+Reprodução opt-in com Node/Playwright existentes configurados, fora de CI=true:
+
+```powershell
+$env:CRM_SCREENSHOTS_PREVIAS = '1'
+& $env:CRM_NODE_PATH --test tests/previas-interface.test.cjs
+```
+
+Testes comuns não escrevem PNG. Servidor/serviço reais em TEMP e porta efêmera, cliente nativo com transporte falso e requisições externas bloqueadas. A prova principal não contorna a rota local de mídia. O conjunto acompanha **22 testes UI PASS locais**, incluindo dimensões naturais 1080×1350, proporção, centro, bounds da imagem/diálogo/Fechar e ausência de rolagem em 1440/390 e alturas reduzidas 1440×720/390×640, nos dois temas; preserva última imagem alcançável em 390, foco/Escape e erros de transporte/tipo/hash/decodificação. Não demonstra acesso real, download operacional ou conteúdo do ZIP. T002 de compartilhamento foi confirmada pelo autor em 08/10, sem teste de acesso real pelo agente. [Validação, checks/review e integração por fonte](../../../specs/005-previas-imagens/validacao.md); implementada/testada no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Galerias históricas abaixo preservadas.
+
 ## Versões de páginas e cenas
 
 Quatro PNG de 08/10/2026 mostram a gaveta Pronta com **Páginas e cenas** expandido nos temas claro/escuro e larguras 1440/390. Fonte da geração original: `7b0ab46a44bfb14d80d6dffbab6ec78b06c028da`; os quatro arquivos permanecem inalterados na rodada de código `af403ae778bfa7eda711f853f00aa5bc1aacdbc0`. O coordenador inspecionou os quatro arquivos finais. A fixture [tests/versoes-fixtures.cjs](../../../tests/versoes-fixtures.cjs) contém cinco páginas de texto v3 com imagens v2/v1/v1/v2/v3 numa produção v8; também contém cena v3 com imagens v1/v2 e vídeo v2 numa produção v9. As imagens mostram as páginas atuais e seus rótulos **imagem vN**; a cena, o rótulo **imagem: versão a confirmar** para versão inválida/vazia e os demais casos de borda são conferidos pelos testes.
@@ -17,7 +36,7 @@ $env:CRM_SCREENSHOTS_VERSOES = '1'
 & $env:CRM_NODE_PATH --test --test-name-pattern='Versões gaveta pronta' tests/versoes-interface.test.cjs
 ```
 
-Somente esses quatro cenários gravam `versoes-*.png` quando a variável vale `1`; os testes comuns não gravam imagens. Servidor/estado em TEMP, porta efêmera e relógio fixo sintético; requisições externas são bloqueadas. Não houve leitura real, download, publicação ou acesso ao CRM privado. [Validação e limites](../../reports/versoes-unidades-validacao.md); implementação/testes locais, integração condicionada ao gate/review do head final. As demais galerias abaixo preservam suas rodadas históricas.
+Somente esses quatro cenários gravam `versoes-*.png` quando a variável vale `1`; os testes comuns não gravam imagens. Servidor/estado em TEMP, porta efêmera e relógio fixo sintético; requisições externas são bloqueadas. Não houve leitura real, download, publicação ou acesso ao CRM privado. [Validação e limites](../../reports/versoes-unidades-validacao.md); integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review. As demais galerias abaixo preservam suas rodadas históricas.
 
 ## Tema claro e escuro
 

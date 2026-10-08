@@ -1,10 +1,10 @@
-# Validação local — versões de páginas e cenas
+# Validação e integração — versões de páginas e cenas
 
-Como um texto revisado que conserva sua fotografia, esta correção permite consultar mídia reaproveitada sem tratá-la como ausente. Manutenção pequena autorizada em 08/10/2026, sem nova feature/Spec Kit; implementada e testada localmente. A integração depende do gate/review do head final; a 005 permanece no backlog até esse merge.
+Como um texto revisado que conserva sua fotografia, esta correção permite consultar mídia reaproveitada sem tratá-la como ausente. Manutenção pequena autorizada em 08/10/2026, sem nova feature/Spec Kit; implementada, testada e integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22) nessa data, merge `b90980a15fad653937fd024ac3c9bb2738e9d99a`. A 005 iniciou somente seu planejamento após esse merge; suas provas futuras não pertencem a esta manutenção.
 
 ## Fonte e comportamento
 
-Base main: `5b296938dde98ff9f5f3b240ff68972870e76b9d`, que integra Pronta pelo [PR #21](https://github.com/Browsher/crm-social/pull/21). Fonte vigente de código/testes: `af403ae778bfa7eda711f853f00aa5bc1aacdbc0`, branch `codex/versoes-paginas-cenas`. A rodada inicial usou `7b0ab46a44bfb14d80d6dffbab6ec78b06c028da`, fonte da geração dos quatro PNG, que permanecem inalterados. A sincronização documental posterior não atribui uma nova execução Windows ao head documental. Constituição 1.1.0 preservada.
+Base main: `5b296938dde98ff9f5f3b240ff68972870e76b9d`, que integra Pronta pelo [PR #21](https://github.com/Browsher/crm-social/pull/21). Fonte do gate local final de código/testes: `af403ae778bfa7eda711f853f00aa5bc1aacdbc0`, na então branch `codex/versoes-paginas-cenas`. A rodada inicial usou `7b0ab46a44bfb14d80d6dffbab6ec78b06c028da`, fonte da geração dos quatro PNG, que permanecem inalterados. O head final revisado foi `092d6cb`; a sincronização documental não lhe atribui nova execução Windows. A manutenção preservou a constituição 1.1.0.
 
 | Regra implementada | Fonte e resultado |
 | --- | --- |
@@ -51,9 +51,9 @@ O comando do gate completo, executado em cada rodada antes da respectiva sincron
 & $env:CRM_NODE_PATH tools/quality-gate.mjs
 ```
 
-## Rodada vigente — fonte af403ae
+## Rodada local final — fonte af403ae
 
-O ajuste acrescenta `adicionarVersaoImagem` e caracteriza dois limites existentes: índice sem flag de retirada e revisões vinculadas à versão da produção. A revisão técnica independente aprovou `af403ae` sem achados; o head documental final continua exigindo seus próprios checks/review antes da integração.
+O ajuste acrescenta `adicionarVersaoImagem` e caracteriza dois limites existentes: índice sem flag de retirada e revisões vinculadas à versão da produção. A revisão técnica independente aprovou `af403ae` sem achados. Os checks e a revisão do head final constam separadamente na integração abaixo.
 
 | Verificação informada pelo coordenador | Resultado |
 | --- | --- |
@@ -69,6 +69,20 @@ O ajuste acrescenta `adicionarVersaoImagem` e caracteriza dois limites existente
 
 O [relatório sanitizado vigente do gate](versoes-unidades-local-gate.json) registra execução em `2026-10-08T14:39:42.690Z`, fonte `af403ae778bfa7eda711f853f00aa5bc1aacdbc0`, seis hashes de arquivos, hash do relatório original, agregados e todos os 20 avisos. Oito funções destacadas têm complexidade entre 1 e 11: `escopoArquivo` 1, `arquivoLigado` 4, `versoesUnidades` 5, `unidades` 2, `pendenciasMidia` 5, `adicionarVersaoImagem` 4, `unidadeDetalhe` 11 e `secaoUnidades` 10. UI permanece fora do LCOV; CI Linux conserva os pulos de UI/PowerShell existentes. Não houve nova execução de testes ou gate durante esta sincronização documental.
 
+## Integração — PR #22, 08/10/2026
+
+| Verificação informada pelo coordenador | Resultado |
+| --- | --- |
+| Head final | `092d6cb` |
+| [CI estrito — execução 37795153927](https://github.com/Browsher/crm-social/actions/runs/37795153927) | SUCCESS; Semgrep PASS; `baselineUpdated=false` |
+| [Review remoto — execução 37795153635](https://github.com/Browsher/crm-social/actions/runs/37795153635) | SUCCESS; comentário `6062479615` lido e triado |
+| Revisão independente do head final | Aprovada, sem Critical, achados de segurança ou regressão |
+| Merge | [PR #22](https://github.com/Browsher/crm-social/pull/22), commit `b90980a15fad653937fd024ac3c9bb2738e9d99a` |
+| Autoria | `204295625+Browsher@users.noreply.github.com`, sem coautoria |
+| Branch da manutenção | Excluída localmente e no remoto após o merge |
+
+No comentário remoto, I1 sugeriu aceitar outro ID da mesma unidade por índice. A sugestão foi rejeitada por contrariar a regra humana explícita: o ponteiro exige o ID exato da unidade ou campo de unidade vazio no arquivo; não é uma regressão. I2, sobre a prova de CI, foi resolvido pela execução estrita acima. O sucesso remoto não substitui a prova Windows de 501 PASS nem transforma os pulos Linux de UI/PowerShell em execução dessas camadas.
+
 ## Evidência e limites
 
 [tests/versoes-fixtures.cjs](../../tests/versoes-fixtures.cjs) contém exclusivamente registros sintéticos: cinco páginas de texto v3 usam imagens v2/v1/v1/v2/v3 numa produção v8; uma cena v3 usa imagens v1/v2 e vídeo v2 numa produção v9. O texto da fixture menciona mídia aprovada como cenário fictício; a consulta comprova somente o registro e o vínculo, sem inferir aprovação ou bytes.
@@ -83,4 +97,6 @@ Nenhum teste desta manutenção leu a planilha ou o CRM privado, escreveu no Goo
 
 ## Conferência documental
 
-Doc-sync final restrito aos 13 Markdown afetados: estado da manutenção, contrato, projeção/interface, roteiro, índice, galeria e este relatório. A verificação local conferiu 632 links relativos, 63 âncoras e 24 blocos cercados, sem destino ausente, âncora ausente ou cerca aberta. `git diff --check` passou. O diagrama de imports preserva as relações existentes; não há mapa Graphify neste checkout. Código, testes, PNG, JSON do gate, constituição e backlog 005 não foram alterados por esta sincronização.
+O doc-sync anterior à integração foi restrito aos 13 Markdown afetados: estado da manutenção, contrato, projeção/interface, roteiro, índice, galeria e este relatório. A verificação local conferiu 632 links relativos, 63 âncoras e 24 blocos cercados, sem destino ausente, âncora ausente ou cerca aberta. `git diff --check` passou. O diagrama de imports preservou as relações existentes; não havia mapa Graphify neste checkout. Código, testes, PNG, JSON do gate, constituição e backlog 005 não foram alterados por aquela sincronização.
+
+O fechamento após o merge atualiza somente o estado integrado e as provas remotas neste relatório, junto do onboarding/índice e do status planejado da 005. Nenhum teste, gate ou screenshot novo foi executado nessa atualização documental.

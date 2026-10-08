@@ -29,6 +29,7 @@ function abrirDia(data,ids,semanaId=null) {
   if(pecas.length) pecas.push(documentosDoDia(registros));
   $('#dia-pecas').replaceChildren(...origens,...(pecas.length?pecas:[node('p','Nenhuma peça registrada neste dia.','empty')]));
   $('#dia').showModal();
+  $('#dia').querySelectorAll('.peca-acordeao[open]').forEach(iniciarPrevias);
 }
 function rotuloPauta(pauta) {return 'Pauta S'+pauta.semana+' de '+civil(pauta.mes+'-01',{month:'long'});}
 function origemPauta(week) {return week.pautaOrigem?node('p',rotuloPauta(week.pautaOrigem),'pauta-origin'):null;}
@@ -84,6 +85,70 @@ function linkArquivo(a,label) {
   const href=urlAutorizada(a?.url);
   if(!href) return null;
   const link=node('a',label);link.href=href;link.target='_blank';link.rel='noopener noreferrer';return link;
+}
+function ordemId(a,b) {return a<b?-1:a>b?1:0;}
+function imagensDasUnidades(p,tipo) {
+  const pagina=tipo==='paginas',key=pagina?'pagina_id':'cena_id';
+  const unidades=p.detalhes[tipo].filter(u=>u.vigente).sort((a,b)=>a.indice-b.indice||ordemId(a[key],b[key]));
+  return unidades.flatMap(u=>u.arquivos.slice(0,pagina?1:2).map((arquivo,index)=>({arquivo,
+    contexto:pagina?'Página '+u.indice:'Cena '+u.indice+' · '+(index===0?'início':'final')}))).filter(posicao=>posicao.arquivo);
+}
+function imagensDaPeca(p) {
+  const d=p.detalhes;
+  if(d.paginas.length||d.cenas.length)return [...imagensDasUnidades(p,'paginas'),...imagensDasUnidades(p,'cenas')];
+  if(p.formato!=='Imagem'||!Number.isSafeInteger(p.versao)||p.versao<=0)return [];
+  return d.arquivos.filter(a=>a.tipo==='imagem'&&a.versao===p.versao&&a.producao_id===p.producao_id)
+    .sort((a,b)=>ordemId(a.arquivo_id,b.arquivo_id)).map((arquivo,index)=>({arquivo,contexto:'Imagem '+(index+1)}));
+}
+let focoPrevia=null;
+function visualizadorPrevia() {
+  if($('#previa-ampliada'))return $('#previa-ampliada');
+  const dialog=node('dialog',undefined,'preview-viewer'),header=node('header',undefined,'preview-viewer-top');
+  const title=node('h2'),close=node('button','Fechar imagem'),img=node('img');
+  dialog.id='previa-ampliada';close.type='button';
+  close.addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('close',()=>{if(focoPrevia?.isConnected)focoPrevia.focus({preventScroll:true});focoPrevia=null;});
+  header.append(title,close);dialog.append(header,img);document.body.append(dialog);return dialog;
+}
+function ampliarPrevia(button,img,contexto) {
+  if(button.disabled||!img.complete||img.naturalWidth===0)return;
+  const viewer=visualizadorPrevia(),grande=viewer.querySelector('img');
+  focoPrevia=button;viewer.setAttribute('aria-label',contexto);viewer.querySelector('h2').textContent=contexto;
+  grande.alt=contexto;grande.src=img.getAttribute('src');viewer.showModal();
+}
+function previaPosicao({arquivo,contexto}) {
+  const article=node('article',undefined,'preview-item'),button=node('button',undefined,'preview-button'),img=node('img');
+  const status=node('span','Carregando prévia…','preview-status');
+  article.dataset.previaArquivo=arquivo.arquivo_id;article.dataset.previaEstado='nao-solicitada';
+  button.type='button';button.disabled=true;button.setAttribute('aria-label','Ampliar imagem — '+contexto);
+  button.addEventListener('click',()=>ampliarPrevia(button,img,contexto));
+  img.alt=contexto;img.addEventListener('load',()=>{
+    article.dataset.previaEstado='disponivel';article.removeAttribute('aria-busy');button.disabled=false;status.hidden=true;
+  });
+  img.addEventListener('error',()=>{
+    article.dataset.previaEstado='indisponivel';article.removeAttribute('aria-busy');button.disabled=true;
+    img.hidden=true;status.hidden=false;status.textContent='Prévia indisponível';
+  });
+  button.append(img,status);article.append(button,node('p',contexto,'preview-context'));
+  const versao=Number.isSafeInteger(arquivo.versao)&&arquivo.versao>0?'imagem v'+arquivo.versao:'imagem: versão a confirmar';
+  article.append(node('small',versao,'preview-version'));
+  const link=linkArquivo(arquivo,'Abrir no Drive/Docs');if(link)article.append(link);
+  return article;
+}
+function galeriaPrevias(p) {
+  const posicoes=imagensDaPeca(p);
+  if(!posicoes.length)return null;
+  const gallery=node('div',undefined,'preview-gallery');gallery.dataset.previas='';gallery.setAttribute('aria-label','Imagens da peça');
+  gallery.append(...posicoes.map(previaPosicao));return gallery;
+}
+function iniciarPrevias(peca) {
+  if(!$('#dia').open||!peca.open)return;
+  for(const posicao of peca.querySelectorAll('[data-previa-arquivo]')) {
+    if(posicao.dataset.previaEstado!=='nao-solicitada')continue;
+    posicao.dataset.previaEstado='carregando';
+    posicao.setAttribute('aria-busy','true');
+    posicao.querySelector('img').src='/api/midia/'+encodeURIComponent(posicao.dataset.previaArquivo);
+  }
 }
 function arquivoRegistro(a) {
   const box=node('article',undefined,'file-record');
@@ -225,7 +290,9 @@ function prontaParaPublicar(p) {
     try {await navigator.clipboard.writeText(texto);status.textContent='Legenda copiada.';}
     catch {status.textContent='Não foi possível copiar. Selecione e copie o texto acima.';}
   });
-  section.append(copy,status);return section;
+  section.append(copy,status);
+  const gallery=galeriaPrevias(p);if(gallery)section.append(gallery);
+  return section;
 }
 function detalhesUnidades(p) {
   const pronta=p.quadro.coluna==='Pronta',sections=[];
@@ -242,6 +309,7 @@ function acordeaoPeca(p,aberto) {
   const body=node('div',undefined,'piece-body');
   if(p.quadro.coluna==='Pronta')body.append(prontaParaPublicar(p));
   body.append(fatosPeca(p));
+  if(p.quadro.coluna!=='Pronta') {const gallery=galeriaPrevias(p);if(gallery)body.append(gallery);}
   if(d.publicacaoRegistrada) body.append(node('p','Publicação: '+valor(p.publicado_em)+' · registro explícito','publication'));
   if(d.revisoes.vigentes.length) body.append(secaoRevisoes(d.revisoes.vigentes,'vigentes'));
   body.append(...detalhesUnidades(p));
@@ -250,7 +318,7 @@ function acordeaoPeca(p,aberto) {
   for(const grupo of ['resolvidas','anteriores','ambiguas']) if(d.revisoes[grupo].length) historico.append(secaoRevisoes(d.revisoes[grupo],grupo));
   if(historico.children.length>1) body.append(historico);
   if(d.avisos.length) body.append(avisosPeca(p));
-  el.append(summary,body);return el;
+  el.append(summary,body);el.addEventListener('toggle',()=>iniciarPrevias(el));return el;
 }
 function cartao(p) {
   const el=node('button',undefined,'post '+p.formato.toLowerCase());

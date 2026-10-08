@@ -73,7 +73,7 @@ test('Tema: rota GET/HEAD possui MIME JavaScript, CSP intacta e guarda local',as
   const origin=await servidor(t),response=await fetch(origin+'/theme.js');
   assert.equal(response.status,200);
   assert.equal(response.headers.get('content-type'),'text/javascript; charset=utf-8');
-  assert.equal(response.headers.get('content-security-policy'),"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
+  assert.equal(response.headers.get('content-security-policy'),"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
   assert.equal(response.headers.get('x-content-type-options'),'nosniff');
   assert.ok((await response.text()).length>0);
   const head=await fetch(origin+'/theme.js',{method:'HEAD'});

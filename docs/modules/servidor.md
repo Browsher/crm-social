@@ -18,8 +18,9 @@ Servidor e regressões de estado/projeção implementados e verificados localmen
 | `port` | 4318; porta 0 permitida para teste |
 | `webDir` | `src/web/`; argumento confiável para fixture de estáticos em TEMP |
 | `quadroConfigPath` | `config/quadro-etapas.json`; carregado e validado antes de criar servidor |
+| `midia` | Serviço confiável injetável com obter(arquivoId); padrão lazy cria o serviço de mídia local |
 
-O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser inteiro de 0 a 65535. Diretórios não são selecionados por requisição HTTP. Imports: `node:http`, `node:fs`, `node:path`, [snapshot](snapshot.md), [projeção](projecao.md) [configuração](quadro-config.md), [cliente Google](google.md) e [coleta](coleta.md). O módulo exporta `criarServidor` sem iniciar listen; o ponto de entrada inicia exclusivamente em `127.0.0.1`. No POST, o cliente lê as variáveis privadas descritas em [Google](google.md). GET e inicialização não carregam chave.
+O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser inteiro de 0 a 65535. Diretórios não são selecionados por requisição HTTP. Imports: `node:http`, `node:fs`, `node:path`, [snapshot](snapshot.md), [projeção](projecao.md), [configuração](quadro-config.md), [cliente Google](google.md), [coleta](coleta.md) e [mídia](midia.md). O módulo exporta `criarServidor` sem iniciar listen; o ponto de entrada inicia exclusivamente em `127.0.0.1`. O POST usa as variáveis privadas de Sheets; GET /api/midia pode carregar a credencial Drive no primeiro cache miss. GET /api/visao e inicialização permanecem locais, sem chave ou Google.
 
 ## Rotas e respostas reais
 
@@ -31,19 +32,20 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | GET /styles.css | CSS da aplicação |
 | POST /api/atualizar | JSON {} até1KiB, Origin obrigatório; coleta injetável, 200/422/503/409 conforme contrato |
 | GET /api/visao | 200, JSON de `projetarVisao(lerEstado(dataDir), nowIso, mapa)`; ausência de captura é resultado estruturado |
-| HEAD nas rotas de consulta | Mesmos controles/tipo/status, sem corpo; /api/atualizar só aceita POST |
+| GET /api/midia/ID-interno | Bytes PNG/JPEG/WEBP autorizados pela captura vigente; falhas 400/403/404/405/422/503 fixas, conforme contrato005 |
+| HEAD nos estáticos e /api/visao | Mesmos controles/tipo/status, sem corpo; /api/atualizar só aceita POST e /api/midia só GET |
 | GET/HEAD de qualquer outra rota | 404, incluindo privados, configuração, importação e traversal |
-| Outros métodos, com Host/Origin válidos | 405; `Allow: POST` na atualização e `GET, HEAD` nas demais; inclusive OPTIONS |
+| Outros métodos, com Host/Origin válidos | 405; `Allow: POST` na atualização, `GET` na mídia e `GET, HEAD` nas demais; inclusive OPTIONS |
 | Host/Origin recusados | 403, antes da avaliação de método/rota |
 | Estado/recibo confirmado inválido ou identidade/vínculo recusado na projeção | 503 genérico, sem alteração da última captura ou reparo dos arquivos |
 
-A allowlist de `STATIC` contém quatro arquivos explícitos: HTML, aplicativo, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A query é descartada ao escolher a rota; não altera configuração ou caminho. URL literal/codificada de traversal não corresponde às seis rotas.
+A allowlist de `STATIC` contém quatro arquivos explícitos: HTML, aplicativo, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A escolha das rotas existentes descarta query sem alterar configuração/caminho; atualização e mídia recusam query no contrato próprio. A mídia é uma rota dinâmica restrita por ID interno; nunca expõe data/ como diretório estático ou proxy genérico.
 
 ## Origem e conteúdo
 
 `permitida` exige Host exatamente `127.0.0.1:<porta real>`; `localhost` é recusado. Na consulta, Origin ausente é permitido; no POST é obrigatório; quando presente, deve ser exatamente `http://127.0.0.1:<porta>`. Não há CORS externo.
 
-Todas as respostas incluem `Cache-Control: no-store`, `X-Content-Type-Options: nosniff` e CSP. A política restringe scripts/estilos/conexões à própria origem e bloqueia imagens, objetos, base externa e incorporação por outro site. Não há carregamento remoto, escrita editorial ou credencial Google no browser. A chave externa é usada somente pelo cliente no servidor.
+Todas as respostas incluem `Cache-Control: no-store`, `X-Content-Type-Options: nosniff` e CSP. A 005 altera somente `img-src 'none'` para `img-src 'self'`: scripts/estilos/conexões continuam na própria origem; objetos, base externa e incorporação por outro site permanecem bloqueados. O navegador obtém imagens somente do servidor local. A chave externa é usada somente pelo cliente no servidor; não há escrita editorial.
 
 A consulta lê e valida ponteiro/recibos/captura a cada GET e gera seleção permitida. O mapa é carregado uma vez ao criar o servidor. A interface tem **Atualizar dados**, que envia POST protegido, promove somente candidata válida e depois relê GET local.
 
@@ -59,4 +61,12 @@ Pegadinhas: `criarServidor` devolve um servidor não iniciado; o chamador deve m
 
 postAtualizar verifica guards antes do callback; não aceita query, campos adicionais ou content-type diferente. respostaAtualizacao publica somente resultado/mensagem/categoria/registrada/avisos fixos. Nenhum dado/configuração bruta na resposta. Callback padrão cria cliente/coletor somente dentro da trava; testes falsos não usam rede. Provas na [validação da 002](../../specs/002-consulta-planilhas/validacao.md).
 
-Sem as variáveis Google, o POST com composição padrão confirma recibo de falha e retorna 503, categoria `configuracao`, `registrada:true`, sem chamar `fetch`; GET continua local. O teste HTTP salva/restaura as variáveis e confere os bytes da captura vigente. Para recusa temporal, a resposta 422/dados repassa somente os dois valores de `MOTIVOS_TEMPO` do snapshot; `motivoResumo` arbitrário continua substituído pelo texto fixo da categoria.
+Sem as variáveis Google, o POST com composição padrão confirma recibo de falha e retorna 503, categoria `configuracao`, `registrada:true`, sem chamar `fetch`; GET /api/visao continua local. O teste HTTP salva/restaura as variáveis e confere os bytes da captura vigente. Para recusa temporal, a resposta 422/dados repassa somente os dois valores de `MOTIVOS_TEMPO` do snapshot; `motivoResumo` arbitrário continua substituído pelo texto fixo da categoria.
+
+## Rota de prévia — 005
+
+`getMidia` aplica Host/Origin e `Sec-Fetch-Site` antes do método, resolução, cache ou cliente. `cross-site`/`same-site` são recusados; ausência, `none` e `same-origin` mantêm as demais guardas. HEAD/outros métodos recebem 405 com Allow GET, sem consultar serviço. O ID é decodificado uma vez; vazio, `.`/`..`, query, `/`, `\`, `:` e controles U+0000–U+001F/U+007F são recusados com 400, inclusive codificados. ID remoto que não corresponde a um ID interno exato resulta 404.
+
+O serviço relê/valida o snapshot e recorta NTV em todo pedido. Resposta 200 usa Content-Type derivado dos bytes; todo erro é texto UTF-8 constante **Prévia indisponível**, sem ID, conta, URL ou mensagem Google. `Cross-Origin-Resource-Policy: same-origin`, no-store/nosniff e CSP acompanham sucesso e falhas; HEAD conserva ausência de corpo. Não há CORS. A captura/recibo não é alterada pela prévia.
+
+[Contrato005](../../specs/005-previas-imagens/contracts/midia.md), [módulo mídia](midia.md) e [tests/midia-http.test.cjs](../../tests/midia-http.test.cjs) documentam todos os status. Testes usam HTTP real em porta efêmera e cliente nativo com transporte falso, com timeout local e conferência byte a byte de capturas/recibos. [Validação](../../specs/005-previas-imagens/validacao.md); integração não autorizada.

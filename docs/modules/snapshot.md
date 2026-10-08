@@ -15,6 +15,8 @@ Persistência e validação dos recibos confirmados implementadas e verificadas 
 
 Não há rota, variável de ambiente ou rede. Imports nativos: fs, path e randomUUID; imports locais: MOTIVOS do [cliente Google](google.md) (somente constantes, sem chamada de rede), [validação](captura.md) e `validarIdentidadesNtv` de [triagem](triagem.md). Não importa configuração ou projeção do quadro. `dataDir` é argumento do chamador confiável, não dado de uma requisição.
 
+Na 005, o [serviço de mídia](midia.md) também usa `lerEstado`, somente leitura, antes e depois de cache/download. A validação de ponteiro, capturas e recibos permanece neste módulo; mídia ausente/corrompida não produz recibo ou altera a captura. `data/midias/` é cache descartável pertencente a midia.cjs, separado da autoridade de `atual.json`/capturas/tentativas. Provas de preservação byte a byte em [tests/midia.test.cjs](../../tests/midia.test.cjs) e [tests/midia-http.test.cjs](../../tests/midia-http.test.cjs).
+
 ## Arquivos e autoridade
 
 | Caminho relativo ao diretório privado | Papel |

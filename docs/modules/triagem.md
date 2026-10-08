@@ -15,6 +15,8 @@ Fonte: [src/triagem.cjs](../../src/triagem.cjs). Estado e evidências na [valida
 
 Importa `CAMPOS`, `camposCapturados`, `CAMPOS_MESES`, `CAMPOS_PAUTAS`, `linhaMensal` e `linhaPauta` de [captura](captura.md). Não conhece mapa do quadro, persistência, rotas, variáveis de ambiente ou rede. Recebe a captura normalizada por `validarCaptura`; não altera a entrada.
 
+Na 005, `resolverArquivo` do [serviço de mídia](midia.md) reutiliza `selecionarNtv` sobre o snapshot validado, antes de procurar o ID interno exato em Arquivos. Recorte de produção/semana e guardas de identidade são os mesmos da projeção; a triagem não ganhou rede, regra de MIME ou escritor. Um cache antigo não contorna ausência do registro no recorte NTV vigente. [Testes de regras/serviço](../../tests/midia.test.cjs) e [validação005](../../specs/005-previas-imagens/validacao.md).
+
 ## Promoção e consulta
 
 ```mermaid
