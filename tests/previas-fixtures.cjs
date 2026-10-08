@@ -28,9 +28,11 @@ function imagemPng({width=120,height=90,cor=[66,127,159]}={}) {
 const imagemJpeg=()=>Buffer.from([0xff,0xd8,0xff,0xe0,0,4,0,0,0xff,0xd9]);
 const imagemWebp=()=>Buffer.from([0x52,0x49,0x46,0x46,4,0,0,0,0x57,0x45,0x42,0x50]);
 const sha256=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+const imagensSinteticas=new Map();
 function imagemPorArquivo(arquivoId) {
   const match=/imagem-pagina-(\d+)$/.exec(arquivoId),n=match?Number(match[1]):1;
-  return imagemPng({cor:[(n*39)%190+30,(n*61)%170+35,(n*83)%160+40]});
+  if(!imagensSinteticas.has(n))imagensSinteticas.set(n,imagemPng({width:1080,height:1350,cor:[(n*39)%190+30,(n*61)%170+35,(n*83)%160+40]}));
+  return Buffer.from(imagensSinteticas.get(n));
 }
 function capturaPrevias() {
   const raw=capturaVersoes(),table=raw.tables.Arquivos,headers=table.values[0];

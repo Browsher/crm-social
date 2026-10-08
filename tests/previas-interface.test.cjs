@@ -65,6 +65,31 @@ async function screenshot(page,theme,vista,width) {
   const destination=path.resolve(__dirname,'../docs/design/screenshots');fs.mkdirSync(destination,{recursive:true});
   await page.screenshot({path:path.join(destination,`previas-${theme}-${vista}-${width}.png`),animations:'disabled'});
 }
+async function conferirMiniaturaVertical(position) {
+  const img=position.locator('img'),button=position.getByRole('button'),box=await button.boundingBox();
+  assert.deepEqual(await img.evaluate(node=>[node.naturalWidth,node.naturalHeight]),[1080,1350]);
+  assert.equal(await img.evaluate(node=>getComputedStyle(node).objectFit),'contain');
+  assert.ok(Math.abs(box.width/box.height-4/5)<0.005,`a caixa da miniatura preserva 4:5 (${box.width}×${box.height})`);
+}
+async function conferirAmpliacaoInteira(page,viewer,image) {
+  const [large,dialog,close,viewport]=await Promise.all([image.boundingBox(),viewer.boundingBox(),
+    viewer.getByRole('button',{name:'Fechar imagem',exact:true}).boundingBox(),page.evaluate(()=>{
+      const v=visualViewport;return {left:v?.offsetLeft||0,top:v?.offsetTop||0,width:v?.width||innerWidth,height:v?.height||innerHeight};
+    })]);
+  assert.deepEqual(await image.evaluate(node=>[node.naturalWidth,node.naturalHeight]),[1080,1350]);
+  assert.equal(await image.evaluate(node=>getComputedStyle(node).objectFit),'contain');
+  assert.ok(Math.abs(large.width/large.height-4/5)<0.003,`a imagem ampliada preserva 4:5 (${large.width}×${large.height})`);
+  for(const [name,box] of [['imagem',large],['dialog',dialog],['botão Fechar',close]]) {
+    assert.ok(box.x>=viewport.left-1&&box.y>=viewport.top-1&&box.x+box.width<=viewport.left+viewport.width+1&&
+      box.y+box.height<=viewport.top+viewport.height+1,`${name} deve caber inteiro na visualViewport ${viewport.width}×${viewport.height}`);
+  }
+  assert.ok(Math.abs(dialog.x+dialog.width/2-(viewport.left+viewport.width/2))<=2,'dialog centralizado horizontalmente');
+  assert.ok(Math.abs(dialog.y+dialog.height/2-(viewport.top+viewport.height/2))<=2,'dialog centralizado verticalmente');
+  assert.ok(Math.abs(large.x+large.width/2-(dialog.x+dialog.width/2))<=2,'imagem centralizada horizontalmente no dialog');
+  assert.equal(await viewer.evaluate(node=>node.scrollWidth<=node.clientWidth+1&&node.scrollHeight<=node.clientHeight+1),true,'visualizador sem corte ou rolagem interna');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  return large;
+}
 function arquivoImagem(raw,id,record={}) {
   adicionarRegistro(raw,'Arquivos',{arquivo_id:id,producao_id:'peca-1',semana_id:'semana-01',tipo:'imagem',versao:1,
     id_drive:'drive-sintetico-'+id,sha256:sha256(imagemPorArquivo(id)),url:'https://drive.google.com/file/d/'+id+'/view',...record});
@@ -84,6 +109,7 @@ for(const theme of ['light','dark'])for(const width of [1440,390])test(`Prévias
     assert.equal(await position.locator('img').getAttribute('alt'),'Página '+n);
     assert.equal(await position.locator('img').getAttribute('src'),'/api/midia/imagem-pagina-'+n);
     assert.equal(await position.getByRole('link').getAttribute('href'),'https://drive.google.com/file/d/imagem-sintetica-'+n+'/view');
+    await conferirMiniaturaVertical(position);
   }
   assert.equal(await page.locator('#dia [data-peca="peca-4"]').evaluate(node=>node.open),false);
   assert.equal(await page.locator('#dia [data-peca="peca-4"] img[src]').count(),0);
@@ -190,12 +216,11 @@ for(const theme of ['light','dark'])for(const width of [1440,390])test(`Prévias
   const image=viewer.locator('img');
   assert.equal(await image.getAttribute('src'),'/api/midia/imagem-pagina-1');assert.equal(await image.getAttribute('alt'),'Página 1');
   await page.waitForFunction(()=>{const img=document.querySelector('#previa-ampliada img');return img.complete&&img.naturalWidth>0;});
-  const large=await image.boundingBox();
+  const large=await conferirAmpliacaoInteira(page,viewer,image);
   assert.ok(large.width*large.height>thumbnail.width*thumbnail.height,'a imagem ampliada ocupa área maior que a miniatura');
-  assert.ok(large.x>=0&&large.y>=0&&large.x+large.width<=width+1&&large.y+large.height<=1051);
-  assert.equal(await viewer.evaluate(node=>node.scrollWidth<=node.clientWidth),true);
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await screenshot(page,theme,'ampliada',width);
+  await page.setViewportSize({width,height:width===390?640:720});
+  await conferirAmpliacaoInteira(page,viewer,image);
   await page.keyboard.press('Escape');assert.equal(await viewer.isVisible(),false);assert.equal(await page.locator('#dia').isVisible(),true);
   assert.equal(await button.evaluate(node=>document.activeElement===node),true);
   const fifth=gallery.locator('[data-previa-arquivo="imagem-pagina-5"]').getByRole('button',{name:'Ampliar imagem — Página 5',exact:true});
