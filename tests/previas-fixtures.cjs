@@ -44,8 +44,8 @@ function capturaPrevias() {
 function credencialSintetica(t,{spreadsheet=false}={}) {
   const root=temporario(t),repoRoot=path.join(root,'repo'),file=path.join(root,'credencial-sintetica.json');
   const pair=crypto.generateKeyPairSync('rsa',{modulusLength:2048});fs.mkdirSync(repoRoot);
-  // Montar o formato de teste em runtime; a única chave vem do par RSA recém-gerado.
-  const credentials={type:['service','account'].join('_'),client_email:['leitor-sintetico','example.invalid'].join('@')};
+  // Credencial fictícia: chave RSA efêmera gerada neste teste, gravada só em TEMP; e-mail no domínio reservado .invalid.
+  const credentials={type:'service_account',client_email:'leitor-sintetico@example.invalid'}; // nosemgrep: generic.secrets.security.detected-google-gcm-service-account.detected-google-gcm-service-account
   credentials.private_key=pair.privateKey.export({type:'pkcs8',format:'pem'});
   fs.writeFileSync(file,JSON.stringify(credentials));
   return {env:{CRM_GOOGLE_CREDENTIALS_FILE:file,...(spreadsheet?{CRM_SPREADSHEET_ID:'fonte-sintetica'}:{})},repoRoot,pair,credentials,root};
