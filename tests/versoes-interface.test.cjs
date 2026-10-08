@@ -2,7 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaVersoes}=require('./versoes-fixtures.cjs');
+const {capturaVersoes,mudarPorId}=require('./versoes-fixtures.cjs');
 const {temporario,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
@@ -64,4 +64,15 @@ test('Versões gaveta não mistura página vigente e histórica que compartilham
   assert.equal(await historyV3.locator('[data-pagina="pagina-v3-2"]').isVisible(),true);
   assert.match(await pages.locator('section.version-group[data-versao="4"]').innerText(),/Versão 4 · vigente/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+});
+
+for(const version of ['dois',''])test('Versões gaveta informa versão da imagem a confirmar para '+JSON.stringify(version),{skip},async t=>{
+  const {p}=await abrir(t,{width:390,editar:raw=>mudarPorId(raw,'Arquivos','imagem-pagina-1','versao',version)}),
+    pages=p.locator('[data-unidades="paginas"]'),first=pages.locator('[data-pagina="pagina-v3-1"]');
+  assert.equal(await first.locator('.image-version').innerText(),'imagem: versão a confirmar');
+  assert.doesNotMatch(await first.innerText(),/imagem vdois|imagem vNão informado/);
+  assert.equal(await first.getByRole('link').getAttribute('href'),'https://drive.google.com/file/d/imagem-sintetica-1/view');
+  for(const [n,expected] of [[2,1],[3,1],[4,2],[5,3]]) {
+    assert.equal(await pages.locator('[data-pagina="pagina-v3-'+n+'"] .image-version').innerText(),'imagem v'+expected);
+  }
 });

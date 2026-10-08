@@ -86,6 +86,31 @@ test('Versões vigência usa maior versão por índice e produção, separando p
   assert.deepEqual(scenes.map(u=>[u.cena_id,u.vigente]),[['cena-v1-2',true],['cena-v2-1',false],['cena-v3-1',true]]);
 });
 
+test('Versões página que só existe em versão anterior segue vigente no seu índice sem flag de retirada',()=>{
+  const raw=capturaVersoes();
+  adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-v1-6',producao_id:'peca-3',versao:1,indice:6,titulo:'Sexta página sintética'});
+  const pages=peca(projetar(raw)).detalhes.paginas;
+  assert.equal(pages.length,6);
+  assert.deepEqual(pages.find(u=>u.pagina_id==='pagina-v1-6')?.vigente,true);
+  assert.deepEqual(pages.filter(u=>u.vigente).map(u=>u.indice).sort((a,b)=>a-b),[1,2,3,4,5,6]);
+});
+
+test('Versões vigência de unidades não altera vínculo de revisões à versão da produção',()=>{
+  const raw=capturaVersoes();
+  for(const [id,version] of [['revisao-texto-v3',3],['revisao-producao-v8',8]]) {
+    adicionarRegistro(raw,'Revisoes',{revisao_id:id,producao_id:'peca-3',pagina_id:'pagina-v3-1',versao:version,
+      decisao:'revisar',motivo:'Conferir exemplo sintético',estado_tratamento:'aberta'});
+  }
+  const view=projetar(raw),p=peca(view),revisoes=p.detalhes.revisoes;
+  assert.equal(p.versao,8);assert.equal(p.detalhes.paginas.find(u=>u.pagina_id==='pagina-v3-1').vigente,true);
+  assert.deepEqual(revisoes.vigentes,[]);
+  assert.deepEqual(revisoes.anteriores.map(r=>[r.revisao_id,r.versao,r.pagina_id]),[['revisao-texto-v3',3,'pagina-v3-1']]);
+  assert.deepEqual(revisoes.ambiguas.map(r=>[r.revisao_id,r.versao,r.pagina_id]),[['revisao-producao-v8',8,'pagina-v3-1']]);
+  assert.deepEqual(p.quadro.pendencias.filter(a=>a.tipo==='revisao'),[]);
+  assert.deepEqual(view.planilha.find(tab=>tab.nome==='Revisoes').linhas.map(r=>r.revisao_id),['revisao-texto-v3','revisao-producao-v8']);
+  assert.ok(p.detalhes.avisos.some(a=>a.aba==='Revisoes' && a.campo==='pagina_id' && /Revisão sem vínculo inequívoco/.test(a.motivo)));
+});
+
 test('Versões empates permanecem visíveis e índices ou versões inválidos não são vigentes',()=>{
   const raw=capturaVersoes();
   adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-v3-1-empate',producao_id:'peca-3',versao:3,indice:1});

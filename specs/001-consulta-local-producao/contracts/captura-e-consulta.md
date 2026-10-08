@@ -463,9 +463,18 @@ a versão da produção é inválida; o fallback de produção sem unidades exig
 
 A gaveta separa grupos por vigência e versão: unidades atuais não recebem **impacto
 atual a confirmar**, mesmo com versão distinta da produção. Ao lado de cada página
-com arquivo ligado, mostra **imagem vN** usando a versão original dessa mídia. Histórico,
+com arquivo ligado, mostra **imagem vN** usando a versão inteira positiva dessa mídia;
+versão vazia ou inválida mostra **imagem: versão a confirmar**, sem converter o original. Histórico,
 ponteiros, regras de revisão, seleção de pacote e recolhimento de Pronta permanecem
 distintos. Não há migração de captura, nova dependência, rota ou operação remota.
+
+Limites: não existe sinal de retirada de um índice. Se ele aparece somente numa versão
+anterior ainda presente na captura, seu maior registro continua vigente; não inferir exclusão
+pela quantidade de unidades de outro índice/versão. Revisões conservam o contrato próprio
+de versão da produção: numa produção v8 com página vigente v3, revisão v3 dessa página
+fica em anteriores; revisão v8 ligada a essa página v3 fica ambígua. Nenhuma delas gera
+pendência vigente de revisão no quadro, e ambas continuam disponíveis nos detalhes/Histórico.
+Essa limitação preexistente é fixada em teste; a vigência das unidades não redefine a das revisões.
 
 [Validação local e limites](../../../docs/reports/versoes-unidades-validacao.md) e
 [quatro imagens sintéticas](../../../docs/design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas).
