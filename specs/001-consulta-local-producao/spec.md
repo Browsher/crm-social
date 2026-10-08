@@ -112,7 +112,8 @@ com Escape, conferindo as versões e o foco restaurado.
    Cena distingue imagens ausentes/inicial/final e/ou vídeo ausente, sem perder
    os três slots na API; aviso técnico de mídia é agregado por cena, mantendo
    validações de índice/tempo/versão independentes.
-   Página mostra versão, **imagem vN** do arquivo ligado e design novo "A confirmar"
+   Página mostra versão, **imagem vN** do arquivo ligado com versão inteira positiva
+   (vazia/inválida: **imagem: versão a confirmar**) e design novo "A confirmar"
    sem fonte inequívoca. Cada índice inteiro positivo usa a maior versão inteira positiva
    por produção/tipo de unidade como vigente, independentemente de `Produções.versao`;
    todos os empates permanecem e índices/versões inválidos não são vigentes. Grupos
@@ -238,6 +239,11 @@ conforme os limites de normalização e apresentação de URL do contrato.
   reais de mídia em unidades vigentes com índice/versão válidos. Sem unidades vigentes,
   o fallback de ausência de arquivo exige versão válida da produção. Registros e
   avisos permanecem; revisão e pacote seguem seus próprios contratos de versão.
+- Sem flag de retirada de índice, seu maior registro ainda presente na captura continua
+  vigente mesmo se só existir em v1 e outros índices estiverem em v3. Revisões continuam
+  classificadas pela versão da produção: produção v8/página vigente v3 mantém revisão
+  v3 em anteriores e revisão v8 dessa página em ambíguas, sem pendência vigente de
+  revisão no quadro. Ambas permanecem nos detalhes/Histórico.
 
 - Na importação, `completedAt` até 10 minutos à frente do relógio local é aceito; mais que isso recusa a captura como inválida. Captura nova com fim igual ou anterior ao da vigente é desatualizada e recusada. Ambos confirmam recibo com motivo e preservam a vigente. Repetição do mesmo ID/bytes já aceitos continua sem alteração; GET não revalida essa política temporal.
 

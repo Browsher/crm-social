@@ -198,6 +198,8 @@ Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado
   por registro; seu formato não identifica a sequência lógica. Empates preservam todos
   os registros vigentes e inválidos não são vigentes. A UI agrupa por vigência/versão,
   atuais primeiro e históricos recolhidos, inclusive com o mesmo número de versão.
+  Sem flag de retirada de índice, seu maior registro ainda capturado continua vigente,
+  mesmo que só exista numa versão anterior à dos demais índices.
 - Revisão mostra decisão, tratamento, versão/unidade e motivo separados. Resolvido/resolvida
   é histórico cinza; desconhecido não é encerrado. Revisão antiga aberta não reprova
   automaticamente a versão nova; sem vínculo, impacto a confirmar.
@@ -205,6 +207,9 @@ Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado
   Resolução explícita precede a classificação por versão; revisão sem versão/vínculo
   inequívoco é ambígua, outra versão válida é anterior e a versão atual é vigente.
   Tratamento desconhecido conserva a revisão vigente com aviso, sem fabricar encerramento.
+  Essa classificação continua usando a versão da produção: produção v8/página vigente v3
+  mantém revisão v3 em anteriores e revisão v8 dessa página em ambíguas, ambas nos
+  detalhes/Histórico, sem pendência vigente de revisão no quadro.
   IDs originais de revisão/página/cena/arquivo e campos de escopo permanecem na API,
   sem IDs/rótulos técnicos na linha visual nem vínculo inventado. A API conserva avisos com aba/linha física/campo
   e motivo; a gaveta apresenta só quantidade e link para Planilha.
@@ -237,7 +242,8 @@ avisos locais de cada peça afetada, sem mudar as relações ou a captura origin
 
 Ponteiro explícito de unidade exige arquivo da mesma produção; página/cena preenchida
 no arquivo também precisa corresponder, enquanto unidade vazia é aceita. A versão da
-mídia pode diferir da versão do texto e a página mostra **imagem vN** do arquivo ligado.
+mídia pode diferir da versão do texto e a página mostra **imagem vN** do arquivo ligado
+com versão inteira positiva; vazia/inválida mostra **imagem: versão a confirmar**.
 Versão inválida do arquivo conserva aviso numérico independente sem desfazer esse
 vínculo. Ausência, referência quebrada e escopo incompatível produzem aviso, sem
 substituta. Empates por papel/versão/página/cena e origens JSON inválidas mantêm os

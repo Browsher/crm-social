@@ -141,8 +141,8 @@ As evidências históricas da 001 têm origem, estado e limites registrados na [
 - [Saída histórica de node:test](reports/001-pr6-node-test.txt).
 - [Validação local de Pronta para publicar](reports/pronta-publicar-validacao.md): opcionais, pacote ZIP, clipboard simulado, 33 testes focados (14 UI), gate Windows com 475 PASS/cobertura 94,0568% e limites da evidência.
 - [Relatório sanitizado do gate de Pronta](reports/pronta-publicar-local-gate.json): fonte eb74b23, 12 hashes de arquivos, métricas de seis funções, todos os 20 avisos e agregados completos; baseline preservada.
-- [Validação local de versões de páginas e cenas](reports/versoes-unidades-validacao.md): ponteiros exatos, vigência por índice, empates/inválidos, faltas reais, grupos da gaveta, 22 testes novos e limites da evidência.
-- [Relatório sanitizado do gate de versões](reports/versoes-unidades-local-gate.json): fonte 7b0ab46, seis hashes de arquivos, sete funções destacadas, 497 PASS, cobertura 94,2065%, 490 métricas/máximo 18 e 20 avisos; baseline preservada.
+- [Validação local de versões de páginas e cenas](reports/versoes-unidades-validacao.md): ponteiros exatos, vigência por índice, limites de retirada/revisões, rótulos de imagem, 26 testes de versões sem pulos e rodada inicial de 497 PASS preservada como histórica.
+- [Relatório sanitizado vigente do gate de versões](reports/versoes-unidades-local-gate.json): fonte af403ae, seis hashes de arquivos, oito funções destacadas, 501 PASS, cobertura 94,2065%, 491 métricas/máximo 18 e 20 avisos; baseline preservada.
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
 - [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 371 PASS, suíte `.cmd` com 18 PASS, hashes do código/testes, origem e limites; iniciador integrado pelo [PR #19](https://github.com/Browsher/crm-social/pull/19), com essas medições preservadas como histórico.

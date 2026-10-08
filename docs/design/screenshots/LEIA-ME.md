@@ -4,7 +4,7 @@ Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplic
 
 ## Versões de páginas e cenas
 
-Quatro PNG de 08/10/2026 mostram a gaveta Pronta com **Páginas e cenas** expandido nos temas claro/escuro e larguras 1440/390. Fonte de código, testes e imagens: `7b0ab46a44bfb14d80d6dffbab6ec78b06c028da`. O coordenador inspecionou os quatro arquivos finais. A fixture [tests/versoes-fixtures.cjs](../../../tests/versoes-fixtures.cjs) contém cinco páginas de texto v3 com imagens v2/v1/v1/v2/v3 numa produção v8; também contém cena v3 com imagens v1/v2 e vídeo v2 numa produção v9. As imagens mostram as páginas atuais e seus rótulos **imagem vN**; a cena e os casos de borda são conferidos pelos testes.
+Quatro PNG de 08/10/2026 mostram a gaveta Pronta com **Páginas e cenas** expandido nos temas claro/escuro e larguras 1440/390. Fonte da geração original: `7b0ab46a44bfb14d80d6dffbab6ec78b06c028da`; os quatro arquivos permanecem inalterados na rodada de código `af403ae778bfa7eda711f853f00aa5bc1aacdbc0`. O coordenador inspecionou os quatro arquivos finais. A fixture [tests/versoes-fixtures.cjs](../../../tests/versoes-fixtures.cjs) contém cinco páginas de texto v3 com imagens v2/v1/v1/v2/v3 numa produção v8; também contém cena v3 com imagens v1/v2 e vídeo v2 numa produção v9. As imagens mostram as páginas atuais e seus rótulos **imagem vN**; a cena, o rótulo **imagem: versão a confirmar** para versão inválida/vazia e os demais casos de borda são conferidos pelos testes.
 
 | Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
 | --- | --- | --- | --- | --- |

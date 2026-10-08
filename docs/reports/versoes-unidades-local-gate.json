@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "executedAtUtc": "2026-10-08T14:22:27.569Z",
+  "executedAtUtc": "2026-10-08T14:39:42.690Z",
   "environment": {
     "platform": "win32",
     "nodeVersion": "24.19.0",
@@ -9,7 +9,7 @@
   "command": "node tools/quality-gate.mjs",
   "source": {
     "baseCommit": "5b296938dde98ff9f5f3b240ff68972870e76b9d",
-    "codeCommit": "7b0ab46a44bfb14d80d6dffbab6ec78b06c028da",
+    "codeCommit": "af403ae778bfa7eda711f853f00aa5bc1aacdbc0",
     "hashFormat": "SHA-256 de UTF-8 com CRLF normalizado para LF",
     "files": [
       {
@@ -18,7 +18,7 @@
       },
       {
         "path": "src/web/app.js",
-        "sha256Utf8Lf": "44f400fb8aa1042fa188da2025a6c4c3610cc0ee83878fb1438dc1be37a5bd83"
+        "sha256Utf8Lf": "df9a5fb20898badafcd47acd01adfdba17d59dad6950beb6d0637481102fb9b3"
       },
       {
         "path": "tests/projecao.test.cjs",
@@ -30,15 +30,15 @@
       },
       {
         "path": "tests/versoes-interface.test.cjs",
-        "sha256Utf8Lf": "6fc268869c73f917a5933deb353fcc2832216661bc5e666f0d82c6a715ecd1a5"
+        "sha256Utf8Lf": "6a3f8c0b05e36534133364400a78daea58111a540dbd633df68a14c33e1770ce"
       },
       {
         "path": "tests/versoes.test.cjs",
-        "sha256Utf8Lf": "8bd2333fa9a5873794326d5116883e4daec895433b8ec14d23229ef1276a27c0"
+        "sha256Utf8Lf": "f4fc63570e3cb2d4d95fe2751d7f9ea34ae73b400fab478c3350dbd7d0426339"
       }
     ]
   },
-  "originalReportSha256": "89f202a29a2400f067bc3fb646b05137e0dcc285d8dd6e880685724babd856c0",
+  "originalReportSha256": "31202841ee699debce2f12513580f39717adfd49fd921bf9a99356331e63df97",
   "exitCode": 0,
   "baselineUpdated": false,
   "results": [
@@ -46,7 +46,7 @@
       "name": "tests",
       "state": "PASS",
       "reason": "",
-      "count": 497
+      "count": 501
     },
     {
       "name": "coverage",
@@ -59,7 +59,7 @@
       "name": "complexity",
       "state": "PASS",
       "reason": "",
-      "metricsCount": 490,
+      "metricsCount": 491,
       "maximum": 18,
       "warningsCount": 20,
       "warnings": [
@@ -150,49 +150,49 @@
         {
           "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
           "file": "src/web/app.js",
-          "line": 108,
-          "value": 12,
+          "line": 113,
+          "value": 11,
           "matchable": true
         },
         {
           "key": "src/web/app.js::ast::121b2cd4f6f0e9aba8b96d049909f5418e9d30a8396cc8b7ef467e7b8c4dc5e3",
           "file": "src/web/app.js",
-          "line": 175,
+          "line": 180,
           "value": 13,
           "matchable": true
         },
         {
           "key": "src/web/app.js::ast::f45b1ce678b80db07ad5ccba4f12862d1642cb3d6d3791d8923c5413900b5779",
           "file": "src/web/app.js",
-          "line": 265,
+          "line": 270,
           "value": 12,
           "matchable": true
         },
         {
           "key": "src/web/app.js::ast::62ae815236231442491bb35a9532e908372da7cd7c2e86db9b9835bc00ea2ab6",
           "file": "src/web/app.js",
-          "line": 348,
+          "line": 353,
           "value": 11,
           "matchable": true
         },
         {
           "key": "src/web/app.js::ast::3af80b21a07fb20cc926d42588a78937bda1c61ef95608814fff4f03a754a1f7",
           "file": "src/web/app.js",
-          "line": 380,
+          "line": 385,
           "value": 15,
           "matchable": true
         },
         {
           "key": "src/web/app.js::ast::9c75b7250eabcff072188ed74ace12d86a67e1a2e0363b689be6ec1af6fc1bba",
           "file": "src/web/app.js",
-          "line": 416,
+          "line": 421,
           "value": 15,
           "matchable": true
         },
         {
           "key": "src/web/app.js::ast::247064941e9cdb1e64d0a141a692b32781e667260ad73e3a6277709fcb742105",
           "file": "src/web/app.js",
-          "line": 584,
+          "line": 589,
           "value": 11,
           "matchable": true
         },
@@ -246,18 +246,26 @@
           "matchable": true
         },
         {
+          "name": "adicionarVersaoImagem",
+          "key": "src/web/app.js::ast::909f869228fdd511ade9e929bf4aa291720d750ea3810cdd103fd00da3eec0a4",
+          "file": "src/web/app.js",
+          "line": 108,
+          "value": 4,
+          "matchable": true
+        },
+        {
           "name": "unidadeDetalhe",
           "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
           "file": "src/web/app.js",
-          "line": 108,
-          "value": 12,
+          "line": 113,
+          "value": 11,
           "matchable": true
         },
         {
           "name": "secaoUnidades",
           "key": "src/web/app.js::ast::25210040b867cb5b35efa25a393409f3d322d689ac8588d589f5c38dcdabcd32",
           "file": "src/web/app.js",
-          "line": 124,
+          "line": 129,
           "value": 10,
           "matchable": true
         }
