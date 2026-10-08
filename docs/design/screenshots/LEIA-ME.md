@@ -233,7 +233,7 @@ Oito PNG finais de 08/10/2026 mostram quadro e gaveta Pronta nos dois temas e la
 | Quadro Pronta | [Abrir](pronta-light-quadro-1440.png) | [Abrir](pronta-light-quadro-390.png) | [Abrir](pronta-dark-quadro-1440.png) | [Abrir](pronta-dark-quadro-390.png) |
 | Gaveta Pronta para publicar | [Abrir](pronta-light-gaveta-1440.png) | [Abrir](pronta-light-gaveta-390.png) | [Abrir](pronta-dark-gaveta-1440.png) | [Abrir](pronta-dark-gaveta-390.png) |
 
-As imagens mostram pacote/legenda/hashtags no topo, ação de cópia e páginas/cenas recolhidas. [Testes de comportamento](../../../tests/pronta-interface.test.cjs) conferem também expansão sem avisos de mídia, preservação na API/Planilha, URL recusada, falha/ausência de clipboard e prioridade da publicação. Clipboard simulado em memória e requisições externas bloqueadas; nenhum clipboard pessoal ou ZIP real foi acessado. [Validação, rodadas e limites](../../reports/pronta-publicar-validacao.md).
+As imagens mostram pacote/legenda/hashtags no topo, ação de cópia e páginas/cenas recolhidas. [Testes de comportamento](../../../tests/pronta-interface.test.cjs) conferem também expansão sem avisos de mídia, preservação na API/Planilha, URL recusada, falha de cópia/ausência de texto e prioridade da publicação. Clipboard simulado em memória e requisições externas bloqueadas; nenhum clipboard pessoal ou ZIP real foi acessado. [Validação, rodadas e limites](../../reports/pronta-publicar-validacao.md).
 
 Reprodução das oito imagens finais com Node/Playwright existentes configurados e fora de `CI=true`, na raiz do repositório:
 
