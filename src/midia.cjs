@@ -55,9 +55,12 @@ function diretorioCache(raiz) {
   return stat.isDirectory()&&!stat.isSymbolicLink();
 }
 function lerLimitado(file) {
-  if(!fs.lstatSync(file).isFile())throw falha(422);
+  const antes=fs.lstatSync(file,{bigint:true});
+  if(!antes.isFile())throw falha(422);
   const fd=fs.openSync(file,'r'),chunks=[];let total=0;
   try {
+    const aberto=fs.fstatSync(fd,{bigint:true});
+    if(!aberto.isFile()||aberto.dev!==antes.dev||aberto.ino!==antes.ino)throw falha(422);
     while(total<=MAX_BYTES) {
       const chunk=Buffer.alloc(Math.min(65536,MAX_BYTES+1-total));
       const lidos=fs.readSync(fd,chunk,0,chunk.length,null);

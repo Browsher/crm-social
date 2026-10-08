@@ -88,12 +88,17 @@ for(const url of ['https://docs.google.com/document/d/sintetico','http://drive.g
   'https://usuario:senha@drive.google.com/pacote','url-malformada',''])test('Pronta recusa URL de pacote fora da allowlist: '+url.replace(/usuario:senha/,'credencial-sintetica'),{skip},async t=>{
   const page=await abrir(t,{editar:raw=>mudarPacote(raw,'url',url)}),p=await gaveta(page);
   assert.equal(await p.locator('[data-publicacao]').getByRole('link',{name:'Baixar pacote',exact:true}).count(),0);
+  const hrefs=await p.locator('[data-publicacao] a').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('href')));
+  assert.equal(hrefs.includes(url),false,'a URL de pacote recusada não deve aparecer em outro link da seção');
   assert.match(await p.locator('[data-publicacao]').innerText(),/Pacote indisponível/);
 });
 test('Pronta texto literal, falha de clipboard e nova tentativa sem escrever na operação',{skip},async t=>{
   const literal='<img src=x onerror=alert(1)> texto de exemplo';
   const page=await abrir(t,{editar:raw=>mudarCelula(raw,'Produções',3,'legenda',literal)}),p=await gaveta(page),section=p.locator('[data-publicacao]');
   assert.equal(await section.locator('.publication-caption img').count(),0);assert.match(await section.innerText(),/<img src=x/);
+  const imagens=await section.locator('img').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('src')));
+  assert.ok(imagens.length>0);
+  assert.ok(imagens.every(src=>typeof src==='string'&&src.startsWith('/api/midia/')));
   await page.evaluate(()=>window.falharClipboard=true);
   await section.getByRole('button',{name:'Copiar legenda',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('[data-publicacao] [role=status]').textContent.includes('Não foi possível'));

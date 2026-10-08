@@ -307,3 +307,32 @@ test('M005 serviço: captura nova com referência igual não invalida bytes vál
   const service=criarServicoMidia({dataDir:ctx.dataDir,criarCliente:remote.criarCliente});
   resultado(await service.obter(INTERNO));assert.equal(remote.calls.length,1);
 });
+test('M005 serviço: troca entre lstat e open recusa hit e baixa bytes corretos sem SHA',async t=>{
+  const raw=capturaPrevias();mudarPorId(raw,'Arquivos',INTERNO,'sha256','');
+  const ctx=preparar(t,raw),corretos=imagemPorArquivo(INTERNO),trocados=imagemPng({cor:[17,99,203]});
+  const file=cachear(ctx,corretos),substituto=path.join(ctx.dataDir,'substituto-sintetico.bin');
+  const original=path.join(ctx.dataDir,'original-sintetico.bin'),before=fotosEstado(ctx.dataDir);
+  fs.writeFileSync(substituto,trocados);
+  const open=fs.openSync,close=fs.closeSync;let trocou=false,fdLeitura,fechouLeitura=false;
+  const mockOpen=t.mock.method(fs,'openSync',(filename,flags,...args)=>{
+    if(path.resolve(String(filename))===file&&flags==='r'&&!trocou) {
+      trocou=true;fs.renameSync(file,original);fs.renameSync(substituto,file);
+    }
+    const fd=open(filename,flags,...args);
+    if(path.resolve(String(filename))===file&&flags==='r')fdLeitura=fd;
+    return fd;
+  });
+  const mockClose=t.mock.method(fs,'closeSync',fd=>{
+    if(fd===fdLeitura)fechouLeitura=true;return close(fd);
+  });
+  const remote=remoto(),service=criarServicoMidia({dataDir:ctx.dataDir,criarCliente:remote.criarCliente});
+  let answer;
+  try {answer=await service.obter(INTERNO);}
+  finally {mockOpen.mock.restore();mockClose.mock.restore();}
+  t.diagnostic(JSON.stringify({trocaReal:trocou,downloads:remote.calls.length,serviuImagemTrocada:answer.bytes.equals(trocados),descritorFechado:fechouLeitura}));
+  assert.equal(trocou,true,'o arquivo real deve ser substituído precisamente antes da abertura');
+  assert.equal(remote.calls.length,1,'hit cuja identidade mudou deve causar novo download');
+  resultado(answer,corretos);assert.equal(fechouLeitura,true,'descritor de cache deve ser fechado mesmo ao recusar o hit');
+  assert.throws(()=>fs.fstatSync(fdLeitura),{code:'EBADF'});
+  assert.deepEqual(fotosEstado(ctx.dataDir),before,'captura e recibos permanecem idênticos');
+});

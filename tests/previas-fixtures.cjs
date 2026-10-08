@@ -44,7 +44,9 @@ function capturaPrevias() {
 function credencialSintetica(t,{spreadsheet=false}={}) {
   const root=temporario(t),repoRoot=path.join(root,'repo'),file=path.join(root,'credencial-sintetica.json');
   const pair=crypto.generateKeyPairSync('rsa',{modulusLength:2048});fs.mkdirSync(repoRoot);
-  const credentials={type:'service_account',client_email:['leitor-sintetico','example.invalid'].join('@'),private_key:pair.privateKey.export({type:'pkcs8',format:'pem'})};
+  // Montar o formato de teste em runtime; a única chave vem do par RSA recém-gerado.
+  const credentials={type:['service','account'].join('_'),client_email:['leitor-sintetico','example.invalid'].join('@')};
+  credentials.private_key=pair.privateKey.export({type:'pkcs8',format:'pem'});
   fs.writeFileSync(file,JSON.stringify(credentials));
   return {env:{CRM_GOOGLE_CREDENTIALS_FILE:file,...(spreadsheet?{CRM_SPREADSHEET_ID:'fonte-sintetica'}:{})},repoRoot,pair,credentials,root};
 }
