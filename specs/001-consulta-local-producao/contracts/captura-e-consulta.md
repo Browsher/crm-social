@@ -66,6 +66,11 @@ capturas antigas; demais extras continuam privados. Meses/Pautas opcionais segue
 seus contratos da 003/004. Na coleta direta, `pacote_versao` textual canônico seguro
 é convertido antes dos dois hashes, como `versao`; importação histórica conserva o original.
 
+A allowlist é aplicada na consulta vigente também às capturas antigas que já contêm
+esses cabeçalhos: seus valores passam a integrar a seleção triada e a Planilha.
+Isso não regrava o envelope, altera bytes/hashes nem converte tipos históricos;
+"sem migração" não significa manter esses campos privados quando já capturados.
+
 O levantamento do dicionário de 03/10 confirmou presença literal dos 66 nomes, não
 validade das linhas nem captura completa. Agentes, Controle e Execucoes estão fora da 001.
 
@@ -342,6 +347,8 @@ O link abre por clique com `noopener noreferrer`; ausência/ambiguidade/URL recu
 mostra **Pacote indisponível**. Seleção não comprova acesso nem bytes do ZIP.
 
 Legenda e hashtags são texto literal seguro com quebras de linha preservadas.
+**Hashtags não informadas** é a mesma mensagem quando a coluna `hashtags` não foi
+capturada ou quando sua célula está vazia; a apresentação não distingue esses casos.
 **Copiar legenda** junta valores presentes com duas quebras de linha e chama
 `navigator.clipboard.writeText` somente no clique local. Sem texto fica desabilitado;
 sucesso é anunciado em `role=status`, falha oferece selecionar/copiar manualmente.

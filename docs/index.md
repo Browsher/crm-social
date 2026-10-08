@@ -138,7 +138,8 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 As evidências históricas da 001 têm origem, estado e limites registrados na [validação](../specs/001-consulta-local-producao/validacao.md). A manutenção do iniciador tem relatório próprio e detalhes no [módulo](modules/iniciador.md#entrada-por-duplo-clique).
 
 - [Saída histórica de node:test](reports/001-pr6-node-test.txt).
-- [Validação local de Pronta para publicar](reports/pronta-publicar-validacao.md): opcionais, pacote ZIP, clipboard simulado, 32 testes focados, gate Windows e limites da evidência.
+- [Validação local de Pronta para publicar](reports/pronta-publicar-validacao.md): opcionais, pacote ZIP, clipboard simulado, 33 testes focados (14 UI), gate Windows com 475 PASS/cobertura 94,0568% e limites da evidência.
+- [Relatório sanitizado do gate de Pronta](reports/pronta-publicar-local-gate.json): fonte eb74b23, 12 hashes de arquivos, métricas de seis funções, todos os 20 avisos e agregados completos; baseline preservada.
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
 - [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 371 PASS, suíte `.cmd` com 18 PASS, hashes do código/testes, origem e limites; iniciador integrado pelo [PR #19](https://github.com/Browsher/crm-social/pull/19), com essas medições preservadas como histórico.

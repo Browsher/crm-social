@@ -6,7 +6,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-Manutenção atual **Pronta para publicar**, implementada/testada localmente em 08/10/2026: estende a allowlist de campos capturados e os detalhes existentes, sem módulo, endpoint, dependência ou escritor editorial novo. 001–004 foram informadas como concluídas na main pelo autor; o parágrafo anterior preserva a rodada da 004. [Validação desta manutenção](reports/pronta-publicar-validacao.md).
+Manutenção atual **Pronta para publicar**, implementada/testada localmente em 08/10/2026: estende a allowlist de campos capturados e os detalhes existentes, sem módulo, endpoint, dependência ou escritor editorial novo. 001–004 foram informadas como concluídas na main pelo autor; o registro da 004 na introdução desta arquitetura preserva sua rodada histórica. [Validação desta manutenção](reports/pronta-publicar-validacao.md).
 
 ```mermaid
 flowchart LR
@@ -218,7 +218,7 @@ flowchart TD
   Avisos -->|menu, selo ou Todos os avisos| Painel
 ```
 
-`camposCapturados` em [src/captura.cjs](../src/captura.cjs) compartilha a allowlist de mínimos e opcionais entre triagem e Planilha: Semanas.pauta_id, Produções.pacote_versao/hashtags e Arquivos.extensao só existem na consulta se seus cabeçalhos foram capturados. Demais extras continuam privados; capturas antigas não são migradas. `montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
+`camposCapturados` em [src/captura.cjs](../src/captura.cjs) compartilha a allowlist de mínimos e opcionais entre triagem e Planilha: Semanas.pauta_id, Produções.pacote_versao/hashtags e Arquivos.extensao só existem na consulta se seus cabeçalhos foram capturados. Demais extras continuam privados. A allowlist vale também para capturas antigas que já contêm esses cabeçalhos: seus valores entram na seleção triada e na Planilha, sem regravar o envelope, alterar bytes/hashes ou converter tipos históricos. `montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
 triados, depois da resolução de pautas e antes de planejar/detalhar o quadro, evitando
 `pautaOrigem`, `quadro`, `detalhes`, envelope e extras nas tabelas.
 Contagens são das linhas NTV, não da alocação no Google. Normalização null→string
@@ -251,7 +251,7 @@ flowchart LR
   API --> Avisos[Contador e Planilha preservam avisos]
 ```
 
-`prontaParaPublicar` em `src/web/app.js` aplica ao botão somente HTTPS em `drive.google.com`, sem usuário/senha ou porta diferente da padrão; ausência/ambiguidade/URL recusada apresenta Pacote indisponível. Legenda/hashtags são texto seguro; a cópia junta presentes com duas quebras de linha, desabilita sem texto e oferece cópia manual na falha. `detalhesUnidades` recolhe páginas/cenas e omite seus avisos de mídia nessa coluna mesmo expandidas. `pendenciaQuadro` mostra Pronta para publicar no cartão. API e Planilha mantêm detalhes/avisos; nenhuma ação editorial ou rota é acrescentada.
+`prontaParaPublicar` em `src/web/app.js` aplica ao botão somente HTTPS em `drive.google.com`, sem usuário/senha ou porta diferente da padrão; ausência/ambiguidade/URL recusada apresenta Pacote indisponível. Legenda/hashtags são texto seguro; a ausência da coluna hashtags e a célula vazia mostram a mesma mensagem Hashtags não informadas. A cópia junta presentes com duas quebras de linha, desabilita sem texto e oferece cópia manual na falha. `detalhesUnidades` recolhe páginas/cenas e omite seus avisos de mídia nessa coluna mesmo expandidas. `pendenciaQuadro` mostra Pronta para publicar no cartão. API e Planilha mantêm detalhes/avisos; nenhuma ação editorial ou rota é acrescentada.
 
 `tests/pronta-interface.test.cjs` usa `tests/pronta-fixtures.cjs`, snapshot e servidor isolados em TEMP/porta efêmera. O clipboard dos testes é simulado em memória, com requisições externas bloqueadas; `CRM_SCREENSHOTS_PRONTA=1` gera somente os oito `pronta-*.png`. [Reprodução e galeria](design/screenshots/LEIA-ME.md#pronta-para-publicar), [validação/limites](reports/pronta-publicar-validacao.md). Os imports de produção permanecem os mesmos; `camposCapturados` é reutilizado pelos consumidores de captura existentes, sem mapa Graphify no checkout.
 
