@@ -66,6 +66,7 @@ Seu schema e conteúdo inicial estão no [contrato](contracts/captura-e-consulta
 | --- | --- |
 | `semanas` | agrupamento NTV, tema, início/fim civil e objetivo semanal registrado |
 | `producoes` | resumos e detalhes com facetas separadas, unidades por versão, quatro grupos de revisões, arquivos/documentos e avisos localizados |
+| `producoes[].detalhes.pacotePublicacao` | arquivo único da produção exata, tipo `pacote`, extensão `zip` e versão igual a `pacote_versao` positiva segura; null em ausência, ambiguidade ou versão inválida |
 | `dias` | peças por data civil válida; grupos Sem data por semana e sem semana |
 | `quadro` | semana, oito colunas fixas, IDs por classificação prioritária; Outras tem quantidadeValoresNovos e título derivados de seus rótulos distintos |
 | `planilha` | seis abas com nomes, 66 cabeçalhos/valores mínimos e contagem de linhas NTV apresentadas |
@@ -147,13 +148,15 @@ sem mapeamento → Outras. `status` permanece informação no cartão, sem decid
 | `montagem_em_producao` | Mídia |
 | Todo outro valor ou vazio | Outras |
 
-O JSON inicial contém nove etapas (uma Visual e oito Mídia), com listas de
+O JSON inicial da 001 continha nove etapas (uma Visual e oito Mídia), com listas de
 liberação/prontidão e revisão em andamento vazias; `bloqueado`, `aprovada` e
 `sem_rejeicao_documental` não ativam essas prioridades. Atualizações de rótulos
 exigem só edição do JSON versionado e reinício, sem mudança de código. O servidor
 valida schema/listas/rótulos e colunas ao carregar: rótulo repetido no mesmo campo
 ou coluna inexistente é erro claro, sem iniciar com mapa parcial ou fallback silencioso.
 Publicada/Outras são destinos reservados à publicação/fallback, sem entrada direta de etapa.
+
+**Nota da manutenção de 08/10/2026:** as duas listas vazias acima descrevem o JSON inicial da 001. O mapa atual mantém nove etapas, contém somente `liberado` em `liberacaoPronta` e mantém `revisaoEmAndamento` vazia; publicação preenchida continua tendo precedência. Pacote, gaveta e fronteiras estão em [Pronta para publicar — manutenção de 08/10/2026](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
 
 Etapas do envelope de delegação não são aliases de célula. Original vazio é apresentado
 como Não informada, sem inventar estado. Quadro não muda/arrasta etapa. O contador de
@@ -245,6 +248,8 @@ resolvida, o aviso aponta ao primeiro pagina_id/cena_id/arquivo_id falho; versao
 na API, sem exposição técnica na linha visual.
 
 ## Tabelas e avisos da Planilha
+
+**Extensão da manutenção de 08/10/2026:** a tabela abaixo preserva a descrição dos 66 mínimos da 001. A consulta atual usa `camposCapturados` e acrescenta `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` somente quando seus cabeçalhos existem, inclusive em capturas antigas. Selecionar os valores triados não regrava o envelope nem altera bytes, hashes ou tipos históricos; demais extras continuam privados. [Contrato da manutenção](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
 
 Como folhas de consulta do mesmo álbum, `planilha` mantém as seis tabelas NTV
 inteiras; o filtro do atalho da gaveta recorta somente avisos.

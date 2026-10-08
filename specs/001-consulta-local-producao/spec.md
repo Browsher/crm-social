@@ -163,7 +163,8 @@ carregar configuração válida e rejeitar coluna inexistente ou rótulo repetid
    **Then** abre a seção "Sem data" da semana com suas peças, sem inventar um dia.
 6. **Given** campos que satisfazem mais de uma regra, **When** classifico,
    **Then** publicação vence liberação, liberação vence revisão e revisão vence etapa;
-   status nunca decide a coluna. As listas atuais de prontidão/revisão são vazias.
+   status nunca decide a coluna. As listas iniciais da 001 de prontidão/revisão eram vazias;
+   o mapa vigente contém `liberado` em `liberacaoPronta`, conforme o [contrato da manutenção](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
 7. **Given** rótulo novo aprovado, **When** altero a configuração versionada e reinicio,
    **Then** o servidor aplica o mapa sem mudar código. Coluna inexistente ou rótulo
    repetido no mesmo campo gera erro claro ao carregar, sem mapa parcial.
@@ -183,6 +184,8 @@ preservando dados privados apenas neste computador.
 **Independent Test**: abrir as seis abas e Histórico, conferir contagens e nomes dos
 66 cabeçalhos mínimos, com seus valores triados renderizados como dados seguros,
 conforme os limites de normalização e apresentação de URL do contrato.
+
+**Nota da manutenção de 08/10/2026:** os cenários abaixo preservam o recorte inicial da 001. A consulta atual mantém os 66 mínimos e acrescenta somente os opcionais contratuais cujo cabeçalho foi capturado: `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao`. Isso vale também para capturas antigas que já contêm esses cabeçalhos, sem regravar bytes ou hashes; demais extras continuam privados. `producoes[].detalhes.pacotePublicacao` representa o pacote único compatível ou null, conforme [Pronta para publicar — manutenção de 08/10/2026](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
 
 **Acceptance Scenarios**:
 
@@ -387,8 +390,10 @@ conforme os limites de normalização e apresentação de URL do contrato.
 - Captura oficial pela Central precede consulta local; o runtime do CRM não herda sessão Google.
 - A decisão de telas de 03/10/2026 complementa o protótipo aprovado; demonstrações não são fonte operacional.
 - Duas leituras completas iguais detectam diferenças observáveis, sem atomicidade entre abas.
-- Oito etapas de mídia e `arte_aprovada` em Visual estão confirmadas; listas atuais de
-  liberação/prontidão e revisão em andamento são vazias, sem aliases inferidos.
+- Oito etapas de mídia e `arte_aprovada` em Visual estão confirmadas; na configuração
+  inicial da 001, as listas de liberação/prontidão e revisão em andamento eram vazias.
+  O mapa vigente contém `liberado` em `liberacaoPronta` e revisão vazia, sem aliases
+  inferidos, conforme o [contrato da manutenção](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
 - Campos mínimos garantem cabeçalho, não mídia, responsável, design novo ou publicação preenchidos.
 - A **002** será leitura direta da Planilha pelo servidor local, somente leitura, com conta
   de serviço/chave fora do repositório, emenda futura da constituição e extensão Agentes/Controle/Execucoes.

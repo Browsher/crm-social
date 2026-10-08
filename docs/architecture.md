@@ -6,6 +6,8 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
+Manutenção atual **Pronta para publicar**, implementada/testada localmente em 08/10/2026: estende a allowlist de campos capturados e os detalhes existentes, sem módulo, endpoint, dependência ou escritor editorial novo. 001–004 foram informadas como concluídas na main pelo autor; o registro da 004 na introdução desta arquitetura preserva sua rodada histórica. [Validação desta manutenção](reports/pronta-publicar-validacao.md).
+
 ```mermaid
 flowchart LR
   Abrir["Abrir CRM.cmd"] -->|porta livre| Iniciador
@@ -37,11 +39,11 @@ flowchart LR
   Google --> Crypto
   Google --> Fetch["fetch nativo / OAuth e Sheets somente leitura"]
   Server --> Quadro["src/quadro-config.cjs"]
-  Projecao --> Captura
+  Projecao -->|CAMPOS e camposCapturados| Captura
   Projecao --> Pautas["src/pautas.cjs: identidade, calendário e origem"]
   Pautas -->|CAMPOS_PAUTAS e instanteUtc| Captura
   Projecao --> Triagem
-  Triagem -->|CAMPOS, opcionais e linhas físicas| Captura
+  Triagem -->|camposCapturados, opcionais e linhas físicas| Captura
   Projecao --> Quadro
   Server -->|define caminho padrão| Config["config/quadro-etapas.json"]
   Quadro -.->|lê caminho recebido| Config
@@ -60,18 +62,18 @@ flowchart LR
 
 | Módulo | Responsabilidade atual | Documento |
 | --- | --- | --- |
-| captura | Seis abas obrigatórias/66 mínimos; Meses/quatro mínimos e Pautas/doze mínimos opcionais independentes; estrutura, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
+| captura | Allowlist camposCapturados compartilhada por triagem/Planilha; seis abas obrigatórias/66 mínimos; Meses/quatro mínimos e Pautas/doze mínimos opcionais independentes; estrutura, dimensões, tempos e hash; sem rede | [Validação](modules/captura.md) |
 | triagem | Seleção NTV dos mínimos e opcionais capturados, avisos por linha física, redação conservadora e validação de identidades antes da promoção; sem I/O ou mapa do quadro | [Triagem](modules/triagem.md) |
 | snapshot | Leitura privada, exclusividade de importação, arquivos imutáveis, confirmação e falhas | [Persistência](modules/snapshot.md) |
 | importar-captura | Entrada CLI local, mensagens/saída e recibo de falha de leitura | [Importador](modules/importador.md) |
-| quadro-config | Validador genérico; JSON versionado tem nove etapas e duas listas vazias; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
-| projecao | Usa seleção/triagem compartilhada e resolve pautas antes de reunir semanas/dias/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses/Pautas opcionais | [Projeção](modules/projecao.md) |
+| quadro-config | Validador genérico; JSON versionado tem nove etapas, liberacaoPronta com liberado e revisaoEmAndamento vazia; projeção aplica classificação e contador por semana | [Configuração](modules/quadro-config.md) |
+| projecao | Usa seleção/triagem compartilhada e resolve pautas antes de reunir semanas/dias/formatos, frescor, detalhes/pacote de publicação/quadro e cópias dos mínimos/opcionais capturados para seis tabelas e Meses/Pautas opcionais | [Projeção](modules/projecao.md) |
 | pautas | Confere pautas NTV triadas, calendário/duplicatas e resolve o ponteiro semanal por ID/marca/início, sem I/O | [Pautas](modules/pautas.md) |
 | google | Configuração externa, JWT RS256, token em memória e GET tipada | [Google](modules/google.md) |
 | coleta | Duas leituras de seis grades e Meses/Pautas quando existem, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
 | servidor | HTTP local com seis rotas fixas, quatro estáticos, controle de Host/Origin e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Entrada Abrir CRM.cmd por duplo clique, reconhecimento de instância existente por GET local; Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses/Pautas opcionais, Histórico e avisos detalhados; card mensal e navegação/origem de pauta; tema claro/escuro somente visual | [Interface](modules/web.md) |
+| web | Planejamento/calendário/lista/filtros, Produção por semana, gaveta compacta, selo/releitura e Planilha com seis abas, Meses/Pautas opcionais, Histórico e avisos detalhados; card mensal e navegação/origem de pauta; Pronta com pacote/legenda/cópia local e tema claro/escuro somente visual | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -191,7 +193,7 @@ Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
-A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta somente nos cartões de Planejamento/Redação/Visual; detalhes continuam na API/gaveta. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico. Iniciador, escala sintética e regressões de T035–T038 foram verificados localmente; captura real, gate após demonstração e onboarding final (T039–T041) concluídos. Evidências e limites ficam somente na validação.
+A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; não há carregamento automático de mídia. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta nos cartões de Planejamento/Redação/Visual. Pronta troca toda pendência do cartão por Pronta para publicar e recolhe páginas/cenas, sem avisos de mídia nas unidades; detalhes e avisos continuam na API e na Planilha. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico. Iniciador, escala sintética e regressões de T035–T038 foram verificados localmente; captura real, gate após demonstração e onboarding final (T039–T041) concluídos. Evidências e limites ficam somente na validação.
 
 ## Planilha: mínimos, avisos e Histórico
 
@@ -216,7 +218,7 @@ flowchart TD
   Avisos -->|menu, selo ou Todos os avisos| Painel
 ```
 
-`montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
+`camposCapturados` em [src/captura.cjs](../src/captura.cjs) compartilha a allowlist de mínimos e opcionais entre triagem e Planilha: Semanas.pauta_id, Produções.pacote_versao/hashtags e Arquivos.extensao só existem na consulta se seus cabeçalhos foram capturados. Demais extras continuam privados. A allowlist vale também para capturas antigas que já contêm esses cabeçalhos: seus valores entram na seleção triada e na Planilha, sem regravar o envelope, alterar bytes/hashes ou converter tipos históricos. `montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
 triados, depois da resolução de pautas e antes de planejar/detalhar o quadro, evitando
 `pautaOrigem`, `quadro`, `detalhes`, envelope e extras nas tabelas.
 Contagens são das linhas NTV, não da alocação no Google. Normalização null→string
@@ -234,6 +236,24 @@ avisos restauram os avisos gerais. Painel fica oculto em Histórico ou sem aviso
 **link não permitido**, mantendo o marcador exato de supressão. A API pode conservar
 URL já triada fora da allowlist visual; textos livres legítimos mantêm suas URLs
 como texto segundo o contrato. Células não criam links ou navegação automática.
+
+## Pronta: pacote e ações locais da gaveta
+
+Como consultar uma pasta já preparada, `pacotePublicacao` em `src/projecao.cjs` procura um único Arquivos com produção exata, tipo `pacote`, extensão `zip` e versão igual a `Produções.pacote_versao`, inteiro positivo seguro. Não depende de `Produções.versao`, não escolhe maior versão ou empate; seleção não confirma bytes ou acesso. A coleta direta normaliza o inteiro textual canônico seguro antes dos hashes, sem migrar capturas históricas.
+
+```mermaid
+flowchart LR
+  Capturados[Mínimos e opcionais capturados triados] --> Detalhe[detalhar e pacotePublicacao]
+  Detalhe --> API[GET /api/visao existente]
+  API --> Gaveta[Gaveta Pronta: pacote, legenda e hashtags]
+  Gaveta -->|clique em Baixar pacote: HTTPS Drive permitido| Link[Abre link em nova aba]
+  Gaveta -->|clique em Copiar legenda| Clipboard[Clipboard local do navegador]
+  API --> Avisos[Contador e Planilha preservam avisos]
+```
+
+`prontaParaPublicar` em `src/web/app.js` aplica ao botão somente HTTPS em `drive.google.com`, sem usuário/senha ou porta diferente da padrão; ausência/ambiguidade/URL recusada apresenta Pacote indisponível. Legenda/hashtags são texto seguro; a ausência da coluna hashtags e a célula vazia mostram a mesma mensagem Hashtags não informadas. A cópia junta presentes com duas quebras de linha, desabilita sem texto e oferece cópia manual na falha. `detalhesUnidades` recolhe páginas/cenas e omite seus avisos de mídia nessa coluna mesmo expandidas. `pendenciaQuadro` mostra Pronta para publicar no cartão. API e Planilha mantêm detalhes/avisos; nenhuma ação editorial ou rota é acrescentada.
+
+`tests/pronta-interface.test.cjs` usa `tests/pronta-fixtures.cjs`, snapshot e servidor isolados em TEMP/porta efêmera. O clipboard dos testes é simulado em memória, com requisições externas bloqueadas; `CRM_SCREENSHOTS_PRONTA=1` gera somente os oito `pronta-*.png`. [Reprodução e galeria](design/screenshots/LEIA-ME.md#pronta-para-publicar), [validação/limites](reports/pronta-publicar-validacao.md). Os imports de produção permanecem os mesmos; `camposCapturados` é reutilizado pelos consumidores de captura existentes, sem mapa Graphify no checkout.
 
 ## Pautas: identidade, calendário e origem
 
@@ -261,7 +281,7 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | Dívida / pegadinha | Fonte e impacto |
 | --- | --- |
 | null vira célula vazia na entidade e na tabela projetada | função registros em src/captura.cjs; envelope preservado; projeção recupera null de etapa_producao antes da triagem; demais mínimos da US5 conservam a normalização, sem prometer reprodução literal da matriz |
-| Mapa restrito aos rótulos aprovados | config/quadro-etapas.json; nove etapas e liberação/revisão vazias; testes/demonstrações usam mapa sintético em TEMP |
+| Mapa restrito aos rótulos aprovados | config/quadro-etapas.json; nove etapas, somente liberado em liberacaoPronta e revisaoEmAndamento vazia; outros rótulos de testes/demonstrações usam mapa sintético em TEMP |
 | I/O síncrono e validação por consulta | lerEstado em src/snapshot.cjs e handler de criarServidor em src/servidor.cjs; cenário sintético de escala verificado, limites na validação |
 | Trava sobrevivente à interrupção | exclusiva em src/snapshot.cjs; exige reconciliação manual; aviso de liberação preserva resultado/erro |
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |

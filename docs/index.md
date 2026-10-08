@@ -4,7 +4,9 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 ## Ordem de leitura
 
-Feature ativa: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
+Manutenção atual: **Pronta para publicar**, autorizada sem nova feature Spec Kit, implementada/testada localmente; [uso](../README.md#pronta-para-publicar), [validação](reports/pronta-publicar-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#pronta-para-publicar). O autor informou 001–004 concluídas na main em 08/10/2026; os registros de entrega abaixo preservam as rodadas históricas. A integração deste ajuste exige gate/review do head vigente.
+
+Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
 
 1. [README](../README.md): resultado atual e comandos de entrada.
 2. [Roadmap](../ROADMAP.md), [AGENTS](../AGENTS.md) e [constituição](../.specify/memory/constitution.md): escopo e fronteiras.
@@ -31,16 +33,16 @@ Feature ativa: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento
 | --- | --- |
 | [Google](modules/google.md) | JWT/fetch nativos, configuração externa e token em memória |
 | [Coleta](modules/coleta.md) | Seis grades obrigatórias, Meses/Pautas opcionais independentes, duas leituras, metadados/hashes e datas |
-| [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, Meses/quatro e Pautas/doze opcionais, normalização/hash e origem física |
+| [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, allowlist compartilhada de campos opcionais, Meses/quatro e Pautas/doze opcionais, normalização/hash e origem física |
 | [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
 | [Snapshot/persistência](modules/snapshot.md) | src/snapshot.cjs; trava, estado único, imutabilidade, falhas e órfãos |
 | [Importador](modules/importador.md) | scripts/importar-captura.cjs; argumentos/saída e falhas de entrada |
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
-| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/quadro e cópias dos mínimos para seis tabelas e Meses/Pautas opcionais; origem semanal e Histórico confirmado |
+| [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/pacote de publicação/quadro e cópias dos mínimos/opcionais capturados para seis tabelas e Meses/Pautas opcionais; origem semanal e Histórico confirmado |
 | [Pautas](modules/pautas.md) | src/pautas.cjs; identidade/calendário, duplicatas e origem semanal por ID/marca/início, sem inferência ou I/O |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, quatro estáticos e Host/Origin |
 | [Iniciador Windows](modules/iniciador.md) | Abrir CRM.cmd por duplo clique, reabertura por GET local e sucesso sem pause; Iniciar CRM.ps1, Node existente, processo oculto, confirmação, retorno e logs privados |
-| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça e tema claro/escuro local |
+| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça, Pronta com pacote/legenda/cópia local e tema claro/escuro local |
 
 ## Feature 001 canônica
 
@@ -95,6 +97,7 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 | --- | --- |
 | [Telas decididas](design/telas.md) | Decisões do autor e nota de implementação parcial |
 | [Screenshots reais/LEIA-ME](design/screenshots/LEIA-ME.md) | Aplicação em execução somente com dados fictícios; origem/limites |
+| [Pronta para publicar — oito screenshots](design/screenshots/LEIA-ME.md#pronta-para-publicar) | Quadro e gaveta, dois temas, 1440/390; fixture sintética, clipboard em memória e estado em TEMP |
 | [Tema claro/escuro — 16 screenshots](design/screenshots/LEIA-ME.md#tema-claro-e-escuro) | Quatro telas, dois temas, 1440/390; fixtures em TEMP, script reproduzível, provas sintéticas locais; tema integrado pelo PR #18 |
 | [Planejamento 1440](design/screenshots/001-planejamento-1440.png) / [390](design/screenshots/001-planejamento-390.png) | Capturas sintéticas desktop/mobile |
 | [Selo hoje 1440](design/screenshots/001-us2-hoje-1440.png) / [390](design/screenshots/001-us2-hoje-390.png) | Verde pelo fim da captura em São Paulo |
@@ -135,6 +138,8 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 As evidências históricas da 001 têm origem, estado e limites registrados na [validação](../specs/001-consulta-local-producao/validacao.md). A manutenção do iniciador tem relatório próprio e detalhes no [módulo](modules/iniciador.md#entrada-por-duplo-clique).
 
 - [Saída histórica de node:test](reports/001-pr6-node-test.txt).
+- [Validação local de Pronta para publicar](reports/pronta-publicar-validacao.md): opcionais, pacote ZIP, clipboard simulado, 33 testes focados (14 UI), gate Windows com 475 PASS/cobertura 94,0568% e limites da evidência.
+- [Relatório sanitizado do gate de Pronta](reports/pronta-publicar-local-gate.json): fonte eb74b23, 12 hashes de arquivos, métricas de seis funções, todos os 20 avisos e agregados completos; baseline preservada.
 - [Relatório do gate local e complexidade por função](reports/001-pr6-quality-gate.json).
 - [LCOV com caminhos relativos](reports/001-pr6-lcov.info).
 - [Gate local final do iniciador/PR #19](reports/019-iniciador-local-gate.json): 371 PASS, suíte `.cmd` com 18 PASS, hashes do código/testes, origem e limites; iniciador integrado pelo [PR #19](https://github.com/Browsher/crm-social/pull/19), com essas medições preservadas como histórico.

@@ -10,7 +10,7 @@ Funções de entrada e fronteira: `reciboPublico` e `projetarVisao`; `redigirTex
 
 Export real: `projetarVisao(estadoLocal, nowIso, mapaQuadro)`, conforme a interface do plano. `nowIso` e `captura.completedAt` determinam frescor em `America/Sao_Paulo`; a data das linhas não decide o selo. O mapa validado recebido do servidor é aplicado na classificação da US4.
 
-Imports: `CAMPOS`/`CAMPOS_PAUTAS` de [captura](captura.md), `projetarPautas` de [pautas](pautas.md), `COLUNAS` de [quadro-config](quadro-config.md) e `chaves`/`redigirTexto`/`selecionarNtv` de [triagem](triagem.md). Não há I/O, rota própria, variável de ambiente ou escrita na entrada. A seleção NTV dos mínimos e opcionais e as regras de redação são compartilhadas com a validação anterior à promoção; não houve mudança no recorte ou nos formatos reconhecidos.
+Imports: `CAMPOS`/`camposCapturados`/`CAMPOS_PAUTAS` de [captura](captura.md), `projetarPautas` de [pautas](pautas.md), `COLUNAS` de [quadro-config](quadro-config.md) e `chaves`/`redigirTexto`/`selecionarNtv` de [triagem](triagem.md). Não há I/O, rota própria, variável de ambiente ou escrita na entrada. A seleção NTV dos mínimos e opcionais e as regras de redação são compartilhadas com a validação anterior à promoção; não houve mudança no recorte ou nos formatos reconhecidos.
 
 | Campo de saída | Comportamento atual |
 | --- | --- |
@@ -19,10 +19,10 @@ Imports: `CAMPOS`/`CAMPOS_PAUTAS` de [captura](captura.md), `projetarPautas` de 
 | `estado` / `selo` | Quatro estados contratuais abaixo; destino planilha em todos eles |
 | `semanas` | Mínimos selecionados + período civil de sete dias, objetivo mensal indefinido e IDs ordinais; `pauta_id`/`pautaOrigem` somente quando o cabeçalho opcional foi capturado |
 | `pautas` | Propriedade somente quando a aba foi capturada; cópias NTV com identidade/calendário válidos e unívocos, inclusive vocabulários desconhecidos com aviso |
-| `producoes` | Mínimos selecionados + dataCivil, semanaId resolvida ou null, formato por slot, detalhes e `quadro:{coluna,pendencias}` |
+| `producoes` | Mínimos selecionados e `pacote_versao`/`hashtags` quando capturados + dataCivil, semanaId resolvida ou null, formato por slot, detalhes e `quadro:{coluna,pendencias}` |
 | `dias` | Grupos por data civil; sem data agrupado por semanaId, inclusive null |
 | `quadro` | `colunas:[{nome}]` e `semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]`; oito colunas por semana, inclusive semanaId null; IDs ordinais |
-| `planilha` | Sem captura, lista vazia; com captura, seis abas `{nome,cabecalhos,quantidadeLinhas,linhas}` com cópias dos mínimos triados e contagens NTV; Meses/quatro mínimos e Pautas/doze mínimos acrescentadas independentemente se capturadas; todas as pautas NTV triadas permanecem conferíveis |
+| `planilha` | Sem captura, lista vazia; com captura, seis abas `{nome,cabecalhos,quantidadeLinhas,linhas}` com cópias dos mínimos/opcionais contratuais capturados já triados e contagens NTV; Meses/quatro mínimos e Pautas/doze mínimos acrescentadas independentemente se capturadas; todas as pautas NTV triadas permanecem conferíveis |
 | `historico` / `ultimaTentativa` | Todos os recibos confirmados selecionados, recentes primeiro; Histórico final na Planilha, sem órfãos/no-op duplicado |
 | `avisos` | Identidade/calendário/texto/vocabulário/duplicatas de Pautas e vínculo semanal não confirmado; mês/texto mensal inválido e duplicatas de Meses; data/semana/versão/índice/tempo/JSON/vínculo inválidos, ausência de mídia, empates, supressão localizada e aviso curto de última importação falha; origem por aba/linha física/campo quando há registro |
 
@@ -37,19 +37,19 @@ Com captura vigente e `ultimaTentativa.resultado=falhou`, a projeção acrescent
 
 Semanas/produções exigem `marca_id=ntv`. Páginas, cenas e revisões são selecionadas pelo conjunto de produções; arquivos, pela produção ou semana quando não têm produção. Seus registros mínimos selecionados alimentam contagens e detalhes; nenhum seletor de elegibilidade do n8n é reutilizado.
 
-Somente campos mínimos explícitos são considerados; envelope, metadados/hash de coleta, extras arbitrários e mapa bruto não são servidos. Recibo público contém apenas tentativaId, concluidaEm, resultado e motivoResumo.
+Somente mínimos e opcionais da allowlist explícita de `camposCapturados` são considerados; envelope, metadados/hash de coleta, extras arbitrários e mapa bruto não são servidos. Recibo público contém apenas tentativaId, concluidaEm, resultado e motivoResumo.
 
 ## Tabelas de consulta e opcionais
 
 `montarPlanilha(ntv, captura)` (`src/projecao.cjs`) percorre `CAMPOS` na ordem Semanas,
 Produções, Páginas, Cenas, Arquivos e Revisoes. Como cópias de folhas já selecionadas,
-as linhas carregam somente os mínimos triados, sem herdar os dados calculados das
+as linhas carregam mínimos e opcionais contratuais capturados já triados, sem herdar os dados calculados das
 outras telas.
 
 | Campo | Regra |
 | --- | --- |
 | `nome` | Nome literal da aba |
-| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 obrigatórios, `Semanas.pauta_id` somente quando capturado, quatro de Meses e doze de Pautas se presentes |
+| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 obrigatórios; `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` somente quando capturados; quatro de Meses e doze de Pautas se presentes |
 | `quantidadeLinhas` | Comprimento da lista de linhas NTV, não a alocação da fonte |
 | `linhas` | Objetos com somente mínimos e opcionais contratuais capturados, já triados; nenhum campo calculado da semana ou da produção |
 
@@ -103,6 +103,7 @@ Como páginas numeradas de um álbum, unidades de versões diferentes permanecem
 | `designNovo` | A confirmar nas páginas; versão/template/arquivo não prova classificação de design |
 | `revisoes` | Grupos vigentes, resolvidas, anteriores e ambíguas, sem substituir responsável da peça por responsável da correção |
 | `arquivos` | Registros da produção ordenados por arquivo_id; nome de apresentação é tipo/papel ou Arquivo registrado, sem fabricar nome original |
+| `pacotePublicacao` | Único registro de `arquivos` com `producao_id` exato, `tipo='pacote'`, `extensao='zip'` e `versao` igual a `Produções.pacote_versao`, inteiro positivo seguro; null em ausência, ambiguidade ou versão inválida |
 | `documentosSemana` | Três papéis Plano/Redação/Visual resolvidos por arquivo_id e semana_id; ausentes/incompatíveis null, inclusive sem semana identificada |
 | `avisos` | Avisos próprios e relacionados já globais, mais avisos novos do detalhe, com origem física e motivo fixo; associação não duplica o conjunto global |
 
@@ -124,9 +125,11 @@ Versão/índice preenchidos exigem inteiros positivos; início/duração preench
 
 ## Quadro por semana
 
-`colunaProducao` aplica publicação preenchida > liberação configurada > revisão configurada > etapa mapeada, com fallback Outras; status é informativo. `colunaSemana` conta rótulos distintos apenas dos cartões Outras daquela semana NTV; vazio/null/espaços usam uma chave somente no contador. Etapa null é recuperada da célula original antes da triagem e conservada na API. Repetição, outra semana/marca ou etapa vencida por prioridade superior não aumenta N; zero/singular/plural vêm da projeção. Configuração versionada mantém nove etapas e liberação/revisão vazias; `capturaQuadro`/`mapaQuadroSintetico` são fixtures TEMP para todas as colunas.
+`pacotePublicacao` (`src/projecao.cjs`) usa a versão de pacote capturada, que pode diferir de `Produções.versao`; não escolhe maior versão, outro arquivo ou primeiro empate. `detalhar` valida `pacote_versao` preenchida como os demais inteiros positivos e conserva avisos. Seleção do registro não valida acesso ao ZIP nem URL clicável: a interface aplica a allowlist específica de Drive ao botão. [Casos sintéticos](../../tests/pronta.test.cjs) e [resultados/limites](../reports/pronta-publicar-validacao.md).
 
-`quadro.pendencias` reúne revisões vigentes de decisão literal `revisar`, `refazer`, `reprovado` ou `rejeitado`, com revisãoId/decisão/versão/responsável de correção, seguidas de mídia ausente na página/cena vigente com unidade/identidade. Aprovação/desconhecido/versão anterior não gera correção inferida. Com versão positiva da produção e sem unidades vigentes, ausência de arquivo registrado nessa versão gera pendência; sem versão válida, mídia vigente fica a confirmar. Registro com URL vazia/recusada não vira mídia ausente nem comprova bytes. API conserva todas; o cartão aplica o filtro de mídia por coluna e mostra primeira/+N somente das pendências visíveis. Tratamento desconhecido continua dívida da revisão final. Casos US4 de prioridade, contador e pendências são conferidos em [tests/projecao.test.cjs](../../tests/projecao.test.cjs), com resultados somente na [validação](../../specs/001-consulta-local-producao/validacao.md).
+`colunaProducao` aplica publicação preenchida > liberação configurada > revisão configurada > etapa mapeada, com fallback Outras; status é informativo. `colunaSemana` conta rótulos distintos apenas dos cartões Outras daquela semana NTV; vazio/null/espaços usam uma chave somente no contador. Etapa null é recuperada da célula original antes da triagem e conservada na API. Repetição, outra semana/marca ou etapa vencida por prioridade superior não aumenta N; zero/singular/plural vêm da projeção. Configuração versionada mantém nove etapas, somente `liberado` em `liberacaoPronta` e `revisaoEmAndamento` vazia; `capturaQuadro`/`mapaQuadroSintetico` são fixtures TEMP para todas as colunas.
+
+`quadro.pendencias` reúne revisões vigentes de decisão literal `revisar`, `refazer`, `reprovado` ou `rejeitado`, com revisãoId/decisão/versão/responsável de correção, seguidas de mídia ausente na página/cena vigente com unidade/identidade. Aprovação/desconhecido/versão anterior não gera correção inferida. Com versão positiva da produção e sem unidades vigentes, ausência de arquivo registrado nessa versão gera pendência; sem versão válida, mídia vigente fica a confirmar. Registro com URL vazia/recusada não vira mídia ausente nem comprova bytes. API conserva todas; o cartão Pronta mostra somente Pronta para publicar, e os demais aplicam o filtro de mídia por coluna e mostram primeira/+N das pendências visíveis. Na gaveta Pronta, páginas/cenas ficam recolhidas e seus avisos de mídia são omitidos mesmo expandidas; contador/Planilha e API preservam os avisos. Tratamento desconhecido continua dívida da revisão final. Casos US4 de prioridade, contador e pendências são conferidos em [tests/projecao.test.cjs](../../tests/projecao.test.cjs), com resultados somente na [validação](../../specs/001-consulta-local-producao/validacao.md).
 
 ## Supressão, testes e dívidas
 

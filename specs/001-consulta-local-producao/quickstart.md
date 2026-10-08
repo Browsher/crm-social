@@ -6,6 +6,8 @@ Consultar [spec](spec.md), [plano](plan.md), [tarefas](tasks.md) e [contrato](co
 
 ## Ambiente e testes da entrega atual
 
+**Nota da manutenção de 08/10/2026:** este roteiro conserva os cenários iniciais da 001. Atualmente, `liberacaoPronta` contém somente `liberado`, `revisaoEmAndamento` permanece vazia e a consulta acrescenta opcionais contratuais quando seus cabeçalhos existem, inclusive em capturas antigas, sem alterar bytes/hashes. `detalhes.pacotePublicacao` é o pacote único compatível ou null. Regras atuais em [Pronta para publicar — manutenção de 08/10/2026](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
+
 Abrir PowerShell na raiz de `crm-social/`. Usar Node 24.19.0 e o Playwright existentes. A [regra de estrutura](../../.claude/rules/project-structure.md) já foi preparada e sincronizada com o código. Ferramentas do gate permanecem isoladas em `tools/`, sem dependências novas de aplicação ou alteração na configuração vigente.
 
 | Variável | Consumidor / efeito |
@@ -158,7 +160,7 @@ Esta tabela conserva o roteiro de aceite da **001 completa**. T001–T038, inclu
 | Selo vazio | Sem captura, inclusive primeira tentativa falha | “Sem dados”, cinza; falha aparece no Histórico; nova captura completa aceita encerra falha |
 | Gaveta | Clique em cartão/dia/lista/quadro, inclusive segunda peça e filtro ativo | Dia inteiro, título/quantidade, primeiro acordeão aberto; todas as peças do dia, não só a clicada |
 | Relações/revisões | Reels sem imagem inicial/final/vídeo, versões/ordem, revisão antiga/resolvida/ambígua, unidade/semana/versão incompatíveis | Três slots e ausência específica de mídia, aviso agregado por cena sem ocultar números inválidos; revisão localiza primeiro vínculo falho e resumo não afirma ausência quando há impacto a confirmar; API conserva IDs técnicos |
-| Configuração | Carregar JSON válido em TEMP; coluna inexistente, rótulo repetido, JSON/arquivo inválido; acrescentar rótulo sintético só no JSON | Erro claro ao carregar impede iniciar; mapa novo entra sem mudar código. O arquivo versionado inicial conserva nove etapas e duas listas vazias |
+| Configuração | Carregar JSON válido em TEMP; coluna inexistente, rótulo repetido, JSON/arquivo inválido; acrescentar rótulo sintético só no JSON | Erro claro ao carregar impede iniciar; mapa novo entra sem mudar código. O arquivo inicial da 001 tinha nove etapas e duas listas vazias; a nota da manutenção de 08/10 acima descreve o mapa atual |
 | Quadro/prioridade | Combinar publicação, rótulos sintéticos de liberação/revisão e etapa, retirando prioridades superiores | Publicação > liberação > revisão > etapa; sem prioridade superior, arte_aprovada em Visual e oito etapas em Mídia, inclusive montagem_pronta; status visível não decide coluna |
 | Outras | Rótulo desconhecido repetido, segundo rótulo, vazio, outras semanas/marcas e cartão vencido por prioridade superior | N conta distintos só dos cartões Outras da semana NTV; vazio conta uma vez, repetidos não somam e excluídos não entram. Título Outras · N valores novos, original visível, singular para um e zero sem cartões |
 | Publicação | publicado_em preenchido/vazio/null/espaços; status publicado sem campo; data preenchida inválida/sem fuso/futura | Preenchido dá Publicada com precedência; inconsistência gera aviso sem mudar coluna. Status/aprovação/arquivo sem o campo não comprovam; não há verificação remota |

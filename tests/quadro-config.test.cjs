@@ -4,9 +4,9 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {mapaQuadroValido,temporario,carregarModulo}=require('./fixtures.cjs');
 const {validarMapaQuadro,carregarMapaQuadro}=carregarModulo('src/quadro-config.cjs',['validarMapaQuadro','carregarMapaQuadro']);
-test('Q01 JSON versionado tem exatamente nove etapas e prioridades vazias', () => {
+test('Q01 JSON versionado tem nove etapas, liberado em Pronta e revisão vazia', () => {
   const map=carregarMapaQuadro(path.resolve(__dirname,'../config/quadro-etapas.json'));
-  assert.deepEqual(map,mapaQuadroValido());
+  assert.deepEqual(map,{...mapaQuadroValido(),liberacaoPronta:['liberado']});
   assert.notEqual(validarMapaQuadro(map),map);
 });
 test('Q02 coluna inexistente ou reservada é erro claro', () => {

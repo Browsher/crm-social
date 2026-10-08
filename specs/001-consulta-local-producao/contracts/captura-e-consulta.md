@@ -57,8 +57,19 @@ Cabeçalho obrigatório não significa valor preenchido em toda linha. IDs devem
 strings não vazias e únicos por aba; linha inteiramente vazia é ignorada, preenchida sem
 ID é erro. Mínimo ausente e qualquer cabeçalho não vazio repetido invalidam a tentativa.
 Relação órfã, versão inválida e JSON malformado geram aviso localizado sem excluir a peça.
-Colunas adicionais são conservadas na captura privada, sem exigir criação remota,
-sem exposição automática por HTTP e sem colunas extras na tela Planilha da 001.
+Colunas adicionais são conservadas na captura privada, sem exigir criação remota
+nem exposição automática por HTTP. A allowlist compartilhada `camposCapturados`
+preserva os 66 mínimos e acrescenta à triagem/Planilha somente `Semanas.pauta_id`,
+`Produções.pacote_versao`, `Produções.hashtags` e `Arquivos.extensao` quando os
+respectivos cabeçalhos foram capturados. Ausência não cria propriedade nem migra
+capturas antigas; demais extras continuam privados. Meses/Pautas opcionais seguem
+seus contratos da 003/004. Na coleta direta, `pacote_versao` textual canônico seguro
+é convertido antes dos dois hashes, como `versao`; importação histórica conserva o original.
+
+A allowlist é aplicada na consulta vigente também às capturas antigas que já contêm
+esses cabeçalhos: seus valores passam a integrar a seleção triada e a Planilha.
+Isso não regrava o envelope, altera bytes/hashes nem converte tipos históricos;
+"sem migração" não significa manter esses campos privados quando já capturados.
 
 O levantamento do dicionário de 03/10 confirmou presença literal dos 66 nomes, não
 validade das linhas nem captura completa. Agentes, Controle e Execucoes estão fora da 001.
@@ -199,12 +210,12 @@ preenchido não colocam a peça em Publicada. Esse critério substitui a exigên
 anterior de timestamp válido/coerente para classificar a coluna.
 
 O servidor lê `config/quadro-etapas.json` na inicialização. Arquivo versionado e
-separado da captura privada. Conteúdo inicial aprovado:
+separado da captura privada. Conteúdo versionado atual, com o ajuste autorizado Pronta de 08/10/2026:
 
 ```json
 {
   "schemaVersion": 1,
-  "liberacaoPronta": [],
+  "liberacaoPronta": ["liberado"],
   "revisaoEmAndamento": [],
   "etapas": [
     {"rotulo": "arte_aprovada", "coluna": "Visual"},
@@ -220,8 +231,8 @@ separado da captura privada. Conteúdo inicial aprovado:
 }
 ```
 
-As listas de liberação/prontidão e revisão em andamento começam vazias: nenhum
-rótulo atual indica essas condições. `bloqueado` não libera; `aprovada` e
+`liberacaoPronta` contém somente o rótulo literal `liberado`; a lista de revisão
+em andamento continua vazia. `bloqueado` não libera; `aprovada` e
 `sem_rejeicao_documental` não indicam revisão em andamento. Os oito valores de mídia
 do dicionário continuam mapeados, e a leitura atual confirmou `arte_aprovada`, que
 agora vai para Visual. Não inferir aliases por palavras, prefixos ou etapa do envelope
@@ -259,14 +270,16 @@ capacidade, elegibilidade ou monitoramento.
 
 O resumo de pendências do cartão aplica a regra de apresentação abaixo, implementada
 em `pendenciaQuadro`, de `src/web/app.js`. A coluna continua definida pelas
-prioridades e pelo mapa; este filtro não altera a projeção nem os detalhes da gaveta.
+prioridades e pelo mapa; este filtro não altera as pendências na API. A gaveta Pronta
+tem a apresentação específica descrita abaixo, com avisos preservados no contador/Planilha.
 
 | Coluna do cartão | Mídia ausente | Revisão vigente que pede correção |
 | --- | --- | --- |
 | Planejamento, Redação, Visual | Não aparece no cartão | Continua no resumo de pendências |
-| Mídia, Revisão, Pronta, Publicada, Outras | Aparece com o texto curto **Mídia ausente** | Continua no resumo de pendências |
+| Mídia, Revisão, Publicada, Outras | Aparece com o texto curto **Mídia ausente** | Continua no resumo de pendências |
+| Pronta | Resumo substituído por **Pronta para publicar** | Resumo substituído por **Pronta para publicar** |
 
-O cartão mostra a primeira pendência visível e **+N pendências** somente para as
+Fora de Pronta, o cartão mostra a primeira pendência visível e **+N pendências** somente para as
 demais visíveis, com singular quando N=1. Se todas forem de mídia e estiverem
 ocultas pela coluna, não há resumo nem contador. API e gaveta conservam os
 detalhes de mídia e revisão definidos neste contrato, independentemente da coluna.
@@ -307,7 +320,7 @@ versões para preencher uma sequência. Página mostra versão e indicador de de
 novo: **A confirmar** enquanto não houver classificação explícita documentada para
 aquela página/versão. Nenhum dos 66 mínimos fornece essa flag; arquivo presente,
 template ou estado sozinho não a comprovam. Não inventar coluna ou evidência.
-Unidades aparecem em linhas compactas com número, texto e link ou **mídia ausente**;
+Fora de Pronta, unidades aparecem em linhas compactas com número, texto e link ou **mídia ausente**;
 no máximo um aviso de ausência por linha. Legenda/campos textuais complementares e
 arquivos como registros ficam em **Texto registrado**, recolhido por padrão;
 versões anteriores também abrem por clique. A API conserva os campos completos.
@@ -318,9 +331,38 @@ nem download/conferência dos bytes. Resolver ponteiros por `arquivo_id` interno
 Editor/Motion requerem produção, papel, versão e origens inequívocas, com aviso em empate.
 Mídia ausente e referência quebrada aparecem como tais; sem preview automática na 001.
 
+### Pronta para publicar — manutenção de 08/10/2026
+
+Como uma pasta preparada para a publicação manual, a peça cuja coluna é Pronta
+abre a gaveta com **Pronta para publicar** no topo. O servidor acrescenta
+`detalhes.pacotePublicacao`: único registro de Arquivos da produção exata, com
+`tipo='pacote'`, `extensao='zip'` e `versao` exatamente igual a `Produções.pacote_versao`,
+inteiro positivo seguro. A versão do pacote pode diferir de `Produções.versao`.
+Ausência, versão inválida ou mais de um candidato retorna null; não escolher maior
+versão, primeiro empate ou outro arquivo. Avisos e registros continuam na API.
+
+**Baixar pacote** aceita somente HTTPS em `drive.google.com`, sem usuário/senha
+ou porta diferente da padrão. `docs.google.com` não é permitido nesse botão.
+O link abre por clique com `noopener noreferrer`; ausência/ambiguidade/URL recusada
+mostra **Pacote indisponível**. Seleção não comprova acesso nem bytes do ZIP.
+
+Legenda e hashtags são texto literal seguro com quebras de linha preservadas.
+**Hashtags não informadas** é a mesma mensagem quando a coluna `hashtags` não foi
+capturada ou quando sua célula está vazia; a apresentação não distingue esses casos.
+**Copiar legenda** junta valores presentes com duas quebras de linha e chama
+`navigator.clipboard.writeText` somente no clique local. Sem texto fica desabilitado;
+sucesso é anunciado em `role=status`, falha oferece selecionar/copiar manualmente.
+**Páginas e cenas** começam recolhidas em Pronta e omitem avisos de mídia/link recusado
+nas unidades mesmo expandidas; links permitidos continuam disponíveis. API,
+contador da peça e Planilha preservam avisos e pendências. As demais colunas
+conservam a apresentação comum abaixo. Sem endpoint, dependência ou escrita editorial nova.
+
+[Validação desta manutenção](../../../docs/reports/pronta-publicar-validacao.md)
+e [oito imagens sintéticas](../../../docs/design/screenshots/LEIA-ME.md#pronta-para-publicar).
+
 ### Detalhes projetados da US3
 
-`producoes[].detalhes` é construído pelo servidor a partir dos mínimos selecionados,
+`producoes[].detalhes` é construído pelo servidor a partir dos mínimos e opcionais capturados selecionados,
 sem repassar o envelope privado. Como fichas dentro da mesma pasta, os registros
 conservam a produção, versão e ponteiro que os identifica; não preencher lacunas
 de uma versão com unidades de outra.
@@ -333,6 +375,7 @@ de uma versão com unidades de outra.
 | Cena `arquivos` / `avisoMidia` | Três slots fixos na ordem imagem inicial/imagem final/vídeo, cada um arquivo ligado ou null; avisoMidia null quando todos ligados, senão string humana fixa das ausências |
 | `revisoes` | `{vigentes,resolvidas,anteriores,ambiguas}`; mínimos selecionados, sem fabricar correção atual |
 | `arquivos` | registros da produção, com `nomeApresentacao` por tipo/papel e fallback Arquivo registrado; todas as versões continuam identificadas |
+| `pacotePublicacao` | único arquivo da produção com tipo pacote, extensão zip e versão igual à pacote_versao positiva segura; null em ausência/ambiguidade/versão inválida |
 | `documentosSemana` | `[{papel,arquivo}]` para Plano, Redação e Visual, ligados pelo ponteiro interno da semana; ausência = null |
 | `avisos` | avisos localizados da peça/unidades/vínculos, com aba/linha física/campo e motivo; conteúdo privado não é anexado |
 
@@ -354,7 +397,7 @@ segue a regra abaixo, sem valor de célula, URL, ID ou localização técnica:
 | Nenhuma | sem texto de ausência de imagens |
 
 Vídeo não ligado acrescenta **vídeo ausente**; quando também faltam imagens, as
-causas são unidas por ponto e vírgula. Todos ligados: `avisoMidia=null`. A interface
+causas são unidas por ponto e vírgula. Todos ligados: `avisoMidia=null`. Fora de Pronta, a interface
 mostra no máximo um texto de ausência por linha de cena, sem confundir arquivo
 registrado com bytes comprovados. Se os registros estão ligados mas os links são
 recusados/ausentes, mostra **link não permitido**, sem exibir a URL bruta. Arquivo
@@ -424,11 +467,12 @@ usam **—**, sem inventar a localização de um aviso global.
   não recebem extras arbitrários. `dias`: grupos por data ou Sem data/semana e IDs de peças.
   `quadro.colunas:[{nome}]` mantém a ordem contratual; `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` contém oito colunas e IDs ordinais por semana, inclusive semanaId null das peças sem vínculo inequívoco. Sem captura, semanas vazias com nomes canônicos mantidos. Cada produção acrescenta `quadro:{coluna,pendencias}`.
   Coluna Outras deriva título/contador só dos seus cartões daquela semana;
-  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. Produção sem versão recebe aviso de versão vigente não informada; versão ausente ou inválida não sustenta afirmação categórica de ausência de mídia vigente. O cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
+  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. Produção sem versão recebe aviso de versão vigente não informada; versão ausente ou inválida não sustenta afirmação categórica de ausência de mídia vigente. Fora de Pronta, o cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
 - `planilha`: seis abas na ordem Semanas, Produções, Páginas, Cenas, Arquivos e
   Revisoes, cada uma `{nome, cabecalhos, quantidadeLinhas, linhas}`. `cabecalhos`
-  é cópia da lista literal de `CAMPOS`; `linhas` contém objetos novos com somente
-  as chaves mínimas daquela aba e os valores já triados. Exclui linhas vazias e
+  é cópia de `camposCapturados`, com mínimos de `CAMPOS` e opcionais contratuais
+  somente quando capturados; `linhas` contém objetos novos com essas chaves e
+  os valores já triados. Exclui linhas vazias e
   registros de outra marca; não recebe `quadro`, `detalhes`, períodos calculados,
   envelope ou extras. Contagem é das linhas NTV apresentadas, não das linhas
   alocadas na planilha inteira. A normalização preexistente null→string vazia

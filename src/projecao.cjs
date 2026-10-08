@@ -1,4 +1,4 @@
-const {CAMPOS,CAMPOS_PAUTAS}=require('./captura.cjs');
+const {CAMPOS,camposCapturados,CAMPOS_PAUTAS}=require('./captura.cjs');
 const {projetarPautas}=require('./pautas.cjs');
 const {COLUNAS}=require('./quadro-config.cjs');
 const {chaves,redigirTexto,selecionarNtv}=require('./triagem.cjs');
@@ -182,6 +182,11 @@ function arquivosRegistrados(producao,records,ctx) {
   }
   return files.map(arquivoApresentado).sort((a,b)=>ordinal(a.arquivo_id,b.arquivo_id));
 }
+function pacotePublicacao(p,arquivos) {
+  if(!Number.isSafeInteger(p.pacote_versao) || p.pacote_versao<=0)return null;
+  const pacotes=arquivos.filter(a=>a.producao_id===p.producao_id && a.tipo==='pacote' && a.extensao==='zip' && a.versao===p.pacote_versao);
+  return pacotes.length===1?pacotes[0]:null;
+}
 function documentosSemana(p,ntv,ctx) {
   const cache=ctx.documentos.get(p.semanaId);
   if(cache) {ctx.locais.push(...cache.avisos);return cache.records;}
@@ -228,11 +233,12 @@ function detalhar(result,ntv,origens,validadeJson) {
     paginas:new Map(ntv.paginas.map(p=>[p.pagina_id,p])),cenas:new Map(ntv.cenas.map(c=>[c.cena_id,c]))};
   for(const p of result.producoes) {
     const ctx={...ctxBase,locais:avisosRelacionados(p,ntv,origens,indice)};
-    validarNumeros(p,['versao'],[],ctx);
+    validarNumeros(p,['versao','pacote_versao'],[],ctx);
     if(!preenchido(p.versao)) avisoRegistro(p,'versao','Versão vigente não informada; mídia a confirmar',ctx);
     p.detalhes={responsavelRegistrado:preenchido(p.responsavel_atual)?p.responsavel_atual:'A confirmar',
       publicacaoRegistrada:preenchido(p.publicado_em),paginas:unidades(p,ntv.paginas,'paginas',ctx),cenas:unidades(p,ntv.cenas,'cenas',ctx),
       revisoes:revisoes(p,ntv.revisoes,ctx),arquivos:arquivosRegistrados(p,ntv.arquivos,ctx),documentosSemana:documentosSemana(p,ntv,ctx),avisos:ctx.locais};
+    p.detalhes.pacotePublicacao=pacotePublicacao(p,p.detalhes.arquivos);
     if(p.detalhes.arquivos.length===0) avisoRegistro(p,'versao','Mídia ausente: nenhum arquivo da produção registrado',ctx);
     avisarPublicacao(p,result.captura.completedAt,ctx);
   }
@@ -279,8 +285,8 @@ function montarQuadro(result,mapaQuadro) {
     colunas:COLUNAS.map(nome=>colunaSemana(nome,result.producoes.filter(p=>p.semanaId===s.semana_id)))}));
 }
 function montarPlanilha(ntv,captura) {
-  const result=Object.entries(CAMPOS).map(([nome,cabecalhos],i)=>{
-    if(nome==='Semanas'&&captura.envelope.tables.Semanas.values[0].includes('pauta_id'))cabecalhos=[...cabecalhos,'pauta_id'];
+  const result=Object.keys(CAMPOS).map((nome,i)=>{
+    const cabecalhos=camposCapturados(nome,captura.envelope.tables[nome]);
     const linhas=ntv[chaves[i]].map(record=>Object.fromEntries(cabecalhos.map(campo=>[campo,record[campo]])));
     return {nome,cabecalhos:[...cabecalhos],quantidadeLinhas:linhas.length,linhas};
   });

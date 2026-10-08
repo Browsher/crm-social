@@ -93,7 +93,7 @@ function arquivoRegistro(a) {
   else box.append(node('p','link não permitido','record-text'));
   return box;
 }
-function arquivosDaUnidade(records,avisoMidia) {
+function arquivosDaUnidade(records,avisoMidia,mostrarAvisos=true) {
   const list=node('span',undefined,'unit-files'),ids=new Set();let ausente=records.length===0,recusado=false;
   for(const a of records) {
     const link=linkArquivo(a,a?.nomeApresentacao || 'Mídia');
@@ -102,10 +102,10 @@ function arquivosDaUnidade(records,avisoMidia) {
     else if(!ids.has(a.arquivo_id)) {ids.add(a.arquivo_id);list.append(link);}
   }
   const aviso=[avisoMidia || (ausente?'Mídia ausente':null),recusado?'link não permitido':null].filter(preenchido).join('; ');
-  if(aviso) list.append(node('span',aviso,'notice'));
+  if(aviso && mostrarAvisos) list.append(node('span',aviso,'notice'));
   return list;
 }
-function unidadeDetalhe(u,tipo) {
+function unidadeDetalhe(u,tipo,mostrarAvisos) {
   const pagina=tipo==='paginas',box=node('article',undefined,'unit-record');
   box.dataset[pagina?'pagina':'cena']=u[pagina?'pagina_id':'cena_id'];
   const text=node('span',undefined,'unit-text');
@@ -118,9 +118,9 @@ function unidadeDetalhe(u,tipo) {
       'Início: '+valor(u.inicio_segundos)+' s · duração: '+valor(u.duracao_segundos)+' s'));
   }
   box.append(text);
-  box.append(arquivosDaUnidade(u.arquivos,pagina?undefined:u.avisoMidia));return box;
+  box.append(arquivosDaUnidade(u.arquivos,pagina?undefined:u.avisoMidia,mostrarAvisos));return box;
 }
-function secaoUnidades(records,tipo) {
+function secaoUnidades(records,tipo,mostrarAvisos=true) {
   const section=secaoDetalhe(tipo==='paginas'?'Páginas':'Cenas');section.dataset.unidades=tipo;
   const groups=new Map();
   for(const u of records) {
@@ -132,7 +132,7 @@ function secaoUnidades(records,tipo) {
     const first=group[0],box=node(first.vigente?'section':'details',undefined,'version-group'+(first.vigente?'':' history'));
     box.dataset.versao=String(first.versao);
     box.append(node(first.vigente?'h4':'summary','Versão '+valor(first.versao)+(first.vigente?' · vigente':' · impacto atual a confirmar')));
-    box.append(...group.map(u=>unidadeDetalhe(u,tipo)));section.append(box);
+    box.append(...group.map(u=>unidadeDetalhe(u,tipo,mostrarAvisos)));section.append(box);
   }
   return section;
 }
@@ -204,16 +204,41 @@ function avisosPeca(p) {
   });
   box.append(link);return box;
 }
+function prontaParaPublicar(p) {
+  const section=secaoDetalhe('Pronta para publicar');section.dataset.publicacao='';section.classList.add('publication-ready');
+  const pacote=p.detalhes.pacotePublicacao,href=urlAutorizada(pacote?.url);
+  const link=href && new URL(href).host==='drive.google.com'?linkArquivo(pacote,'Baixar pacote'):null;
+  if(link) {link.classList.add('publication-action');section.append(link);}
+  else section.append(node('p','Pacote indisponível','record-text'));
+  section.append(node('p',preenchido(p.legenda)?p.legenda:'Legenda não informada','publication-caption'),
+    node('p',preenchido(p.hashtags)?p.hashtags:'Hashtags não informadas','publication-hashtags'));
+  const texto=[p.legenda,p.hashtags].filter(preenchido).join('\n\n');
+  const copy=node('button','Copiar legenda','publication-action'),status=node('p','','copy-status');
+  copy.type='button';copy.disabled=!texto;status.setAttribute('role','status');
+  copy.addEventListener('click',async()=>{
+    try {await navigator.clipboard.writeText(texto);status.textContent='Legenda copiada.';}
+    catch {status.textContent='Não foi possível copiar. Selecione e copie o texto acima.';}
+  });
+  section.append(copy,status);return section;
+}
+function detalhesUnidades(p) {
+  const pronta=p.quadro.coluna==='Pronta',sections=[];
+  for(const tipo of ['paginas','cenas']) if(p.detalhes[tipo].length)sections.push(secaoUnidades(p.detalhes[tipo],tipo,!pronta));
+  if(!pronta)return sections;
+  const fold=recolhido('Páginas e cenas');fold.dataset.detalhesProducao='';fold.append(...sections);
+  return sections.length?[fold]:[];
+}
 function acordeaoPeca(p,aberto) {
   const el=node('details',undefined,'peca-acordeao'),summary=node('summary'),d=p.detalhes;
   el.dataset.peca=p.producao_id;el.open=aberto;
   summary.append(node('span',p.formato,'format-label'),node('strong',p.titulo || 'Título não informado'),node('span',statusLegivel(p.status),'status'),
     node('small',resumoPeca(d),'piece-hint'));
   const body=node('div',undefined,'piece-body');
+  if(p.quadro.coluna==='Pronta')body.append(prontaParaPublicar(p));
   body.append(fatosPeca(p));
   if(d.publicacaoRegistrada) body.append(node('p','Publicação: '+valor(p.publicado_em)+' · registro explícito','publication'));
   if(d.revisoes.vigentes.length) body.append(secaoRevisoes(d.revisoes.vigentes,'vigentes'));
-  for(const tipo of ['paginas','cenas']) if(d[tipo].length) body.append(secaoUnidades(d[tipo],tipo));
+  body.append(...detalhesUnidades(p));
   body.append(textosRegistrados(p));
   const historico=recolhido('Histórico');historico.dataset.historico='';
   for(const grupo of ['resolvidas','anteriores','ambiguas']) if(d.revisoes[grupo].length) historico.append(secaoRevisoes(d.revisoes[grupo],grupo));
@@ -291,7 +316,8 @@ function semanaDoQuadro(weeks) {
   state.semanaId=week?.semana_id;return week;
 }
 function pendenciaQuadro(p) {
-  const mostrarMidia=['Mídia','Revisão','Pronta','Publicada','Outras'].includes(p.quadro.coluna);
+  if(p.quadro.coluna==='Pronta')return node('span','Pronta para publicar','board-ready');
+  const mostrarMidia=['Mídia','Revisão','Publicada','Outras'].includes(p.quadro.coluna);
   const records=p.quadro.pendencias.filter(r=>r.tipo!=='midia' || mostrarMidia);
   if(!records.length)return null;
   const first=records[0],box=node('span',undefined,'board-pending');

@@ -15,12 +15,12 @@ Estado em 04/10/2026: carregamento/validação implementados em T010; classifica
 | Campo | Conteúdo / validação |
 | --- | --- |
 | `schemaVersion` | Inteiro 1 |
-| `liberacaoPronta` | Lista de rótulos literais não vazios; inicial vazia |
+| `liberacaoPronta` | Lista de rótulos literais não vazios; mapa atual contém somente `liberado` |
 | `revisaoEmAndamento` | Lista de rótulos literais não vazios; inicial vazia |
 | `etapas` | Lista de `{rotulo, coluna}`; nenhum rótulo repetido neste campo |
 | `etapas[].coluna` | Uma das seis primeiras colunas; Publicada e Outras são reservadas |
 
-O arquivo inicial possui nove etapas: `arte_aprovada` em Visual e oito rótulos de mídia em Mídia, inclusive `montagem_pronta`. Os nomes literais completos e a prioridade aplicada estão no [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md). As duas listas vazias permanecem vazias; rótulos sintéticos dos testes não entram na configuração versionada.
+O arquivo versionado possui nove etapas: `arte_aprovada` em Visual e oito rótulos de mídia em Mídia, inclusive `montagem_pronta`. Os nomes literais completos e a prioridade aplicada estão no [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md). Na manutenção autorizada Pronta, `liberacaoPronta` passou a conter somente `liberado`; `revisaoEmAndamento` continua vazia. Publicação preenchida vence liberação, que vence revisão e etapa; `status` não classifica. Comparação literal, sem aliases ou normalização. Outros rótulos sintéticos dos testes não entram na configuração versionada. [Verificação local](../reports/pronta-publicar-validacao.md).
 
 Comparação literal e sensível a maiúsculas. Espaços não são removidos do rótulo retornado; rótulo só com espaços é inválido. Um texto igual em campos diferentes é permitido, enquanto repetição dentro do mesmo campo falha com índices dos dois elementos.
 
@@ -34,4 +34,4 @@ Erros começam por `configuração:`, identificando arquivo/JSON, schema, lista,
 
 [tests/quadro-config.test.cjs](../../tests/quadro-config.test.cjs) usa funções puras e arquivos TEMP reais para validar configuração inicial, duplicação, reservas, campos inválidos e novo rótulo só no JSON. Evidência em [validacao.md](../../specs/001-consulta-local-producao/validacao.md).
 
-O mapa fica em memória durante a vida do servidor: mudança no JSON exige reinício. A projeção monta `quadro.semanas` com oito colunas, IDs e Outras por semana; `quadro.colunas` mantém nomes canônicos. Liberação/revisão são exercitadas com mapa sintético em TEMP, pois listas versionadas permanecem vazias; não comprova coleta operacional nem histórias seguintes.
+O mapa fica em memória durante a vida do servidor: mudança no JSON exige reinício. A projeção monta `quadro.semanas` com oito colunas, IDs e Outras por semana; `quadro.colunas` mantém nomes canônicos. O rótulo real `liberado` e a prioridade de publicação são exercitados com a configuração versionada em `tests/pronta.test.cjs`; outros rótulos de liberação/revisão usam mapa sintético em TEMP. Isso não comprova coleta operacional nem histórias seguintes.

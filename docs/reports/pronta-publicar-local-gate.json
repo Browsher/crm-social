@@ -1,0 +1,296 @@
+{
+  "schemaVersion": 1,
+  "executedAtUtc": "2026-10-08T13:57:14.279Z",
+  "environment": {
+    "platform": "win32",
+    "nodeVersion": "24.19.0",
+    "timezone": "America/Sao_Paulo"
+  },
+  "command": "node tools/quality-gate.mjs",
+  "source": {
+    "baseCommit": "91c4b9d817e28e063456d826eff62ec75f9863d2",
+    "codeCommit": "eb74b23fd68978531e4b5e66a48987a2f33a3f66",
+    "hashFormat": "SHA-256 de UTF-8 com CRLF normalizado para LF",
+    "files": [
+      {
+        "path": "config/quadro-etapas.json",
+        "sha256Utf8Lf": "9256f7da2003d456d6f19d27600944661e4b14b46a9ea5174a888d90af093656"
+      },
+      {
+        "path": "src/captura.cjs",
+        "sha256Utf8Lf": "ecafb29c911c1d38c923d14279e6bfd6018fc72db8731da16c34cc44563ccf44"
+      },
+      {
+        "path": "src/coleta.cjs",
+        "sha256Utf8Lf": "4b6d13fab69657c877f6f15116ba04f21a5e481aaa92e8d8d7631a6bf71729f8"
+      },
+      {
+        "path": "src/projecao.cjs",
+        "sha256Utf8Lf": "78ad52465a872e7fb798e056a74b638f2dbe0a19cc2191b8810c43bba3c1e1e2"
+      },
+      {
+        "path": "src/triagem.cjs",
+        "sha256Utf8Lf": "d5287f08da4fe3711e4f239349f0d44d22223f556409e4de392ff4cf5daf2e6b"
+      },
+      {
+        "path": "src/web/app.js",
+        "sha256Utf8Lf": "5b4c5a213e5bccb458f021a7c4c9805c5139ee409d873681820131c7b7286ef0"
+      },
+      {
+        "path": "src/web/styles.css",
+        "sha256Utf8Lf": "f44693b8e75f7b4bfaa98501316e51a6d17da4aaebd5f41087f4e6d9f0e6eea8"
+      },
+      {
+        "path": "tests/interface.test.cjs",
+        "sha256Utf8Lf": "f4d11a112845ce64a848049c0df7183350a055e2d5b82316da0770dd2761cdb3"
+      },
+      {
+        "path": "tests/pronta-fixtures.cjs",
+        "sha256Utf8Lf": "fd88fb5d10f541290d94b8fad667e403b353aa6bdb4262c1e8fbb8ab7b36fb5b"
+      },
+      {
+        "path": "tests/pronta-interface.test.cjs",
+        "sha256Utf8Lf": "c8757c002f60195f1784596b2bb876c03ac1a2cbb7ec841c6cb28d33cb4a5304"
+      },
+      {
+        "path": "tests/pronta.test.cjs",
+        "sha256Utf8Lf": "840fa7ff7ac937b7925c8ab4270cc703669de3951ad37a463003af701d7a8ea9"
+      },
+      {
+        "path": "tests/quadro-config.test.cjs",
+        "sha256Utf8Lf": "134e3bf48070c7d639626c5005d462d156b61c790622f4986aa5513dfbb7f4cb"
+      }
+    ]
+  },
+  "originalReportSha256": "2675d192189cf684c75f500c04c9270b057a6b93bdac314de33332e53e493943",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 475
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 94.05684754521964,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "metricsCount": 484,
+      "maximum": 18,
+      "warningsCount": 20,
+      "warnings": [
+        {
+          "key": "scripts/importar-captura.cjs::ast::bf89f0c0b0d36c259a50aa54095beae1784420c6257787a296b8f3bfe3ecfd24",
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::acacfd7a3c71352965abfb6402a03e0cbd6da68956c6beb7ec1a0a003d55eabe",
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::1d0bd6cdb2d58d2b32b71f663e32c9230591a4af23ad9ede598b0448c29d4c0a",
+          "file": "src/google.cjs",
+          "line": 9,
+          "value": 18,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::4be10e827f4b6cdd4b598b92013c5daf6fbcd5958d4a2c735b64ddabd24878fd",
+          "file": "src/google.cjs",
+          "line": 27,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::9d6a7c01215bd7dbc99e39796d516dacfd50127cb9a7f11e97e7559f1158a537",
+          "file": "src/servidor.cjs",
+          "line": 31,
+          "value": 14,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::374c8857f4098604ae5a6e74f8a297ecd4474ce0f19c5c21f83b0599a894e5d2",
+          "file": "src/servidor.cjs",
+          "line": 37,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::db6e76d461bdcaf32aac6e745afaed92ad448184e570d8b80c57b8ba145db9bf",
+          "file": "src/servidor.cjs",
+          "line": 53,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::6160a0ed8a70e9bc36fd2cf1abbe39c6254c7f043b17dd58b22f6b2801364878",
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::702d80510ed234619df766294be9c5b3862a2758919fa5c70a09f67d909ae9fd",
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::17bd8b3924ba7188062a62b4875c72848402d9caaa9a85be29d7c7f72d92f2e8",
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::809f7c5bd501a6b9594f40088df62f4d7e8a892f80f8a65dc9d46494a4b4cb3e",
+          "file": "src/web/app.js",
+          "line": 35,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::98333c7ad65cdc212bced0bb83381bb3f3a122fca12977337507855f8f76587e",
+          "file": "src/web/app.js",
+          "line": 96,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
+          "file": "src/web/app.js",
+          "line": 108,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::121b2cd4f6f0e9aba8b96d049909f5418e9d30a8396cc8b7ef467e7b8c4dc5e3",
+          "file": "src/web/app.js",
+          "line": 174,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f45b1ce678b80db07ad5ccba4f12862d1642cb3d6d3791d8923c5413900b5779",
+          "file": "src/web/app.js",
+          "line": 264,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::62ae815236231442491bb35a9532e908372da7cd7c2e86db9b9835bc00ea2ab6",
+          "file": "src/web/app.js",
+          "line": 347,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3af80b21a07fb20cc926d42588a78937bda1c61ef95608814fff4f03a754a1f7",
+          "file": "src/web/app.js",
+          "line": 379,
+          "value": 15,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::9c75b7250eabcff072188ed74ace12d86a67e1a2e0363b689be6ec1af6fc1bba",
+          "file": "src/web/app.js",
+          "line": 415,
+          "value": 15,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::247064941e9cdb1e64d0a141a692b32781e667260ad73e3a6277709fcb742105",
+          "file": "src/web/app.js",
+          "line": 583,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::659233f77fc9ecb0c526480a61d2da6d52ecc3dd4847bf45d97e6c067e2a5208",
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12,
+          "matchable": true
+        }
+      ],
+      "functions": [
+        {
+          "name": "camposCapturados",
+          "key": "src/captura.cjs::ast::5522b372ec997c7a3529dcc39d38acc34330cf00731dcef2277ef79db1f07f14",
+          "file": "src/captura.cjs",
+          "line": 13,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "name": "pacotePublicacao",
+          "key": "src/projecao.cjs::ast::1fde420161f53bfcd53fc38f91e9aaacd70291514251c1ba7ded5f5ea6ead397",
+          "file": "src/projecao.cjs",
+          "line": 185,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "name": "prontaParaPublicar",
+          "key": "src/web/app.js::ast::445049113ffe3cace8b57fea077f140029b7f9172f1c44f1447bdf5f1cb3bb7d",
+          "file": "src/web/app.js",
+          "line": 207,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "name": "detalhesUnidades",
+          "key": "src/web/app.js::ast::f0f08ec87c81922ff34bc8843cf9f20ecb91fc539f88af2c18031b50bc1c17f1",
+          "file": "src/web/app.js",
+          "line": 224,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "name": "pendenciaQuadro",
+          "key": "src/web/app.js::ast::b03961a9cbc9493bb53df0f0b8ed5882e8b0c227ea1810df2c152a44b4ee8d7b",
+          "file": "src/web/app.js",
+          "line": 318,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "name": "selecionarNtv",
+          "key": "src/triagem.cjs::ast::1712f4f3af7bf0b3eabd7c4196510cc9649fccbb43dc3f07653f086c5733cef1",
+          "file": "src/triagem.cjs",
+          "line": 51,
+          "value": 6,
+          "matchable": true
+        }
+      ],
+      "scope": "Funções novas e ajustadas destacadas; lista completa de avisos. Agregados abrangem todas as métricas do gate."
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0",
+      "findings": [],
+      "missingFiles": []
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ]
+}
