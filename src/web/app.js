@@ -487,7 +487,7 @@ function cabecalhoPlanejamento() {
   const semanas=state.view.semanas.filter(w=>layout.segundaDaSemana(w.periodo.inicio)===state.inicioSemana);
   const pauta=(state.view.pautas??[]).find(p=>p.inicio_semana===state.inicioSemana);
   $('#week-title').textContent=semanas.map(w=>w.pautaOrigem?'S'+w.pautaOrigem.semana+' · '+w.pautaOrigem.tema:w.tema).filter(Boolean).join(' · ') ||
-    (pauta?'S'+pauta.semana+' · '+pauta.tema:'');
+    (!semanas.length&&pauta?rotuloPauta(pauta)+' · '+pauta.tema:'');
   $('#week-progress').textContent=progressoTexto(pecasDaSemana().filter(aceito));
   $('#week-title').hidden=mensal;$('#week-progress').hidden=mensal;
   $('#anterior').setAttribute('aria-label',mensal?'Mês anterior':'Semana anterior');

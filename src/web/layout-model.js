@@ -2,7 +2,7 @@
   'use strict';
   const estados={Planejamento:'Planejada',Redação:'Criação',Visual:'Criação',Mídia:'Criação',Outras:'Criação',
     Revisão:'Revisão',Pronta:'Pronta',Publicada:'Publicada'};
-  function estadoSimples(p) {return estados[p.quadro.coluna]||'Criação';}
+  function estadoSimples(p) {return Object.hasOwn(estados,p.quadro.coluna)?estados[p.quadro.coluna]:'Criação';}
   function motivoTravado(p) {
     const {coluna,pendencias}=p.quadro;
     if(coluna==='Pronta'||coluna==='Publicada')return '';

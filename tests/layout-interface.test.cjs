@@ -260,6 +260,18 @@ test('Layout A cabeçalho mostra pauta confirmada da semana',{skip},async t=>{
   assert.match(await page.locator('#week-title').textContent(),/S2.*Conexões da próxima semana/);
 });
 
+test('Layout A cabeçalho não confirma pauta pelo início quando a Semana diverge',{skip},async t=>{
+  const {page}=await abrirLayout(t,{editar:raw=>{
+    mudarPorId(raw,'Semanas','semana-01','tema','');
+    mudarPorId(raw,'Semanas','semana-01','pauta_id','pauta-outubro-2');
+  }});
+  assert.equal(await page.locator('#week-title').textContent(),'');
+  assert.equal(await page.locator('.layout-card').count(),5);
+  const view=await (await page.request.get(new URL('/api/visao',page.url()).href)).json();
+  assert.equal(view.semanas.find(w=>w.semana_id==='semana-01').pautaOrigem,null);
+  assert.ok(view.avisos.some(a=>a.aba==='Semanas'&&a.campo==='pauta_id'));
+});
+
 test('Layout A tema aceita semana registrada fora da segunda-feira',{skip},async t=>{
   const {page}=await abrirLayout(t,{editar:raw=>{
     mudarPorId(raw,'Semanas','semana-01','inicio_semana','2026-10-06');

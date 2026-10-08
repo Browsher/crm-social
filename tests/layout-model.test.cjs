@@ -15,6 +15,9 @@ function projetar(raw=capturaLayout()) {
   return projetarVisao({captura:validarCaptura(recalcularHashes(raw)),historico:[],ultimaTentativa:null},AGORA,mapa);
 }
 function peca(coluna,pendencias=[]) {return {quadro:{coluna,pendencias}};}
+for(const coluna of ['constructor','toString','__proto__'])test('Layout estado simples recusa chave herdada '+coluna,()=>{
+  assert.equal(layout.estadoSimples(peca(coluna)),'Criação');
+});
 function congelar(value) {
   if(value&&typeof value==='object'){Object.freeze(value);for(const item of Object.values(value))congelar(item);}
   return value;

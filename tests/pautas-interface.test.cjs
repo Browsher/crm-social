@@ -188,7 +188,7 @@ test('U004 captura antiga preserva todas as peças sem data e semanas na API',{s
 
 test('U004 pauta sem peças não cria semana capturada e conserva a consulta',{skip},async t=>{
   const page=await abrir(t,{width:390});await page.locator('.pauta-link').first().click();
-  assert.equal(await page.locator('#week-title').textContent(),'S1 · Tema sintético 1');
+  assert.equal(await page.locator('#week-title').textContent(),'Pauta S1 de novembro · Tema sintético 1');
   assert.equal(await page.locator('#lista [data-producao-id]').count(),0);
   assert.equal(await page.locator('#lista').evaluate(n=>document.activeElement===n),true);
   await page.locator('.pauta-link').nth(1).click();assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
