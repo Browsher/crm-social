@@ -8,7 +8,7 @@
 
 **Organization**: Histórias por prioridade: US1 (P1), US3 (P1), US2 (P2). A infraestrutura compartilhada também cobre recusas de US3, sem duplicar implementação de transporte/cache/HTTP.
 
-**Estado**: O autor aprovou expressamente o escopo com **21 tarefas em 2026-10-08** e autorizou `speckit-implement` no PR #23, que deve sair do rascunho ao final. Implementação em andamento, com TDD na ordem abaixo. T002 é externa e não bloqueia testes sintéticos; continua incluída na contagem, sem simular conclusão. Nenhum merge da 005 autorizado.
+**Estado**: O autor aprovou expressamente o escopo com **21 tarefas em 2026-10-08** e autorizou `speckit-implement` no PR #23. As **20 tarefas do agente estão concluídas**, com TDD na ordem abaixo, PR fora do rascunho, gate e revisão com resolução registrada em [validacao.md](validacao.md). T002 é externa e não bloqueia testes sintéticos; permanece pendente e incluída na contagem, sem simular conclusão. Nenhum merge da 005 autorizado ou executado; checks/review do head de entrega são conferidos no PR.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -109,7 +109,7 @@
 - [X] T018 Executar `node tools/quality-gate.mjs` com Node 24.19.0 no PATH e Playwright local, após as suítes das cinco camadas; confirmar estados/exit/baseline e corrigir falhas sem mascarar cobertura/complexidade, registrando evidência sanitizada por fonte em `specs/005-previas-imagens/validacao.md`; diferenciar limite Semgrep Windows e pulos UI/PowerShell do CI Linux (depende de T017; FR-014–015; SC-005).
 - [X] T019 Executar `doc-sync-onboarding` segundo `.claude/agents/doc-sync-onboarding.md`, como última etapa das alterações de código: atualizar `AGENTS.md`, `README.md`, `ROADMAP.md`, `docs/index.md`, `docs/architecture.md`, módulos existentes e `docs/modules/midia.md`, galeria e `specs/005-previas-imagens/validacao.md`; registrar implementação/testes/limites/emenda1.2.0/autor pendente sem declarar integração, preservar contratos históricos e ajustar mapa real de imports quando implementados (depende de T018; FR-012–015; constituição IV–VI).
 - [X] T020 Fazer revisão independente da spec/contrato e diff final, seguindo `.claude/agents/reviewer.md`, com foco em autorização por captura, origem/stream/cache, segredo, regressão Sheets/T1/Pronta e UI/foco; registrar findings/fonte e resolução em `specs/005-previas-imagens/validacao.md`, repetindo T018–T019 se houver código novo; não aceitar Critical, segurança ou regressão (depende de T019; FR-014–015; SC-005).
-- [ ] T021 Criar commits com autoria `204295625+Browsher@users.noreply.github.com`, sem coautoria, push somente em `Browsher/crm-social` e um PR da `codex/005-previas-imagens`, com evidências de `specs/005-previas-imagens/validacao.md`/12 screenshots; anexar PR, obter quality-gate/review remotos do head final e corrigir bloqueios pelo mesmo ciclo, então entregar PR/review/screenshots junto do link integrado da T1. **Não fazer merge da 005 nem apagar sua branch** (depende de T020; FR-015; autorização do autor).
+- [X] T021 Criar commits com autoria `204295625+Browsher@users.noreply.github.com`, sem coautoria, push somente em `Browsher/crm-social` e um PR da `codex/005-previas-imagens`, com evidências de `specs/005-previas-imagens/validacao.md`/12 screenshots; anexar PR, obter quality-gate/review remotos do head final e corrigir bloqueios pelo mesmo ciclo, então entregar PR/review/screenshots junto do link integrado da T1. **Não fazer merge da 005 nem apagar sua branch** (depende de T020; FR-015; autorização do autor).
 
 ---
 
@@ -212,5 +212,6 @@ Delegar por arquivo/interface, não por história concorrente que escreva a mesm
 
 - Todos os 21 itens têm checkbox, ID sequencial e caminho; apenas fases de história têm `[USn]`.
 - Hooks opcionais `speckit.git.commit` antes/depois de tasks não executados; esta geração não faz commit/push.
+- Hook opcional `hooks.after_implement` conferido em `.specify/extensions.yml`: `speckit.git.commit` (`$speckit-git-commit`), habilitado e condição null. Dispensado conforme `tdd-workflow`, que exige commits manuais; autoria noreply e ausência de coautoria conferidas.
 - Na geração inicial, nenhuma task, teste, gate ou screenshot da 005 havia sido executado. Após a aprovação das 21 tarefas, as marcas acima registram execução própria da 005, com evidências em [validacao.md](validacao.md); números históricos de T1/Pronta não comprovam esta entrega.
 - A galeria em Pronta segue a spec aprovada: imagens vinculadas vigentes, sem extração ou confirmação do ZIP. O aceite do escopo em 2026-10-08 não comprova o conteúdo do pacote nem o compartilhamento real de T002.

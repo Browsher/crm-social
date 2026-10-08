@@ -54,7 +54,7 @@ Após receber essa evidência, o revisor retirou o Minor condicional, mantendo s
 
 Limites: revisão local somente nos pacotes fornecidos, sem shell, filesystem, testes ou scanners; não releu checkout/diff integrais ou todos os testes. CSS, integrações anteriores e parte da documentação foram resumidos pelo coordenador. Gate estrito e review remoto completo do head entregue permanecem necessários.
 
-## Entrega remota em andamento — T021
+## Rodadas remotas iniciais — T021
 
 O PR #23 saiu do rascunho no head `e79c15d1f9546f427103a27864320911e41fbcba`, sem merge. [Primeiro CI estrito](https://github.com/Browsher/crm-social/actions/runs/37809663261): testes, cobertura e complexidade PASS; **Semgrep FAIL** por achado médio ou superior, exit 1. O resultado remoto conhecido prevalece sobre o SKIP local; esta rodada não atende ao aceite de segurança.
 
@@ -101,6 +101,14 @@ As cinco camadas voltaram a passar após as correções. Os 12 PNG permanecem na
 Revisor independente da produção recebeu os deltas `7bb2bae`/`84aae5e`, os resultados RED/GREEN, gate local final, CI estrito e a justificativa da exceção. Recomendou aprovação no escopo dos pacotes, sem Critical, Important, segurança ou regressão confirmados. Conferiu a recusa por identidade do descritor e seu fechamento, além da supressão estritamente de regra/linha sobre o discriminador público da fixture fictícia.
 
 Limites preservados: não executou shell, testes ou scanners, não releu checkout integral e não reivindicou independência sobre testes/fixtures que havia escrito. O coordenador leu os reforços de allowlist/XSS e o teste de troca real; os reviews remotos completos também os examinaram. A prova local não equivale a acesso operacional ao Drive. Depois da documentação, o coordenador conferiu os 13 hashes: zero divergências e nenhum delta de código/testes em relação à fonte do gate. O review remoto do head documental final continua necessário.
+
+## Encerramento da entrega — T021
+
+No head documental `161c07d245d0d3b4dcad63fe78d36de5f0afd2c9`, [quality-gate estrito](https://github.com/Browsher/crm-social/actions/runs/37813693273) e [execução do review](https://github.com/Browsher/crm-social/actions/runs/37813692916) concluíram SUCCESS. O [parecer remoto](https://github.com/Browsher/crm-social/pull/23#issuecomment-6065057282) não encontrou Critical, falha de segurança ou bloqueio de código; sua única Important pede evidência do gate desse mesmo head. O coordenador conferiu o SHA do check aprovado e o diff `84aae5e..161c07d`: somente 15 documentos/relatório, nenhum código, teste, script, config, gate, CI ou baseline. Treze hashes conferidos, zero divergências. Essa evidência resolve a ressalva I1, sem mudar código nem exigir que o revisor tenha executado o gate.
+
+A observação Minor de instabilidade foi investigada também por cinco rodadas Windows de `node --test --test-concurrency=1 tests/google-midia.test.cjs tests/midia.test.cjs`: cada rodada **47 PASS, 0 FAIL, 0 pulos, exit 0**, total 235 PASS. A troca real entre lstat/open continuou recusada em todas. Isso não identifica a causa da tentativa anterior; o diagnóstico intermitente permanece dívida explícita, sem atribuir defeito aos testes de timeout/concorrência por hipótese. As sugestões de ampliação/token/desempenho/eviction mantêm a triagem e os limites já registrados; a alegação de novo GET obrigatório ao ampliar não corresponde à investigação real no Chromium.
+
+O PR #23 está OPEN e fora do rascunho, com descrição/evidências e 12 screenshots sintéticos. As 20 tarefas do agente estão concluídas; T002 externa continua pendente. Commits manuais com autor/committer noreply e sem coautoria. Hook opcional de pós-implementação `speckit.git.commit` conferido e dispensado conforme `tdd-workflow`. O commit de encerramento atualiza somente tarefas e este registro; seus checks/review e a identidade das fontes são conferidos diretamente no PR antes da entrega. **Nenhum merge da 005 ou exclusão de sua branch foi realizado.** Tarefa 1 já integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22).
 
 ## Preparação externa do autor
 
