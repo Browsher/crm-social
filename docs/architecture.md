@@ -6,7 +6,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-Manutenção atual **Pronta para publicar**, implementada/testada localmente em 08/10/2026: estende a allowlist de campos capturados e os detalhes existentes, sem módulo, endpoint, dependência ou escritor editorial novo. 001–004 foram informadas como concluídas na main pelo autor; o registro da 004 na introdução desta arquitetura preserva sua rodada histórica. [Validação desta manutenção](reports/pronta-publicar-validacao.md).
+Manutenção atual **versões de páginas e cenas**, implementada/testada localmente em 08/10/2026: corrige vigência por índice e vínculo de mídia explícito nos módulos existentes, sem módulo, endpoint, dependência ou escritor editorial novo. **Pronta para publicar** já integrada pelo [PR #21](https://github.com/Browsher/crm-social/pull/21); 001–004 foram informadas como concluídas na main pelo autor. O registro da 004 na introdução preserva sua rodada histórica. [Validação desta manutenção](reports/versoes-unidades-validacao.md); integração depende do gate/review do head final.
 
 ```mermaid
 flowchart LR
@@ -39,7 +39,7 @@ flowchart LR
   Google --> Crypto
   Google --> Fetch["fetch nativo / OAuth e Sheets somente leitura"]
   Server --> Quadro["src/quadro-config.cjs"]
-  Projecao -->|CAMPOS e camposCapturados| Captura
+  Projecao -->|campos contratuais e seleção de cabeçalhos| Captura
   Projecao --> Pautas["src/pautas.cjs: identidade, calendário e origem"]
   Pautas -->|CAMPOS_PAUTAS e instanteUtc| Captura
   Projecao --> Triagem
@@ -137,7 +137,7 @@ flowchart TD
 
 Após validar estrutura e identidades NTV da candidata, mesmo ID e serialização já aceitos devolvem `sem_alteracao`, sem novo recibo/frescor/rollback. Conteúdo diferente no mesmo ID é conflito. Falha confirmável preserva captura e acrescenta recibo saneado; impossibilidade de registrar gera erro explícito. Interrupção pode deixar trava: não há expiração/remoção automática; conferir proprietário/processo/estado antes de recuperação manual. Os detalhes de falha, órfãos e concorrência estão no [módulo snapshot](modules/snapshot.md).
 
-`lerRecibo` confere cada recibo confirmado antes da projeção: objeto, IDs compatíveis, tipos, resultado e data ISO real com fuso explícito; `completa` exige captura identificada. Recibo corrompido recusa a leitura, e `criarServidor` responde 503 genérico sem escrever ou reparar arquivos. Após `validarCaptura(raw)`, `promoverComTrava` chama `validarIdentidadesNtv` de [triagem](modules/triagem.md), antes de no-op, gravação da candidata ou troca de captura vigente. Campo NTV terminado em `_id` que seria redigido recusa a candidata; falha confirmável registra somente aba/linha/campo e motivo estático, preservando a última captura. A projeção reutiliza a mesma seleção e continua recusando bytes antigos/corrompidos sem fundir identidades em marcadores; HTTP retorna 503 sem escrita. Snapshot não importa mapa ou regras do quadro. `detalhar` avisa versão ausente; `pendenciasMidia` não afirma ausência de mídia vigente sem versão positiva da produção.
+`lerRecibo` confere cada recibo confirmado antes da projeção: objeto, IDs compatíveis, tipos, resultado e data ISO real com fuso explícito; `completa` exige captura identificada. Recibo corrompido recusa a leitura, e `criarServidor` responde 503 genérico sem escrever ou reparar arquivos. Após `validarCaptura(raw)`, `promoverComTrava` chama `validarIdentidadesNtv` de [triagem](modules/triagem.md), antes de no-op, gravação da candidata ou troca de captura vigente. Campo NTV terminado em `_id` que seria redigido recusa a candidata; falha confirmável registra somente aba/linha/campo e motivo estático, preservando a última captura. A projeção reutiliza a mesma seleção e continua recusando bytes antigos/corrompidos sem fundir identidades em marcadores; HTTP retorna 503 sem escrita. Snapshot não importa mapa ou regras do quadro. `detalhar` avisa versão ausente; `pendenciasMidia` usa unidades vigentes válidas independentemente da versão da produção, exigindo versão positiva da produção somente no fallback sem unidades vigentes.
 
 A validação temporal ocorre sob trava, depois de estrutura/conflito/no-op e antes de gravar a candidata: fim até 10 minutos no futuro é permitido, inclusive o limite; excedente é inválida, e ID novo com fim igual ou anterior ao vigente é desatualizada. Ambas confirmam motivo fixo no recibo e mantêm a vigente. GET/releitura/reinício validam estrutura sem reaplicar essa política relativa à importação.
 
@@ -236,6 +236,14 @@ avisos restauram os avisos gerais. Painel fica oculto em Histórico ou sem aviso
 **link não permitido**, mantendo o marcador exato de supressão. A API pode conservar
 URL já triada fora da allowlist visual; textos livres legítimos mantêm suas URLs
 como texto segundo o contrato. Células não criam links ou navegação automática.
+
+## Páginas e cenas: vigência e mídia explícita
+
+Como um texto que conserva sua fotografia, cada unidade resolve os arquivos pelos ponteiros exatos em `src/projecao.cjs`. `arquivoLigado` exige produção e, se preenchida no arquivo, unidade coincidente; versão da mídia pode diferir do texto. Vínculo quebrado ou escopo incompatível retorna null com aviso, sem substituição. Versão inválida do arquivo conserva sua validação numérica independente.
+
+`versoesUnidades` calcula a maior versão inteira positiva por índice inteiro positivo para cada produção e tipo de unidade. `unidades` marca todos os empates nessa maior versão como vigentes; IDs continuam exclusivos por registro e seu formato não é interpretado. Índice/versão inválidos permanecem com aviso e não são vigentes. `Produções.versao` não participa desse cálculo. Revisões mantêm suas comparações de versão/vínculos e pacote mantém a versão exata capturada em `pacote_versao`.
+
+Em `src/web/app.js`, `secaoUnidades` agrupa por `[vigente,versao]`, mostrando grupos atuais antes dos históricos recolhidos, inclusive quando uma mesma versão contém unidades atuais e antigas. `unidadeDetalhe` acrescenta **imagem vN** com a versão original do arquivo ligado à página. A regra de Pronta continua recolhendo a seção inteira e mantendo seus avisos na API/Planilha. [Projeção](modules/projecao.md#detalhes-versões-e-relações), [interface](modules/web.md#versões-das-unidades) e [evidência local](reports/versoes-unidades-validacao.md). Os imports do mapa acima permanecem os mesmos; não há mapa Graphify neste checkout.
 
 ## Pronta: pacote e ações locais da gaveta
 

@@ -4,6 +4,8 @@ Como um índice de fotografias, o modelo conserva identidades e relações: 001 
 
 [Spec](spec.md) e [contrato](contracts/captura-e-consulta.md) são as fontes dos requisitos e interfaces. Nenhuma entidade de apresentação cria coluna ou estado remoto.
 
+**Manutenção de 08/10/2026:** a introdução preserva o fechamento histórico da 001. As regras atuais de unidades abaixo foram corrigidas sem nova feature/Spec Kit, com implementação/testes locais e integração condicionada ao gate/review do head final. [Fonte e limites](../../docs/reports/versoes-unidades-validacao.md).
+
 ## Captura e identidade
 
 Envelope privado versionado com fonte, marca, início/fim, matrizes completas e
@@ -186,13 +188,16 @@ Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado
 
 - Ponteiros de Semanas resolvem por `arquivo_id`. Editor/Motion precisam de produção,
   papel, versão e origens compatíveis; empate/ausência de vínculo gera aviso, sem vigente arbitrário.
-- Páginas/cenas são ordenadas dentro da versão pertinente; não misturar versões para
-  completar sequência. Design novo: A confirmar quando não há classificação explícita
+- Páginas/cenas são ordenadas dentro da versão pertinente; a vigência é calculada por
+  índice, permitindo versões atuais diferentes entre índices. Design novo: A confirmar quando não há classificação explícita
   da página/versão; arquivo/template/estado presente não é prova. Não existe flag nos mínimos.
 - Na projeção implementada, `detalhes.paginas`/`cenas` conservam todas as versões:
   ordenação por versão/índice positivos e ID, com inválidos preservados ao final e aviso.
-  `vigente` exige versão positiva igual à da produção; a UI exibe essa versão primeiro
-  e as demais recolhidas, com impacto atual a confirmar.
+  `vigente` exige índice/versão inteiros positivos e a maior versão registrada por
+  produção/índice/tipo de unidade, sem comparar com `Produções.versao`. Cada ID é exclusivo
+  por registro; seu formato não identifica a sequência lógica. Empates preservam todos
+  os registros vigentes e inválidos não são vigentes. A UI agrupa por vigência/versão,
+  atuais primeiro e históricos recolhidos, inclusive com o mesmo número de versão.
 - Revisão mostra decisão, tratamento, versão/unidade e motivo separados. Resolvido/resolvida
   é histórico cinza; desconhecido não é encerrado. Revisão antiga aberta não reprova
   automaticamente a versão nova; sem vínculo, impacto a confirmar.
@@ -230,10 +235,13 @@ semana representada no fim do dia, usando **—**. A resolução é reaproveitad
 na mesma consulta: aviso semanal entra uma vez no conjunto global e permanece nos
 avisos locais de cada peça afetada, sem mudar as relações ou a captura original.
 
-Ponteiro de unidade exige arquivo da mesma produção/versão; página/cena preenchida
-no arquivo também precisa corresponder. Ausência, referência quebrada e escopo
-incompatível produzem aviso, sem substituta. Empates por papel/versão/página/cena e
-origens JSON inválidas mantêm os registros, sem selecionar vigente automático.
+Ponteiro explícito de unidade exige arquivo da mesma produção; página/cena preenchida
+no arquivo também precisa corresponder, enquanto unidade vazia é aceita. A versão da
+mídia pode diferir da versão do texto e a página mostra **imagem vN** do arquivo ligado.
+Versão inválida do arquivo conserva aviso numérico independente sem desfazer esse
+vínculo. Ausência, referência quebrada e escopo incompatível produzem aviso, sem
+substituta. Empates por papel/versão/página/cena e origens JSON inválidas mantêm os
+registros, sem selecionar arquivo vigente automático.
 Avisos públicos trazem aba, linha física e campo quando disponíveis; o vínculo de
 origem é mantido internamente por ID/WeakMap, sem enviar matriz bruta ou mapas privados.
 
@@ -246,6 +254,12 @@ técnico de mídia por cena reúne causas distintas no primeiro ponteiro falho;
 resolvida, o aviso aponta ao primeiro pagina_id/cena_id/arquivo_id falho; versao
 é usado quando a versão da revisão/produção é inválida. Escopos completos permanecem
 na API, sem exposição técnica na linha visual.
+
+Faltas reais de mídia das unidades vigentes com índice/versão válidos geram pendências
+independentemente da validade de `Produções.versao`. Sem unidades vigentes, o fallback
+que procura arquivo na versão da produção exige essa versão inteira positiva; sem
+ela, não afirma ausência categórica. Revisões e seleção de pacote conservam regras
+próprias. [Contrato de versões das unidades](contracts/captura-e-consulta.md#versões-das-unidades--manutenção-de-08102026).
 
 ## Tabelas e avisos da Planilha
 

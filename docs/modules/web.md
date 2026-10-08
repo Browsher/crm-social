@@ -180,8 +180,8 @@ O diálogo nativo recebe título de data/sem data, quantidade e **todas** as pe�
 | Publicação | Uma linha quando publicado_em está preenchido; não existe faixa vazia nem confirmação remota |
 | Texto registrado | Details fechado: legenda, corpo/função das páginas, texto na tela das cenas e Arquivos · registros; unidades identificadas por Página/Cena número e versão, sem IDs técnicos; textContent |
 | Revisão vigente | Título legível de decisão/versão/motivo, abaixo Corrige: responsável e tratamento; sem IDs/rótulos técnicos, adicionais em +N revisão aberta/revisões abertas |
-| Páginas / Cenas | Versão vigente primeiro; outras versões recolhidas; índice em ordem. Em Pronta, seção inteira recolhida e avisos de mídia omitidos nas unidades, preservados na API/Planilha |
-| Página | Linha compacta com número, título ou corpo, Design novo: A confirmar e link permitido ou mídia ausente |
+| Páginas / Cenas | Grupos por vigência e versão, atuais primeiro; históricos recolhidos; índice em ordem. Em Pronta, seção inteira recolhida e avisos de mídia omitidos nas unidades, preservados na API/Planilha |
+| Página | Linha compacta com número, título ou corpo, Design novo: A confirmar, imagem vN do arquivo ligado e link permitido ou mídia ausente |
 | Cena | Linha compacta com número, texto, início/duração e links permitidos; um texto humano agregado distingue imagens ausentes/inicial/final e/ou vídeo ausente |
 | Arquivos · registros | Dentro de Texto registrado: nome de apresentação, versão e registro, sem miniatura; arquivo ligado sem URL segura mostra link não permitido |
 | Histórico | Details fechado por padrão; revisões resolvidas, de outras versões e com vínculo a confirmar em grupos próprios, sem virar revisão vigente |
@@ -201,6 +201,12 @@ Fora da coluna Pronta, `arquivosDaUnidade` usa `avisoMidia` da cena para mostrar
 `urlAutorizada` transforma em link somente HTTPS nos hosts exatos `drive.google.com` ou `docs.google.com`, sem usuário/senha na URL. Um link abre somente por clique em aba separada, com `noopener noreferrer`; URL recusada nunca é ecoada como texto bruto. Antes do HTTP, a projeção já suprime userinfo de Arquivos.url/Produções.url_video_final usando new URL, com aviso fixo sem o valor; URL não vazia malformada também é suprimida e vazio/somente espaços permanece sem aviso de URL inválida. Registros não carregam imagem, iframe, vídeo ou arquivo remotamente. Textos são aplicados por `createElement`/`textContent` e `replaceChildren`, sem innerHTML, comandos ou execução de JSON. CSS fornece foco visível e breakpoint de 720 px; body acompanha a altura da página e a sidebar desktop mantém o fundo até o fim.
 
 A projeção preserva a frase legítima e substitui somente o pedaço HTTP(S) separado por espaços em branco que `new URL` identifica com usuário/senha, conservando espaços e pontuação de contorno. Em texto livre, não promete detectar outros esquemas, URLs relativas ou credenciais fora desse pedaço; campos de URL dedicados mantêm seu guarda. JSON é dado: só tokens de string redigidos são reserializados, e o restante dos bytes permanece. Avisos já globais dos registros relacionados são incorporados ao resumo/contador da peça; detalhes técnicos permanecem fora da gaveta. Em Texto registrado, Página/Cena e número/versão identificam a unidade sem expor seu ID técnico na apresentação.
+
+### Versões das unidades
+
+Como um texto atualizado que reaproveita uma fotografia, a página mostra **imagem vN** a partir da versão original do arquivo ligado, sem comparar com a versão da produção ou do texto. `secaoUnidades` (`src/web/app.js`) agrupa por `[vigente,versao]`; os grupos vigentes são seções abertas e os demais são `details` recolhidos com **impacto atual a confirmar**. Uma mesma versão pode ter unidades atuais e históricas em grupos separados quando outro índice já avançou. Índice e versão válidos e a maior versão por índice vêm da projeção; a UI não escolhe mídia ou recalcula vigência.
+
+[tests/versoes-interface.test.cjs](../../tests/versoes-interface.test.cjs) confere cinco páginas de texto v3 com imagens v2/v1/v1/v2/v3, grupos atuais/históricos com o mesmo número de versão, links exatos, Escape e ausência de corte horizontal. Quatro cenários cobrem claro/escuro em 1440/390, com somente GET local, estado TEMP, porta efêmera, requests externos bloqueados e erros do navegador verificados. [Validação da correção](../reports/versoes-unidades-validacao.md) e [quatro screenshots sintéticos](../design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas); integração pendente de gate/review do head final. Revisões, pacote e recolhimento de Pronta conservam suas regras próprias.
 
 ## Verificação e limites
 

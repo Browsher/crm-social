@@ -10,6 +10,8 @@ Como um álbum da operação, esta feature permite localizar registros sem coman
 
 **Status**: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). Próximo passo: 002 — Planilhas. A tipagem da captura demonstrada deixa vínculos/vigência a confirmar; decisão pendente, resultados e limites na [validação](validacao.md).
 
+**Manutenção atual de 08/10/2026:** o status acima preserva o fechamento histórico da 001; 001–004 estão concluídas na main e Pronta foi integrada pelo PR #21. A correção pequena de versões de páginas/cenas foi autorizada sem nova feature/Spec Kit, implementada e testada localmente; integração depende do gate/review do head final. Ponteiros explícitos podem reaproveitar mídia de outra versão, e a vigência das unidades usa a maior versão positiva por produção/índice positivo/tipo, sem comparar com a produção. [Contrato vigente](contracts/captura-e-consulta.md#versões-das-unidades--manutenção-de-08102026) e [evidências/limites](../../docs/reports/versoes-unidades-validacao.md).
+
 **Input**: CRM simples somente neste computador, com o desenho aprovado; usar o GitHub
 Spec Kit e construir por features. A decisão de interface está em
 [telas.md](../../docs/design/telas.md), subordinada aos requisitos desta única spec.
@@ -110,8 +112,14 @@ com Escape, conferindo as versões e o foco restaurado.
    Cena distingue imagens ausentes/inicial/final e/ou vídeo ausente, sem perder
    os três slots na API; aviso técnico de mídia é agregado por cena, mantendo
    validações de índice/tempo/versão independentes.
-   Página mostra versão e design novo "A confirmar" sem fonte inequívoca; versões
-   anteriores e Texto registrado começam recolhidos e abrem por clique, com API completa.
+   Página mostra versão, **imagem vN** do arquivo ligado e design novo "A confirmar"
+   sem fonte inequívoca. Cada índice inteiro positivo usa a maior versão inteira positiva
+   por produção/tipo de unidade como vigente, independentemente de `Produções.versao`;
+   todos os empates permanecem e índices/versões inválidos não são vigentes. Grupos
+   atuais vêm primeiro; históricos e Texto registrado começam recolhidos e abrem
+   por clique, com API completa, inclusive quando o mesmo número de versão contém
+   unidades atuais e antigas. Ponteiro explícito exige produção/unidade compatíveis
+   (unidade vazia no arquivo é aceita), permitindo mídia de outra versão sem substituição.
 5. **Given** arquivo relacionado, ausente ou vínculo quebrado, **When** consulto,
    **Then** o arquivo mostra nome de apresentação, versão e "registro"; ausência e
    inconsistência geram avisos, sem prévia nem mídia substituta. Link permitido abre
@@ -226,8 +234,10 @@ conforme os limites de normalização e apresentação de URL do contrato.
   antes de no-op, gravação ou promoção; falha confirmável registra localização sem valor
   e preserva a última captura. A consulta mantém recusa da projeção para bytes antigos ou
   corrompidos, sem fundir registros numa chave compartilhada ou escrever arquivos privados.
-- Versão vigente ausente gera aviso; versão ausente/inválida não comprova ausência de
-  mídia vigente no quadro. Registros e impacto atual continuam a confirmar.
+- Versão da produção ausente gera aviso; sua ausência/invalidade não impede faltas
+  reais de mídia em unidades vigentes com índice/versão válidos. Sem unidades vigentes,
+  o fallback de ausência de arquivo exige versão válida da produção. Registros e
+  avisos permanecem; revisão e pacote seguem seus próprios contratos de versão.
 
 - Na importação, `completedAt` até 10 minutos à frente do relógio local é aceito; mais que isso recusa a captura como inválida. Captura nova com fim igual ou anterior ao da vigente é desatualizada e recusada. Ambos confirmam recibo com motivo e preservam a vigente. Repetição do mesmo ID/bytes já aceitos continua sem alteração; GET não revalida essa política temporal.
 

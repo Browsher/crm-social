@@ -2,6 +2,23 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
+## Versões de páginas e cenas
+
+Quatro PNG de 08/10/2026 mostram a gaveta Pronta com **Páginas e cenas** expandido nos temas claro/escuro e larguras 1440/390. Fonte de código, testes e imagens: `7b0ab46a44bfb14d80d6dffbab6ec78b06c028da`. O coordenador inspecionou os quatro arquivos finais. A fixture [tests/versoes-fixtures.cjs](../../../tests/versoes-fixtures.cjs) contém cinco páginas de texto v3 com imagens v2/v1/v1/v2/v3 numa produção v8; também contém cena v3 com imagens v1/v2 e vídeo v2 numa produção v9. As imagens mostram as páginas atuais e seus rótulos **imagem vN**; a cena e os casos de borda são conferidos pelos testes.
+
+| Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Gaveta com imagens reaproveitadas | [Abrir](versoes-light-gaveta-1440.png) | [Abrir](versoes-light-gaveta-390.png) | [Abrir](versoes-dark-gaveta-1440.png) | [Abrir](versoes-dark-gaveta-390.png) |
+
+Reprodução com Node/Playwright existentes configurados, fora de `CI=true`, na raiz do repositório:
+
+```powershell
+$env:CRM_SCREENSHOTS_VERSOES = '1'
+& $env:CRM_NODE_PATH --test --test-name-pattern='Versões gaveta pronta' tests/versoes-interface.test.cjs
+```
+
+Somente esses quatro cenários gravam `versoes-*.png` quando a variável vale `1`; os testes comuns não gravam imagens. Servidor/estado em TEMP, porta efêmera e relógio fixo sintético; requisições externas são bloqueadas. Não houve leitura real, download, publicação ou acesso ao CRM privado. [Validação e limites](../../reports/versoes-unidades-validacao.md); implementação/testes locais, integração condicionada ao gate/review do head final. As demais galerias abaixo preservam suas rodadas históricas.
+
 ## Tema claro e escuro
 
 Registro local de 06/10/2026, regenerado em 07/10/2026: **16 screenshots da aplicação executável**, exclusivamente com fixtures sintéticas em TEMP, nos temas claro/escuro e larguras 1440/390. O botão agora indica a ação: **☾ Escuro** no tema claro e **☀ Claro** no escuro, com aria-label correspondente e sem aria-pressed. Doze imagens mudaram; as quatro gavetas permaneceram iguais porque o diálogo oculta o botão. Estado de integração e checks no [PR #18](https://github.com/Browsher/crm-social/pull/18); merge condicionado ao gate e review vigentes. As imagens não representam o CRM privado do autor. Planejamento inclui objetivo sintético e três pautas; Produção inclui os três formatos, e Planilha mostra avisos e abas/Histórico da captura fictícia. Datas/horários são controlados em 04/10/2026 para a apresentação reproduzível, com duas capturas sintéticas de 02/10 e 03/10. A gaveta registra a janela de 1050 px de altura; as outras telas usam fullPage, conservando largura e a rolagem própria dos componentes. Sem montagem ou alteração da imagem.

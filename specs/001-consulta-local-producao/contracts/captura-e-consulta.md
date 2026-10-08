@@ -438,8 +438,9 @@ Versões/índices preenchidos inválidos e tempos preenchidos não finitos/negat
 geram aviso preservando o original; vazio continua desconhecido, nunca zero.
 As unidades são agrupadas por vigência e versão, ordenadas numericamente por índice e, no
 empate, pelo ID ordinal; valores inválidos ficam depois dos válidos. Na gaveta,
-versão vigente vem primeiro e outras versões ficam recolhidas, com impacto atual
-a confirmar. A marcação de design novo continua A confirmar por ausência de fonte.
+grupos vigentes vêm primeiro e os históricos ficam recolhidos, com impacto atual
+a confirmar, inclusive quando compartilham o mesmo número de versão. A marcação
+de design novo continua A confirmar por ausência de fonte.
 
 ### Versões das unidades — manutenção de 08/10/2026
 
@@ -465,6 +466,9 @@ atual a confirmar**, mesmo com versão distinta da produção. Ao lado de cada p
 com arquivo ligado, mostra **imagem vN** usando a versão original dessa mídia. Histórico,
 ponteiros, regras de revisão, seleção de pacote e recolhimento de Pronta permanecem
 distintos. Não há migração de captura, nova dependência, rota ou operação remota.
+
+[Validação local e limites](../../../docs/reports/versoes-unidades-validacao.md) e
+[quatro imagens sintéticas](../../../docs/design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas).
 
 Os avisos da US3 usam a linha física do retângulo capturado, inclusive após linhas
 vazias ou registros de outra marca. O mapa de origem permanece privado em WeakMap,
@@ -493,7 +497,7 @@ usam **—**, sem inventar a localização de um aviso global.
   não recebem extras arbitrários. `dias`: grupos por data ou Sem data/semana e IDs de peças.
   `quadro.colunas:[{nome}]` mantém a ordem contratual; `quadro.semanas:[{semanaId,colunas:[{nome,titulo,ids,quantidadeValoresNovos}]}]` contém oito colunas e IDs ordinais por semana, inclusive semanaId null das peças sem vínculo inequívoco. Sem captura, semanas vazias com nomes canônicos mantidos. Cada produção acrescenta `quadro:{coluna,pendencias}`.
   Coluna Outras deriva título/contador só dos seus cartões daquela semana;
-  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo registrado na versão atual com URL vazia/recusada não vira mídia ausente. Produção sem versão recebe aviso de versão vigente não informada; versão ausente ou inválida não sustenta afirmação categórica de ausência de mídia vigente. Fora de Pronta, o cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
+  não servir o mapa bruto. Pendência de revisão vem de decisão vigente literal revisar/refazer/reprovado/rejeitado, com tipo/texto/revisaoId/decisao/versao/responsavelCorrecao. Mídia ausente conserva tipo/texto e unidade/unidadeId quando pertinente. Aprovação/desconhecido/versão anterior não criam correção inferida; arquivo ligado com URL vazia/recusada não vira mídia ausente. Produção sem versão recebe aviso de versão vigente não informada. Unidades vigentes com índice/versão válidos sustentam faltas reais de mídia mesmo quando a versão da produção é inválida; sem unidades vigentes, o fallback de ausência de arquivo exige versão válida da produção. Fora de Pronta, o cartão resume a primeira pendência visível/+N após o filtro de mídia por coluna definido acima; a API conserva todas as pendências e a gaveta mantém seus detalhes. Etapa null é recuperada antes da triagem e preservada no JSON; chave de vazio somente no contador Outras. Tratamento desconhecido permanece dívida da revisão final.
 - `planilha`: seis abas na ordem Semanas, Produções, Páginas, Cenas, Arquivos e
   Revisoes, cada uma `{nome, cabecalhos, quantidadeLinhas, linhas}`. `cabecalhos`
   é cópia de `camposCapturados`, com mínimos de `CAMPOS` e opcionais contratuais
