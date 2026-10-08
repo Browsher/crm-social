@@ -2,9 +2,28 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-Planejamento, frescor/releitura, gaveta, Produção e Planilha implementados localmente; verificação sintética e estado final T001–T041 na [validação](../../specs/001-consulta-local-producao/validacao.md). Demonstração privada e onboarding final concluídos; limites na validação. Arquivos: [index.html](../../src/web/index.html), [app.js](../../src/web/app.js) e [styles.css](../../src/web/styles.css). Funções estáveis em app.js: `abrirDia`/`acordeaoPeca`, `secaoUnidades`/`secaoRevisoes`, `renderProducao`/`pendenciaQuadro`, `renderPlanilha`/`celulaPlanilha`, `detalhesCaptura` e `objetivoMensal`. Consulta mensal da 003 testada localmente com dados sintéticos; demonstração com uma linha fictícia marcada como teste conferida na [validação da 003](../../specs/003-planejamento-mensal/validacao.md).
+## Layout v3 — Parte A vigente localmente
 
-## Inicialização e navegação
+Como páginas de uma agenda, Semana e Mês localizam as peças; Produção acompanha projetos por semana. Parte A da 006 implementada/testada localmente, **não integrada**; [validação](../../specs/006-layout-v3/validacao.md). A Parte B aguarda ok explícito na A para perfil/pop-up/Instagram/Publicar e remoção visual de Planilha. As seções históricas 001–005 abaixo conservam contratos de dados e provas, com a apresentação substituída identificada.
+
+`index.html` carrega `/theme.js` antes do CSS e `/layout-model.js` antes de `/app.js`, ambos os últimos com defer. `app.js` usa as [seis funções puras compartilhadas](layout-model.md), mantendo integração DOM, atualização e gaveta. Principais funções vigentes: `semanaPlanejamento`, `calendario`, `objetivoMensal`, `renderProducao`/`projetoSemana`, `passosProducao`, `carregarMiniaturas`, `abrirDia`/`acordeaoPeca`, `renderPlanilha`/`celulaPlanilha` e `detalhesCaptura`.
+
+| Controle | Comportamento da Parte A |
+| --- | --- |
+| Entrada e menu | Planejamento em Semana; menu Planejamento, Produção e Planilha, sem Publicar/Instagram. |
+| Atualização | ⟳ Atualizar único no topo das três telas, feedback acessível, um POST {} seguido de GET; desabilitado até terminar. Selo conserva clique até Planilha. Falha/no-op preservam captura, horário e falha ativa conforme API. |
+| Objetivo/pautas | Linha única com nome completo acessível, truncamento visual; botão aria-expanded e painel hidden sem espaço recolhido. Objetivo vem de Meses em view.planilha, pautas estruturadas sem status/agente, fallback textual sem numeração inventada. |
+| Semana | Segunda a domingo; hoje destacado. Sete colunas em região horizontal focável no celular, inicialmente centrada em hoje e com rolagem por semana preservada ao retornar/trocar tela. Cartões mostram miniatura/formato/título/estado e abrem o dia inteiro. |
+| Mês | Usa altura disponível e pontos por estado com nomes acessíveis; qualquer semana é acionável por clique/Enter/Espaço, inclusive vazia e cruzando ano/mês. Não carrega mídia. |
+| Produção | Projetos pela semana registrada: atual/futuras antes de passadas; órfãs e Sem data permanecem acessíveis. Progresso X de N prontas conta Pronta/Publicada. Cinco passos com aria-current ou motivo curto de correção/mídia. |
+| Futuro vazio | Cabeçalho com período, corpo somente **Planejamento na sexta-feira**; sem tema, pauta, contador ou percentual inventado. |
+| Miniaturas | Primeira imagem da seleção da 005, imagem inteira 4:5 com contain. IntersectionObserver carrega apenas peças visíveis da tela ativa pela rota local; falha individual mostra Prévia indisponível. |
+| Gaveta | Dia inteiro, unidades/versões, textos, pacote/cópia, avisos/atalhos de Planilha e galeria/ampliação preservados. Fatos visuais: Estado, Prevista e Versão; metadados de responsáveis/ferramentas removidos. Revisões mantêm decisão/motivo editorial. |
+| Planilha | Mesmos mínimos/opcionais, avisos, Histórico, teclado e atalhos; atualização foi realocada para o topo. |
+
+Captura/API/projeção/coleta/cache/configuração/tema permanecem; não há nova dependência, conta ou estado editorial. O servidor acrescenta somente o estático `/layout-model.js`. [12 screenshots sintéticos](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) e testes de modelo/HTTP/interface/regressão comprovam o recorte A; o gate local não substitui CI/review do head final.
+
+## Inicialização e navegação — histórico 001–005
 
 O HTML carrega `/theme.js` de forma síncrona antes de `/styles.css`, seguido de `/app.js` com defer; o aplicativo consulta GET /api/visao e atualiza por POST /api/atualizar; depois faz GET com cache no-store. A 005 acrescenta imagens solicitadas somente à origem local, por /api/midia/ID-interno quando a peça abre. Não há framework, comunicação direta com Google ou credencial no navegador.
 
@@ -53,7 +72,7 @@ Gate Windows histórico de 06/10: **350 PASS**. Em 07/10, o gate final da árvor
 
 O gerador tem [três testes próprios](../../tests/screenshots-tema.test.cjs), **3 PASS sem SKIP** localmente. Dois casos VM leem/executam `scripts/screenshots-tema.cjs` real, interrompem antes da captura e comprovam que a limpeza não remove caminho fora de TEMP ou com prefixo inválido. O CLI executa uma cópia em TEMP, gera 16 PNG com larguras 1440/390 e comprova a remoção somente do TEMP criado pelo script, preservando diretório alheio com prefixo semelhante. O CI executa os dois casos VM; o CLI com navegador declara SKIP pela pendência M8. O teste HTTP H02 passou percorrendo os quatro estáticos, inclusive `/theme.js`, com GET/HEAD e MIME correspondente. Nesta rodada não houve alteração do código de produção, PNG, configuração de CI/gate ou baseline. [Galeria de 16 screenshots sintéticos](../design/screenshots/LEIA-ME.md#tema-claro-e-escuro), regenerada por [scripts/screenshots-tema.cjs](../../scripts/screenshots-tema.cjs) com Node/Playwright existentes. Sem nova dependência, polling, alteração dos contratos de captura ou validação editorial.
 
-## Objetivo e pautas do mês
+## Objetivo e pautas do mês — histórico 003/004
 
 `objetivoMensal` lê o objetivo exclusivamente de Meses em `state.view.planilha`, selecionando NTV e o `state.mes` exibido. Zero linhas mostra **Ainda não definido**; uma linha mostra objetivo textual não vazio ou esse estado. Duas ou mais linhas mostram **A confirmar** sem escolher objetivo. Número/bool não viram objetivo artificial no card; a célula completa permanece na tabela. Todos os textos são criados por `textContent`, sem execução, e o card acompanha navegação mensal e POST→GET. Os avisos ficam na Planilha.
 
@@ -71,7 +90,7 @@ As regressões em 1440/390 verificam a cor ao navegar por objetivos/ausências/d
 
 Implementação e testes da 004 são locais/sintéticos; [tests/pautas-interface.test.cjs](../../tests/pautas-interface.test.cjs) confere navegação/foco sem peças, fallback, origens, órfãos, leitura/teclado da Planilha, temas e contraste. [Validação da 004](../../specs/004-pautas-planejamento/validacao.md) e [20 screenshots](../design/screenshots/LEIA-ME.md#004--pautas-no-planejamento) registram resultados e limites; entrega no [PR #20](https://github.com/Browsher/crm-social/pull/20), com entrega e integração acompanhadas no PR e merge condicionado ao gate/review do head vigente; resultados por head na validação citada.
 
-## Calendário, lista e Sem data
+## Calendário, lista e Sem data — apresentação histórica 001
 
 O cartão mostra somente formato, título e status registrados, com rótulos de ausência. Seis status conhecidos/aprovados recebem rótulo legível na apresentação, sem mudar o valor da API. `pronto`, `publicado`, `erro`, `cancelado` e `cancelada` constam no dicionário; `em_planejamento` foi explicitamente fornecido/aprovado pelo autor nesta revisão:
 
@@ -92,7 +111,7 @@ Tema aparece no início da semana. Para múltiplas peças, apresenta o primeiro 
 
 **N sem data** conta globalmente a captura NTV e abre lista dedicada por semana, sem filtro de mês/formato; o link fica oculto quando N é zero. O total **peças registradas** também é global, não a quantidade visível naquele filtro.
 
-## Produção por semana
+## Produção por semana — quadro histórico substituído na Parte A
 
 `semanasQuadro` ordena por início civil/identidade, sem período ao final. A seleção conserva escolha; na primeira carga prefere semana de hoje em São Paulo, senão última datada ou primeira disponível. Setas ficam desabilitadas nos limites; tema/período/total são da semana escolhida, sem filtro de mês/formato do Planejamento. O browser usa colunas/título/IDs/contador da API, sem recalcular mapas. Vazia mostra **Sem peças**; sem captura pede primeira leitura à Central.
 
@@ -171,6 +190,8 @@ Legenda e hashtags usam `textContent` e preservam quebras de linha com `white-sp
 
 ### Apresentação comum da gaveta
 
+Na Parte A, os fatos passaram a Estado/Prevista/Versão e responsáveis/Com quem está/Corrige deixaram a apresentação. Avisos e seus atalhos de Planilha permanecem nesta parte. A descrição da faixa antiga abaixo preserva a evolução histórica; vínculos, versões, textos, grupos e segurança continuam vigentes.
+
 O diálogo nativo recebe título de data/sem data, quantidade e **todas** as peças do grupo. Como fichas dobráveis, `abrirDia` guarda o elemento que abriu o detalhe e gera um `details` por peça, em ordem ordinal de ID; só a primeira seção começa aberta. O filtro de formato do calendário/lista não é reaplicado ao dia. Um dia vazio mostra **Nenhuma peça registrada neste dia**, sem acordeão fictício; Sem data conserva o grupo da própria semana. A apresentação segue o [mockup da gaveta compacta](../design/mockups/gaveta-v2.html), preservando todos os detalhes seguros na API.
 
 | Seção da peça | Conteúdo real |
@@ -231,6 +252,8 @@ atualizar envia somente JSON vazio à API local; não conhece chave, token ou ID
 Recusas temporais diretas mostram motivo próprio no status da atualização e no Histórico; `motivoHistorico` aceita somente os dois textos fixos novos além dos motivos legados. Os casos sintéticos em 1440/390 verificam captura/data preservadas e a mesma mensagem nas duas apresentações.
 
 ## Prévias de imagens — 005
+
+Atualização da 006 Parte A: miniaturas de peças visíveis em Semana/Produção também iniciam pedidos locais; a seleção foi extraída para layout-model.js. A galeria completa continua sob abertura da peça e a ampliação da 005 permanece. Mês e telas ocultas não solicitam imagens. As provas e o gatilho anteriores registrados abaixo são históricos.
 
 Como uma folha de contato ao lado do texto, a galeria mostra as imagens ligadas às unidades vigentes e permite conferi-las maiores. Implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23); merge/exclusão da branch autorizados após gate/review aprovados no head final. [Validação por fonte, entrega e integração](../../specs/005-previas-imagens/validacao.md).
 

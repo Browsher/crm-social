@@ -1,5 +1,11 @@
 # Mockup de telas v2
 
+## Layout v3 — referência da 006
+
+[layout-v3.html](layout-v3.html) é a cópia sanitizada da referência aprovada em 08/10/2026. Perfil/marca e textos comerciais foram substituídos por valores demonstrativos; não contém dados capturados, credenciais, IDs de serviço ou fontes remotas. A fonte foi somente lida. [Telas](../telas.md#layout-v3--referência-aprovada-para-a-006) e [spec da 006](../../../specs/006-layout-v3/spec.md) prevalecem sobre itens ilustrativos divergentes.
+
+O HTML conserva Dados e avisos, mensagens e botões de exemplo para registrar a referência; eles não autorizam sua presença na UI final. A Parte A foi implementada/testada localmente, com 12 screenshots sintéticos de Semana/Mês/Produção nos dois temas e 1440/390; [evidências do aplicativo](../screenshots/LEIA-ME.md#006--layout-v3-parte-a). O autor manteve 32 tarefas e autorizou duas partes; perfil/pop-up/Instagram/Publicar e remoção visual da Planilha são B, não iniciada e dependente do ok explícito na A. Nenhum mockup é apresentado como screenshot do produto.
+
 03/10/2026 — demonstração offline de decisões visuais, construída sobre o [protótipo de 02/10](../prototype/index.html). Abrir [telas-v2.html](telas-v2.html) no navegador. A [especificação das telas](../telas.md) e a [spec da 001](../../../specs/001-consulta-local-producao/spec.md) definem o escopo da implementação.
 
 Peças, datas, versões, estados, responsabilidades e horários são exemplos do protótipo. Os nomes dos agentes e workflows são referências funcionais. Este HTML não é uma captura da planilha nem um monitor de agendas; não prova aprovação, integração ou publicação. Não lê Google, não salva decisões e não executa workflows. Não contém mídias operacionais.

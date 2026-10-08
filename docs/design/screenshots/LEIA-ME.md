@@ -2,6 +2,26 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
+## 006 — Layout v3 Parte A
+
+Doze screenshots do aplicativo, gerados em 08/10/2026 às 16:17 após os ajustes e inspecionados pelo coordenador, mostram Semana, Mês e Produção em claro/escuro e larguras 1440/390. Fonte final: `5ac5d7c` da branch `codex/006-layout-v3`, baseada em `2be585a`; screenshots gerados antes do commit, com somente whitespace posterior no mockup/script. O commit base não contém o código novo. Viewports 1440×1050 e 390×844; Produção usa fullPage. Nenhuma mudança semântica de código ocorreu depois da geração. Parte A implementada/testada localmente, não integrada; PR/CI/review pendentes. Publicar/perfil/pop-up/Instagram pertencem à B, não iniciada.
+
+| Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Semana | [Abrir](layout-v3-parte-a/layout-v3-light-semana-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-light-semana-390.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-semana-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-semana-390.png) |
+| Mês | [Abrir](layout-v3-parte-a/layout-v3-light-mes-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-light-mes-390.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-mes-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-mes-390.png) |
+| Produção | [Abrir](layout-v3-parte-a/layout-v3-light-producao-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-light-producao-390.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-producao-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-producao-390.png) |
+
+[scripts/screenshots-layout-v3.cjs](../../../scripts/screenshots-layout-v3.cjs) usa [layout-browser.cjs](../../../tests/layout-browser.cjs) e [layout-fixtures.cjs](../../../tests/layout-fixtures.cjs): oferta, carrossel de cinco páginas e Reels travado, PNG 1080×1350 exclusivamente sintéticos. Promove captura apenas em TEMP validado por prefixo, inicia servidor/serviço reais em porta efêmera, usa credencial efêmera e transporte falso de mídia, bloqueia rede externa e verifica erros de página/overflow. Encerra navegador/servidor antes da limpeza restrita do TEMP criado. Não usa CRM, captura ou conta do autor.
+
+Reprodução com Node/Playwright existentes configurados:
+
+```powershell
+& $env:CRM_NODE_PATH scripts/screenshots-layout-v3.cjs
+```
+
+Miniaturas 4:5 usam contain; Semana móvel permite rolar os sete dias, começa em hoje e conserva rolagem visual. Mês não solicita mídia; Produção mostra projetos, passos ou motivo travado, progresso e período/frase da futura vazia. A prova é sintética: não demonstra acesso Google/Instagram, conteúdo de ZIP, aprovação, publicação ou operação editorial. [Validação e gate local](../../../specs/006-layout-v3/validacao.md). As galerias seguintes preservam as provas históricas das 001–005.
+
 ## 005 — Prévias de imagens
 
 Doze PNG sintéticos atualizados em 08/10/2026 mostram galeria, imagem ampliada e falha localizada em Pronta, nos temas claro/escuro e larguras 1440/390. Fonte do código/testes/PNGs: `452197514b8d10a14bcc466e8bc83bfdfb601e95`; o coordenador inspecionou todos. As cinco páginas têm texto v3 e imagens v2/v1/v1/v2/v3, geradas por [previas-fixtures.cjs](../../../tests/previas-fixtures.cjs) como PNG 1080×1350. Miniaturas usam caixas 4:5 com contain; a ampliação mantém a imagem inteira, proporcional e centralizada, sem corte inferior. Não há conteúdo real. Este conjunto substitui os 12 PNG anteriores da fonte `392e109`; a rodada original permanece histórica na validação.

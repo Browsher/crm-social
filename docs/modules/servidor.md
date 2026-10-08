@@ -28,6 +28,7 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | --- | --- |
 | GET / | `index.html`, `text/html` |
 | GET /app.js | JavaScript da aplicação |
+| GET /layout-model.js | JavaScript puro compartilhado da 006 Parte A, carregado antes de app.js |
 | GET /theme.js | JavaScript de preferência visual, carregado antes do CSS |
 | GET /styles.css | CSS da aplicação |
 | POST /api/atualizar | JSON {} até1KiB, Origin obrigatório; coleta injetável, 200/422/503/409 conforme contrato |
@@ -39,7 +40,11 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | Host/Origin recusados | 403, antes da avaliação de método/rota |
 | Estado/recibo confirmado inválido ou identidade/vínculo recusado na projeção | 503 genérico, sem alteração da última captura ou reparo dos arquivos |
 
-A allowlist de `STATIC` contém quatro arquivos explícitos: HTML, aplicativo, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A escolha das rotas existentes descarta query sem alterar configuração/caminho; atualização e mídia recusam query no contrato próprio. A mídia é uma rota dinâmica restrita por ID interno; nunca expõe data/ como diretório estático ou proxy genérico.
+A allowlist de `STATIC` contém cinco arquivos explícitos: HTML, aplicativo, modelo visual, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A escolha das rotas existentes descarta query sem alterar configuração/caminho; atualização e mídia recusam query no contrato próprio. A mídia é uma rota dinâmica restrita por ID interno; nunca expõe data/ como diretório estático ou proxy genérico.
+
+## Estático da 006 — Parte A
+
+A única alteração do servidor na Parte A é servir /layout-model.js como JavaScript sob a mesma allowlist explícita, GET/HEAD, MIME, CSP e guardas de Host/método. São agora cinco arquivos: HTML, aplicativo, modelo visual, tema e CSS. Não há novos endpoints de dados, configuração de perfil ou instagram.js; estes dois últimos pertencem à B, não iniciada. tests/layout-http.test.cjs passou de RED 1 PASS/3 FAIL para 4 PASS, conferindo estático/guardas, invariância de bytes de capturas/recibos em TEMP e API completa. [Validação](../../specs/006-layout-v3/validacao.md).
 
 ## Origem e conteúdo
 
