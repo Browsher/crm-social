@@ -68,6 +68,42 @@ for(const config of combinacoes) {
     assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-19');
     assert.match(await page.locator('#week-progress').textContent(),/0 de 0 prontas/);await semOverflow(page);
   });
+  test('Layout A Mês anuncia peças e estados no nome acessível da semana em '+label,{skip},async t=>{
+    const {page}=await abrirLayout(t,config);await modo(page,'Mês');
+    const week=page.getByRole('button',{name:/Semana de 5 de outubro.*Oferta sintética de outubro.*Pronta.*Carrossel de cinco páginas.*Pronta/});
+    assert.equal(await week.count(),1,'nomes e estados são anunciados no botão, não apenas em seus filhos');
+    await week.focus();await page.keyboard.press('Enter');
+    assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-05');
+    await modo(page,'Mês');await page.locator('[data-formato="Reels"]').click();
+    assert.equal(await page.getByRole('button',{name:/Semana de 5 de outubro.*Reels em produção.*Criação/}).count(),1);
+    assert.equal(await page.getByRole('button',{name:/Semana de 5 de outubro.*Oferta sintética/}).count(),0,'nome acessível acompanha filtro');
+  });
+  test('Layout A dia de hoje e falta de prévia têm nomes acessíveis em '+label,{skip},async t=>{
+    const {page}=await abrirLayout(t,config);
+    const today=page.getByRole('button',{name:/8 de outubro.*hoje/});
+    assert.equal(await today.count(),1,'botão do dia anuncia hoje');
+    assert.equal(await page.locator('#lista').getByRole('region').count(),0,'dias são grupos, sem sete landmarks extras');
+    assert.equal(await page.getByRole('button',{name:/Prévia indisponível.*Reels em produção/}).count(),1);
+    assert.equal(await page.getByRole('button',{name:/◇/}).count(),0,'glifo decorativo não entra no nome');
+    await today.focus();await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#dia').isVisible(),true);await page.keyboard.press('Escape');
+    assert.equal(await today.evaluate(n=>n===document.activeElement),true);
+  });
+  test('Layout A alternância mantém o período do mês navegado em '+label,{skip},async t=>{
+    const {page}=await abrirLayout(t,config);
+    await modo(page,'Mês');await modo(page,'Semana');
+    assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-05','alternância sem navegar preserva semana');
+    for(const [steps,first,last,month] of [[1,'2026-10-26','2026-11-01','Novembro'],[-1,'2026-09-28','2026-10-04','Outubro'],[3,'2026-12-28','2027-01-03','Janeiro']]) {
+      await modo(page,'Mês');
+      for(let i=0;i<Math.abs(steps);i++)await page.locator(steps>0?'#proximo':'#anterior').click();
+      assert.match(await page.locator('#mes').textContent(),new RegExp(month,'i'));
+      await modo(page,'Semana');
+      const days=await page.locator('.planning-day').evaluateAll(ns=>ns.map(n=>n.dataset.data));
+      assert.equal(days[0],first,'primeira semana do mês selecionado');assert.equal(days[6],last);
+      assert.match(await page.locator('#objetivo-toggle').textContent(),new RegExp(month,'i'));
+      await semOverflow(page);
+    }
+  });
   test('Layout A Produção ordena projetos, progresso e motivos em '+label,{skip},async t=>{
     const {page}=await abrirLayout(t,config);await navegar(page,'producao');
     const projects=page.locator('#quadro .project');
@@ -194,6 +230,49 @@ test('Layout A Semana móvel começa mostrando hoje e preserva rolagem ao filtra
   assert.ok(day.x>=box.x&&day.x+day.width<=box.x+box.width,'hoje visível dentro da região');
   await region.evaluate(n=>{n.scrollLeft=0;});await page.locator('[data-formato="Imagem"]').click();
   assert.equal(await region.evaluate(n=>n.scrollLeft),0,'rolagem escolhida permanece no mesmo período');
+});
+
+test('Layout A tema aceita semana registrada fora da segunda-feira',{skip},async t=>{
+  const {page}=await abrirLayout(t,{editar:raw=>{
+    mudarPorId(raw,'Semanas','semana-01','inicio_semana','2026-10-06');
+    mudarPorId(raw,'Semanas','semana-01','tema','Tema sintético fora da segunda');
+  }});
+  assert.match(await page.locator('#week-title').textContent(),/Tema sintético fora da segunda/);
+  await navegar(page,'producao');
+  assert.match(await page.locator('.project[data-semana-id="semana-01"] h2').textContent(),/Tema sintético fora da segunda/);
+});
+
+test('Layout A Sem data identifica vínculo e semana ausente',{skip},async t=>{
+  const {page}=await abrirLayout(t,{editar:raw=>{
+    mudarPorId(raw,'Produções','peca-1','data_prevista','');
+    mudarPorId(raw,'Semanas','semana-01','tema','Semana sintética com vínculo');
+  }});
+  await page.locator('#abrir-sem-data').click();
+  const linked=page.locator('#lista-sem-data [data-producao-id="peca-1"]');
+  assert.match(await linked.textContent(),/Semana sintética com vínculo/);
+  assert.match(await page.locator('#lista-sem-data [data-producao-id="peca-sem-data"]').textContent(),/Semana não identificada/);
+  await linked.focus();await page.keyboard.press('Enter');
+  assert.match(await page.locator('#dia-titulo').textContent(),/Sem data.*Semana sintética com vínculo/);
+});
+
+test('Layout A Sem data suporta semana sem tema nem período',{skip},async t=>{
+  const {page}=await abrirLayout(t,{editar:raw=>{
+    mudarPorId(raw,'Produções','peca-1','data_prevista','');
+    mudarPorId(raw,'Semanas','semana-01','tema','');mudarPorId(raw,'Semanas','semana-01','inicio_semana','');
+  }});
+  await page.locator('#abrir-sem-data').click();
+  assert.match(await page.locator('#lista-sem-data [data-producao-id="peca-1"]').textContent(),/Semana não identificada/);
+});
+
+test('Layout A primeira semana cruzada conserva o mês escolhido',{skip},async t=>{
+  const {page}=await abrirLayout(t);await modo(page,'Mês');await page.locator('#proximo').click();
+  await page.locator('.month-week[data-inicio-semana="2026-10-26"]').click();
+  assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-26');
+  assert.match(await page.locator('#objetivo-toggle').textContent(),/Novembro/);
+  await modo(page,'Mês');assert.match(await page.locator('#mes').textContent(),/Novembro/);
+  await page.locator('#anterior').click();await page.locator('.month-week[data-inicio-semana="2026-09-28"]').click();
+  assert.match(await page.locator('#objetivo-toggle').textContent(),/Outubro/);
+  await modo(page,'Mês');assert.match(await page.locator('#mes').textContent(),/Outubro/);
 });
 
 test('Layout A projeto futuro vazio identifica período sem tema ou progresso inventados',{skip},async t=>{

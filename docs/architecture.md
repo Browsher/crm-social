@@ -20,7 +20,14 @@ flowchart LR
   subgraph Evidencia["Ferramenta sintética de evidência: somente TEMP"]
     ScreenshotsLayout["scripts/screenshots-layout-v3.cjs"] --> LayoutBrowser["tests/layout-browser.cjs"]
     LayoutBrowser --> LayoutFixtures["tests/layout-fixtures.cjs"]
+    LayoutBrowser --> Fixtures
+    LayoutBrowser --> Snapshot
+    LayoutBrowser --> Google
+    LayoutBrowser --> Midia
     LayoutFixtures --> Fixtures
+    LayoutFixtures --> FixturesPrevias["tests/previas-fixtures.cjs"]
+    LayoutFixtures --> FixturesPautas
+    LayoutFixtures --> FixturesPronta["tests/pronta-fixtures.cjs"]
     LayoutBrowser -->|TEMP, porta efêmera, transporte de mídia falso| Server
     Screenshots["scripts/screenshots-tema.cjs"] --> Fixtures["tests/fixtures.cjs"]
     ScreenshotsPautas["scripts/screenshots-pautas.cjs"] --> FixturesPautas["tests/pautas-fixtures.cjs"]

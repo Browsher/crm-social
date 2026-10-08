@@ -2,7 +2,7 @@
 
 ## Feature 006 — Layout v3 (Parte A implementada/testada, não integrada)
 
-Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 concluídas na main conforme o autor. O escopo mantém 32 tarefas em duas partes autorizadas. T001–T016 verificadas na A; T017–T023 e fechamento B não iniciados, aguardando ok explícito na A. A mantém Planilha e entrega topo/objetivo/Semana/Mês/projetos; gate final Windows passou; revisão, PR e checks por head permanecem pendentes na validação. Sem merge. Provas antigas abaixo permanecem históricas.
+Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 concluídas na main conforme o autor. O escopo mantém 32 tarefas em duas partes autorizadas. T001–T016 verificadas na A; T017–T023 e fechamento B não iniciados, aguardando ok explícito na A. A mantém Planilha e entrega topo/objetivo/Semana/Mês/projetos; gate final Windows passou; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado após commits/push. Revisão independente, CI e review remoto têm acompanhamento/resultados no PR por head, com aprovação exigida no head final antes de concluir a entrega. Sem merge. Provas antigas abaixo permanecem históricas.
 
 | Documento | Uso |
 | --- | --- |
@@ -93,9 +93,6 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | [Tarefas](../specs/002-consulta-planilhas/tasks.md) | 24 tarefas com RED/GREEN e gates separados |
 | [Quickstart](../specs/002-consulta-planilhas/quickstart.md) | Testes falsos e preparação da conta pelo autor para demonstração |
 | [Validação](../specs/002-consulta-planilhas/validacao.md) | Decisões, RED/GREEN, screenshots e aceite remoto |
-| [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
-| [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate final Windows: 654 PASS, cobertura 95,4072%, baseline preservada |
-| [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
 | [Checklist](../specs/002-consulta-planilhas/checklists/requirements.md) | Qualidade da especificação; não substitui testes ou aprovação |
 | [Análise](../specs/002-consulta-planilhas/analysis.md) | Nova análise reduzida; ajustes antigos corrigidos pelo escopo aprovado |
 
@@ -112,9 +109,6 @@ T021 demonstrada; implementação, provas sintéticas e resultados reais sanitiz
 | [Tarefas](../specs/003-planejamento-mensal/tasks.md) | 15 tarefas concluídas; preparação do autor e demonstração pelo CRM com registro fictício |
 | [Quickstart](../specs/003-planejamento-mensal/quickstart.md) | Instruções do autor e comandos para repetir ensaios sintéticos executados |
 | [Validação](../specs/003-planejamento-mensal/validacao.md) | RED/GREEN, gates/reviews históricos, screenshots sintéticos e fechamento T002/T015 sanitizado |
-| [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
-| [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate final Windows: 654 PASS, cobertura 95,4072%, baseline preservada |
-| [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
 | [Checklist](../specs/003-planejamento-mensal/checklists/requirements.md) | Histórico do planejamento preservado; fechamento registrado em spec/validação/tarefas |
 
 Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7`: gate Windows com 322 PASS sem pulos nas cinco camadas, cobertura 98,3871%, drop 0, complexidade PASS com 17 avisos e baseline preservada. Semgrep SKIP por ausência no Windows e audit N/A. [Relatório local da integração](reports/003-integracao-t021-local-gate.json); resultados anteriores são históricos. Código integrado pelo [PR #15](https://github.com/Browsher/crm-social/pull/15); o fechamento documental exige novos checks/review. Evidência na [validação da 003](../specs/003-planejamento-mensal/validacao.md). Objetivo definido usa cor principal; pautas restantes usam +N pautas/+1 pauta. T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real; uso editorial real ainda não comprovado. Essa orientação pertence ao fechamento da 003; a 004 foi autorizada em 07/10 e está descrita abaixo.
@@ -131,9 +125,6 @@ Implementada/testada localmente: galeria e ampliação das imagens vinculadas à
 | [Modelo](../specs/005-previas-imagens/data-model.md) | Referências autorizadas, seleção da galeria, bytes e cache |
 | [Contrato de mídia](../specs/005-previas-imagens/contracts/midia.md) | GET local por ID interno, guardas, status e limites de bytes/transporte |
 | [Quickstart](../specs/005-previas-imagens/quickstart.md) | Preparação pendente do autor e repetição dos ensaios sintéticos |
-| [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
-| [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate final Windows: 654 PASS, cobertura 95,4072%, baseline preservada |
-| [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
 | [Checklist](../specs/005-previas-imagens/checklists/requirements.md) | Qualidade da especificação; não comprova implementação |
 | [Tarefas](../specs/005-previas-imagens/tasks.md) | 21 tarefas aprovadas após a parada inicial; rastreabilidade, dependências e estado de execução |
 | [Análise independente](../specs/005-previas-imagens/analysis.md) | Pesquisa/revisão documental do planejamento, com aprovação posterior das 21 tarefas; não substitui teste do código |

@@ -325,9 +325,11 @@ function posicionarSemana() {
 }
 function miniatura(p) {
   const box=node('span',undefined,'piece-thumbnail'),posicao=imagensDaPeca(p)[0];
-  if(!posicao){box.append(node('span','◇','thumbnail-placeholder'));box.setAttribute('aria-label','Prévia indisponível');return box;}
+  box.setAttribute('role','img');box.setAttribute('aria-label','Prévia da peça');
+  const indisponivel=()=>{const placeholder=node('span','◇','thumbnail-placeholder');placeholder.setAttribute('aria-hidden','true');box.replaceChildren(placeholder);box.setAttribute('aria-label','Prévia indisponível');};
+  if(!posicao){indisponivel();return box;}
   const img=node('img');img.alt='';img.width=108;img.height=135;img.dataset.midia=posicao.arquivo.arquivo_id;img.decoding='async';
-  img.addEventListener('error',()=>{box.replaceChildren(node('span','◇','thumbnail-placeholder'));box.setAttribute('aria-label','Prévia indisponível');},{once:true});
+  img.addEventListener('error',indisponivel,{once:true});
   box.append(img);return box;
 }
 function carregarMiniaturas() {
@@ -350,16 +352,17 @@ function semanaPlanejamento() {
   const days=[];
   for(let n=0;n<7;n++) {
     const date=dataMais(state.inicioSemana,n),today=date===hojeCivil(),day=node('section',undefined,'planning-day'+(today?' today':''));
-    day.dataset.data=date;day.setAttribute('aria-label',civil(date,{weekday:'long',day:'numeric',month:'long'})+(today?' · hoje':''));
+    day.dataset.data=date;day.setAttribute('role','group');day.setAttribute('aria-label',civil(date,{weekday:'long',day:'numeric',month:'long'})+(today?' · hoje':''));
     const header=node('button',undefined,'planning-day-heading');header.type='button';
+    header.setAttribute('aria-label',day.getAttribute('aria-label'));if(today)header.setAttribute('aria-current','date');
     header.append(node('span',civil(date,{weekday:'short'})),node('strong',civil(date,{day:'2-digit'})));
     header.addEventListener('click',()=>abrirDia(date,pecasDaData(date).map(p=>p.producao_id)));
     day.append(header,...pecasDaData(date).filter(aceito).map(cartao));days.push(day);
   }
   $('#lista').replaceChildren(...days);
 }
-function abrirSemana(inicio) {
-  state.inicioSemana=inicio;state.mes=inicio.slice(0,7);state.modo='Semana';render();
+function abrirSemana(inicio,mes=inicio.slice(0,7)) {
+  state.inicioSemana=inicio;state.mes=mes;state.modo='Semana';render();
   $('#lista').focus({preventScroll:true});
 }
 function calendario() {
@@ -368,9 +371,9 @@ function calendario() {
   const first=state.mes+'-01',start=layout.segundaDaSemana(first),next=new Date(first+'T12:00:00Z');next.setUTCMonth(next.getUTCMonth()+1);
   const last=dataMais(next.toISOString().slice(0,10),-1),end=dataMais(layout.segundaDaSemana(last),6);
   for(let inicio=start;inicio<=end;inicio=dataMais(inicio,7)) {
-    const week=node('button',undefined,'month-week');week.type='button';week.dataset.inicioSemana=inicio;
+    const week=node('button',undefined,'month-week'),labels=[];week.type='button';week.dataset.inicioSemana=inicio;
     week.setAttribute('aria-label','Semana de '+civil(inicio,{day:'numeric',month:'long'}));
-    week.addEventListener('click',()=>abrirSemana(inicio));
+    week.addEventListener('click',()=>abrirSemana(inicio,state.mes));
     for(let n=0;n<7;n++) {
       const date=dataMais(inicio,n),day=node('span',undefined,'month-day'+(!date.startsWith(state.mes)?' outside':'')+(date===hojeCivil()?' today':''));
       day.dataset.data=date;day.append(node('span',String(Number(date.slice(-2))),'month-date'));
@@ -378,9 +381,11 @@ function calendario() {
       for(const p of pecasDaData(date).filter(aceito)) {
         const dot=node('span',undefined,'month-dot state-'+estadoClasse(p)),label=(p.titulo || p.formato)+' · '+layout.estadoSimples(p);
         dot.setAttribute('role','img');dot.setAttribute('aria-label',label);dot.title=label;dots.append(dot);
+        labels.push(civil(date,{day:'numeric',month:'long'})+' · '+label);
       }
       day.append(dots);week.append(day);
     }
+    week.setAttribute('aria-label',week.getAttribute('aria-label')+': '+(labels.join('; ') || 'Sem peças'));
     grid.append(week);
   }
   $('#calendario').replaceChildren(header,grid);
@@ -431,6 +436,9 @@ function renderProducao() {
 function row(p) {
   const el=node('button',undefined,'agenda-row');el.type='button';el.dataset.producaoId=p.producao_id;
   el.append(node('strong',p.titulo || 'Título não informado'),node('small',p.formato),node('small',layout.estadoSimples(p)));
+  const semana=state.view.semanas.find(w=>w.semana_id===p.semanaId);
+  const rotulo=semana?.tema || (semana?.periodo.inicio?'Semana de '+civil(semana.periodo.inicio,{day:'numeric',month:'long'}):'Semana não identificada');
+  el.append(node('small',rotulo));
   el.addEventListener('click',()=>abrirDiaDaPeca(p));return el;
 }
 function listaSemData() {
@@ -439,7 +447,7 @@ function listaSemData() {
 }
 function pautasDoMes() {return (state.view.pautas??[]).filter(p=>p.mes===state.mes).sort((a,b)=>a.semana-b.semana);}
 function irParaPauta(pauta) {
-  abrirSemana(pauta.inicio_semana);
+  abrirSemana(pauta.inicio_semana,pauta.mes);
 }
 function listaPautas(pautas) {
   const list=node('ul',undefined,'pautas-list');
@@ -476,7 +484,7 @@ function cabecalhoPlanejamento() {
   const mensal=state.modo==='Mês',mes=civil(state.mes+'-01',{month:'long',year:'numeric'});
   $('#mes').textContent=mensal?mes.charAt(0).toUpperCase()+mes.slice(1):
     civil(state.inicioSemana,{day:'2-digit',month:'long'})+' – '+civil(dataMais(state.inicioSemana,6),{day:'2-digit',month:'long'});
-  const semanas=state.view.semanas.filter(w=>w.periodo.inicio===state.inicioSemana);
+  const semanas=state.view.semanas.filter(w=>layout.segundaDaSemana(w.periodo.inicio)===state.inicioSemana);
   const pauta=(state.view.pautas??[]).find(p=>p.inicio_semana===state.inicioSemana);
   $('#week-title').textContent=semanas.map(w=>w.tema).filter(Boolean).join(' · ') || pauta?.tema || '';
   $('#week-progress').textContent=progressoTexto(pecasDaSemana());
@@ -522,7 +530,7 @@ function controles() {
   for (const b of document.querySelectorAll('[data-modo]')) b.addEventListener('click',()=>{state.modo=b.dataset.modo;render();});
   for (const [id,n] of [['anterior',-1],['proximo',1]]) $('#'+id).addEventListener('click',()=>{
     if(state.modo==='Semana') {state.inicioSemana=dataMais(state.inicioSemana,n*7);state.mes=state.inicioSemana.slice(0,7);}
-    else {const date=new Date(state.mes+'-01T12:00:00Z');date.setUTCMonth(date.getUTCMonth()+n);state.mes=date.toISOString().slice(0,7);}
+    else {const date=new Date(state.mes+'-01T12:00:00Z');date.setUTCMonth(date.getUTCMonth()+n);state.mes=date.toISOString().slice(0,7);state.inicioSemana=layout.segundaDaSemana(state.mes+'-01');}
     render();
   });
   $('#objetivo-toggle').addEventListener('click',()=>{
