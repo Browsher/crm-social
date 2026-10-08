@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "4ab855e7a39b5aa764877aa9f31e85a51e7b6035",
+  "sourceCommit": "01d772bd66a6116c04d0a52ecd5a311e8afc0bb9",
   "nodeVersion": "24.19.0",
   "exitCode": 0,
   "results": [
@@ -8,7 +8,7 @@
       "name": "tests",
       "state": "PASS",
       "reason": "",
-      "count": 676
+      "count": 680
     },
     {
       "name": "coverage",
@@ -3127,7 +3127,7 @@
           "key": "src/web/app.js::ast::46f24455e3d071eca9892bb27a100d0cbb0c107ceffd06c672e5707292d0db25",
           "file": "src/web/app.js",
           "line": 483,
-          "value": 7,
+          "value": 8,
           "matchable": true
         },
         {
@@ -3453,168 +3453,168 @@
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::461537b9ae97d30e13f1c6ab1906b7a7556beb43a2cff8783978748c6251dfcf",
+          "key": "src/web/layout-model.js::ast::d1899b897ef14d37489ac54bacb1e4a6b40389ceee2856bb4701c0db0e2cf44f",
           "file": "src/web/layout-model.js",
           "line": 1,
           "value": 3,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::39986ae325aa0104f445af0582f40912f50037d7d4e492bc0af0f5ce6492bdef",
+          "key": "src/web/layout-model.js::ast::fd2119dc7f647e492bfe46241b69aa910f77a4e65d276423ae1de1026c469a2a",
           "file": "src/web/layout-model.js",
           "line": 5,
           "value": 2,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::d8996e8e8e63cdd24fe6d256a117bb5384a5d82d5f15a63ee5f6ae19fd6fc536",
+          "key": "src/web/layout-model.js::ast::76983d38a77ce7fa416541c0fc26e8d4db520384def0d7094b274f8203ca74f8",
           "file": "src/web/layout-model.js",
           "line": 6,
           "value": 6,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::18a88effb4e6ffa6110b5dff7d460c8eedbbbcdc71b8aa43c71249650fd4d3b2",
+          "key": "src/web/layout-model.js::ast::5b801f72e0d34509738b4fbaa3b8e7406623bf7f8502280b99979628830fe860",
           "file": "src/web/layout-model.js",
           "line": 9,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::f69554832a77fb93dc1298389111c4d86ae9abc62e9c8ce1b6f4b31622d8a808",
+          "key": "src/web/layout-model.js::ast::fdc94b56b3306d975385c2bb8233b34acc86369ef176f489c6bc1e0cfb85749f",
           "file": "src/web/layout-model.js",
           "line": 10,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::dfdfe6b2a12f9bb1cb2b66ab687b88ae06ebe3ac19863414615926b34ca1e698",
+          "key": "src/web/layout-model.js::ast::bb5935e2633396628028d8b24b0dc92f068b924d49a9a78ba03e7f08844b661b",
           "file": "src/web/layout-model.js",
           "line": 13,
           "value": 2,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::5d876b6f46de53475169705425cd74297c48634258d915cb91600eaf5463f21d",
+          "key": "src/web/layout-model.js::ast::ba95f729c8c51055010a09f4903c091b7a6ef02337f07badc2870082a1d63a58",
           "file": "src/web/layout-model.js",
           "line": 14,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::c7c7ac92fdf3187b02afe17c6925e7cce2ad8494744a25d4c6bd1153703dcd81",
+          "key": "src/web/layout-model.js::ast::f147467c3a745d0e4aa170ce9084626c086bf5c3d8781195487c77598989d510",
           "file": "src/web/layout-model.js",
           "line": 17,
           "value": 3,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::0dccd5d00c44d3f82e89257df40b1eea9ef2b9841e2d90db4b997a60c31ba771",
+          "key": "src/web/layout-model.js::ast::bea4b181ac43fb620c9cb1f0077cf2f1ed899d64badb39de898484459c1c9c5e",
           "file": "src/web/layout-model.js",
           "line": 19,
           "value": 2,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::b81a4b92195c2a98687dfa6d9c8ede2019f21deb512aa1ab975244da9bd0116e",
+          "key": "src/web/layout-model.js::ast::e1c0928d9a037cf7d3976f244fc46a852c3e776742672655fcc205e7f118bb34",
           "file": "src/web/layout-model.js",
           "line": 21,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::1c4a53aa6476c119db8cd40a068fbad3cefab23ee4c9d5b33a648b4b37eef9ae",
+          "key": "src/web/layout-model.js::ast::fdde25ab278413183ecefb6e89f3bae5934c9106d91c16d3c00905198f18cf94",
           "file": "src/web/layout-model.js",
           "line": 21,
           "value": 2,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::c8a9e24775768f0eae0f8108c2ade8e031903f9d1540f7f0f89b316a109e4814",
+          "key": "src/web/layout-model.js::ast::18f96f66bdb65a2b619df9afd437451c2bc29a02edced15f64cb31be0e5a77d5",
           "file": "src/web/layout-model.js",
           "line": 22,
           "value": 2,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::a9a004ffda952ea88fb9f104baa37c3b439caf87dc3c7962fa908a052a4a872d",
+          "key": "src/web/layout-model.js::ast::dec7cea21ba9ed9640b985f23b12618918169bc6a736eca124a299e3e37a010b",
           "file": "src/web/layout-model.js",
           "line": 22,
           "value": 3,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::a705ef23e3cca52ced598165d07d0259e4b5b44e28c29bd4bdce68ecc3010dc9",
+          "key": "src/web/layout-model.js::ast::0f44c28cc96e5ac219b9e073ccaf1d0dbbc525c4f4bda648dd4b8dc7e8f11c9f",
           "file": "src/web/layout-model.js",
           "line": 23,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::b05e0b2c5f3470cab461402060ec9a73155efcf77a01ec57cf4cd4c50b51c6df",
+          "key": "src/web/layout-model.js::ast::9feab937a9d2dc9ee5ace96a50818aec0e54eefdd3e71fe0790b09d0029e0790",
           "file": "src/web/layout-model.js",
           "line": 25,
           "value": 6,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::1882e28ff239e370e8b184fd65eac33fbdb137c63460902dbd95365fa7058ade",
+          "key": "src/web/layout-model.js::ast::23b0607a93f5b81280505670f6f834fa479b6adb48543bb4ea1550bfd505af7c",
           "file": "src/web/layout-model.js",
           "line": 29,
           "value": 3,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::7ba50e9d3567a4b2f54829a77790296c393d2d74abd9e5eb156b85a3b47abfab",
+          "key": "src/web/layout-model.js::ast::41f8d9d6aa93226ab099d23d2baf4089026662ed295d7fc0fb9b0e4683795153",
           "file": "src/web/layout-model.js",
           "line": 30,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::006909fa1e7d3706c947a78dcac2b0761ea3556060cf21572656c43516195e4a",
+          "key": "src/web/layout-model.js::ast::1c0cba5c721df523bc5762bf948f1d2d809c37f253428d1eb8caefa926cba00f",
           "file": "src/web/layout-model.js",
           "line": 30,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::5ffd926de80a540e9c570d107afb9c4b721c6fcd465867e91801dd55500118bd",
+          "key": "src/web/layout-model.js::ast::ebc08c387a1df7afc3079d2004deefaa156e3015f4076226a6ed073962736839",
           "file": "src/web/layout-model.js",
           "line": 32,
           "value": 5,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::6313fcc718ca8e2a9177046272528dae1fdb44cf55a5e8c46a339e1f7b86cc39",
+          "key": "src/web/layout-model.js::ast::fb8907415d61cfca91e568a5a24e9ada58f9d208d3b1cdb5fdc5895cf3795ae8",
           "file": "src/web/layout-model.js",
           "line": 39,
           "value": 2,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::d9f3cdbe0fb6dfeb914fc707664c2fdb5e3d049bc53a4e1f614387501adf518d",
+          "key": "src/web/layout-model.js::ast::29b9b329b226e8ce42e7988b7ab6e58c597f40a928b65c0728f56e6995588435",
           "file": "src/web/layout-model.js",
           "line": 42,
           "value": 1,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::06064446bbf2f6d6b30ce52311c1ae0c8562cece80c97f77b8cdd6993fe4c228",
+          "key": "src/web/layout-model.js::ast::470c961137f1f85db483a39eb0f17d79db3bf3f9681c21b226d8fab05ff45a5d",
           "file": "src/web/layout-model.js",
           "line": 43,
           "value": 3,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::eb06be21cedf7f972911c3b6b376ccd5800642007484efc41b86f2c58d81d0e0",
+          "key": "src/web/layout-model.js::ast::720d4b71c7886cf02754db0b614cc65d126b6da96728cf503ca0c99e9a12f512",
           "file": "src/web/layout-model.js",
           "line": 44,
           "value": 3,
           "matchable": true
         },
         {
-          "key": "src/web/layout-model.js::ast::2674d94105ec482d4c0f4cfa1f3aee138c7ca0a2522d47a50d9afcf6fde0a098",
+          "key": "src/web/layout-model.js::ast::6454d029eb99b3f49d44573f22e053ef40e32a59472f86962d1b6ef695050b95",
           "file": "src/web/layout-model.js",
           "line": 48,
           "value": 1,

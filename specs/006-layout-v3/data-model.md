@@ -23,7 +23,7 @@ Identidade: segunda-feira civil para navegação; semana_id para projeto da sema
 
 Planejamento agrupa pela data civil e exibe todas as peças do dia; Produção usa semanaId e mantém órfãs em Semana não identificada. Sem data não é descartada. X conta estados Pronta/Publicada; bloqueios não alteram captura ou liberação. Progresso de Planejamento segue os cartões da semana civil após o filtro de formato ativo; Produção conserva o projeto inteiro por semana registrada, sem herdar esse filtro.
 
-Atual primeiro, próxima semana depois, demais futuras em ordem crescente e passadas em ordem decrescente. Calendário pode apresentar período vazio sem criar Semanas/Produções. Período é texto identificador; futuro é calculado comparando as segundas-feiras civis normalizadas, sem tratar um início posterior na semana atual como futuro. Semana registrada sem período usa Período não identificado; grupo órfão mantém Sem semana. Corpo vazio futuro tem somente a mensagem autorizada.
+Atual primeiro, próxima semana depois, demais futuras em ordem crescente e passadas em ordem decrescente. Calendário pode apresentar período vazio sem criar Semanas/Produções. Período é texto identificador; futuro é calculado comparando as segundas-feiras civis normalizadas, sem tratar um início posterior na semana atual como futuro. Semana registrada sem período usa Período não identificado; grupo órfão tem h2 Semana não identificada e subtítulo compacto Sem semana. Corpo vazio futuro tem somente a mensagem autorizada.
 
 ## Objetivo/pautas
 

@@ -16,11 +16,11 @@
 | --- | --- | --- |
 | T024 Regressões gerais | executadas; menu/dias/escala migrados e verdes | não iniciada |
 | T025 Regressões das features | executadas; vínculos/versões/pacote/galeria preservados; isolamento final 103 PASS/0 SKIP | não iniciada |
-| T026 Acessibilidade/temas | executadas no recorte A, 1440/390, claro/escuro, teclado/contraste/overflow; 16 casos TDD adicionais na rodada d996002, mais 2 RED→GREEN na 5725b9f; rolagem existente coberta por 1 GREEN; rodada 4ab855e com mais 3 RED→GREEN; focal final 109 PASS/0 SKIP (49 UI Layout + 42 modelo + 18 Pautas) | não iniciada |
+| T026 Acessibilidade/temas | executadas no recorte A, 1440/390, claro/escuro, teclado/contraste/overflow; 16 casos TDD adicionais na rodada d996002, mais 2 RED→GREEN na 5725b9f; rolagem existente coberta por 1 GREEN; rodada 4ab855e com mais 3 RED→GREEN; focal 4ab855e com 109 PASS/0 SKIP; rodada 01d772b acrescentou 5 RED→GREEN (um caso legado migrado), focal final 113 PASS/0 SKIP (50 UI Layout + 45 modelo + 18 Pautas) | não iniciada |
 | T027 Gerador/evidência | implementado/testado, incluído no gate final | não iniciada |
-| T028 Screenshots | 12 PNG regenerados em 08/10 às 17:17:12–22, fonte 4ab855e; Semana light/1440 alterado inspecionado/aprovado, onze idênticos aos anteriores aprovados | não iniciada |
+| T028 Screenshots | 12 PNG regenerados em 08/10 às 17:41:25–30, fonte 01d772b; Semana light/1440 alterado inspecionado/aprovado (quatro pixels no contorno das miniaturas), onze idênticos aos anteriores aprovados | não iniciada |
 | T029 Review | revisão focal 6998d22→d996002 sem achados remanescentes naquele delta; correções/revisão independente/review remoto e resultados finais acompanhados no [PR #24](https://github.com/Browsher/crm-social/pull/24) por head; aprovação exigida no head final antes da entrega | não iniciada |
-| T030 Gate | oficial Windows repetido fonte código/testes/PNG 4ab855e PASS: 676 testes, 95,5492%, 635 métricas/máximo 16/19 avisos, exit 0; baseline preservada; Semgrep SKIP/audit N/A; tentativa anterior exit 1 não reproduzida, separada na validação | não iniciada |
+| T030 Gate | oficial Windows fonte código/testes/PNG 01d772b PASS: 680 testes, 95,5492%, 635 métricas/máximo 16/19 avisos, exit 0; baseline preservada; Semgrep SKIP/audit N/A; tentativa histórica 4ab855e exit 1 não reproduzida, separada na validação | não iniciada |
 | T031 Documentação | doc-sync-onboarding executado; fontes e pendências na validação | não iniciada |
 | T032 PR/CI | commits/push realizados; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado; resultados de CI/review registrados no PR por head, com aprovação exigida no head final; sem merge | não iniciada |
 
