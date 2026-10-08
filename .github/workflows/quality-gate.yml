@@ -83,3 +83,24 @@ jobs:
         run: python -m pip install --disable-pip-version-check semgrep==1.179.0
       - name: Executar gate estrito
         run: node tools/quality-gate.mjs --strict
+      # Diagnóstico temporário da 005; remover antes da entrega.
+      - name: Diagnóstico temporário dos achados sanitizados do Semgrep
+        if: failure()
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          try {
+            const report = JSON.parse(fs.readFileSync('quality-gate-report.json', 'utf8'));
+            const findings = report.results?.find(result => result.name === 'semgrep')?.findings;
+            if (Array.isArray(findings)) {
+              for (const finding of findings) {
+                const {rule, file, line, severity} = finding;
+                if (typeof rule !== 'string' || typeof file !== 'string' || !Number.isInteger(line) ||
+                    file.startsWith('../') || path.isAbsolute(file) || !['low', 'medium', 'high', 'critical'].includes(severity)) continue;
+                console.log(JSON.stringify({rule, file, line, severity}));
+              }
+            }
+          } catch { process.exitCode = 1; }
+          NODE

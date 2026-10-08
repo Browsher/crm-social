@@ -54,6 +54,12 @@ Após receber essa evidência, o revisor retirou o Minor condicional, mantendo s
 
 Limites: revisão local somente nos pacotes fornecidos, sem shell, filesystem, testes ou scanners; não releu checkout/diff integrais ou todos os testes. CSS, integrações anteriores e parte da documentação foram resumidos pelo coordenador. Gate estrito e review remoto completo do head entregue permanecem necessários.
 
+## Entrega remota em andamento — T021
+
+O PR #23 saiu do rascunho no head `e79c15d1f9546f427103a27864320911e41fbcba`, sem merge. [Primeiro CI estrito](https://github.com/Browsher/crm-social/actions/runs/37809663261): testes, cobertura e complexidade PASS; **Semgrep FAIL** por achado médio ou superior, exit 1. O resultado remoto conhecido prevalece sobre o SKIP local; esta rodada não atende ao aceite de segurança.
+
+**Alteração temporária no próprio CI para diagnóstico:** o workflow vigente não publica relatório nem artefato com a localização dos achados. Um passo condicionado à falha exibirá somente regra, arquivo, linha e severidade já sanitizados pelo adaptador. Sem alteração de scanner, versões, packs, configuração, limites, baseline, permissões ou checks. O passo será removido após localizar a causa, antes da entrega final; não é redução de checagens nem correção do achado.
+
 ## Preparação externa do autor
 
 T002 permanece pendente de confirmação: compartilhar a pasta Produções da NTV com a conta de serviço como Leitor. Essa tarefa não bloqueia os testes falsos. Nenhum ID, e-mail, link privado, screenshot ou conteúdo real integra este registro. Testes sintéticos não comprovam compartilhamento ou acesso operacional.
