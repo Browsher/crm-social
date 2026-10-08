@@ -59,7 +59,7 @@ for(const width of [1440,390])for(const scheme of ['light','dark'])test('U004 ca
     const target=page.locator('#lista');assert.equal(await target.isVisible(),true);
     assert.equal(await target.locator('.planning-day').first().getAttribute('data-data'),date);assert.equal(await target.evaluate(n=>document.activeElement===n),true);
   }
-  await card.locator('.pauta-link').nth(1).click();assert.match(await page.locator('#week-title').textContent(),/Conexões do cotidiano/);
+  await card.locator('.pauta-link').nth(1).click();assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
   await contraste(page);
   await page.locator('#lista [data-producao-id="peca-1"]').click();
   assert.deepEqual(await page.locator('#dia-pecas .pauta-origin').allTextContents(),['Pauta S2 de novembro']);
@@ -84,7 +84,7 @@ for(const width of [1440,390])for(const scheme of ['light','dark'])test('U004 se
   const before=await week.boundingBox();await page.locator('.pauta-link').nth(1).focus();await page.keyboard.press('Enter');
   assert.equal(await week.evaluate(n=>document.activeElement===n),true);
   assert.equal(await week.locator('.planning-day').first().getAttribute('data-data'),'2026-11-09');
-  assert.equal(await page.locator('#week-title').textContent(),'Conexões do cotidiano');
+  assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
   const after=await week.boundingBox();assert.equal(after.width,before.width);assert.equal(after.height,before.height);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await contraste(page);
 });
@@ -188,10 +188,10 @@ test('U004 captura antiga preserva todas as peças sem data e semanas na API',{s
 
 test('U004 pauta sem peças não cria semana capturada e conserva a consulta',{skip},async t=>{
   const page=await abrir(t,{width:390});await page.locator('.pauta-link').first().click();
-  assert.equal(await page.locator('#week-title').textContent(),'Tema sintético 1');
+  assert.equal(await page.locator('#week-title').textContent(),'S1 · Tema sintético 1');
   assert.equal(await page.locator('#lista [data-producao-id]').count(),0);
   assert.equal(await page.locator('#lista').evaluate(n=>document.activeElement===n),true);
-  await page.locator('.pauta-link').nth(1).click();assert.equal(await page.locator('#week-title').textContent(),'Conexões do cotidiano');
+  await page.locator('.pauta-link').nth(1).click();assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
   await page.locator('#selo').click();assert.equal(await page.locator('#dados-planilha tbody tr').count(),1);
   assert.equal(await page.locator('#dados-planilha tbody tr td').first().textContent(),'semana-01');
 });
