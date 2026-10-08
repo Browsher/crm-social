@@ -2,8 +2,8 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {capturaPronta}=require('./pronta-fixtures.cjs');
-const {temporario,mudarCelula,recalcularHashes}=require('./fixtures.cjs');
+const {capturaPronta,mudarPacote}=require('./pronta-fixtures.cjs');
+const {temporario,mudarCelula,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 const skip=process.env.CI==='true'?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
@@ -38,6 +38,7 @@ async function gaveta(page) {
 }
 async function screenshot(page,name,theme,width) {
   if(process.env.CRM_SCREENSHOTS_PRONTA!=='1')return;
+  // Exportação sintética opt-in solicitada pelo autor; dados e servidor dos testes ficam em TEMP.
   const destination=path.resolve(__dirname,'../docs/design/screenshots');fs.mkdirSync(destination,{recursive:true});
   await page.screenshot({path:path.join(destination,`pronta-${theme}-${name}-${width}.png`),fullPage:name==='quadro',animations:'disabled'});
 }
@@ -68,10 +69,24 @@ for(const theme of ['light','dark'])for(const width of [1440,390])test(`Pronta q
   assert.ok(await page.locator('#avisos-tabela tbody tr').count()>0);
   assert.match(await page.locator('#avisos-tabela').innerText(),/Imagem ausente/);
 });
+test('Pronta preserva revisão vigente na gaveta após a seção de publicação',{skip},async t=>{
+  const page=await abrir(t,{editar:raw=>adicionarRegistro(raw,'Revisoes',{
+    revisao_id:'revisao-liberada-sintetica',producao_id:'peca-3',versao:2,decisao:'revisar',
+    motivo:'Correção sintética ainda registrada',responsavel_correcao:'Equipe sintética',estado_tratamento:'aberta'
+  })});
+  const card=page.locator('#quadro [data-coluna="Pronta"] [data-producao-id="peca-3"]');
+  assert.match(await card.innerText(),/Pronta para publicar/);
+  assert.equal(await card.locator('.board-pending').count(),0);
+  const p=await gaveta(page),review=p.locator('[data-revisoes="vigentes"]');
+  assert.equal(await review.isVisible(),true);
+  assert.match(await review.innerText(),/Revisão vigente.*Correção sintética ainda registrada.*Equipe sintética/is);
+  assert.equal(await p.evaluate(el=>Boolean(el.querySelector('[data-publicacao]').compareDocumentPosition(
+    el.querySelector('[data-revisoes="vigentes"]'))&Node.DOCUMENT_POSITION_FOLLOWING)),true);
+});
 for(const url of ['https://docs.google.com/document/d/sintetico','http://drive.google.com/file/d/sintetico',
   'https://drive.google.com.exemplo.invalid/pacote','https://drive.google.com:444/pacote',
   'https://usuario:senha@drive.google.com/pacote','url-malformada',''])test('Pronta recusa URL de pacote fora da allowlist: '+url.replace(/usuario:senha/,'credencial-sintetica'),{skip},async t=>{
-  const page=await abrir(t,{editar:raw=>mudarCelula(raw,'Arquivos',5,'url',url)}),p=await gaveta(page);
+  const page=await abrir(t,{editar:raw=>mudarPacote(raw,'url',url)}),p=await gaveta(page);
   assert.equal(await p.locator('[data-publicacao] a').count(),0);
   assert.match(await p.locator('[data-publicacao]').innerText(),/Pacote indisponível/);
 });
@@ -87,7 +102,7 @@ test('Pronta texto literal, falha de clipboard e nova tentativa sem escrever na 
   await page.waitForFunction(()=>window.copiadoSintetico);
   assert.equal(await page.evaluate(()=>window.copiadoSintetico),literal+'\n\n#ExemploSintetico #PublicacaoManual');
 });
-test('Pronta ausências de texto e clipboard são explícitas; publicada não mostra seção de pronta',{skip},async t=>{
+test('Pronta ausência de texto é explícita; publicada não mostra seção de pronta',{skip},async t=>{
   const page=await abrir(t,{editar:raw=>{mudarCelula(raw,'Produções',3,'legenda','');mudarCelula(raw,'Produções',3,'hashtags','');}}),p=await gaveta(page);
   assert.equal(await p.getByRole('button',{name:'Copiar legenda',exact:true}).isDisabled(),true);
   assert.match(await p.locator('[data-publicacao]').innerText(),/Legenda não informada.*Hashtags não informadas/s);

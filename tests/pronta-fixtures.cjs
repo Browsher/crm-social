@@ -27,4 +27,10 @@ function capturaPronta() {
   raw.tables.Revisoes.values=raw.tables.Revisoes.values.filter((row,i)=>i===0 || !['revisao-atual','revisao-incerta'].includes(row[0]));
   return recalcularHashes(raw);
 }
-module.exports={capturaPronta,campoOpcional};
+function mudarPacote(raw,campo,valor) {
+  const table=raw.tables.Arquivos,index=table.values[0].indexOf('arquivo_id');
+  const row=table.values.findIndex((r,i)=>i>0 && r[index]==='pacote-sintetico-3');
+  if(row<1)throw new Error('Pacote sintético esperado não encontrado');
+  return mudarCelula(raw,'Arquivos',row,campo,valor);
+}
+module.exports={capturaPronta,campoOpcional,mudarPacote};

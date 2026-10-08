@@ -317,7 +317,7 @@ function semanaDoQuadro(weeks) {
 }
 function pendenciaQuadro(p) {
   if(p.quadro.coluna==='Pronta')return node('span','Pronta para publicar','board-ready');
-  const mostrarMidia=['Mídia','Revisão','Pronta','Publicada','Outras'].includes(p.quadro.coluna);
+  const mostrarMidia=['Mídia','Revisão','Publicada','Outras'].includes(p.quadro.coluna);
   const records=p.quadro.pendencias.filter(r=>r.tipo!=='midia' || mostrarMidia);
   if(!records.length)return null;
   const first=records[0],box=node('span',undefined,'board-pending');

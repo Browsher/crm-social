@@ -1,7 +1,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const path=require('node:path');
-const {capturaPronta}=require('./pronta-fixtures.cjs');
+const {capturaPronta,mudarPacote}=require('./pronta-fixtures.cjs');
 const {capturaValida,temporario,mudarCelula,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
 const {carregarMapaQuadro}=require('../src/quadro-config.cjs');
 const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
@@ -48,12 +48,12 @@ test('Pronta pacote usa versão do pacote e identidade exata, sem ocultar avisos
   assert.ok(p.detalhes.avisos.length>0);
 });
 for(const [nome,editar] of [
-  ['outra produção',raw=>mudarCelula(raw,'Arquivos',5,'producao_id','peca-4')],
-  ['versão anterior',raw=>mudarCelula(raw,'Arquivos',5,'versao',2)],
+  ['outra produção',raw=>mudarPacote(raw,'producao_id','peca-4')],
+  ['versão anterior',raw=>mudarPacote(raw,'versao',2)],
   ['versão textual histórica',raw=>mudarCelula(raw,'Produções',3,'pacote_versao','3')],
   ['versão vazia',raw=>mudarCelula(raw,'Produções',3,'pacote_versao','')],
-  ['tipo errado',raw=>mudarCelula(raw,'Arquivos',5,'tipo','imagem')],
-  ['extensão errada',raw=>mudarCelula(raw,'Arquivos',5,'extensao','png')],
+  ['tipo errado',raw=>mudarPacote(raw,'tipo','imagem')],
+  ['extensão errada',raw=>mudarPacote(raw,'extensao','png')],
   ['ambíguo',raw=>adicionarRegistro(raw,'Arquivos',{arquivo_id:'pacote-duplicado',producao_id:'peca-3',tipo:'pacote',extensao:'zip',versao:3,url:'https://drive.google.com/file/d/duplicado-sintetico'})]
 ]) test('Pronta recusa pacote '+nome,t=>{
   const raw=capturaPronta();editar(raw);
@@ -73,7 +73,7 @@ test('Pronta coleta normaliza pacote_versao canônico antes dos hashes e conserv
   }
 });
 test('Pronta GET real publica pacote seguro projetado e mantém métodos e origem protegidos',async t=>{
-  const dir=temporario(t);promoverCaptura(capturaPronta(),dir);
+  const dir=temporario(t);assert.equal(promoverCaptura(capturaPronta(),dir).resultado,'completa');
   const server=criarServidor({dataDir:dir,port:0});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   t.after(()=>new Promise(resolve=>server.close(resolve)));

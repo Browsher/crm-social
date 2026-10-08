@@ -56,13 +56,13 @@ function selecionarNtv(captura,avisos,origens,validadeJson) {
     captura.arquivos.filter(r=>ids.has(r.producao_id) || (!r.producao_id && weeks.has(r.semana_id))),captura.revisoes.filter(r=>ids.has(r.producao_id))];
   const result=Object.fromEntries(Object.entries(CAMPOS).map(([nome,fields],i)=>{
     const table=captura.envelope.tables[nome],keyIndex=table.values[0].indexOf(fields[0]);
+    const selecionados=camposCapturados(nome,table);
     const fisicas=new Map(table.values.slice(1).map((row,index)=>[row[keyIndex],index+2]));
     return [chaves[i],linhas[i].map(r=>{
       const origem={aba:nome,linha:fisicas.get(r[fields[0]])};
       // Recupera a célula de etapa em todas as linhas para conservar null:
       // registros normaliza null/undefined; selecionar reaplica a triagem.
       const entrada=nome==='Produções'?{...r,etapa_producao:table.values[origem.linha-1][table.values[0].indexOf('etapa_producao')]}:r;
-      const selecionados=camposCapturados(nome,table);
       const selected=selecionar(entrada,selecionados,nome,origem.linha,avisos);
       origens.set(selected,origem);
       if(Object.hasOwn(selected,'origens_json')) validadeJson.set(selected,jsonValido(r.origens_json));
