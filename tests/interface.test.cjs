@@ -295,7 +295,12 @@ test('U06 conteúdo HTML é texto; somente HTTPS Drive/Docs sem credenciais vira
     }
   },()=>{},capturaDetalhada);
   await page.locator('#calendario [data-producao-id="peca-3"]').click();
-  assert.equal(await page.locator('#dia img').count(),0);
+  assert.equal(await page.locator('#dia .peca-acordeao > summary img, #dia [data-textos] img').count(),0);
+  assert.equal(await page.locator('#dia [data-peca="peca-3"] > summary strong').textContent(),text);
+  assert.equal(await page.locator('#dia [data-peca="peca-3"] [data-textos]').getByText('Página 1 · versão 2 · Corpo: '+text,{exact:true}).textContent(),'Página 1 · versão 2 · Corpo: '+text);
+  const imagens=await page.locator('#dia img').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('src')));
+  assert.ok(imagens.length>0);
+  assert.ok(imagens.every(src=>typeof src==='string'&&src.startsWith('/api/midia/')));
   assert.ok((await page.locator('#dia').textContent()).includes(text));
   const links=page.locator('#dia a[target="_blank"]');
   const hrefs=await links.evaluateAll(ns=>ns.map(n=>n.href));
