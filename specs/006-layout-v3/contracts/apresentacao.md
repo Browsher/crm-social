@@ -33,9 +33,9 @@ Motivo substitui o indicador de cinco passos na linha. Não mostrar motivo técn
 
 ## Progresso, semana e datas
 
-X = peças Pronta ou Publicada; N = todas as peças no bloco apresentado; 0 ≤ X ≤ N. Sem peças não inventa meta nem 100%. Semanas futuras vazias mostram somente Planejamento na sexta-feira no corpo; período pode permanecer no cabeçalho.
+X = peças Pronta ou Publicada; N = todas as peças no conjunto apresentado; 0 ≤ X ≤ N. Em Planejamento, esse conjunto é a semana por data civil após o filtro de formato ativo, concordando com os cartões visíveis. Em Produção, é o projeto inteiro por semana registrada, independente do filtro de Planejamento. Sem peças não inventa meta nem 100%. Semanas futuras vazias mostram somente Planejamento na sexta-feira no corpo; período pode permanecer no cabeçalho.
 
-Hoje e semana atual são civis de America/Sao_Paulo; semana inicia segunda e termina domingo. Planejamento segue dataCivil, inclusive remarcadas para outra semana; projeto de Produção mantém semanaId e agrega órfãs em Semana não identificada. Sem data fica acessível em grupo próprio, sem dia inventado. Não fixar quantidade/dias/formato obrigatório.
+Hoje e semana atual são civis de America/Sao_Paulo; semana inicia segunda e termina domingo. Futuro compara a segunda-feira normalizada do início registrado com a segunda-feira de hoje; início posterior no mesmo período civil não transforma a semana atual em futura. Semana registrada sem período mostra Período não identificado; Sem semana fica reservado ao grupo órfão. Planejamento segue dataCivil, inclusive remarcadas para outra semana; projeto de Produção mantém semanaId e agrega órfãs em Semana não identificada. Sem data fica acessível em grupo próprio, sem dia inventado. Não fixar quantidade/dias/formato obrigatório.
 
 ## Menu, topo e atualização
 

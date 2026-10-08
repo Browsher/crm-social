@@ -102,7 +102,7 @@ Pesquisa registrada em [research.md](research.md): funções e acoplamentos atua
 
 [Modelo](data-model.md) e [contrato](contracts/apresentacao.md) definem classificação, bloqueio, progresso, fila, agrupamento temporal e prévias. A autoridade é p.quadro.coluna da API; status textual não decide estado. “Outras” mapeia para Criação porque foi explicitamente solicitado pelo autor. Publicada/Pronta vencem bloqueio; revisão vigente de correção vence ausência de mídia. Não persistir nenhum derivado.
 
-Peças aparecem uma vez por projeto da semana registrada; sem vínculo ficam em Semana não identificada. Planejamento usa dataCivil, incluindo remarcações, sem duplicar a peça em uma semana diferente por associação original. São agrupamentos distintos, explicitados no contrato. Progresso usa o conjunto de peças do bloco exibido.
+Peças aparecem uma vez por projeto da semana registrada; sem vínculo ficam em Semana não identificada. Planejamento usa dataCivil, incluindo remarcações, sem duplicar a peça em uma semana diferente por associação original. São agrupamentos distintos, explicitados no contrato. Progresso de Planejamento usa a semana civil após o filtro de formato, concordando com os cartões visíveis; Produção usa o projeto inteiro pela semana registrada, independente desse filtro. Futuro compara segundas-feiras civis normalizadas; semana registrada sem período conserva identidade e mostra Período não identificado.
 
 ### Integração sem Planilha visual — planejada para Parte B
 

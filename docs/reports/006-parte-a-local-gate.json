@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "7fc1996e9843812f83054a6eb11c13c730e7d95b",
+  "sourceCommit": "4ab855e7a39b5aa764877aa9f31e85a51e7b6035",
   "nodeVersion": "24.19.0",
   "exitCode": 0,
   "results": [
@@ -8,7 +8,7 @@
       "name": "tests",
       "state": "PASS",
       "reason": "",
-      "count": 673
+      "count": 676
     },
     {
       "name": "coverage",
@@ -3001,7 +3001,7 @@
           "key": "src/web/app.js::ast::8478609d6c24fe5fa65f664e1bc6ec6a39113ffba567fcfc5a1e4845b0f9240e",
           "file": "src/web/app.js",
           "line": 415,
-          "value": 7,
+          "value": 8,
           "matchable": true
         },
         {

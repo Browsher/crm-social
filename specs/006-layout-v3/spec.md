@@ -99,7 +99,7 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 - **FR-005**: Objetivo/pautas ausentes ou ambíguos DEVEM conservar os critérios da consulta existente, com “Ainda não definido” ou “A confirmar” e sem associação inventada.
 - **FR-006**: Planejamento DEVE oferecer Semana | Mês e iniciar em Semana; navegar períodos e pautas DEVE conservar o período selecionado.
 - **FR-007**: Semana DEVE ter sete colunas de segunda a domingo, hoje destacado e peças com miniatura, formato, título e estado simples; em 390 px, as sete colunas permanecem em região de rolagem própria.
-- **FR-008**: O cabeçalho da semana e cada projeto DEVEM mostrar tema/pauta disponíveis e progresso “X de N prontas”, calculado só com peças reais; zero peças não implica meta ou percentual concluído.
+- **FR-008**: O cabeçalho da semana e cada projeto DEVEM mostrar tema/pauta disponíveis e progresso “X de N prontas”, calculado só com peças reais: em Planejamento, somente peças visíveis pelo filtro de formato na semana civil; em Produção, o projeto inteiro da semana registrada. Zero peças não implica meta ou percentual concluído.
 - **FR-009**: Mês DEVE usar a altura disponível da tela e pontos coloridos por estado simples; ativar qualquer semana DEVE abrir sua visão Semana, com identificação acessível independente de cor.
 - **FR-010**: Ativar peça DEVE abrir a gaveta do dia completo; peças sem data ou semana DEVEM continuar acessíveis, identificadas como “Sem data”/“Semana não identificada”.
 - **FR-011**: Produção DEVE organizar projetos por semana, atual primeiro, próxima depois; outras semanas registradas continuam acessíveis e não são descartadas.
