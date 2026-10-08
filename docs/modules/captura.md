@@ -12,6 +12,7 @@ Implementado com regras puras de estrutura e tempo; estado e evidências na [val
 | `validarTempoImportacao(completedAt, nowIso, completedAtVigente=null)` | Confere tolerância futura e ordem estrita do fim de uma candidata já validada; relógio/instante vigente são fornecidos pelo importador sob trava |
 | `hashCelulas(tables)` / `letraColuna(n)` | Helpers reutilizados pela coleta direta; mesma definição v1 |
 | `CAMPOS` / `CAMPOS_MESES` / `CAMPOS_PAUTAS` | Seis listas obrigatórias/66 mínimos preservados; descritores separados com quatro mínimos mensais e doze de Pautas |
+| `camposCapturados(nome, table)` | Devolve mínimos e opcionais permitidos cujo cabeçalho existe na tabela; compartilhado por triagem e Planilha, sem alterar o envelope |
 | `linhaMensal(record)` / `linhaPauta(record)` | Recuperam em WeakMaps privados a linha física registrada pelo parser de cada opcional; não criam colunas extras |
 | `idSeguro(value)` | Restringe IDs de captura/tentativa usados em nomes de arquivos a 1–100 caracteres alfanuméricos, hífen ou sublinhado |
 | `instanteUtc(value)` | Confere timestamp UTC com `Z`, segundos e fração opcional de 1–3 dígitos |
@@ -46,6 +47,8 @@ Implementado com regras puras de estrutura e tempo; estado e evidências na [val
 A forma segura de ID de arquivo não é imposta às identidades editoriais das seis abas: estas são conferidas como strings não vazias/únicas por aba. Pautas conserva IDs opacos e duplicatas para avisos na consulta; sua validação semântica está no [módulo Pautas](pautas.md). `Semanas.pauta_id` é cabeçalho opcional, fora dos oito mínimos obrigatórios da aba. Não confundir ID interno com ID Drive.
 
 ## Hash e erros
+
+Como etiquetas adicionais de uma fotografia, os opcionais das seis abas só são consultados quando constam no cabeçalho capturado. A allowlist em `src/captura.cjs`, usada por `selecionarNtv` e `montarPlanilha`, contém `Semanas.pauta_id`, `Produções.pacote_versao`, `Produções.hashtags` e `Arquivos.extensao`. Nenhum deles entra nos 66 mínimos obrigatórios; demais extras continuam privados. Ausência não cria propriedade nem migra capturas antigas. [Verificação sintética de Pronta](../reports/pronta-publicar-validacao.md).
 
 O hash usa JSON compacto de pares ordenados por nome de aba, com `sheetId`, `range` e `values` nessa ordem. Remove somente null/string vazia no fim das linhas e linhas finais vazias. Instantes e extras do envelope não entram no hash de células; a persistência compara separadamente a serialização do envelope completo. Meses/Pautas participam somente quando presentes, também na ordem por nome (`sort`); sem Pautas, hashes e bytes históricos de seis abas ou com Meses permanecem iguais. A ordem de apresentação das opcionais é somente visual na Planilha.
 

@@ -224,6 +224,26 @@ Doze capturas atuais de 05/10/2026 mostram os ajustes da aplicação em loopback
 
 Screenshots comprovam apresentação com dados fictícios; não comprovam conta/planilha real, integração, decisão editorial, mídia ou publicação. T002/T015 foram concluídas em demonstração posterior pelo CRM com uma linha fictícia marcada como teste; somente contagens/resultado na validação da 003. T021 atendida pelo PR #16 e código da 003 integrado pelo PR #15. Nenhum screenshot dessa demonstração foi acrescentado.
 
+## Pronta para publicar
+
+Oito PNG finais de 08/10/2026 mostram quadro e gaveta Pronta nos dois temas e larguras 1440/390. A aplicação roda em loopback com `tests/pronta-fixtures.cjs`, estado em TEMP, porta efêmera e relógio fixo sintético. Os status pronto/publicado são fictícios; nenhum dado operacional foi usado. O coordenador conferiu visualmente os oito arquivos finais.
+
+| Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Quadro Pronta | [Abrir](pronta-light-quadro-1440.png) | [Abrir](pronta-light-quadro-390.png) | [Abrir](pronta-dark-quadro-1440.png) | [Abrir](pronta-dark-quadro-390.png) |
+| Gaveta Pronta para publicar | [Abrir](pronta-light-gaveta-1440.png) | [Abrir](pronta-light-gaveta-390.png) | [Abrir](pronta-dark-gaveta-1440.png) | [Abrir](pronta-dark-gaveta-390.png) |
+
+As imagens mostram pacote/legenda/hashtags no topo, ação de cópia e páginas/cenas recolhidas. [Testes de comportamento](../../../tests/pronta-interface.test.cjs) conferem também expansão sem avisos de mídia, preservação na API/Planilha, URL recusada, falha/ausência de clipboard e prioridade da publicação. Clipboard simulado em memória e requisições externas bloqueadas; nenhum clipboard pessoal ou ZIP real foi acessado. [Validação, rodadas e limites](../../reports/pronta-publicar-validacao.md).
+
+Reprodução das oito imagens finais com Node/Playwright existentes configurados e fora de `CI=true`, na raiz do repositório:
+
+```powershell
+$env:CRM_SCREENSHOTS_PRONTA = '1'
+& $env:CRM_NODE_PATH --test --test-name-pattern='Pronta quadro' tests/pronta-interface.test.cjs
+```
+
+Os quatro cenários de quadro também abrem a gaveta, gerando os oito arquivos `pronta-*.png`; com a variável ausente, os testes não gravam screenshots. A galeria anterior permanece histórica. Não houve coleta operacional, publicação ou download real de ZIP; imagens e testes não comprovam bytes ou acesso ao pacote.
+
 ## 004 — Pautas no Planejamento
 
 20 screenshots de 07/10/2026, exclusivamente sintéticos, gerados por `scripts/screenshots-pautas.cjs` com servidor próprio em TEMP, porta efêmera e relógio fixo fictício em novembro de 2026. Quatro pautas, quatro modelos, status variados e S2 do autor; dezembro demonstra fallback do resumo textual de Meses. Nenhuma leitura da planilha operacional. A galeria anterior foi preservada.

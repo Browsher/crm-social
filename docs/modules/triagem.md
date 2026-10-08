@@ -10,10 +10,10 @@ Fonte: [src/triagem.cjs](../../src/triagem.cjs). Estado e evidências na [valida
 | --- | --- |
 | `chaves` | Ordem interna semanas, producoes, paginas, cenas, arquivos e revisoes, correspondente às seis abas de CAMPOS |
 | `redigirTexto(texto)` | Redação conservadora de formatos conhecidos, pedaços HTTP(S) credenciados e strings JSON, conforme o contrato |
-| `selecionarNtv(captura, avisos, origens, validadeJson)` | Seleciona registros NTV e seus vínculos, copia somente mínimos triados, localiza avisos por linha física e mantém metadados em WeakMap |
+| `selecionarNtv(captura, avisos, origens, validadeJson)` | Seleciona registros NTV e seus vínculos, copia mínimos e opcionais contratuais capturados já triados, localiza avisos por linha física e mantém metadados em WeakMap |
 | `validarIdentidadesNtv(captura)` | Executa a mesma seleção em estruturas temporárias; identidade/vínculo alterável pela redação causa erro localizado sem incluir a célula |
 
-Importa `CAMPOS`, `CAMPOS_MESES`, `CAMPOS_PAUTAS`, `linhaMensal` e `linhaPauta` de [captura](captura.md). Não conhece mapa do quadro, persistência, rotas, variáveis de ambiente ou rede. Recebe a captura normalizada por `validarCaptura`; não altera a entrada.
+Importa `CAMPOS`, `camposCapturados`, `CAMPOS_MESES`, `CAMPOS_PAUTAS`, `linhaMensal` e `linhaPauta` de [captura](captura.md). Não conhece mapa do quadro, persistência, rotas, variáveis de ambiente ou rede. Recebe a captura normalizada por `validarCaptura`; não altera a entrada.
 
 ## Promoção e consulta
 
@@ -34,7 +34,7 @@ Na [projeção](projecao.md), `selecionarNtv` mantém a mesma guarda contra byte
 
 ## Recorte, redação e limites
 
-Semanas e produções usam `marca_id=ntv`. Páginas, cenas e revisões seguem produções NTV; arquivos seguem produção NTV ou, sem produção, semana NTV. Dados de outras marcas fora desse recorte não participam da validação de identidades NTV. Cabeçalhos e valores selecionados continuam os mínimos literais de `CAMPOS`; extras não entram na seleção. Quando capturada, Meses seleciona somente `marca_id==='ntv'` e seus quatro mínimos de `CAMPOS_MESES`, sem vínculo com semanas. `linhaMensal` recupera em WeakMap a posição física registrada pelo parser, inclusive após linhas vazias e marcas excluídas.
+Semanas e produções usam `marca_id=ntv`. Páginas, cenas e revisões seguem produções NTV; arquivos seguem produção NTV ou, sem produção, semana NTV. Dados de outras marcas fora desse recorte não participam da validação de identidades NTV. Cabeçalhos e valores selecionados usam `camposCapturados` de captura: os mínimos literais de `CAMPOS` e apenas `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` quando seus cabeçalhos existem. Esses opcionais passam pela mesma redação e alimentam a Planilha; demais extras continuam privados. O recorte NTV e os 66 mínimos permanecem. Quando capturada, Meses seleciona somente `marca_id==='ntv'` e seus quatro mínimos de `CAMPOS_MESES`, sem vínculo com semanas. `linhaMensal` recupera em WeakMap a posição física registrada pelo parser, inclusive após linhas vazias e marcas excluídas.
 
 Os helpers internos `selecionar`, `sensivel`, `jsonValido`, `redigirPedacoUrl` e `motivoUrl` preservam os limites de redação descritos no [contrato](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md). Linha física vem da matriz original; `etapa_producao=null` é recuperada antes da triagem, e validade original de `origens_json` fica separada do texto redigido. A triagem é conservadora e não promete detectar todos os segredos possíveis.
 

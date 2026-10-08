@@ -1,6 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
+Manutenção atual: Pronta para publicar (08/10), implementada/testada localmente; [validação](../../docs/reports/pronta-publicar-validacao.md). Autor informou 001–004 concluídas na main; a linha seguinte preserva o histórico da 004.
 T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/15), T002/T015 conferidas com registro fictício, 004 implementada/testada localmente, [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente, resultados por head na [validação da 004](../../specs/004-pautas-planejamento/validacao.md); 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
@@ -15,7 +16,7 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - EntryPoint Windows: Iniciar CRM.ps1 [-DataDir <diretorio>] [-Port <porta>] [-NodePath <exe>].
 - Iniciador resolve -NodePath/CRM_NODE_PATH/PATH, usa Node oculto, confirma stdout em dez segundos e retorna PID/URL/logDir/encerrar.
 - Porta 0–65535, data/ e 4318 padrão; logs privados em DataDir/runtime; erro encerra só filho criado, nunca ocupante.
-- src/captura.cjs valida seis abas/66 mínimos e Meses/Pautas opcionais independentes; src/snapshot.cjs confirma estado privado.
+- src/captura.cjs valida seis abas/66 mínimos e Meses/Pautas opcionais; camposCapturados compartilha a allowlist com triagem/Planilha; snapshot confirma estado privado.
 - validarTempoImportacao confere candidata sob trava: futuro até 10 min; fim posterior ao vigente.
 - Falha temporal confirma recibo e mantém vigente; no-op de ID aceito precede essa regra.
 - GET/releitura/reinício validam estrutura sem reaplicar a política temporal da promoção.
@@ -23,11 +24,11 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - src/snapshot.cjs usa .importacao.lock exclusiva; interrupção exige reconciliação manual.
 - src/triagem.cjs seleciona NTV/66 mínimos e redige; snapshot valida identidades antes do no-op/gravação, sem mapa do quadro.
 - src/projecao.cjs usa triagem e pautas.cjs para origem/detalhes/quadro/tabelas; sem versão positiva, mídia vigente a confirmar.
-- config/quadro-etapas.json é aplicado na projeção; nove etapas e liberação/revisão vazias.
+- config/quadro-etapas.json: nove etapas, liberacaoPronta=[liberado] e revisaoEmAndamento vazia; publicação preenchida tem precedência.
 - src/servidor.cjs importa snapshot/projecao/quadro-config e escuta somente em 127.0.0.1.
 - Rotas: GET/HEAD estáticos/visão; POST /api/atualizar {} com Origin obrigatório e ≤1KiB.
 - src/web/ entrega Planejamento com navegação/origem de Pautas, gaveta, Produção e seis abas/Meses/Pautas/Histórico em Planilha.
-- Gaveta compacta: primeira aberta, dados preenchidos, versões/texto/Histórico recolhidos; Esc devolve foco.
+- Gaveta: primeira aberta; Pronta prioriza pacote ZIP único por pacote_versao/produção/tipo/extensão, legenda/hashtags e clipboard local por clique; Esc devolve foco.
 - Resumo distingue revisão vigente/a confirmar/ausência; IDs técnicos da revisão só na API.
 - Cena: três slots inicial/final/vídeo; aviso de mídia agregado, validações numéricas independentes.
 - Documentos semanais uma vez no fim do dia; três papéis com — na ausência, inclusive órfãos.
@@ -50,7 +51,7 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
 - Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
 - M8: UI fora do LCOV e pulos UI/PowerShell no Linux; CLI coberta; aceite Windows local exige zero pulos.
-- US4: primeira pendência/+N visíveis; mídia oculta no cartão de Planejamento/Redação/Visual; semanaId declarada no estado.
+- US4: Pronta mostra Pronta para publicar e recolhe páginas/cenas sem avisos de mídia; demais colunas conservam primeira pendência/+N; API/Planilha mantêm avisos.
 - US5: abas por teclado/foco, rolagem própria e Histórico confirmado; releitura conserva aba disponível.
 - T039 captura real, T040 gate e T041 onboarding concluídos; resultados/limites só na validação.
 - Google/coleta: JWT/fetch nativos, seis abas e Meses/Pautas opcionais, hashes; POST adquire lock durante await.
