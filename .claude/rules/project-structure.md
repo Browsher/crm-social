@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-Trabalho atual: 005 Prévias de imagens, implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), sem merge; [validação](../../specs/005-previas-imagens/validacao.md). T1 integrada pelo PR #22; 21 tarefas aprovadas em 08/10, T002 externa pendente.
+Trabalho atual: 005 Prévias de imagens, implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), integração condicionada ao gate/review do head final; [validação](../../specs/005-previas-imagens/validacao.md). T1 integrada pelo PR #22; 21/21 concluídas, T002 confirmada pelo autor em 08/10, sem acesso real pelo agente.
 T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/15), T002/T015 conferidas com registro fictício, 004 implementada/testada localmente, [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente, resultados por head na [validação da 004](../../specs/004-pautas-planejamento/validacao.md); 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.

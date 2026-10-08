@@ -4,7 +4,7 @@ Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplic
 
 ## 005 — Prévias de imagens
 
-Doze PNG sintéticos de 08/10/2026 mostram galeria, imagem ampliada e falha localizada em Pronta, nos temas claro/escuro e larguras 1440/390. Fonte do código/testes: `392e1090c02fa4a52ab887c20887a6b79e5aee69`; o coordenador inspecionou todos. As cinco páginas têm texto v3 e imagens v2/v1/v1/v2/v3, geradas por [previas-fixtures.cjs](../../../tests/previas-fixtures.cjs); não há conteúdo real.
+Doze PNG sintéticos atualizados em 08/10/2026 mostram galeria, imagem ampliada e falha localizada em Pronta, nos temas claro/escuro e larguras 1440/390. Fonte do código/testes/PNGs: `452197514b8d10a14bcc466e8bc83bfdfb601e95`; o coordenador inspecionou todos. As cinco páginas têm texto v3 e imagens v2/v1/v1/v2/v3, geradas por [previas-fixtures.cjs](../../../tests/previas-fixtures.cjs) como PNG 1080×1350. Miniaturas usam caixas 4:5 com contain; a ampliação mantém a imagem inteira, proporcional e centralizada, sem corte inferior. Não há conteúdo real. Este conjunto substitui os 12 PNG anteriores da fonte `392e109`; a rodada original permanece histórica na validação.
 
 | Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
 | --- | --- | --- | --- | --- |
@@ -19,7 +19,7 @@ $env:CRM_SCREENSHOTS_PREVIAS = '1'
 & $env:CRM_NODE_PATH --test tests/previas-interface.test.cjs
 ```
 
-Testes comuns não escrevem PNG. Servidor/serviço reais em TEMP e porta efêmera, cliente nativo com transporte falso e requisições externas bloqueadas. A prova principal não contorna a rota local de mídia. O conjunto acompanha **22 testes UI PASS locais**, incluindo última imagem alcançável em 390, foco/Escape e erros de transporte/tipo/hash/decodificação; não demonstra compartilhamento real, download operacional ou conteúdo do ZIP. [Validação e checks/review por fonte](../../../specs/005-previas-imagens/validacao.md); implementada/testada no [PR #23](https://github.com/Browsher/crm-social/pull/23), sem integração ou merge. Galerias históricas abaixo preservadas.
+Testes comuns não escrevem PNG. Servidor/serviço reais em TEMP e porta efêmera, cliente nativo com transporte falso e requisições externas bloqueadas. A prova principal não contorna a rota local de mídia. O conjunto acompanha **22 testes UI PASS locais**, incluindo dimensões naturais 1080×1350, proporção, centro, bounds da imagem/diálogo/Fechar e ausência de rolagem em 1440/390 e alturas reduzidas 1440×720/390×640, nos dois temas; preserva última imagem alcançável em 390, foco/Escape e erros de transporte/tipo/hash/decodificação. Não demonstra acesso real, download operacional ou conteúdo do ZIP. T002 de compartilhamento foi confirmada pelo autor em 08/10, sem teste de acesso real pelo agente. [Validação, checks/review e integração por fonte](../../../specs/005-previas-imagens/validacao.md); implementada/testada no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Galerias históricas abaixo preservadas.
 
 ## Versões de páginas e cenas
 

@@ -6,7 +6,7 @@ Estado atual: a 001 está implementada, testada e demonstrada com captura real, 
 
 As decisões abaixo preservam o recorte histórico de cada entrega. A 004 usa as mesmas três telas; seu acréscimo vigente está em [Pautas no Planejamento](#11-pautas-no-planejamento-004), com contrato canônico na pasta da feature.
 
-Estado vigente da 005 em 08/10/2026: galeria/ampliação/fallback implementados e testados localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), sem integração ou merge. [Evidências](../../specs/005-previas-imagens/validacao.md). A manutenção de versões foi integrada pelo PR #22; os recortes anteriores abaixo permanecem históricos.
+Estado vigente da 005 em 08/10/2026: galeria/ampliação/fallback implementados e testados localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. [Evidências, entrega e integração](../../specs/005-previas-imagens/validacao.md). A manutenção de versões foi integrada pelo PR #22; os recortes anteriores abaixo permanecem históricos.
 
 ## Princípios
 
@@ -150,8 +150,8 @@ Como um índice do mês para a semana, a 004 aproxima objetivo e execução regi
 
 Como uma folha de contato junto do texto, a gaveta mostra imagens das páginas/cenas vigentes na ordem, com versão da mídia e link permitido adjacente. Abrir a peça inicia somente suas imagens pelo servidor local; quadro/peças fechadas não buscam mídia e vídeos seguem somente por link. Em Pronta, a galeria fica junto do pacote/legenda/hashtags, fora da dobra recolhida de páginas/cenas. Imagens reaproveitadas preservam versões anteriores; não há extração ou conferência do ZIP.
 
-A faixa tem rolagem lateral no celular. Clique/Enter amplia a imagem num segundo dialog; **Fechar imagem** ou Escape fecha a ampliação e devolve foco à miniatura, preservando a gaveta. Escape seguinte pode fechar a gaveta. A imagem ampliada cabe em 390/1440 sem corte horizontal.
+A faixa tem rolagem lateral no celular. Miniaturas ficam inteiras e proporcionais em caixas 4:5 com contain; as fixtures da peça são PNG 1080×1350. Clique/Enter amplia a imagem num segundo dialog; **Fechar imagem** ou Escape fecha a ampliação e devolve foco à miniatura, preservando a gaveta. Escape seguinte pode fechar a gaveta. A imagem ampliada fica inteira e centralizada na área disponível em 390/1440, inclusive em viewport baixa; diálogo, imagem e Fechar cabem no viewport sem corte inferior ou rolagem da imagem.
 
 Falha mostra **Prévia indisponível** somente na posição afetada, esconde o ícone quebrado e desabilita ampliação. Link Drive/Docs continua permitido por clique, Baixar pacote mantém sua allowlist exclusiva Drive, e texto/Pronta/contagem/Planilha permanecem. Nenhuma causa privada ou aviso editorial novo aparece.
 
-O navegador solicita somente ID interno à origem local. Servidor resolve a captura vigente, confere PNG/JPEG/WEBP por bytes/tamanho/hash e usa cache privado ou Drive readonly. T002 de compartilhamento real permanece externa/pendente; testes sintéticos não demonstram acesso operacional. [Contrato005](../../specs/005-previas-imagens/contracts/midia.md), [interface](../modules/web.md#prévias-de-imagens--005) e [12 screenshots sintéticos](screenshots/LEIA-ME.md#005--prévias-de-imagens).
+O navegador solicita somente ID interno à origem local. Servidor resolve a captura vigente, confere PNG/JPEG/WEBP por bytes/tamanho/hash e usa cache privado ou Drive readonly. T002 confirmada pelo autor em 08/10/2026: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente; testes sintéticos não demonstram acesso operacional. [Contrato005](../../specs/005-previas-imagens/contracts/midia.md), [interface](../modules/web.md#prévias-de-imagens--005) e [12 screenshots sintéticos atualizados da fonte 4521975](screenshots/LEIA-ME.md#005--prévias-de-imagens).

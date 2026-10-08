@@ -4,7 +4,7 @@ Como o índice de um álbum, esta página localiza decisões, módulos e evidên
 
 ## Ordem de leitura
 
-Estado atual em 08/10/2026: versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`; [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). Pronta integrada pelo PR #21; 001–004 concluídas na main conforme o autor. Trabalho atual: [005 — Prévias de imagens](#feature-005--prévias-de-imagens), implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), sem integração ou merge. As 21 tarefas foram aprovadas pelo autor em 08/10 após a parada inicial; T002 externa permanece pendente. Constituição 1.2.0 aplicada na branch. [Evidência, entrega e checks/review por fonte](../specs/005-previas-imagens/validacao.md). Os demais registros preservam as rodadas e numeração históricas.
+Estado atual em 08/10/2026: versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`; [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). Pronta integrada pelo PR #21; 001–004 concluídas na main conforme o autor. Trabalho atual: [005 — Prévias de imagens](#feature-005--prévias-de-imagens), implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. As 21 tarefas foram aprovadas pelo autor em 08/10 após a parada inicial e estão concluídas; T002 confirmada pelo autor nessa data, sem teste de acesso real pelo agente. Constituição 1.2.0 aplicada na branch. [Evidência, entrega e checks/review por fonte](../specs/005-previas-imagens/validacao.md). Os demais registros preservam as rodadas e numeração históricas.
 
 Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
 
@@ -22,7 +22,7 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | [ROADMAP](../ROADMAP.md) | Entregas do v1, 005 implementada/testada na branch e backlog futuro/v2 ilustrativo |
 | [AGENTS](../AGENTS.md) | Regras locais e bloco gerenciado preservado |
 | [CLAUDE](../CLAUDE.md) | Importador das instruções canônicas; não é outra regra de produto |
-| [Constituição](../.specify/memory/constitution.md) | 1.2.0 aprovada/aplicada na branch 005 em08/10, ainda não integrada; preserva a emenda 1.1.0 da leitura de planilhas |
+| [Constituição](../.specify/memory/constitution.md) | 1.2.0 aprovada/aplicada na 005 em 08/10; integração acompanhada no PR #23; preserva a emenda 1.1.0 da leitura de planilhas |
 | [Regra curta de estrutura](../.claude/rules/project-structure.md) | EntryPoints/pastas/imports/testes observados, até 60 linhas |
 | [architecture.md](architecture.md) | Mapa de módulos/imports, persistência, rotas/env e dívidas |
 | [Este índice](index.md) | Todos os documentos autorais do projeto e referências de ferramenta |
@@ -94,7 +94,7 @@ Integração da main após T021, fonte `4263f660fa2a77d2be467f15c6cf43c66d4575f7
 
 ## Feature 005 — Prévias de imagens
 
-Implementada/testada localmente: galeria e ampliação das imagens vinculadas à peça aberta, com leitura Drive sob demanda pelo servidor e cache privado. A geração de 21 tarefas provocou a parada inicial; o autor aprovou todas em 08/10/2026. T002, compartilhar a pasta como Leitor e conferir o tipo de Drive, permanece externa/pendente. Gate Windows da fonte `84aae5e`: 578 PASS, sem pulos locais; [CI estrito dessa fonte](https://github.com/Browsher/crm-social/actions/runs/37812480393) PASS, inclusive Semgrep. A rodada inicial de 577 PASS e os 12 screenshots inspecionados da fonte `392e109` permanecem históricos. Entrega e checks/review vigentes no PR #23, sem integração ou merge.
+Implementada/testada localmente: galeria e ampliação das imagens vinculadas à peça aberta, com leitura Drive sob demanda pelo servidor e cache privado. A geração de 21 tarefas provocou a parada inicial; o autor aprovou todas em 08/10/2026. 21/21 tarefas concluídas; o autor confirmou em 08/10 a pasta Produções compartilhada como Leitor (T002), sem acesso real pelo agente. Gate Windows da fonte `4521975`: 578 PASS, sem pulos locais; 12 screenshots 4:5 atuais dessa fonte inspecionados. Rodadas anteriores permanecem históricas. Entrega, integração e checks/review por head no PR #23; merge/exclusão da branch autorizados após gate/review aprovados no head final.
 
 | Documento | Uso |
 | --- | --- |

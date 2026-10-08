@@ -8,7 +8,7 @@
 
 A gaveta ganha uma folha de contato das imagens vinculadas à peça e um visualizador maior. O navegador pede somente um arquivo interno; o servidor consulta a captura vigente, reutiliza bytes locais válidos ou lê o Drive. Falha de prévia preserva texto, links e estado editorial.
 
-O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. Após a parada prevista e a apresentação do [peso](tasks.md#rastreabilidade-e-peso), o autor aprovou esse escopo em 2026-10-08. Implementação realizada com TDD na ordem de tasks.md. Gate Windows da fonte `84aae5e` passou com 578 testes sem pulos e cobertura 95,0828%; [CI estrito dessa fonte](https://github.com/Browsher/crm-social/actions/runs/37812480393) PASS, inclusive Semgrep. A rodada inicial de 577 PASS e os 12 screenshots sintéticos inspecionados da fonte `392e109` permanecem históricos. Entrega e checks/review por head são acompanhados no PR #23 e na validação; nenhum merge autorizado. [Evidências](validacao.md).
+O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. Após a parada prevista e a apresentação do [peso](tasks.md#rastreabilidade-e-peso), o autor aprovou esse escopo em 2026-10-08. As 21/21 estão concluídas; a T002 foi confirmada pelo autor em 08/10: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. Implementação realizada com TDD na ordem de tasks.md. Gate Windows da fonte `4521975` passou com 578 testes sem pulos e cobertura 95,0881%; 12 screenshots 4:5 dessa fonte inspecionados. As rodadas anteriores permanecem históricas. Entrega, checks/review por head e integração são acompanhados no PR #23 e na validação; merge e exclusão da branch agora autorizados após gate/review aprovados no head final. [Evidências](validacao.md).
 
 ## Technical Context
 
@@ -40,10 +40,10 @@ O speckit-tasks gerou 21 tarefas: 20 do agente e uma externa do autor. Após a p
 | II — fontes/identidades | Resolver pela captura validada e recorte NTV; cache nunca concede acesso a arquivo removido; preserva ponteiros/versões da T1 |
 | III — responsabilidades | Nenhuma escrita remota, geração, publicação, fila ou agente; estados visuais não viram estado editorial |
 | IV — evidência/TDD | RED antes de cada implementação, cinco camadas, imagens sintéticas; preview não comprova aprovação nem ZIP |
-| V — escopo/revisão | Única spec005, 21 tarefas aprovadas após a parada do limite20; review independente e CI final; PR sem merge |
+| V — escopo/revisão | Única spec005, 21/21 tarefas concluídas após aprovação do escopo; review independente e CI do head final; merge/exclusão da branch condicionados a gate/review aprovados |
 | VI — leitura mínima | Emenda1.2.0 aprovada2026-10-08: escopo Drive readonly separado de Sheets, credencial externa, tokenRAM, Google só no servidor |
 
-Emenda aplicada no branch da 005; features001–004 e capturas não são migradas. Pré/pós-desenho: PASS, sem exceção constitucional. Compartilhamento pelo autor pendente e não bloqueante para os testes falsos.
+Emenda aplicada no branch da 005; features001–004 e capturas não são migradas. Pré/pós-desenho: PASS, sem exceção constitucional. Compartilhamento confirmado pelo autor em 08/10 (T002 concluída), sem teste de acesso real pelo agente; testes continuam sintéticos.
 
 ## Project Structure
 
@@ -116,7 +116,7 @@ Usar unidades já resolvidas na projeção, somente vigentes, ordenadas por índ
 
 abrirDia monta todas as peças: reservar galeria sem src; inicializar após showModal somente na peça aberta e depois em toggle com gaveta+peça abertas. Pronta inclui galeria fora da dobra de páginas/cenas; demais peças recebem galeria junto do resumo. src somente /api/midia/ + encodeURIComponent(IDinterno). Links continuam usando a allowlist atual HTTPS Drive/Docs via linkArquivo; Baixar pacote conserva sua regra exclusiva drive.google.com. Cada miniatura usa botão nomeado por contexto, link adjacente, data-previa-arquivo próprio (não duplicar data-pagina/cena legado), alt contextual e estado carregando/erro. Erro genérico desabilita ampliação e não usa classe notice de avisos editoriais.
 
-Segundo dialog nativo para imagem grande com botão Fechar, foco devolvido à miniatura, evento cancel/Escape somente no topo. CSS específico sobrescreve dimensão da gaveta; imagem cabe na viewport, faixa overflow-x:auto e filhos sem encolhimento. Cores somente tokens existentes; sem modal extra de confirmação ou mensagens de implementação.
+Segundo dialog nativo para imagem grande com botão Fechar, foco devolvido à miniatura, evento cancel/Escape somente no topo. Miniaturas usam caixas 4:5 com grid centralizado e imagem de dimensões automáticas, máximos de 100% e object-fit:contain, preservando a imagem inteira. O visualizador tem altura calc(100dvh - 32px), grid de cabeçalho auto e área minmax(0,1fr); considera a altura real do título/Fechar. Imagem proporcional, inteira e centralizada na área disponível, sem corte inferior em 1440/390 ou viewport baixa. Faixa overflow-x:auto e filhos sem encolhimento. Cores somente tokens existentes; sem modal extra de confirmação ou mensagens de implementação.
 
 ### Testes, prova visual e documentação
 
@@ -124,9 +124,9 @@ RED específico por regra/módulo antes de implementar, não depender de erro de
 
 Cache em TEMP real: hits, versão/origem/hash alterados, corrupção, gravação falha/parcial, concorrência, captura mudando durante download. HTTP real porta0/127.0.0.1: IDinterno, rejeições sem rede, status/headers, Host/Origin/Sec-Fetch-Site, sem CORS, método, CSP e não regressão da atualização/visao.
 
-Playwright com servidor real e transporte falso, sem page.route contornando a rota de mídia na prova principal. Bloquear requisições externas, conferir ausência antes da abertura/peças fechadas, seleção/ordem, cache, Pronta, fallback/link, teclado/Escape/foco e rolagem390. Ajustes legados somente em seletores: pacote recusado testa Baixar pacote, XSS testa caption em vez de proibir qualquer img legítima. Exportar12PNG opt-in em docs/design/screenshots/ e inspecionar todos; estado e servidores continuam TEMP.
+Playwright com servidor real e transporte falso, sem page.route contornando a rota de mídia na prova principal. Bloquear requisições externas, conferir ausência antes da abertura/peças fechadas, seleção/ordem, cache, Pronta, fallback/link, teclado/Escape/foco e rolagem390. As imagens da peça geradas por imagemPorArquivo são PNG 1080×1350; o gerador genérico continua parametrizável para os demais testes. Conferir naturalWidth/naturalHeight, proporção, bounds da imagem/diálogo/Fechar no visualViewport, centro e ausência de rolagem, incluindo resize para 390×640 e 1440×720 nos dois temas. Ajustes legados somente em seletores: pacote recusado testa Baixar pacote, XSS testa caption em vez de proibir qualquer img legítima. Exportar12PNG opt-in em docs/design/screenshots/ e inspecionar todos; estado e servidores continuam TEMP.
 
-Depois do gate completo node tools/quality-gate.mjs, doc-sync-onboarding atualiza AGENTS/README/ROADMAP/índice/arquitetura/módulos/contrato e validação, separando planejado/testado/integrado. Revisão independente no head e CIquality-gate remoto verdes; PR único da005 sem merge. Compartilhamento real pelo autor permanece tarefa externa, sem log/ID/e-mail/screenshot real.
+Depois do gate completo node tools/quality-gate.mjs, doc-sync-onboarding atualiza AGENTS/README/ROADMAP/índice/arquitetura/módulos/contrato e validação, separando planejado/testado/integrado. Revisão independente e CIquality-gate do head final verdes permitem merge do PR único da005 e exclusão da branch, conforme autorização atual do autor. T002 concluída por declaração do autor em 08/10/2026; acesso real não executado pelo agente, sem log/ID/e-mail/screenshot real.
 
 ## Complexity Tracking
 

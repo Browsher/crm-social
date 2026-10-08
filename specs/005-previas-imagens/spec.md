@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-08
 
-**Status**: Implementada e testada localmente; 21 tarefas aprovadas pelo autor em 2026-10-08. Gate Windows da fonte `84aae5e` com 578 PASS e cobertura 95,0828%; [CI estrito dessa fonte](https://github.com/Browsher/crm-social/actions/runs/37812480393) PASS, inclusive Semgrep. A rodada inicial de 577 PASS e os 12 screenshots sintéticos inspecionados da fonte `392e109` permanecem históricos; entrega e checks/review por head acompanhados no PR #23 e na validação. T002 do autor permanece pendente, sem bloquear os testes. Sem integração ou merge. Evidências em [validacao.md](validacao.md).
+**Status**: Implementada e testada localmente; 21/21 tarefas concluídas. O autor confirmou em 2026-10-08 a T002: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. Gate Windows da fonte `4521975` com 578 PASS, sem pulos locais, e cobertura 95,0881%; 12 screenshots sintéticos 4:5 dessa fonte inspecionados. As rodadas anteriores permanecem históricas. O autor autorizou merge e exclusão da branch após gate/review aprovados no head final; entrega e integração acompanhadas no PR #23, sem antecipar o merge. Evidências em [validacao.md](validacao.md).
 
 **Input**: Solicitação do autor em 08/10/2026: imagens na gaveta, ampliação e falha localizada mantendo o Drive; leitura privada pelo servidor. Início após tarefa 1 integrada: [PR #22](https://github.com/Browsher/crm-social/pull/22), main `b90980a15fad653937fd024ac3c9bb2738e9d99a`.
 
@@ -74,8 +74,8 @@ Como autor, quero “Prévia indisponível” somente no lugar da imagem que fal
 
 - **FR-001**: Mostrar imagens explicitamente vinculadas às páginas/cenas vigentes, por índice e posição do ponteiro, preservando identidade/versões da tarefa 1. Peça de imagem sem unidades usa os arquivos de imagem da sua versão de produção, preservando empates.
 - **FR-002**: Incluir a galeria em Pronta junto das ações existentes; não extrair ZIP, afirmar seus integrantes ou exigir versão da imagem igual à do pacote.
-- **FR-003**: Miniaturas lado a lado, rolagem lateral em 390, sem corte horizontal da página/gaveta.
-- **FR-004**: Ativação abre imagem maior; botão/Escape fecham ampliação, devolvem foco e preservam gaveta.
+- **FR-003**: Miniaturas lado a lado em caixas 4:5, com `object-fit:contain`, preservando imagem inteira e proporção, sem corte ou distorção. Rolagem lateral em 390, sem corte horizontal da página/gaveta.
+- **FR-004**: Ativação abre a imagem inteira, proporcional e centralizada na área disponível do visualizador em 1440/390, inclusive em viewport baixa; imagem, diálogo e botão Fechar permanecem dentro do viewport, sem corte inferior ou rolagem da imagem. Botão/Escape fecham ampliação, devolvem foco e preservam gaveta.
 - **FR-005**: Buscar somente quando a peça abre; quadro e peças fechadas não iniciam download; vídeos fora.
 - **FR-006**: Navegador identifica somente arquivo interno; servidor resolve a referência remota exclusivamente na captura vigente válida, recortada à NTV. Nunca aceitar ID do Drive, URL ou caminho do navegador.
 - **FR-007**: Aceitar somente PNG/JPEG/WEBP conferidos pelos bytes, até 15 MB, com timeout finito e sem redirecionar para outro destino.
@@ -86,7 +86,7 @@ Como autor, quero “Prévia indisponível” somente no lugar da imagem que fal
 - **FR-012**: Prévia/cache não alteram captura, coleta/falha de coleta, aprovação, liberação, publicação, Google, n8n ou agentes.
 - **FR-013**: Obedecer à constituição 1.2.0 aprovada em 2026-10-08: conta leitora, arquivos compartilhados, escopo de leitura e servidor loopback.
 - **FR-014**: Testes com transporte falso/imagens sintéticas geradas no teste, RED antes da implementação e cinco camadas aplicáveis: regras, I/O, serviço/projeção, HTTP real e interface local.
-- **FR-015**: Doze screenshots sintéticos: 1440/390, claro/escuro, galeria/ampliação/indisponível; gate/review vigentes e um PR sem merge.
+- **FR-015**: Doze screenshots sintéticos com imagens PNG 1080×1350: 1440/390, claro/escuro, galeria/ampliação/indisponível; gate/review vigentes e um PR. Autorização atual do autor em 2026-10-08 permite merge e exclusão da branch somente após gate/review aprovados no head final.
 
 ### Key Entities *(include if feature involves data)*
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "feature": "005-previas-imagens",
   "date": "2026-10-08",
-  "sourceCommit": "84aae5e406db05c3c8c03f6afc5d35c6334e1263",
+  "sourceCommit": "452197514b8d10a14bcc466e8bc83bfdfb601e95",
   "environment": "Windows local, Node 24.19.0 e Playwright existente; fixtures sinteticas e transporte falso",
   "command": "node tools/quality-gate.mjs",
   "exitCode": 0,
@@ -18,7 +18,7 @@
       "name": "coverage",
       "state": "PASS",
       "reason": "",
-      "percent": 95.08284339925174,
+      "percent": 95.08809396689803,
       "drop": 0
     },
     {
@@ -195,35 +195,89 @@
     "src/midia.cjs": "11f266163168f16f488b7a03a23e94b34be9921405f9b7028d258c16389755a6",
     "src/servidor.cjs": "3446dba661b80bd440bdd33e3c1bd0153d8c196e0e0e3b5aa819bcc925417150",
     "src/web/app.js": "0cd46435075ea6f4d8620fa01b339789891b3c3e75d220932451c61a955c8da0",
-    "src/web/styles.css": "ee2c7a005f75e6c3e80c0c49a4bcefced4e499bba48c1d730c3623965c4e97d3",
+    "src/web/styles.css": "7ac305ccbd6d644faf4e6bcb7eb01ab5a6598b3916b4c635cd904400b4e2efa9",
     "tests/google-midia.test.cjs": "ef9911971542953e54b79c672f721388dd9757f09602ed074a235322ab0b2cbb",
     "tests/midia.test.cjs": "23192f577e87ccc26ccc1ecaa6a5f766e3b1ce95490ed9b27bacf849374b38ec",
     "tests/midia-http.test.cjs": "46b085879085a721be19c3404344274b1cd6749479952bf5f201e1f456b23af0",
-    "tests/previas-fixtures.cjs": "f16caf39bdd8866cab7cbb677176b5435dae60b67626a923eb33ad74feaea465",
-    "tests/previas-interface.test.cjs": "e528416a7fd38a3dfb3e79fe515bc53ff8f0a8ce52e8f9207ab8f539a6ad23ce",
+    "tests/previas-fixtures.cjs": "3055d95875cbbd6dcdd3ebc60f6a02b23761419f98d46d14f8d97835775f6bc9",
+    "tests/previas-interface.test.cjs": "403a3f2566a7100ddef9124f7342a74db6815ba26878acdf5fdd02c1f9e66981",
     "tests/interface.test.cjs": "cbd64f252ed7e99a27cf293520c34b586cd2d6e8d88717a12856b442b9862164",
     "tests/pronta-interface.test.cjs": "0e30076a6e22b5fdf64831be3e81b25f61a7873637bd1af8d34033ca341022f5",
     "tests/tema.test.cjs": "0c9056acb9c8fea90f12769285b552705afb42cdfdf3e076205172ef6f45bfde"
   },
   "limits": [
-    "Semgrep local SKIP por ferramenta ausente; CI estrito da fonte 84aae5e PASS, inclusive Semgrep; checks finais no PR.",
+    "Semgrep local SKIP por ferramenta ausente; CI estrito e review do head final conferidos no PR #23 antes do merge.",
     "UI fora do LCOV; CI Linux pula UI/PowerShell.",
     "Drop zero no modo full nao representa comparacao historica.",
-    "Compartilhamento real T002 pendente, nao bloqueante para testes falsos.",
-    "Tentativa Windows e7ec1d2 com testes FAIL sem diagnostico; reproducao 578 PASS e duas rodadas oficiais posteriores PASS. Causa inicial nao identificada."
+    "T002 concluida por confirmacao expressa do autor em 08/10/2026; acesso operacional nao conferido pelo agente.",
+    "Tentativa Windows e7ec1d2 com testes FAIL sem diagnostico; execucoes posteriores PASS. Causa inicial nao identificada."
   ],
-  "remoteStrictGate": {
+  "semgrepFixtureException": {
+    "rule": "generic.secrets.security.detected-google-gcm-service-account.detected-google-gcm-service-account",
+    "file": "tests/previas-fixtures.cjs",
+    "line": 50,
+    "scope": "Somente esta regra nesta linha; demais linhas, regras e configuracao preservadas",
+    "reason": "Falso positivo sobre discriminador publico; RSA efemera gerada no teste, dominio reservado e gravacao somente TEMP; literais legiveis"
+  },
+  "previousRemoteStrictGate": {
     "sourceCommit": "84aae5e406db05c3c8c03f6afc5d35c6334e1263",
     "url": "https://github.com/Browsher/crm-social/actions/runs/37812480393",
     "state": "PASS",
     "semgrep": "PASS",
     "baselineUpdated": false
   },
-  "semgrepFixtureException": {
-    "rule": "generic.secrets.security.detected-google-gcm-service-account.detected-google-gcm-service-account",
-    "file": "tests/previas-fixtures.cjs",
-    "line": 48,
-    "scope": "Somente esta regra nesta linha; demais linhas, regras e configuracao preservadas",
-    "reason": "Falso positivo sobre discriminador publico; RSA efemera gerada no teste, dominio reservado e gravacao somente TEMP; literais legiveis"
+  "aspectRatioValidation": {
+    "imageWidth": 1080,
+    "imageHeight": 1350,
+    "ratio": "4:5",
+    "red": {
+      "pass": 6,
+      "fail": 6,
+      "exitCode": 1
+    },
+    "focusedGreen": {
+      "pass": 12,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    "interfaceGreen": {
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    "viewports": [
+      [
+        1440,
+        1050
+      ],
+      [
+        390,
+        1050
+      ],
+      [
+        1440,
+        720
+      ],
+      [
+        390,
+        640
+      ]
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "screenshots": 12,
+    "screenshotSourceCommit": "452197514b8d10a14bcc466e8bc83bfdfb601e95",
+    "visuallyInspected": true
+  },
+  "authorTask": {
+    "id": "T002",
+    "state": "complete",
+    "date": "2026-10-08",
+    "evidence": "Confirmacao expressa do autor: pasta Producoes compartilhada como Leitor",
+    "operationalAccessTested": false
   }
 }
