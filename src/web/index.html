@@ -6,6 +6,7 @@
   <title>Social Studio · Planejamento</title>
   <script src="/theme.js"></script>
   <link rel="stylesheet" href="/styles.css">
+  <script src="/layout-model.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
 <body>
@@ -26,27 +27,25 @@
     <div class="topbar-actions"><span class="computer">Neste computador <span class="presence" aria-hidden="true"></span></span><button type="button" id="theme-toggle" aria-label="Ativar tema escuro">☾ Escuro</button></div>
   </header>
   <main>
-    <div class="page-heading"><div><h1 id="titulo">Planejamento</h1><p class="subtitle">Peças registradas, semana a semana.</p></div><button type="button" id="selo" class="badge cinza">Carregando</button></div>
+    <div class="page-heading"><h1 id="titulo">Planejamento</h1><div class="capture-actions"><button type="button" id="selo" class="badge cinza">Carregando</button><button type="button" id="atualizar" class="refresh-button">⟳ Atualizar</button></div></div>
+    <p id="resultado-atualizacao" role="status" aria-live="polite"></p>
     <p id="erro" role="alert" hidden></p>
     <section id="planejamento" aria-label="Planejamento" hidden>
-      <div id="objetivo-mes" class="month-brief"><span class="brief-icon" aria-hidden="true">◎</span><div><small>Objetivo do mês</small><p>Ainda não definido</p></div></div>
-      <div class="month-heading"><h2 id="mes"></h2><div class="month-nav"><button type="button" id="anterior" aria-label="Mês anterior">‹</button><button type="button" id="proximo" aria-label="Próximo mês">›</button></div></div>
+      <div id="objetivo-mes" class="objective"><button type="button" id="objetivo-toggle" aria-expanded="false" aria-controls="pautas-mes"></button><div id="pautas-mes" hidden></div></div>
+      <div class="month-heading"><div><h2 id="mes"></h2><p id="week-title"></p><span id="week-progress"></span></div><div class="month-nav"><button type="button" id="anterior" aria-label="Semana anterior">‹</button><button type="button" id="proximo" aria-label="Próxima semana">›</button></div></div>
       <div class="toolbar">
         <div class="filters" role="group" aria-label="Formato"><button type="button" data-formato="Todos" class="active">Todos</button><button type="button" data-formato="Imagem">Imagem</button><button type="button" data-formato="Carrossel">Carrossel</button><button type="button" data-formato="Reels">Reels</button></div>
-        <div class="views" role="group" aria-label="Visualização"><button type="button" data-modo="Calendário">Calendário</button><button type="button" data-modo="Lista">Lista</button></div>
+        <div class="views" role="group" aria-label="Visualização"><button type="button" data-modo="Semana">Semana</button><button type="button" data-modo="Mês">Mês</button></div>
       </div>
-      <div id="sem-captura" class="empty" hidden><h3>Nenhuma captura disponível</h3><p>Peça a primeira leitura à Central.</p></div>
+      <div id="sem-captura" class="empty" hidden><h3>Nenhuma captura disponível</h3></div>
       <div id="calendario" class="calendar"></div>
-      <div id="lista"></div>
+      <div id="lista" class="planning-week" role="region" aria-label="Semana, sete dias" tabindex="0"></div>
       <div class="calendar-footer"><span id="total"></span><button type="button" id="abrir-sem-data" class="text-button" hidden>0 sem data</button></div>
       <section id="sem-data" aria-label="Peças sem data" hidden><div class="section-heading"><h2>Sem data</h2><button type="button" id="fechar-sem-data">Fechar lista</button></div><div id="lista-sem-data"></div></section>
     </section>
-    <section id="producao" aria-label="Produção por etapa" hidden>
-      <div class="week-heading"><div><small id="semana-periodo"></small><h2 id="semana-tema">Aguardando captura</h2></div>
-        <div class="month-nav"><button type="button" id="semana-anterior" aria-label="Semana anterior" disabled>‹</button><button type="button" id="semana-proxima" aria-label="Próxima semana" disabled>›</button></div>
-      </div>
+    <section id="producao" aria-label="Projetos por semana" hidden>
       <p id="quadro-vazio" class="empty" hidden></p>
-      <div id="quadro" class="production-board"></div>
+      <div id="quadro" class="production-projects"></div>
       <p id="quadro-total" class="board-total"></p>
     </section>
     <section id="planilha" hidden>
@@ -58,9 +57,7 @@
           <div><dt>Cobertura das semanas</dt><dd id="periodo-captura">Aguardando leitura local</dd></div>
         </dl>
         <div id="avisos-captura" class="capture-notice" role="status" hidden></div>
-        <button type="button" id="atualizar" class="refresh-button">Atualizar dados</button>
         <p id="releitura-aviso">Leitura da planilha pelo servidor local, somente leitura</p>
-        <p id="resultado-atualizacao" role="status" aria-live="polite"></p>
       </section>
       <p id="planilha-vazia" class="empty" hidden>Sem captura disponível. Peça a primeira captura completa à Central.</p>
       <div id="abas-planilha" class="sheet-tabs" role="tablist" aria-label="Tabelas capturadas e Histórico"></div>

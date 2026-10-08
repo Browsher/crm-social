@@ -1,0 +1,4613 @@
+{
+  "schemaVersion": 1,
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 654
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 95.40719696969697,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "metrics": [
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::0dd55615fe90951e3f9ba3cb42fb947531232bc32e314a1d57aa86c5490e681a",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 7,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::4c907b0f82879aa05d690c04e2efa5acdb5b03fdabcf23f438ea3b861324d612",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 11,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::7ec6e2fdb9829832f0a8e181d2c286b713d1f5548fe22ecd8dc2660ce5b955b5",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 12,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::595a6f9a7e89810337f5ef96a0cb460a4a02d55095a4e6d708418d755c48a181",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 16,
+          "value": 1,
+          "matchable": false
+        },
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::eb27ec9119906927fab645b1799a5173cc67177371fb2032c0bf9d1257a4b483",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 17,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::2380dc0a2369d03a1731c25e3aca094b32ce8dd5c560b6586599130f07f502af",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 32,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::595a6f9a7e89810337f5ef96a0cb460a4a02d55095a4e6d708418d755c48a181",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 39,
+          "value": 1,
+          "matchable": false
+        },
+        {
+          "key": "docs/design/prototype/verificar-preview.cjs::ast::b101b6d479e357f657e9212ad401e03070d2345b9baaf3365b009caaf032cbe3",
+          "file": "docs/design/prototype/verificar-preview.cjs",
+          "line": 47,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/importar-captura.cjs::ast::bf89f0c0b0d36c259a50aa54095beae1784420c6257787a296b8f3bfe3ecfd24",
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "scripts/importar-captura.cjs::ast::c5f7700156fd2d332a2d36c45a59893d931f8ac2d73fdce1bdf3c2c2a42bef28",
+          "file": "scripts/importar-captura.cjs",
+          "line": 12,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "scripts/importar-captura.cjs::ast::74e5d74477cfcec917ac180e25816309f702491e9bd6eaedb5c1f9d1e14c0ddc",
+          "file": "scripts/importar-captura.cjs",
+          "line": 17,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "scripts/importar-captura.cjs::ast::dd846d22fb980a56439bbf80076911789d7f9278b2dd39aee3bd27d4482a046f",
+          "file": "scripts/importar-captura.cjs",
+          "line": 23,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "scripts/importar-captura.cjs::ast::0dd55615fe90951e3f9ba3cb42fb947531232bc32e314a1d57aa86c5490e681a",
+          "file": "scripts/importar-captura.cjs",
+          "line": 26,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::30b874db27235e498d3f7fd5ff8026673b1bc12b0f6543ba45f130da46016422",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 8,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::3f4bb6b8408a7e3cd409bea1db34bdc9d10c6fc1409a2ba742899b203deb33fd",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 11,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::a818799591683fbd9d562181ccc971cfbc4678ee16d23a1f4d4780b91f50c9c5",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 15,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::7951809fade3d0d6a0f35705a953c7fc142763000febc94aa8cd9476962acabc",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 16,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::7bb3264496f0d13af455148bdb4a52f795f91ab5fe322dc92fc787c7f378231b",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 17,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::3311f23e52ae0116febc3037f641e649bf56fed65984a234fd4fda5dcf3b7026",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 21,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::37fe98f0c5d950efe36aea045df09c55c33a34f4877d53ab43dfeced54f7901c",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 26,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::14d1259c6baeaf809ddf60ada33b18791abb1553b14521dc12791dcb6bf5618f",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 30,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::4893159f15f7b7296a7d59d75339aa019d1bc7d0e8f4c9a35a757454d0aed994",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 30,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::dedb98486033c97c8cfb9f305dbe1ea81edc009a2c684c63a670e912710b779d",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 31,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::381a83c1075d6cd2e0b13a1bdcb2a096338472370993e29177998ecfbbefe614",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 45,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::4166755897b5499fd43bb7725f6911e54804a3ba7bcc770a1e8dd84d6f0c7f66",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 45,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::fe3a77babb9fadca0d4871257aab57833d872fdaace52f4806dd8ce0a3fd6e5e",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 13,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::eb927ecb4635137b063eb6134d82f7f0bc3d7a6872b353d4237a9dea7b89e835",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 24,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::59dc6254b62365c1e178d0e9f1cec2803d99399dc0eccc5a3820ac745bcaa5e2",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 24,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::6764069e069b36f8431e8cdf506d54ab0401436bf9b406a0a04fd5bf2a6fd160",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 27,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::11b0e5fa1e660cc8caa9bf6705e5c5d225d09015fa6ccbef1cf12433d07528fc",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 32,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::c95e1e775242c83a9711d31eb3f32199a246e1e370708049a3b48acd596e1e4d",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 37,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::598f384def376ad7e4f01694dd6de8d4352b9b85b71ba093fe0bbc35e51013cc",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 39,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::2a16c240887a2a56ef88ee0d8eb0803b7b55117c8ac4d8cf0613932ab0e0ccef",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 44,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::5abdf75634e65c2cf0632623d07086f5ac75604e00e08e9f882cb630eacebc10",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 45,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::e6d156d89b2375970e6a5a5f5e2bb42f307d10402ec7566ad24dcbb9dfe1b41d",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 52,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::0dd55615fe90951e3f9ba3cb42fb947531232bc32e314a1d57aa86c5490e681a",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 69,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::d0b1544265d34c5f402ad49241bf1b66ac533dc7db4c60b509d4d09944521f76",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 75,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::7352427fbc6d1b110c77176ebdf012c489924757f84b0e4b5d8f6f165c13a629",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 85,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-pautas.cjs::ast::812980966acab1eef9921a9b5331dd137d11acf9313497839ca176c2454502f0",
+          "file": "scripts/screenshots-pautas.cjs",
+          "line": 94,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::fe3a77babb9fadca0d4871257aab57833d872fdaace52f4806dd8ce0a3fd6e5e",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 12,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::eb927ecb4635137b063eb6134d82f7f0bc3d7a6872b353d4237a9dea7b89e835",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 26,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::59dc6254b62365c1e178d0e9f1cec2803d99399dc0eccc5a3820ac745bcaa5e2",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 26,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::11b0e5fa1e660cc8caa9bf6705e5c5d225d09015fa6ccbef1cf12433d07528fc",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 28,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::c95e1e775242c83a9711d31eb3f32199a246e1e370708049a3b48acd596e1e4d",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 33,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::598f384def376ad7e4f01694dd6de8d4352b9b85b71ba093fe0bbc35e51013cc",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 35,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::2a16c240887a2a56ef88ee0d8eb0803b7b55117c8ac4d8cf0613932ab0e0ccef",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 39,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::0dd55615fe90951e3f9ba3cb42fb947531232bc32e314a1d57aa86c5490e681a",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 53,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::d0b1544265d34c5f402ad49241bf1b66ac533dc7db4c60b509d4d09944521f76",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 59,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::7352427fbc6d1b110c77176ebdf012c489924757f84b0e4b5d8f6f165c13a629",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 67,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-tema.cjs::ast::7fd66ba4877a99660db35d5e57d169e5439205ce188d93dee8603ad2dd33e416",
+          "file": "scripts/screenshots-tema.cjs",
+          "line": 75,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::5522b372ec997c7a3529dcc39d38acc34330cf00731dcef2277ef79db1f07f14",
+          "file": "src/captura.cjs",
+          "line": 13,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::e3b6ba1fa280bac6ff3be31a42a5818023e712ec57b256550e7d2bbd7317aedb",
+          "file": "src/captura.cjs",
+          "line": 14,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::f3edc4313e26f531eaa2598bc20e216913b7a11ff0526c9663fcdb428e009ea3",
+          "file": "src/captura.cjs",
+          "line": 20,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::4023ef3c3e813c1fa969451c680500d94af1bda03ee4d5bb253dc8af5280f938",
+          "file": "src/captura.cjs",
+          "line": 22,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::757ed62cb704b4db03be85427b3c82922b2bc1573ff76fe645a10de53ba28d5e",
+          "file": "src/captura.cjs",
+          "line": 24,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::5622af6f67066420a39a026d8915e91d2ab0ff49a2a8aa155e4096afffac0cf2",
+          "file": "src/captura.cjs",
+          "line": 24,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::fd03a1bc9f276c444d843c16b799ee7d4fa25752e2626fde793411a9051eb099",
+          "file": "src/captura.cjs",
+          "line": 25,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::7871f9cc594f4f86cd674c87170c71915ba0a3a8eb968c72aad99e1abeaa01a6",
+          "file": "src/captura.cjs",
+          "line": 26,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::d47f6f5659b26e5ee22e6b21c5b38150ee88119f090c1f9b193f7d60e173d497",
+          "file": "src/captura.cjs",
+          "line": 27,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::7e18f9efe78a1a674f9f99e9b3d245f8c04d2da0518797c2fb1f8dc7d9ec84f9",
+          "file": "src/captura.cjs",
+          "line": 28,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::ae2e0c08a796fa598d2e3248176d4cfa3ad03e8b8286cbc6b9f16f04a00aa257",
+          "file": "src/captura.cjs",
+          "line": 31,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::6b5ad9ae3bf579fddb06b4acdbd23316d4cd364cf48add6987a76271af022a5a",
+          "file": "src/captura.cjs",
+          "line": 36,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::1629b7f0f9462528cdcd3c00dcc4d62f2f166440a177a8105c0856dd12a26f52",
+          "file": "src/captura.cjs",
+          "line": 39,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::522db122f85afb68495b48d35983d78b41a22a71e6df73e4500ea55fbea0f5fd",
+          "file": "src/captura.cjs",
+          "line": 53,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::e0756c7ddd4d8a4dde5b08763c9953bc17e1192c947c0605379800f6d24e4603",
+          "file": "src/captura.cjs",
+          "line": 58,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::9fd39c73de97c59c291e80a29deb07d25becb1e50821c795d975599ddd0b0f1e",
+          "file": "src/captura.cjs",
+          "line": 67,
+          "value": 9,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::562c94249b62caf31bf66e4014df6ca5e94811605d353ca0885e735b43325511",
+          "file": "src/captura.cjs",
+          "line": 78,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::e894a2201a7dac8509511dc944191805129d79a84ac7d7f1736bcca2f9452e52",
+          "file": "src/captura.cjs",
+          "line": 88,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::46d2fea5538eb2b0cb6765702b46331175594737f5274369eb28b93b9fd5c849",
+          "file": "src/captura.cjs",
+          "line": 92,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::df4136dc1e0ecf0a02c91dbf510dc6d626665a2cb39806dae796036c026245ff",
+          "file": "src/captura.cjs",
+          "line": 94,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::60065db72740dfb98004ff2f7e557d0bac0fd5f758a8be6c069ff78008694445",
+          "file": "src/captura.cjs",
+          "line": 94,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::7794a26eefa5ed3a54ca480fdf81256cc5757ef1645cc967539d9b0c7e0f8011",
+          "file": "src/captura.cjs",
+          "line": 106,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::30e80da3649e0c70e5d9b9bd024f3802735752bddba9c3b5da916ea8fb5abb69",
+          "file": "src/captura.cjs",
+          "line": 107,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::167ef01de2e1debfd996921a7ecd3a178cf30dd26ad574e66ae526040aa290f8",
+          "file": "src/captura.cjs",
+          "line": 115,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::33cfc38377fcc92fe3e777010833ec4c59231b8adcbb11e57647d38202cadc61",
+          "file": "src/captura.cjs",
+          "line": 116,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::bf04584b5aac13010a0448da67f8ea73e893aece3fd153e7bf141096e1d6edf8",
+          "file": "src/captura.cjs",
+          "line": 122,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::c0aaaf63c00120b759700e778dda9e918a495ed7ec61445553893eb91517903f",
+          "file": "src/captura.cjs",
+          "line": 125,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/captura.cjs::ast::79424efdd0433569dda041d2e42324c13cc7a864038e77fd7f32da4235a7564d",
+          "file": "src/captura.cjs",
+          "line": 139,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::3f42f6814d702a4f326ff85a32d95ddf3bea1464458d54bc032142675a6295d5",
+          "file": "src/coleta.cjs",
+          "line": 10,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::7e18f9efe78a1a674f9f99e9b3d245f8c04d2da0518797c2fb1f8dc7d9ec84f9",
+          "file": "src/coleta.cjs",
+          "line": 15,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::03baa4170f3ec5abc13f3237749e4ef0a7c79578af30bc93efee7230b4d8ca39",
+          "file": "src/coleta.cjs",
+          "line": 16,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::d422b4925f5aadfbb1c7aa13afdeb390d44b093786c6a080c377827b9fd487c6",
+          "file": "src/coleta.cjs",
+          "line": 17,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::79555f1e460f7b92aa16f83fcdef2cf3a92d1f35e5c94a031e728a1128ed09c7",
+          "file": "src/coleta.cjs",
+          "line": 18,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::9b187e7584caf23bc675db2822c31d1d91974ef6628ac403fd93058672e7e717",
+          "file": "src/coleta.cjs",
+          "line": 21,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::7b33b207ba16eeb6d96ee39822aeaef93871a748b832a62930a2015c4a657b51",
+          "file": "src/coleta.cjs",
+          "line": 28,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::416cbb70749e206a5b009657b5c1c237d211b7f8725e1e75616e75158dd6ac65",
+          "file": "src/coleta.cjs",
+          "line": 29,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::86e976b22580c8e58ed9f2652873663b78a79e5b834bf8be3134c917010a92f2",
+          "file": "src/coleta.cjs",
+          "line": 29,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::acacfd7a3c71352965abfb6402a03e0cbd6da68956c6beb7ec1a0a003d55eabe",
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::cbcf2d26c1cbc3245df6009e5d5b42a54758ebec5bd6ec875741b22e75c8ba7e",
+          "file": "src/coleta.cjs",
+          "line": 39,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::330d2f34e63b68edc9efcb2267016c7a1ab2e580a365a8b041fe385627343c64",
+          "file": "src/coleta.cjs",
+          "line": 39,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::6c03ffbcaa8f3e89bc4799cda681ca79b1e893239ff7b6b4c055772152615def",
+          "file": "src/coleta.cjs",
+          "line": 41,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::45fc494fc49ad2c07c98ab4a429a3c74663c7a86e5e1f4c2fe2130f521604145",
+          "file": "src/coleta.cjs",
+          "line": 48,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::4a449bf920ea66c6443c503e341ffcd751b813df855ea311027387a5a75bdb34",
+          "file": "src/coleta.cjs",
+          "line": 52,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::01dc942679468cd495c6c91220cc4e320d4b161045add6294a3a68dc03185751",
+          "file": "src/coleta.cjs",
+          "line": 52,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::75863a17e5ecd4b7ab03ad11b41219e5adb37f92f56d975647be3dc69a139333",
+          "file": "src/coleta.cjs",
+          "line": 59,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::c9c81b3dcaa2c8bca1d9c445257c55bbb6628a5dc877eb7d3dfb82de208c6c5d",
+          "file": "src/coleta.cjs",
+          "line": 63,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::e0d96845d3e04c7850ecd39a15b8b77c593c1f2b8b171cd202f53699d7bdf5b2",
+          "file": "src/coleta.cjs",
+          "line": 70,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::be273896a62a58a62d228f87d39c392ba260671a8add423b6aa8dd24dc0f34cf",
+          "file": "src/coleta.cjs",
+          "line": 70,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::568219582d79c04f0cea52460ce8ce4a158e003b469bfb3ae34aef0d0bc9d233",
+          "file": "src/coleta.cjs",
+          "line": 71,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::f7749c748b2931315e7a503c8560e05cfb52387abf11a2ce3b198ac2114ad700",
+          "file": "src/coleta.cjs",
+          "line": 74,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::a7c245e7efc7fc5b1e628f53b1a5c2a45339e5d9a179977c3bc588b1693b2b53",
+          "file": "src/google.cjs",
+          "line": 10,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::e5cdf26f466912a805aadcf1a85da4357d3f518adc84fc2d6b1980e8eb8043a1",
+          "file": "src/google.cjs",
+          "line": 11,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::1d0bd6cdb2d58d2b32b71f663e32c9230591a4af23ad9ede598b0448c29d4c0a",
+          "file": "src/google.cjs",
+          "line": 24,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::9a276e172df4a4fd34bbc3706ef38d8651b022b327af7b7938b16aa912ace64e",
+          "file": "src/google.cjs",
+          "line": 31,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::bb8631e79d596348dc8e9267df68588fe514a72af68009f9dbf7952b8a6c9fce",
+          "file": "src/google.cjs",
+          "line": 32,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::d44133921bbfbfcdce7171be435f56059351258f4efa022f185435bd692a2129",
+          "file": "src/google.cjs",
+          "line": 36,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::4be10e827f4b6cdd4b598b92013c5daf6fbcd5958d4a2c735b64ddabd24878fd",
+          "file": "src/google.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::f5663280cb6734086737ff7695ef23ad3918f924486bb51036de8fd1ff669b76",
+          "file": "src/google.cjs",
+          "line": 51,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::9f1b258c6b31de79a25bfb06dd07c691b556d6e458f72a3b75c32b345311ab6f",
+          "file": "src/google.cjs",
+          "line": 55,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::473d5eb96e942830d7c6f1e271df1adecf259674ee697adeb0e2682ed7c6f30c",
+          "file": "src/google.cjs",
+          "line": 57,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::c2d56f6f07d72f8d49f22c24416f43164387f28c23b2f29a85630881fbed6eb9",
+          "file": "src/google.cjs",
+          "line": 63,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::49ff409e35661181663bd910bc647d70ee366f1a78a69232044777eb632fb072",
+          "file": "src/google.cjs",
+          "line": 70,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::978d70b4ff9d7167a17c5395e00651dd7b10a1725785fcb1f1a7cda8a5edaeed",
+          "file": "src/google.cjs",
+          "line": 71,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::04d037d6a5b42a12972347c46c1ead6b7a0fec6a15d074c197e062b5127ef058",
+          "file": "src/google.cjs",
+          "line": 71,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::cf52763a1c43c6b4b78599883c5570f495d309680bd8c0d819ddd57560a80a71",
+          "file": "src/google.cjs",
+          "line": 74,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::a7997ca52d5d0325cc85ff85c260422bbdc0b3f185ca531cf48f1b2bf27c53ad",
+          "file": "src/google.cjs",
+          "line": 75,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::85de51e8095200ba8beb8116b3e2ccd194ec4248a028e9b33f2ce2b4cb9ac72f",
+          "file": "src/google.cjs",
+          "line": 76,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::01239d996a464dbe0d00d596524287aee145975fde0ef091f0bec6c53af85d80",
+          "file": "src/google.cjs",
+          "line": 78,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::c869d73fb4a1b50d3425692a30cb59f6d1d59a9e44b64555975eb02e0fc34628",
+          "file": "src/google.cjs",
+          "line": 79,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::26e4ba00a7e08c9e0529612a2f443218dcd0797752ac2988189358863f6da426",
+          "file": "src/google.cjs",
+          "line": 80,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::7e5fb673e14e94678bd0086c0f80ed971eef255b2c30016701b62952b1b80e18",
+          "file": "src/google.cjs",
+          "line": 80,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::dd7c4ef0efdda5ef004c43dae8170cb5aac358f9f8723eef78b838c670d89b34",
+          "file": "src/google.cjs",
+          "line": 83,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::da2a1afce1d7b623723c4202a7afcc51cffefd65beae613811a3eeb9370dfcd8",
+          "file": "src/google.cjs",
+          "line": 86,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::eb99f4c75cbe2e997b5d0c582596e89fe553b870db7cfb8ee2883a38765f6e81",
+          "file": "src/google.cjs",
+          "line": 92,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::9b64dc7884c8ae9ca6858ac838a9c4faa6f84f41295958af556537496807f9ac",
+          "file": "src/google.cjs",
+          "line": 98,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::e9b7cdfa2e36942fa9df65cad7f544a7c557bd6e0e57d2023ccf597196881c00",
+          "file": "src/google.cjs",
+          "line": 111,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::145a298ecd3d8a533f2370e7108a72acd87ae6cea9518f7128856f17219b404b",
+          "file": "src/google.cjs",
+          "line": 115,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::a2bf0e73976c8f63875baf7609d844627b961bf7d422e144476e26bcde214477",
+          "file": "src/google.cjs",
+          "line": 118,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::eb7d43cbda2d735f27c5ec9f5ac833b5d264551971a49ede5af224654faa4e57",
+          "file": "src/google.cjs",
+          "line": 121,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::c36d3ecea98314e5622802b02d4325802f0eb55f77af96a82b86845e8f6c176c",
+          "file": "src/google.cjs",
+          "line": 123,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::5418c9ec6c8b236cfadc57b808bababcbce34ab791db3c38aed6d2a6e0d722fe",
+          "file": "src/google.cjs",
+          "line": 126,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::a7c245e7efc7fc5b1e628f53b1a5c2a45339e5d9a179977c3bc588b1693b2b53",
+          "file": "src/midia.cjs",
+          "line": 9,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::8f78ed2a306195ce2da95fe1883f1b516104b01688c742a719872aabe2e0ce0d",
+          "file": "src/midia.cjs",
+          "line": 10,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::558199f4a28d373c4b1a7405dc80e9241f39505e4793aae884ade24d95d2bd82",
+          "file": "src/midia.cjs",
+          "line": 15,
+          "value": 10,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::4b2d591a7ec806dc8da03633fc1213c5eb2e2882f308f18e1aa931a1f0fa03bb",
+          "file": "src/midia.cjs",
+          "line": 21,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::93c015ffa753373c2e756a35695de9a92e8da061db1cca35fdaae7b48b81b1f0",
+          "file": "src/midia.cjs",
+          "line": 27,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::7b2b6b0300adf1a6f5f0dbd6f7ca095947d3b22bcfd49235cc0d76ef5c3c6ec9",
+          "file": "src/midia.cjs",
+          "line": 31,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::205d218f9c80ee3c8fd7dc414bb006824b783a34bc5646ccf32b577a33bcb72f",
+          "file": "src/midia.cjs",
+          "line": 39,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::c0620ed94e702a8c33ddf74442be7e101b9f32913554a7ca7743fcd7c8ab527c",
+          "file": "src/midia.cjs",
+          "line": 44,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::91bf2cb2db8e8eb29278bc9be71807ceb96ca8f68a7d13a85feb2696c30d42b0",
+          "file": "src/midia.cjs",
+          "line": 48,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::66acf2ed0e2e51399a05f5d10889c8de9515a2898a63d7bcf3f66bbc8e123002",
+          "file": "src/midia.cjs",
+          "line": 53,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::eb52a47e972791db0968175a67e8a81a23775abd2d6388c960640826a1ae16c1",
+          "file": "src/midia.cjs",
+          "line": 57,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::f6a5f5391b9683a97d5ce607b3d9644f8f7c137d66c5a80ca6a5f3fb1be3401c",
+          "file": "src/midia.cjs",
+          "line": 73,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::fbc9dc8a21574ad726f7a02c02294d9cfe440d05750a574195a0047b89b87d53",
+          "file": "src/midia.cjs",
+          "line": 80,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::a46d4c7603369ea0f4be9a9ce297e27a902e51a91bc46fbfc50d8e5976de759b",
+          "file": "src/midia.cjs",
+          "line": 91,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::d1f80cda06f5967030f89b19a6a3eec39b98b2b2e75674f9dff0ace29fb793a9",
+          "file": "src/midia.cjs",
+          "line": 96,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::42d59b46ef7c4549ed05eb684239ca6667ef5e79833412180f9bbfdb25fb29b6",
+          "file": "src/midia.cjs",
+          "line": 98,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::8cafd975f36e76c1cd8dfa6870eb43f7f61e1141faa7c4cfe844d70d17adb567",
+          "file": "src/midia.cjs",
+          "line": 108,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/midia.cjs::ast::b244155484fbeb31b2988fa7fa763fff9fcebf0e40ca9b471ae3a629eda0798d",
+          "file": "src/midia.cjs",
+          "line": 110,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::081e22fe720a7d0e12193822f3621676044b30dc6b273e056e8430783fbb39ea",
+          "file": "src/pautas.cjs",
+          "line": 3,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::45f714e3a891899774838a34b2a769a4186ac280d87e2ab96c78099181b53b1b",
+          "file": "src/pautas.cjs",
+          "line": 4,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::1370313e491a278c01335622967230e20a25348c30a93c3569a07e2b5bfe3833",
+          "file": "src/pautas.cjs",
+          "line": 11,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::65af2615bcbc1ef3a27a21529c82c7b6c5bad0dba63ae69e6e3104142ec3823d",
+          "file": "src/pautas.cjs",
+          "line": 14,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::40dff930fbfdfe0a3bf8f7a168f4d5891229d5e924bf7bf8ee09d0e5272839a2",
+          "file": "src/pautas.cjs",
+          "line": 20,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::3f687c352dd57913a45a0deae922c064d4d8188b46ad6a3d0fbfc26f61142834",
+          "file": "src/pautas.cjs",
+          "line": 22,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::ffdaca54d3df564235c4ac88bd86eff468981a97f2f471a817bd51025f0f9e2e",
+          "file": "src/pautas.cjs",
+          "line": 30,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::9c99db8f3c7aa2c40856e255264b2c05cf22a110cfddaecd16592bc4c1fe0cfd",
+          "file": "src/pautas.cjs",
+          "line": 37,
+          "value": 9,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::efbfb549789b7ef4835e8734603d8bf09ba4bf4e975fd89444702d68c1620ae2",
+          "file": "src/pautas.cjs",
+          "line": 38,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::94a4c74a26bf144d20cc56b995901af76f0f4093715c62af134bd75ec0ba34cf",
+          "file": "src/pautas.cjs",
+          "line": 38,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::ab3128596ec6a45792295f47b9da3eeedbda87e378c1e0750e7585702a1f9c88",
+          "file": "src/pautas.cjs",
+          "line": 39,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::2d79c8307428596d53c23789a690d656b7edd518ef08e8a40fd78fa8ce48174a",
+          "file": "src/pautas.cjs",
+          "line": 40,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::f6a76513ce142ab3c07b70864492661ce2ccf8401167308b1bc96852a40c7048",
+          "file": "src/pautas.cjs",
+          "line": 41,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/pautas.cjs::ast::f774d858b6a18d8961f7339f209a3abf544f237dd1c7ef53bd28e146ef2d6e31",
+          "file": "src/pautas.cjs",
+          "line": 49,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::80c681ee362e4ee9eddbccece741a5da270a441e1fe710b5aa87e16738c8167b",
+          "file": "src/projecao.cjs",
+          "line": 5,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::7cf3b8018667e1ed95d8e6c9fd77657b1c96dd6a33b85c3eba80345eea1791d0",
+          "file": "src/projecao.cjs",
+          "line": 7,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::9826e583f96cbf59dda19d53b485705cd9c0146f0f226725a7de32927455b9b2",
+          "file": "src/projecao.cjs",
+          "line": 11,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::8db73c67594597e22e772b2c27cc74b73bfc8392796fdcc95d35481499e3ac62",
+          "file": "src/projecao.cjs",
+          "line": 15,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::fd99a66f51a04cb4a1d16fd2214eca16ad351731bf70cd6594404bb286aa135a",
+          "file": "src/projecao.cjs",
+          "line": 17,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::6d7a694bc30795a41fa968197c80244b2c117934e090c4b060cbf13701f67870",
+          "file": "src/projecao.cjs",
+          "line": 22,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::9c924c54fea9cad35476d226c5c87f58dbec1d01a1ba3126bc02d33ae74c41c4",
+          "file": "src/projecao.cjs",
+          "line": 28,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::34e18941755ebadd46c240c7dd4fcee42b3f4f139b1af8030580820147f01064",
+          "file": "src/projecao.cjs",
+          "line": 29,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::8426f0e34e8a3962e1c5bfa56e5759c45c519b880022040a09968d287b6747bf",
+          "file": "src/projecao.cjs",
+          "line": 30,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::070d46751899ecd247c53cb4f0211f416ff1bd6067b482cf1a8a80f38a2a5e7a",
+          "file": "src/projecao.cjs",
+          "line": 32,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::3a20485f74d388e6984adb9489008fb3a0df118f893055b83a86c5796a9e82bb",
+          "file": "src/projecao.cjs",
+          "line": 39,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::176817dcbd6ee170f044c06b4d602e1a84ef747c87542e52b4f2ac2e5bfacba9",
+          "file": "src/projecao.cjs",
+          "line": 42,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::09b43635fd35757aa4e779a5761a9bd6808ad7fb676a657d57fe0c7a650b4729",
+          "file": "src/projecao.cjs",
+          "line": 42,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::282367ded09d6974c41b31687ab8220c217934ef95b5ee7e11a701aff67427a7",
+          "file": "src/projecao.cjs",
+          "line": 45,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::571c106b6ced0a44f701f75e025ed647a03891b06f101770af8601e7049059aa",
+          "file": "src/projecao.cjs",
+          "line": 45,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::72736325069ed3af5695513a1ea622287f9121f17228a0e1eddc8ef9ef3111f2",
+          "file": "src/projecao.cjs",
+          "line": 47,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::501f2e4eb34ac5968676fdb00a6483c85b3dbc17304fa1cf16e13271b0bdb10b",
+          "file": "src/projecao.cjs",
+          "line": 48,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::30cee5bf1681487cc8bc641c25b792aa7c072ea1795e7652395c76dcc85ab37f",
+          "file": "src/projecao.cjs",
+          "line": 48,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::7d6df598bf400af0acc216dc762a8ee93e388688fd1df07cd775503a52fec037",
+          "file": "src/projecao.cjs",
+          "line": 51,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::1418f80871f781aa604660191d6207f0fbe0083ed48ee75d6cec805d14e1c970",
+          "file": "src/projecao.cjs",
+          "line": 58,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::1dc0bc2072d5957f16b13c3b81c00f807194b30b23b1a434a746af3ebfaec351",
+          "file": "src/projecao.cjs",
+          "line": 58,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::20e18de1fe925bcf39dd4555d897079d81d3e006c8011c1475bf68ad71fd6786",
+          "file": "src/projecao.cjs",
+          "line": 60,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::081e22fe720a7d0e12193822f3621676044b30dc6b273e056e8430783fbb39ea",
+          "file": "src/projecao.cjs",
+          "line": 79,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::9257af64ada6a91528505f786c91fcbdc9718c70b39a7c04a5c83b6412e297dc",
+          "file": "src/projecao.cjs",
+          "line": 80,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::0765bb251201e21201f88f1809d09997ff8a45536ba675b7985cc94d2b9acc97",
+          "file": "src/projecao.cjs",
+          "line": 81,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::e03111aa7cb90dedf06a9e39e2ab733c4e30fd543b721ac4c97b7c4f4b70e416",
+          "file": "src/projecao.cjs",
+          "line": 85,
+          "value": 9,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::a1a003d5c83e56da201a5df347d5ced50f34499ef6374d36bf5facac55211ba0",
+          "file": "src/projecao.cjs",
+          "line": 94,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::e02173718d797b53a059459b1843067694689d90c4ffb681fdc0c39176125ebc",
+          "file": "src/projecao.cjs",
+          "line": 98,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::362c00ce0d20799ef74af5492e8d71197e5a3d7d8bf3de82286b14751452908c",
+          "file": "src/projecao.cjs",
+          "line": 99,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::591afbf845e71bc3982ce03a06dfad493a5b82a109f4fd9c0626a1555deb0048",
+          "file": "src/projecao.cjs",
+          "line": 104,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::dcc8296eb9b288a9685392f96ffb7b1087c81de189e6fa8c7e2bb310d4215dd2",
+          "file": "src/projecao.cjs",
+          "line": 112,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::18f117dc4b5c5a30d08aac34877cfc50b44930ae275fb660aa55f255c8cd6db6",
+          "file": "src/projecao.cjs",
+          "line": 113,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::88933d06980b0aedec7cff069c9e007a36920ec25098d84422326bd4f9608312",
+          "file": "src/projecao.cjs",
+          "line": 116,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::dc0b82a0bdec3c244087e0b6774a7d9e1cfeafce33e0e454ee305268faf1da52",
+          "file": "src/projecao.cjs",
+          "line": 124,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::64a8c06486510c05878a15902114e0ee14a287cfe2a58a7bab7c1bb559a30c13",
+          "file": "src/projecao.cjs",
+          "line": 127,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::e79b5f4255760af78709d4f5ef59cd43b79004b291a786b5124e83bf3a50b73d",
+          "file": "src/projecao.cjs",
+          "line": 130,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::cdca4754fb37fc3a392a80b7d8919c2093e7ba55dcfb0511c156c1d7e38b869f",
+          "file": "src/projecao.cjs",
+          "line": 135,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::63736705c0a59a265140566e9d1a7cde6a9c262ecc83deabb20316198658b9e8",
+          "file": "src/projecao.cjs",
+          "line": 142,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::318d63e8a1d9813a6a936bbe238a6ab583a9cc5271cab4a58631a7f819b7e444",
+          "file": "src/projecao.cjs",
+          "line": 144,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::45459d03af6ccf709405729279ee9d5b07f8d596e8b01b44226f94ee01f16451",
+          "file": "src/projecao.cjs",
+          "line": 145,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::6777fe65043f4067c4e9a609f6c6904b18e51e473691640b47bf509475489803",
+          "file": "src/projecao.cjs",
+          "line": 150,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::bbd722ba396bf0f04e1b30208d932e1af2aa87e5a360b8b2b156488271b0cd2b",
+          "file": "src/projecao.cjs",
+          "line": 152,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::4075902eed44b7c311ee0345531c2ab7d1bef158bc5f6c6f31317cae995f2191",
+          "file": "src/projecao.cjs",
+          "line": 161,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::97ed096e487412e0cb52e144d1beaaf306d4c61d8851b5152d7fa40e60e44255",
+          "file": "src/projecao.cjs",
+          "line": 163,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::1c7808267f8673d5e9d35645e1bc287baf46dbf54c8709274fd4d6c3060b6dbb",
+          "file": "src/projecao.cjs",
+          "line": 163,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::153c2da4f839393efeeb4f692a18fb1671ba652972c2c6cbf0e346a295153ae8",
+          "file": "src/projecao.cjs",
+          "line": 179,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::b50ef073a7a1b344e3d5aee1ded96964c3df5734b47bfd2ca957120985074726",
+          "file": "src/projecao.cjs",
+          "line": 180,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::b156ce742f157f0f65f1556b0302a6261d4a8a427887440ca9151f2d201382b2",
+          "file": "src/projecao.cjs",
+          "line": 190,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::1fde420161f53bfcd53fc38f91e9aaacd70291514251c1ba7ded5f5ea6ead397",
+          "file": "src/projecao.cjs",
+          "line": 192,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::d31e48279a062d9f0cdc3a3363c32c44890ad8b22dc98d1ec21a3ac476b997e2",
+          "file": "src/projecao.cjs",
+          "line": 194,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::e2898b5e1e4795687839c1755327dec05649a24ffe89e8a2cea74fbfcb042c6b",
+          "file": "src/projecao.cjs",
+          "line": 197,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::c0bf551a108842a4cc02637590f639f693c8a0c58413e44a2c7d4e872a5c03a6",
+          "file": "src/projecao.cjs",
+          "line": 200,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::14d3321001f9be8c49c52e2f99c1b49fe366ff0c585ccfb53bde65ffacab96f8",
+          "file": "src/projecao.cjs",
+          "line": 202,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::263aff46b07da3cfed27711500bc42b67d8e483e4f9e26e4e8ced2e87324e322",
+          "file": "src/projecao.cjs",
+          "line": 208,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::cb88a43b9a6a5ace15d2b404583a2999caf60031ff26d97171d6a589412e68b1",
+          "file": "src/projecao.cjs",
+          "line": 217,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::b2204805555cd83d87a3a57113a2bc930c4333e0f73d8092ab0b61832274615e",
+          "file": "src/projecao.cjs",
+          "line": 218,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::d1faf5d04692d54439c6f373f31403516ad0ffa1a3134881f65ebce5bb00bb27",
+          "file": "src/projecao.cjs",
+          "line": 228,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::177635d7a8845b02cc9bf0ed3250c260292fb5fe40312058bc0bbf9825343bec",
+          "file": "src/projecao.cjs",
+          "line": 229,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::b8b41fdbbe0e8d50d7a72bb35d3a23cf3cb100926e07efacba4577b12495e4fa",
+          "file": "src/projecao.cjs",
+          "line": 231,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::2eb878b40e0e2596bbdfb2cd56c45c6249de6572b97e9f2112e08c2ee31bb90a",
+          "file": "src/projecao.cjs",
+          "line": 233,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::4f80fb2874a3250cebd08db4b8f8c160277ab0e8a53fbb1742a53213050a87ca",
+          "file": "src/projecao.cjs",
+          "line": 233,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::3c0c1b27c50426deff36b9abe6bca4ce5e08deaf3e28ac9074520e959f0e5b10",
+          "file": "src/projecao.cjs",
+          "line": 235,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::a6de89d4da718030081864046dcd6c3dcb85d525dca502aeeef6d68de1bac3a9",
+          "file": "src/projecao.cjs",
+          "line": 237,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::5d7a300b716fac6ccd7129f923c85cb71b3b0196febd337fafb435f91ef05608",
+          "file": "src/projecao.cjs",
+          "line": 239,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::e2973393460c35f69aacd8d7676d93b410d3dd6872f018e2c664a5ef715330a9",
+          "file": "src/projecao.cjs",
+          "line": 240,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::62f894ecdeb3e1e81d1eb5427da376395a386e895bcae1fa805ec3dbf9a40cbb",
+          "file": "src/projecao.cjs",
+          "line": 240,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::e12eefa3bdf3c4a19edd92dda926b45d194878ff87a9446b31c74eaeca1844da",
+          "file": "src/projecao.cjs",
+          "line": 253,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::f22fa93d50dcc887d9401edcebcb7c3c996d0f36baadd116c96ae5d61f650448",
+          "file": "src/projecao.cjs",
+          "line": 259,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::44333c5eb9fba2625ec89455e923846074837910eb822b5a170f499ff8d96568",
+          "file": "src/projecao.cjs",
+          "line": 261,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::98de44e8da04f87777b78ceee2fbe0b82d04813662722dca1f406e4aa489cc51",
+          "file": "src/projecao.cjs",
+          "line": 261,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::2add157ce944a99890f8ff72f8820abdb82ddbb5a3fdf321362163d74746bdda",
+          "file": "src/projecao.cjs",
+          "line": 266,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::365c6e26e18b3cf95854b6291aa0afd998e93ea6bd83959fbc20b831489ef77f",
+          "file": "src/projecao.cjs",
+          "line": 267,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::dcd1df7a68e7baa81962bbd10134695d64bdafc236a6cf4399a3d94945b36d91",
+          "file": "src/projecao.cjs",
+          "line": 267,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::fa86d474068343256cc1d3b51aaf293a853a8b86481eec476075506e60df1f21",
+          "file": "src/projecao.cjs",
+          "line": 269,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::710b021eef4fb6f65f2277bc24f9d5e6c2ae8e809e51f72fa6e653e7bd22cc88",
+          "file": "src/projecao.cjs",
+          "line": 269,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::2511711c5b95cba8482aa110a17b354f78abcfe67f23679f4d383867ca57d419",
+          "file": "src/projecao.cjs",
+          "line": 270,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::8e0785cae679e60314b7dd4f94ad8b580ca9fb31c71adb90b2e9aaa19e59d42b",
+          "file": "src/projecao.cjs",
+          "line": 270,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::68ef46f0be8210c5589df3ac95424cc01c4646915d3892ef52a2a1b290edf303",
+          "file": "src/projecao.cjs",
+          "line": 272,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::28d1ad02f41b82a59a828b4f77eece72354bfa7bb0b59bcf37e35aea12806b6e",
+          "file": "src/projecao.cjs",
+          "line": 278,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::db6c4355caf9b65c0d2d096b6269dd76209f9836717849b72a18730ca8fe841a",
+          "file": "src/projecao.cjs",
+          "line": 279,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::9a1790474ad1535f45f1886937377ae8f8e818ca8e2457b3dedfe7adda86b952",
+          "file": "src/projecao.cjs",
+          "line": 279,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::c984360d94d52ada7cb12e44c79c9cc0ac5ef97ed8577508042a28b1c959318d",
+          "file": "src/projecao.cjs",
+          "line": 280,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::7421c1cc54f1f0801b0d529364bc4fcefb169aaab05856c4c6edee18cda157dd",
+          "file": "src/projecao.cjs",
+          "line": 284,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::477e23daba21a75142dfe26fd3f9e799a100e1ad8e42dc915f9389e73b520a01",
+          "file": "src/projecao.cjs",
+          "line": 286,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::5be1104e8d8dd69565bd6428db700068f87aa1d232160aea6b5c9b669aed6b93",
+          "file": "src/projecao.cjs",
+          "line": 290,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::c82ff2ca1eb4267d67396ca0d86dcfa8bfdb5bbd11d2b0ea10ccdf8fd78062f9",
+          "file": "src/projecao.cjs",
+          "line": 291,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::b8d45655e5ccc9aec7ce36dcb4ad57a3120ea484aed8de5b584117793417384a",
+          "file": "src/projecao.cjs",
+          "line": 291,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::46258110000e960b4ebf7db29ad880715ff7da8288414f8668073dd21a9a5ba5",
+          "file": "src/projecao.cjs",
+          "line": 293,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::0eb44f153b8156fabf6c2809fa51a2fa9242b482d26bc747919df1fcaa90d8a4",
+          "file": "src/projecao.cjs",
+          "line": 294,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::043706d62283c1bf5c42af26d7bb5700b61ae9b902841e79d0640029c85e98c7",
+          "file": "src/projecao.cjs",
+          "line": 296,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::0332cb81c8fb6bac76f0e100e8d2de6be4194c50649bf7b54ac39be84d6af864",
+          "file": "src/projecao.cjs",
+          "line": 296,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::a6f0986a9137e2e2a208da61cd285bac81768bd42982d3af28810c4dc36ca9bb",
+          "file": "src/projecao.cjs",
+          "line": 300,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::7c5eeef72f7962219ef297b2ed43a1adae05a472f85bd8de91b87fad67585514",
+          "file": "src/projecao.cjs",
+          "line": 303,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/projecao.cjs::ast::cc30207e8cb50413b55eb59d7ce4cdf1c79e47bc890bf4c9204a2c69b9374387",
+          "file": "src/projecao.cjs",
+          "line": 313,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/quadro-config.cjs::ast::fd01d45256a4b88336937b42823173c97a936d20782682b7c0c5632aa5d3185c",
+          "file": "src/quadro-config.cjs",
+          "line": 3,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/quadro-config.cjs::ast::3af80b21a07fb20cc926d42588a78937bda1c61ef95608814fff4f03a754a1f7",
+          "file": "src/quadro-config.cjs",
+          "line": 4,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/quadro-config.cjs::ast::ad96e0d4c156a4d226714fc28cbc3b3591b5c117f08237a96575a6f0d9aa5be8",
+          "file": "src/quadro-config.cjs",
+          "line": 7,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/quadro-config.cjs::ast::6f6a5b9490628c6ce1b2290001a24bcf979f0d35ed7e654f49772eba49c8aa79",
+          "file": "src/quadro-config.cjs",
+          "line": 15,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/quadro-config.cjs::ast::80a5cd53d7d495e21c28895c4a1236a862ddcd2525c0fbb8a42931cad84cbae0",
+          "file": "src/quadro-config.cjs",
+          "line": 22,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/quadro-config.cjs::ast::6b442d22c34674c759bda34d155059acb5885cd46b8a243e8d8039d4a18eb542",
+          "file": "src/quadro-config.cjs",
+          "line": 24,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::fe2eb65c8cdd76c9a44ce43b7faed10be1f4bd68e603e0ca3235ff5b634754eb",
+          "file": "src/servidor.cjs",
+          "line": 11,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::5d00c2cf6637bc192aa13c7634a700c20cf07e2760a6193886dcb13a7dc39700",
+          "file": "src/servidor.cjs",
+          "line": 16,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::87c6edb8460ce84763bcc78f20fc9ce0728a5b1f101d730686dc946646455e9a",
+          "file": "src/servidor.cjs",
+          "line": 20,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::92e339bbe2cb146041af8edc35dccb0b464c2819014ee092008b2f7dff5a3913",
+          "file": "src/servidor.cjs",
+          "line": 21,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::590abd6584906ae7689de18563dd15f6ce60a1a358727f7b52723355d79ff1b1",
+          "file": "src/servidor.cjs",
+          "line": 23,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::d491d9e16793e2f70520b16a0b2ac2cdfabca10fb01b5d48423fc3a8cb54bf67",
+          "file": "src/servidor.cjs",
+          "line": 24,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::1f8c6c3f69c2056ec54a689551c94d27a5f591ecad5f31b46f32cafa61ea0f74",
+          "file": "src/servidor.cjs",
+          "line": 25,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::9d6a7c01215bd7dbc99e39796d516dacfd50127cb9a7f11e97e7559f1158a537",
+          "file": "src/servidor.cjs",
+          "line": 32,
+          "value": 14,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::374c8857f4098604ae5a6e74f8a297ecd4474ce0f19c5c21f83b0599a894e5d2",
+          "file": "src/servidor.cjs",
+          "line": 38,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::9031da33f01e4cfc4d4d8808fd7e953f27bd0662dbab9af72d3e9a1c231f043b",
+          "file": "src/servidor.cjs",
+          "line": 52,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::730664a4e63e383f4a5b784f076003b2788f3d971aa089e31fecb49f9ce98997",
+          "file": "src/servidor.cjs",
+          "line": 59,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::8d76306b696c2ae8358f60342c4446315221d9ad09c52939072577f1a1a7b48f",
+          "file": "src/servidor.cjs",
+          "line": 61,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::3b02e473baf4ba28f462e6f8e4f52ccfc5b2e5138a7770a2f6d1662b9b2b9df7",
+          "file": "src/servidor.cjs",
+          "line": 71,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::efb9cb7102681d98e2bf9bb7c123f3cd790aadce9272021b808169af23e8649c",
+          "file": "src/servidor.cjs",
+          "line": 71,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::89e6284599d32a16dadc1cd05802817ef91867196ed1bfac838bebfbd456d448",
+          "file": "src/servidor.cjs",
+          "line": 71,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::83955f0d3bcc15d49d9e04d86936199b463b4e4b6dca6728bd82b2a1ff59074f",
+          "file": "src/servidor.cjs",
+          "line": 73,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::84c82acc4568b023ba0a6a7aa6565cfe8f3940fd24fc51e950e6d6929f4a4030",
+          "file": "src/servidor.cjs",
+          "line": 74,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::bf89f0c0b0d36c259a50aa54095beae1784420c6257787a296b8f3bfe3ecfd24",
+          "file": "src/servidor.cjs",
+          "line": 97,
+          "value": 9,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::0dd55615fe90951e3f9ba3cb42fb947531232bc32e314a1d57aa86c5490e681a",
+          "file": "src/servidor.cjs",
+          "line": 109,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::931a9b09f3396ed278165a18e0e450f62b9453345257be64d54f3489d12db114",
+          "file": "src/servidor.cjs",
+          "line": 112,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::67ed9343dc9e64f01817777bbfa612010adee100e42ad37fc458302a306461cc",
+          "file": "src/servidor.cjs",
+          "line": 113,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::d756c59fdcfac869082502b9adf3110765480ccf17e040fe9dd9442adc78cf62",
+          "file": "src/snapshot.cjs",
+          "line": 12,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::fcb9a95e1a4bed0017c9bd24d6c0864c453c2a055b0ce4919e88e64af8434d4b",
+          "file": "src/snapshot.cjs",
+          "line": 13,
+          "value": 10,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::605f8f45d65b7bca8c457f0b2cb88ab16c590f40e07b2640c447407d06e5660c",
+          "file": "src/snapshot.cjs",
+          "line": 17,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::d367e319638e8a69b399a2bc2ece5a6a6f518db29d9b0f51b8aa7efe8d1aaf4c",
+          "file": "src/snapshot.cjs",
+          "line": 26,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::6160a0ed8a70e9bc36fd2cf1abbe39c6254c7f043b17dd58b22f6b2801364878",
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::2812dfda3ca9ef092e840e8d7cd30d8cabb5e703264663bd4f37c0ef35520206",
+          "file": "src/snapshot.cjs",
+          "line": 39,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::bb7f4adee503dace367e73eb0443009b1d7f297b907979b4d1910d918c49a77c",
+          "file": "src/snapshot.cjs",
+          "line": 42,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::51f2f0a5f4ad879412f7e92c683df1e4eff19b08b42ff8019f6f734c5e7f2b1a",
+          "file": "src/snapshot.cjs",
+          "line": 50,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::7c3bb486b09677448288b3c2bc7ca1ab98c1584c704a18966c82dd928fc159f6",
+          "file": "src/snapshot.cjs",
+          "line": 55,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::e88e80a53339f588bcf70a2e522c6dba0012602bd441eaaea9ac50f44172a311",
+          "file": "src/snapshot.cjs",
+          "line": 62,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::02eb136a591f8336af659924e51200bdd752a52b585b91b4a64e660bd07e9c09",
+          "file": "src/snapshot.cjs",
+          "line": 78,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::5c3aeec451c0b7010606796273458ea0dcc44e06b7655d0767801f616c674957",
+          "file": "src/snapshot.cjs",
+          "line": 82,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::d3826dc509f11e7fced4ce84f2f5e2e336beb8808b975498e42fc8c7cf734c09",
+          "file": "src/snapshot.cjs",
+          "line": 86,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::38f5f9111c845bf4fed814ac737a1a56c8d1409848204bfc9f7da9d7bfd46ebb",
+          "file": "src/snapshot.cjs",
+          "line": 91,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::2e4105c414b8de2508d914da2203eed193bac2fa37c0eb12a625647220e03b6d",
+          "file": "src/snapshot.cjs",
+          "line": 102,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::bb9af3fe3d2cff03eb953d8dd5bb2bc806c99a52cd2b4690ffb417ceb421ad11",
+          "file": "src/snapshot.cjs",
+          "line": 106,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::b4525485a4bf561fbcf06ba5ddcc2c6a89d836100a53a063e84708f05e616b0a",
+          "file": "src/snapshot.cjs",
+          "line": 112,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::3171f4a1041261143a07c7562547e439751e3dd112a4a71ed027eb837010cefe",
+          "file": "src/snapshot.cjs",
+          "line": 125,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::a855e1015e8ac7fe6a5ee130ceb958ded5373da7645812a2ad1c0186112808fb",
+          "file": "src/snapshot.cjs",
+          "line": 128,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::702d80510ed234619df766294be9c5b3862a2758919fa5c70a09f67d909ae9fd",
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::02474556602687e4f5d179c8a695dff2da8cca4ba9744fba4a361114dca48b70",
+          "file": "src/snapshot.cjs",
+          "line": 145,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::7260c7abc9b6c349db3b904b25b4713d5fdc2b597f56d30d0f81d3a55819a6c8",
+          "file": "src/snapshot.cjs",
+          "line": 163,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::ae57314ef1adeeb09dad25c939d95a2f8d3e5429e6f1499023c06fbcc5ae3fb6",
+          "file": "src/snapshot.cjs",
+          "line": 163,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::4dd1e8308ec06f53ba4bcbda0b566ef22083b194839e1f44458cf90b945fd288",
+          "file": "src/snapshot.cjs",
+          "line": 164,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::b470ae73c6a6be1ded05df2170c5bf4adf2eca547fb909e4f1cf1e9c260a3c35",
+          "file": "src/snapshot.cjs",
+          "line": 172,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::8c66dfef103fbbb310b2fc8fa6ecf078a8af6771152a5ad6f8e961dcbfcb4dd1",
+          "file": "src/triagem.cjs",
+          "line": 5,
+          "value": 9,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::487a0662a5dfe3f24bb6d9ff99ad19f04f4a322891ef79e867205d226b56ce62",
+          "file": "src/triagem.cjs",
+          "line": 16,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::c26b57c5c7a151cc6e325249c9428abb8a3a353a307ecc9bcbb7a5ec4d29aab9",
+          "file": "src/triagem.cjs",
+          "line": 21,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::fb56591910efcfcb441b7b33147b7d8fddffddd677a76d866f74b53995cbf36b",
+          "file": "src/triagem.cjs",
+          "line": 28,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::241b35e1c64f758e9c50e925b0e1d1f5894f89f03429cdb788fab43240a201c5",
+          "file": "src/triagem.cjs",
+          "line": 31,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::cdd7e4648c405bc15c9c5b77878d73d04a624cf66f57c8b9a5c97570ca22b275",
+          "file": "src/triagem.cjs",
+          "line": 36,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::17bd8b3924ba7188062a62b4875c72848402d9caaa9a85be29d7c7f72d92f2e8",
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::1712f4f3af7bf0b3eabd7c4196510cc9649fccbb43dc3f07653f086c5733cef1",
+          "file": "src/triagem.cjs",
+          "line": 51,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::261e18b783fd9f34bb207a5b4bfee983c20130597703ce64ff626a35afcff7b8",
+          "file": "src/triagem.cjs",
+          "line": 52,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::cd9ed2305563059123d9ce5cba278afbc9d1dcfab8f48302059aecab3c3f83d4",
+          "file": "src/triagem.cjs",
+          "line": 53,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::091399272b63023644e6776bd2571798cb6661f08850aa747f1bd29c818c2992",
+          "file": "src/triagem.cjs",
+          "line": 54,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::802c6b836612633c2f90a026b0554ce0568ec9763423ff8f337da487cf328a55",
+          "file": "src/triagem.cjs",
+          "line": 54,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::ead4d40eda29f03619ccb0b4081d1420b13dadbfce4559973019110a09993cbe",
+          "file": "src/triagem.cjs",
+          "line": 55,
+          "value": 1,
+          "matchable": false
+        },
+        {
+          "key": "src/triagem.cjs::ast::ead4d40eda29f03619ccb0b4081d1420b13dadbfce4559973019110a09993cbe",
+          "file": "src/triagem.cjs",
+          "line": 55,
+          "value": 1,
+          "matchable": false
+        },
+        {
+          "key": "src/triagem.cjs::ast::5ddf0e45bb2d1010aecc087873eb00c3f86c106ce7c761401cde594986223601",
+          "file": "src/triagem.cjs",
+          "line": 56,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::ead4d40eda29f03619ccb0b4081d1420b13dadbfce4559973019110a09993cbe",
+          "file": "src/triagem.cjs",
+          "line": 56,
+          "value": 1,
+          "matchable": false
+        },
+        {
+          "key": "src/triagem.cjs::ast::0f35463e32cf2b09101c93f1237342a68a34a59eaea8c8b2ee48dc1d4f88ebe0",
+          "file": "src/triagem.cjs",
+          "line": 57,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::70be1f7ccbaf02ca7723178ce3c36ff01274673ee10a8e88b0a3a3456551e510",
+          "file": "src/triagem.cjs",
+          "line": 60,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::e4a22592558daeaefe603bf1a90f20aaf9e2b4957d39fe8dbe20f7c2ddc43fa6",
+          "file": "src/triagem.cjs",
+          "line": 61,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::68ae36a38121bff0c5d526931d22fa3cbb58aab495deade5100b4df68e78dd92",
+          "file": "src/triagem.cjs",
+          "line": 73,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::a48e0a1ee9c5e31964981becea64c1296a0eb3c56a2666a76c2a4f4d0e4177ff",
+          "file": "src/triagem.cjs",
+          "line": 73,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::1e9f19979f6185a9ab751e3675e4c5dd9464bcf22832ff2cdf772608b6f93fbe",
+          "file": "src/triagem.cjs",
+          "line": 80,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::97f9d71050dc541d01f76fb73e9aa227331d0d9f3185081849f156a099ed408c",
+          "file": "src/triagem.cjs",
+          "line": 80,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::4370dda9af97f91f0f37956e6b9c9fe1f167db6b450241448d02e039cbe68b82",
+          "file": "src/triagem.cjs",
+          "line": 83,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::792f7d4e790e54ff828510a047aad44a8bbd52114e49575057edc84a142ead01",
+          "file": "src/triagem.cjs",
+          "line": 93,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::05b708c77f74594c8362240903f2b8828ddabd502257837ddb3584f6be68f924",
+          "file": "src/web/app.js",
+          "line": 2,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::6b7f05550fd92fb3832979c3f828e8c93a53425e6503a134aa311554b439dc1f",
+          "file": "src/web/app.js",
+          "line": 4,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::02688bb6053a2913524454c639e302cb04f74bd783a44edebaa32ce1ece7d580",
+          "file": "src/web/app.js",
+          "line": 8,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::09b1d4f8497c7f17bdf6c8744d158bf57370cc979c7a0211d30804b6982ef504",
+          "file": "src/web/app.js",
+          "line": 14,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::d5f1028b5ee4ba2dd34ed0c0c23404e69f493820070a7a9852d4c1ffad907173",
+          "file": "src/web/app.js",
+          "line": 17,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::8483f18222b58e42c66bdf0706fdd6ca17323f093273eae4537486940cd1fca1",
+          "file": "src/web/app.js",
+          "line": 17,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::060a8e8d4e29b5f44438b9f2209d338591a792fac01e108d018a4d7e5603f6a8",
+          "file": "src/web/app.js",
+          "line": 17,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f7e1075ec299541417c812576d2c59c03c5da495e4ce3a747a55ebf215936a4d",
+          "file": "src/web/app.js",
+          "line": 18,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::7329eaa1494940d82eeb344bc4a20936bcabbda84702c59f33d6fe41dfdfc468",
+          "file": "src/web/app.js",
+          "line": 20,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::761426df24de5b16a69db42826ac54f3702b9d47dd1a4ef645c14c945c88204b",
+          "file": "src/web/app.js",
+          "line": 22,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::032534abfa839c0bfdf99100a976ff3901572482f28684a9fbfe083aa3a39d53",
+          "file": "src/web/app.js",
+          "line": 25,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::509306c3bb5b34534ab0dc6921aef4ccc09c6cc37cacf6877c3314e82e5ef380",
+          "file": "src/web/app.js",
+          "line": 32,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::72f3c92ca977147561d38b7af754d8da315dee20de759ca86f23a4665b71ec7e",
+          "file": "src/web/app.js",
+          "line": 33,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::809f7c5bd501a6b9594f40088df62f4d7e8a892f80f8a65dc9d46494a4b4cb3e",
+          "file": "src/web/app.js",
+          "line": 34,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::acc50c819a0821c2b07054d6ef1d76f34977d798bcba2ae9fdc6cf63a44bfb3e",
+          "file": "src/web/app.js",
+          "line": 35,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::b4168865c8c1cb3d665036d7387f9d301bed1c6f770fc25fbd9a16119705b196",
+          "file": "src/web/app.js",
+          "line": 49,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::081e22fe720a7d0e12193822f3621676044b30dc6b273e056e8430783fbb39ea",
+          "file": "src/web/app.js",
+          "line": 50,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1e4189b72750a3753cfe1d6e38fa66d9f8b8611164683a852fef5bca956740b3",
+          "file": "src/web/app.js",
+          "line": 51,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1c4b200b3d2d647a7fd7c92fbb5a53373b814286e069bc4e28cdbe05842a542f",
+          "file": "src/web/app.js",
+          "line": 52,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::522ef5a7dcb962e11763be70252ed169228c49b0702866196559bec21f6415d9",
+          "file": "src/web/app.js",
+          "line": 62,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::47afad5ae046bbdcb4d8ff2a50c603eaca28aa40f540592864eddebc71960842",
+          "file": "src/web/app.js",
+          "line": 65,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::b845e6898a4aa382480f8683e7f15c7f1a08fabc1e983162ad7428c645296358",
+          "file": "src/web/app.js",
+          "line": 72,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::952b30c8fa7a2e4ab2339ab166ac9a8f877d00872aa7ff6238601f0a58ef4772",
+          "file": "src/web/app.js",
+          "line": 77,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3984b638862e80ac0ae8693f9a82dd4f6f12fe02a0233a8272b2ca0a99a325db",
+          "file": "src/web/app.js",
+          "line": 79,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::558e16184bf3f3c3aeeb0b31c6928cb082e9f10548c20d44e93ec78975198314",
+          "file": "src/web/app.js",
+          "line": 84,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0c08e0fa9b34e92af589ad15a808eb037fad44c1ef5989e461b628d8dc8519fb",
+          "file": "src/web/app.js",
+          "line": 85,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::705faec92dfa06db15bc063be39d207dfe1ec052ee66977676c8dbd7892344b9",
+          "file": "src/web/app.js",
+          "line": 88,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::df72208c412926e2355e463b2e440a9fa3dafa719c923d5f6c5572b5b87a719f",
+          "file": "src/web/app.js",
+          "line": 94,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::54947e7cbe1347bb62973d21bbd347d2356f34cf990122826ef4afa7d89fa3a3",
+          "file": "src/web/app.js",
+          "line": 99,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::52e7d233b27028280a5281e0ed948cd6f7adfb2eeb8235b3d33c2f99d392415c",
+          "file": "src/web/app.js",
+          "line": 100,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e4c86788a11bda3661d2cef16507702963ceefdd75d8c4edf17709ae02778d8f",
+          "file": "src/web/app.js",
+          "line": 103,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::d76049fe900c7d927fbc9f9a918a1b14e31ded13e48c15fb6f0f0fdb0bdce4e7",
+          "file": "src/web/app.js",
+          "line": 113,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::c81f6dbeb20f9ad2e1b6da50cc69a0e1c802b813b80931dede4e330c966efb18",
+          "file": "src/web/app.js",
+          "line": 119,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::092f09cafe0dbf13c9212a97b38524f364001369e68722045378860a30d0b7c3",
+          "file": "src/web/app.js",
+          "line": 128,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::98333c7ad65cdc212bced0bb83381bb3f3a122fca12977337507855f8f76587e",
+          "file": "src/web/app.js",
+          "line": 136,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::909f869228fdd511ade9e929bf4aa291720d750ea3810cdd103fd00da3eec0a4",
+          "file": "src/web/app.js",
+          "line": 148,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
+          "file": "src/web/app.js",
+          "line": 153,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::25210040b867cb5b35efa25a393409f3d322d689ac8588d589f5c38dcdabcd32",
+          "file": "src/web/app.js",
+          "line": 169,
+          "value": 10,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f88fc4dbde11235b68282c000c4c1fbbb50b30adab85b369df03696548b20279",
+          "file": "src/web/app.js",
+          "line": 176,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0d7bbc065ae0e7c0161db429c6247f0237c78ede55f64d2a38a1ee7cf9890ff4",
+          "file": "src/web/app.js",
+          "line": 181,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::aa454144c0130cfd5a1926f961fa5ec6e259f29d326a4800c5119d6c6cc68164",
+          "file": "src/web/app.js",
+          "line": 185,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::4fffeed09f13a4d6169fe240a314c39f3d9d1b3d19e5e50f7983bbcd91ed1b7a",
+          "file": "src/web/app.js",
+          "line": 193,
+          "value": 1,
+          "matchable": false
+        },
+        {
+          "key": "src/web/app.js::ast::4fffeed09f13a4d6169fe240a314c39f3d9d1b3d19e5e50f7983bbcd91ed1b7a",
+          "file": "src/web/app.js",
+          "line": 195,
+          "value": 1,
+          "matchable": false
+        },
+        {
+          "key": "src/web/app.js::ast::81176ab57814806c911325b75eb03dad5888bd5e131d37d0c014dc4b823cbd9a",
+          "file": "src/web/app.js",
+          "line": 198,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::58102fbbe5246b61d4a80343eb1450aa4385c77167e726dfb927c8cc00b0cdff",
+          "file": "src/web/app.js",
+          "line": 207,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::19fc84de717d39d090ff597163e51e4dcc186b383ffe872d6c3ebb19bf89e2ce",
+          "file": "src/web/app.js",
+          "line": 210,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::fbcccb7fa13ad82dbe1494ea8e7c6e54b47accc8c45b4939cdead0e2251e1c28",
+          "file": "src/web/app.js",
+          "line": 214,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::321403e50975662dc10891251e68a0a6a5eb275a3897336942de216179b7c942",
+          "file": "src/web/app.js",
+          "line": 215,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::121b2cd4f6f0e9aba8b96d049909f5418e9d30a8396cc8b7ef467e7b8c4dc5e3",
+          "file": "src/web/app.js",
+          "line": 220,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::789db8872124269f483f995ba326744fd747d6ca6ad41bf2166f888e5d5a3b6e",
+          "file": "src/web/app.js",
+          "line": 225,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::040211a9cbe0d636c5c9bca96ae4f09613a0b5e529c85823d9a5c1f297b230b2",
+          "file": "src/web/app.js",
+          "line": 235,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::fce131ba074eb69a26600669546c6e88668651d0728d7f7f3444e83a60888f0d",
+          "file": "src/web/app.js",
+          "line": 236,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::b403eca560147d950c9742126ee986125c6c5de2fbdb1a69343aa09b0301bf7d",
+          "file": "src/web/app.js",
+          "line": 236,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1e45b48263a8edb24790f7ff25afc7016b48f5389e821467bb32f82fddd6c203",
+          "file": "src/web/app.js",
+          "line": 236,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ee204d00bca13002bf37ce05e9aaf9c8346e556b4ca54b760832b4d437b33465",
+          "file": "src/web/app.js",
+          "line": 237,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0455c4690ca770d4e6589ceb4285142177fba1900b17b3022a080796dd745ef7",
+          "file": "src/web/app.js",
+          "line": 242,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0296fc03d40ab9d93b84798c48bb546c5d5cb3070331fc53e2d09685eff4f5fa",
+          "file": "src/web/app.js",
+          "line": 247,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::445049113ffe3cace8b57fea077f140029b7f9172f1c44f1447bdf5f1cb3bb7d",
+          "file": "src/web/app.js",
+          "line": 253,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::07a545ffeaf5f9e03527407c387dd752774267ef3b5ef9bd3d6b4578b673bc1a",
+          "file": "src/web/app.js",
+          "line": 264,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f0f08ec87c81922ff34bc8843cf9f20ecb91fc539f88af2c18031b50bc1c17f1",
+          "file": "src/web/app.js",
+          "line": 272,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::8f65dabe2e6dab27bd8e0fdeaf53fba0e328a69651a5bf0c54cb65fd87db04cb",
+          "file": "src/web/app.js",
+          "line": 279,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ab98c1e695c70e53b3dc746403e9cdcc308d0744116a452a689eef380d4d2e2c",
+          "file": "src/web/app.js",
+          "line": 296,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ed4f0d914f2d0a429a94008e6cbcf2ce9e4a044fd7b82f2f420e39308cca4493",
+          "file": "src/web/app.js",
+          "line": 299,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::b4f60815b8d6a44f48264350c99348002ebf9b3b8038ff621a20ca21443f153c",
+          "file": "src/web/app.js",
+          "line": 302,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::d78f25df0a874ed7fbce0f53ddd2358d79f622840c3ed67e19e2f1e95d6e6ead",
+          "file": "src/web/app.js",
+          "line": 303,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::6f31dfa8d7ae1742bb9edf6c2be4893a71be5b5db52bfda4810d9e4df18786c9",
+          "file": "src/web/app.js",
+          "line": 306,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::860da865c2932c9500d811cf423a3d1c1bfa1af10d1b5068ffe600402bd46b25",
+          "file": "src/web/app.js",
+          "line": 306,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::98455f1181a67eed62bf07c3e6c6a2582cf4a3875592d7fe3150636613dc0bdd",
+          "file": "src/web/app.js",
+          "line": 307,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ca6dd5d657e26ba0d1cb6d309472c2acfb3ad4ee08715713f467dbb2ed7455a7",
+          "file": "src/web/app.js",
+          "line": 309,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::2ca62e7fccf7fa48ad387bbb9e7ee422a9583644c0623ee4ccd53434affc0f3c",
+          "file": "src/web/app.js",
+          "line": 311,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::cc2a1ee3a2a924deac02b692dd1475c441fbc618ab2e68137320fbe762b103ba",
+          "file": "src/web/app.js",
+          "line": 314,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::167bd6ed5857165b28f2ecad4f46eb6960e452db05cbcf331b78e98cd4f8d9a0",
+          "file": "src/web/app.js",
+          "line": 318,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ac174c264d0ce8832a636bd1e77dc334196a4105c680dc43d36e174fb763d496",
+          "file": "src/web/app.js",
+          "line": 326,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::cbd5098bd313eca5a935b7d86605f4ac30a9b24a2840f12450062f69a0d9fa30",
+          "file": "src/web/app.js",
+          "line": 330,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::4a9cff2e81c8b89f5202c8a6536b619ba3114ed2dac745bbfd8bcc32b802f711",
+          "file": "src/web/app.js",
+          "line": 333,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::07b25cbb8651e668a53b3d42906a238a08bace681f5d32e8fd1b48b8ba6b7a88",
+          "file": "src/web/app.js",
+          "line": 336,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ec76b52f3d780a241dd5a6c85dc61733961862bfc7498e0e801524ca7ec3b022",
+          "file": "src/web/app.js",
+          "line": 341,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3f539a6909077bb79df861d90951c143f4cf271a7ceb2e1829214aaae68aceb8",
+          "file": "src/web/app.js",
+          "line": 343,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::5c0127809aebb4b6bdb6ec55e5350166c2ac9b1049df8b2bd89032b8af2572b6",
+          "file": "src/web/app.js",
+          "line": 347,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::df24b429e0324508404d5e6b38347a650fed22227240c087f764476d13f08251",
+          "file": "src/web/app.js",
+          "line": 349,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::b5ca01d46adfb5d99fb3ce1d166a22410a6316c269c5208e00e2b56105b3b900",
+          "file": "src/web/app.js",
+          "line": 356,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::dffcf134ab07884efb3d0724fbbe4be0adf969ef6a33cf5d2c42e222fa6de8a7",
+          "file": "src/web/app.js",
+          "line": 356,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::04aaa3c12f4ed470d29636cf279b761b91122d3d50e273103ce8baaf6180f219",
+          "file": "src/web/app.js",
+          "line": 361,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f45b1ce678b80db07ad5ccba4f12862d1642cb3d6d3791d8923c5413900b5779",
+          "file": "src/web/app.js",
+          "line": 365,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::2b7974ac289ae83ccddc3597c44ba1a05f11cc36471192ad19a1d97ee4aff4ff",
+          "file": "src/web/app.js",
+          "line": 373,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::f575ac10f8fd054fe3d8b96fe6c365bd31b05f2ec3f2dd9d269e7e39804fb124",
+          "file": "src/web/app.js",
+          "line": 388,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::90669271f37f1cbb93a97062f9794a1bdc0f4799cde9cba43685fa4ac4c99ba8",
+          "file": "src/web/app.js",
+          "line": 389,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::73b840492f3bbc1c03baff492e9007ad14d96b6e12ce11b9bcc73f758245b8eb",
+          "file": "src/web/app.js",
+          "line": 396,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::515a74566d38d4058b753ec16b32b21e405d7b1f5174c47ca791deca8a67ecf8",
+          "file": "src/web/app.js",
+          "line": 400,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::2846dfb1393584e523fa7aad13b4315e75bb0be79dbccf6a10da541b026d1364",
+          "file": "src/web/app.js",
+          "line": 404,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::708fb8b55717e5a37edf8124aa21be96838882d9be8696cd12e77462e72be0b3",
+          "file": "src/web/app.js",
+          "line": 408,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::8478609d6c24fe5fa65f664e1bc6ec6a39113ffba567fcfc5a1e4845b0f9240e",
+          "file": "src/web/app.js",
+          "line": 410,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::62ae815236231442491bb35a9532e908372da7cd7c2e86db9b9835bc00ea2ab6",
+          "file": "src/web/app.js",
+          "line": 424,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::d67f91cf5504b30d08e91474c464d183a679131967ccd5e8e39b06aa5a52b5e4",
+          "file": "src/web/app.js",
+          "line": 431,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::50d7dd8ed83b22517cbb62c3f2824e45bdb0f5b51f732319c5ff0848d54db336",
+          "file": "src/web/app.js",
+          "line": 434,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::66001976c488889cdc5deadc98f3a8369ab24ccb05b3892d522703b699b166f7",
+          "file": "src/web/app.js",
+          "line": 436,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::d912b545ce9762d43a86a93b2a22b8239cbd4d807087e8f77ec71e47de16b02c",
+          "file": "src/web/app.js",
+          "line": 437,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ef43b4a2b3b24c13765d4103b80d1fcafa66cb825e460949aa98f0f6945c02c3",
+          "file": "src/web/app.js",
+          "line": 440,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::9acf9d1b2cba01bea35ab178deb9bb3045440daf269044175272cdc7e919e9e7",
+          "file": "src/web/app.js",
+          "line": 440,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0d1b7c9c7aac73c00106faaa64cd4c27bb90b2baed9d94d14c73948445090967",
+          "file": "src/web/app.js",
+          "line": 440,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::7ff95e17fc23b9f1a7771cfec99fde3a35faafe379975a56fdb805955aa52cba",
+          "file": "src/web/app.js",
+          "line": 441,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3f4a8d69182f852d77398a3bf274e2faa908aa85cd047e585e9669512c09b668",
+          "file": "src/web/app.js",
+          "line": 444,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::7648b86874f7518ff527d2d6c33da38bab4b4d6e368f7cf233ef2ef18cea9999",
+          "file": "src/web/app.js",
+          "line": 450,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::9c75b7250eabcff072188ed74ace12d86a67e1a2e0363b689be6ec1af6fc1bba",
+          "file": "src/web/app.js",
+          "line": 454,
+          "value": 14,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::90d74a36d05e1b393b0616e00e280aebe96699a4250bb7ebd9652704fca8ce81",
+          "file": "src/web/app.js",
+          "line": 455,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e24a381bb8577531b9a64d7de905459713a6d85ff1add1bc0188bf90399df9c5",
+          "file": "src/web/app.js",
+          "line": 455,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::6e14c466e40184c88e015c8a17a69e1d7945139862ca7c4dbb8469ae0bd0a6f3",
+          "file": "src/web/app.js",
+          "line": 463,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::93eada8ad121075055c3ba8b349c9a27e673b5299255d7ad0670644c6d31eb6b",
+          "file": "src/web/app.js",
+          "line": 467,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::46f24455e3d071eca9892bb27a100d0cbb0c107ceffd06c672e5707292d0db25",
+          "file": "src/web/app.js",
+          "line": 475,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::baae3c7e9af43a1c98d0b3b3fc5c44578ba5e4c4c0b363933fa652b56b370a1e",
+          "file": "src/web/app.js",
+          "line": 479,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::63dfe69629cb404119cff56fbbdb7e891bcc6e4cf356a5c47341e228065a61d2",
+          "file": "src/web/app.js",
+          "line": 480,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::16255645ce8382d72b80ae7c0ed96965691488be67380ada7987302fc6ed1c8b",
+          "file": "src/web/app.js",
+          "line": 481,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::68b782d5f1f7b9e264e2b64e2480e7a5fbd6aa457f5425b7591217ff37828c7b",
+          "file": "src/web/app.js",
+          "line": 487,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::462f7819caff586e10a3dd857af1a1fb9d386e73e1f9d9e1335f8bbd80ac57c2",
+          "file": "src/web/app.js",
+          "line": 495,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::6764069e069b36f8431e8cdf506d54ab0401436bf9b406a0a04fd5bf2a6fd160",
+          "file": "src/web/app.js",
+          "line": 505,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ef2cb0216fc5ab9dfd734bb90c0f15009881a5cd0b936a8fca069f51b1310f88",
+          "file": "src/web/app.js",
+          "line": 519,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::cfae2d5928ce5ce7f3508e9a27b79f0563e4d21ca3492ee41f4d9d09c2f70a6b",
+          "file": "src/web/app.js",
+          "line": 520,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::601de25aeec1b8b4a089ee145723cf8c7e8e4360e8b17b43e5fe23587c8d0928",
+          "file": "src/web/app.js",
+          "line": 521,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e92cc72c563ba6a8d5146d68184e3a127115396eb02745df02894112a6bcfd63",
+          "file": "src/web/app.js",
+          "line": 522,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::093ef4c078d8e3d2421efa545404085b74a58cd151f596f33c357239c5f46bc1",
+          "file": "src/web/app.js",
+          "line": 523,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::923c69475a1965b9268fbfc1484d7a8d3618ee6a9b3da62df9e807b2747b24ac",
+          "file": "src/web/app.js",
+          "line": 528,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::5b122f09cab6028bceb31aff58744f1eef8816543f7a5a37d9a30003cc78a6b7",
+          "file": "src/web/app.js",
+          "line": 532,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e1bf937b11a3354a1e5f2cf801bc1a5051e4a64a3f46cc0a8b997c0987648089",
+          "file": "src/web/app.js",
+          "line": 533,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::7b8465953f270123090df7a60fc0890169694af35fa925313088de1cbdf32284",
+          "file": "src/web/app.js",
+          "line": 534,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::05d673b469a0eda757c58e4823103d724fc9d967230b820e9de7b905b4c54c42",
+          "file": "src/web/app.js",
+          "line": 535,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::ef4f378fd28a52d1806aae84b748491b07a2220fe148582a521bcfccb77cd1af",
+          "file": "src/web/app.js",
+          "line": 536,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::22e0e5a5df57db3758f1688a35743ba98fbe3bea1d90000aaf1756056fe5e219",
+          "file": "src/web/app.js",
+          "line": 537,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::97734da577f9418ee052a87345016185491216c41e1aaa93df63184c0d2f13a6",
+          "file": "src/web/app.js",
+          "line": 539,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::a26496147291db76fd323c62a0c4a90d20010f8894502e5a38fbfd16e0b9eb2d",
+          "file": "src/web/app.js",
+          "line": 541,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::df8dbb45d4f6a44ac468a14144f01937d15f8875696815dc2b4ca3a862f26297",
+          "file": "src/web/app.js",
+          "line": 553,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::fdd313ac3ab71698a6fda21a17bfd8475aa9222f27b524894a85f21dd64fe9b5",
+          "file": "src/web/app.js",
+          "line": 559,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3373dde5e111e294a29c3826ca34efa894f4925691a5038d4c1bd142714fe786",
+          "file": "src/web/app.js",
+          "line": 564,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::bb75db2c4de20256dbf36c7d9b03841a9e46cec02a39ab225d8db5608699280c",
+          "file": "src/web/app.js",
+          "line": 565,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::c84f1327317b1330b6c7a261764cac46d9b5f41881282a9d7e9350c5d545937d",
+          "file": "src/web/app.js",
+          "line": 568,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0587aaed374ff420c5b1550e3b14f7a39a0d4f9ef8f3c4bdbe2f39b9e6398a77",
+          "file": "src/web/app.js",
+          "line": 582,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::c1b4bdc337db6ef60d9e09778de23611492a419fb65a64fb7a235a9dd14f54e4",
+          "file": "src/web/app.js",
+          "line": 584,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::70601c22fa7bc3d53c07926eb932a985afd176f228639eea08a7c1e5443d0557",
+          "file": "src/web/app.js",
+          "line": 592,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::3bb98f312d734f94a3e94490ef5f938f126f7d8568649c93c21ca5689c21c4ee",
+          "file": "src/web/app.js",
+          "line": 593,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::eec44dffea0e4a7bfc0879e06eb5ab2150d05a01cdd0d7e7dbe6f3c674f7b65e",
+          "file": "src/web/app.js",
+          "line": 602,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e4e2b23f8a8de94959d945a69258a06fe999a90a63eab218e28879d61e8cafd7",
+          "file": "src/web/app.js",
+          "line": 604,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::d4da9e9611f1d978b0c10f1023f83f1d8318da6e5e27acfe8f4d921dbb521a6f",
+          "file": "src/web/app.js",
+          "line": 609,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::17c52e9694860e3eeeda6c1de8d9f0c65a4787a63500aa7b594db9339438b102",
+          "file": "src/web/app.js",
+          "line": 614,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::373349b3b3da30d8ad5bbaec35d3c8cc8b875dee0f1c64f6e9392812f5408c81",
+          "file": "src/web/app.js",
+          "line": 615,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::6b3cc8980217d4f8e535e752eeed26e5bf1eb7b4d12e5e48c12cc627a2282b79",
+          "file": "src/web/app.js",
+          "line": 621,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e7c72e8acf31f9a50c9de39c1f3fa5456b236e1800b1a928b489e1b67217b1d0",
+          "file": "src/web/app.js",
+          "line": 623,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::bfc4926b2f442149ddc3505555bb64e197056a718b794da47b2bd4dd5a463a2f",
+          "file": "src/web/app.js",
+          "line": 625,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0977a0f01ead929ac335d5ee75cfff4d35e4737b9b747b3105026e896dad9ace",
+          "file": "src/web/app.js",
+          "line": 626,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e3a2e7c9e3295f64c9501bb2f663a3d336921b75658849b0cbc4a7fc19eb0221",
+          "file": "src/web/app.js",
+          "line": 632,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::7294b0bc48931ab4486d6ab6197444dcac37ee87f6b621ae22ba501abe3d5225",
+          "file": "src/web/app.js",
+          "line": 632,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1a3d2d29197e921778c1640dfab89c8ead522d6b3260e7e2e3aa7162c40603e9",
+          "file": "src/web/app.js",
+          "line": 635,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::247064941e9cdb1e64d0a141a692b32781e667260ad73e3a6277709fcb742105",
+          "file": "src/web/app.js",
+          "line": 640,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::9513d0bb5f66e8550098ad9a6d243611ee6b9603c5a3dd9ccbac497724a4ef57",
+          "file": "src/web/app.js",
+          "line": 654,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::dbc5b5f193ba50a6ac0923f2535e519e3ab627f5b3a6b313da1f7d78e8c0ee41",
+          "file": "src/web/app.js",
+          "line": 662,
+          "value": 7,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::0d3579423839d2ac77d32dba8c9a3e0cfba16c099273bde585916e9c9ed65fab",
+          "file": "src/web/app.js",
+          "line": 678,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::e161a95a66842670abb7b52051559ab8b41c19726ea896dc45b71df742003e50",
+          "file": "src/web/app.js",
+          "line": 690,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::461537b9ae97d30e13f1c6ab1906b7a7556beb43a2cff8783978748c6251dfcf",
+          "file": "src/web/layout-model.js",
+          "line": 1,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::39986ae325aa0104f445af0582f40912f50037d7d4e492bc0af0f5ce6492bdef",
+          "file": "src/web/layout-model.js",
+          "line": 5,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::d8996e8e8e63cdd24fe6d256a117bb5384a5d82d5f15a63ee5f6ae19fd6fc536",
+          "file": "src/web/layout-model.js",
+          "line": 6,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::18a88effb4e6ffa6110b5dff7d460c8eedbbbcdc71b8aa43c71249650fd4d3b2",
+          "file": "src/web/layout-model.js",
+          "line": 9,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::f69554832a77fb93dc1298389111c4d86ae9abc62e9c8ce1b6f4b31622d8a808",
+          "file": "src/web/layout-model.js",
+          "line": 10,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::dfdfe6b2a12f9bb1cb2b66ab687b88ae06ebe3ac19863414615926b34ca1e698",
+          "file": "src/web/layout-model.js",
+          "line": 13,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::5d876b6f46de53475169705425cd74297c48634258d915cb91600eaf5463f21d",
+          "file": "src/web/layout-model.js",
+          "line": 14,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::c7c7ac92fdf3187b02afe17c6925e7cce2ad8494744a25d4c6bd1153703dcd81",
+          "file": "src/web/layout-model.js",
+          "line": 17,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::0dccd5d00c44d3f82e89257df40b1eea9ef2b9841e2d90db4b997a60c31ba771",
+          "file": "src/web/layout-model.js",
+          "line": 19,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::b81a4b92195c2a98687dfa6d9c8ede2019f21deb512aa1ab975244da9bd0116e",
+          "file": "src/web/layout-model.js",
+          "line": 21,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::1c4a53aa6476c119db8cd40a068fbad3cefab23ee4c9d5b33a648b4b37eef9ae",
+          "file": "src/web/layout-model.js",
+          "line": 21,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::c8a9e24775768f0eae0f8108c2ade8e031903f9d1540f7f0f89b316a109e4814",
+          "file": "src/web/layout-model.js",
+          "line": 22,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::a9a004ffda952ea88fb9f104baa37c3b439caf87dc3c7962fa908a052a4a872d",
+          "file": "src/web/layout-model.js",
+          "line": 22,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::a705ef23e3cca52ced598165d07d0259e4b5b44e28c29bd4bdce68ecc3010dc9",
+          "file": "src/web/layout-model.js",
+          "line": 23,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::b05e0b2c5f3470cab461402060ec9a73155efcf77a01ec57cf4cd4c50b51c6df",
+          "file": "src/web/layout-model.js",
+          "line": 25,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::1882e28ff239e370e8b184fd65eac33fbdb137c63460902dbd95365fa7058ade",
+          "file": "src/web/layout-model.js",
+          "line": 29,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::7ba50e9d3567a4b2f54829a77790296c393d2d74abd9e5eb156b85a3b47abfab",
+          "file": "src/web/layout-model.js",
+          "line": 30,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::006909fa1e7d3706c947a78dcac2b0761ea3556060cf21572656c43516195e4a",
+          "file": "src/web/layout-model.js",
+          "line": 30,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::5ffd926de80a540e9c570d107afb9c4b721c6fcd465867e91801dd55500118bd",
+          "file": "src/web/layout-model.js",
+          "line": 32,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::6313fcc718ca8e2a9177046272528dae1fdb44cf55a5e8c46a339e1f7b86cc39",
+          "file": "src/web/layout-model.js",
+          "line": 39,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::d9f3cdbe0fb6dfeb914fc707664c2fdb5e3d049bc53a4e1f614387501adf518d",
+          "file": "src/web/layout-model.js",
+          "line": 42,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::06064446bbf2f6d6b30ce52311c1ae0c8562cece80c97f77b8cdd6993fe4c228",
+          "file": "src/web/layout-model.js",
+          "line": 43,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::eb06be21cedf7f972911c3b6b376ccd5800642007484efc41b86f2c58d81d0e0",
+          "file": "src/web/layout-model.js",
+          "line": 44,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/layout-model.js::ast::2674d94105ec482d4c0f4cfa1f3aee138c7ca0a2522d47a50d9afcf6fde0a098",
+          "file": "src/web/layout-model.js",
+          "line": 48,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/theme.js::ast::df22e849b3118e2c5fd25e96cd99ae2e4296e41c8856dc9b66f607f95d10521d",
+          "file": "src/web/theme.js",
+          "line": 2,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "src/web/theme.js::ast::347a775374568b311475c11299dbfd2e89c6604ee5bd5fecc3896214fd43b38d",
+          "file": "src/web/theme.js",
+          "line": 10,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "src/web/theme.js::ast::5fd24ebe331503681ae9eacc7542c937327b0d0f744c5ae03ef22352d1f2c72f",
+          "file": "src/web/theme.js",
+          "line": 17,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "src/web/theme.js::ast::2293e64f2c935714ff321172b2e7cafc44a65958b3dbde71d174e8a99d89a7bf",
+          "file": "src/web/theme.js",
+          "line": 22,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "src/web/theme.js::ast::7ee3b3c6b9148b145f53c049cf7742aab42b033d3d867d0be6c59b5406bb060d",
+          "file": "src/web/theme.js",
+          "line": 24,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::cebc731a8da9a582e9ec117e3e07242bea2c58acd761f5bdf1873bd472817190",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 9,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::bfc5e5da2cab0f10f6256f3bb316e6caaf987c23e3615439d27739ab3403ae7f",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 10,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::9af0a86ff3b9f0f11b542d08242caf6a456b5339b8e62175d9556417b76f456f",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 11,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::80f631b3ad40e12b66198652efbdbdd3a99378be526cba6912af0ee08c44235d",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 13,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::09355108d189b90ca592fcbb55e2ca6bb5fe952bab6ce9a1cfd679abf7479682",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 14,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::f2c32ea7ce856cf2a432c0874035bb2436d43cf3173737ffa4fc7c95bfcd2da4",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 16,
+          "value": 10,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::70179c732d2bbe093111a85d32aaae8481fa1da3acf3ea84c33eba2a21c5d641",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 22,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::92f3a530eb134f15941134c9bd280a9c7a527c448f2d932abea9115ed9e1f994",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 23,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::e958f92e2a218da836b6f8e524ed0fbb715bacd0f2a7f78f2156e01bc2d12cf7",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 27,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::deb5d718caaa1fd32e0bc0a3faefc720912933d91e6c24a7ecc3ddf2a751a456",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 29,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::97d38cff20e1a1d4ae44083d74c6b71ce57dd798c65937375126785d56a1e1f2",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 30,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::e4e6d97c95440dedbfee7cbef020c3b1fbb0724a3cb9ecda7a14defec3d1baa2",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 39,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::fdd7962c98dab5cc5be0772d96bf7d2b8b63f13226376486616768f40954ce8b",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 41,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::6f26abf707f2766a27dd03d9d0fbedf3653f5a2a228ecd742db4509492123caf",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 46,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "test-results/screenshots-003.cjs::ast::b101b6d479e357f657e9212ad401e03070d2345b9baaf3365b009caaf032cbe3",
+          "file": "test-results/screenshots-003.cjs",
+          "line": 49,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::fd03a1bc9f276c444d843c16b799ee7d4fa25752e2626fde793411a9051eb099",
+          "file": "tests/fixtures.cjs",
+          "line": 15,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::522033575dd3ed41f5ff855b84a8cf44ae0ded5cca7f7825df6365fdb29fa3b8",
+          "file": "tests/fixtures.cjs",
+          "line": 16,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::265a3eb3576dbd53f1735a3998075fe170785ad6273ea14befdcd707878af70c",
+          "file": "tests/fixtures.cjs",
+          "line": 17,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::75cb56e6b3e7dad54aa2e0bfa90788f2e1620339e3ffcf06e72641332d047faa",
+          "file": "tests/fixtures.cjs",
+          "line": 25,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::6339bee239adcdd31a16b20c8847637981dd67edfea86b8798b710b5c2b46734",
+          "file": "tests/fixtures.cjs",
+          "line": 26,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::5b6c71f4762fbf72fd7b33329fd3a3990644889d3c81c1faee9aff810ee173f7",
+          "file": "tests/fixtures.cjs",
+          "line": 35,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::b73e4a8a57fa5bcd7b8c9b6d3b522d1f90aaa5fb66f7fb15655f3fedc3cf28a6",
+          "file": "tests/fixtures.cjs",
+          "line": 40,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::f5a1a10989a86aca3e69692e5cbae38987fe8243ef594260c91eeb5ca0246e6b",
+          "file": "tests/fixtures.cjs",
+          "line": 49,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::7eb8f780ef5e0c05964e6eaa6bda11847cfb6772312b938da10f5f04640378df",
+          "file": "tests/fixtures.cjs",
+          "line": 62,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::92ea8bc5e865b5409040ec5e26361de4b62fb159ac71ea33233ceddee5feae0c",
+          "file": "tests/fixtures.cjs",
+          "line": 66,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::72218d3f9d2d275b92068d31d18aafe2279ab79507ba6def92daf8cdebbc0fd4",
+          "file": "tests/fixtures.cjs",
+          "line": 66,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::6adb45b19c1d17394edaab2629b12111658c30c110132977a10e5e297ed0b4da",
+          "file": "tests/fixtures.cjs",
+          "line": 71,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::fa65c00acae27c40f2affe16a3b4321148318a60914eee5970e50cd34d3bfa11",
+          "file": "tests/fixtures.cjs",
+          "line": 72,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::7048a1211e7c368b58f0e4bc98557383ca4b98a0d0ed9d02d61310ab0a386dcd",
+          "file": "tests/fixtures.cjs",
+          "line": 74,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::a01719a7ee7b497dd326ae1e0086ff6ee0c3472a134a2dcfd24df3708c752963",
+          "file": "tests/fixtures.cjs",
+          "line": 78,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::9a5287c5102ab781c13d6dbeaab24ce46d9465db26297a836116eafe7278ccf2",
+          "file": "tests/fixtures.cjs",
+          "line": 83,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::b1858a781c488fd43142003c4cd7016fc63b8a5539c7da6a497f9ba4afa95049",
+          "file": "tests/fixtures.cjs",
+          "line": 85,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::b91a122bf30cf38286eacbe460b45ddf1b9d0ca13235fd75819f10512f47e0d0",
+          "file": "tests/fixtures.cjs",
+          "line": 88,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::8622c982f02fc311e38ecdb885dac7617bc74d0ce7d5f821cebd01ee039cb9da",
+          "file": "tests/fixtures.cjs",
+          "line": 106,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::0d99dd4106fb59f825593ba1b4482b0796e08d0d0fb70a9293548ce8cc0324c1",
+          "file": "tests/fixtures.cjs",
+          "line": 112,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::89429dcd3a36eb5e49cfda8056b3b556806cc4e79a5c95297c56e584de232571",
+          "file": "tests/fixtures.cjs",
+          "line": 138,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::b24baf73bd631715a0bc9276bb238f9e170f5e3f343c6f1e59f097bf05da03fb",
+          "file": "tests/fixtures.cjs",
+          "line": 160,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::5800da04a67c42aa72731447a34d3f330e6146591fbc1504c205081487ae55c9",
+          "file": "tests/fixtures.cjs",
+          "line": 165,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::52819971f2d6b0c151df18fb09f8cee6117d8f6c8a2b01691a9acd22d36f4351",
+          "file": "tests/fixtures.cjs",
+          "line": 167,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::fec2e8dd780beedce3a249f5b03d32d3347f399d7cf04fc27cddc6d690a26120",
+          "file": "tests/fixtures.cjs",
+          "line": 167,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::659233f77fc9ecb0c526480a61d2da6d52ecc3dd4847bf45d97e6c067e2a5208",
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::97679979776fc9b49cf5b42e73bf22d504e49356b717a3c5b6baaeacbdb7fa0e",
+          "file": "tests/fixtures.cjs",
+          "line": 181,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::c5f8a30a3baeb0c753abf132d15603f770a606a647b225083374162c42c44522",
+          "file": "tests/fixtures.cjs",
+          "line": 183,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::03d5b4b0284516fcdbadbb2c6a126c68154b01d3d9823787502219675005cac4",
+          "file": "tests/fixtures.cjs",
+          "line": 183,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::54061a79a166f105db6971465e05633ccf0e7c2ce2e8ec1f1de489b1dcd2027d",
+          "file": "tests/fixtures.cjs",
+          "line": 183,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::b38d0fb9f11e9bb5393e56e3f9a8a4846e2f80051ac570cac0ed537eab7e89bb",
+          "file": "tests/fixtures.cjs",
+          "line": 189,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::bb65130b657fbd61b6bd5583ac086eb2c6fbb9a1588c34ea15fc25eabe19f707",
+          "file": "tests/fixtures.cjs",
+          "line": 191,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::8269a44fc9f5455f0179ba57c2dee53bfefe116aeed11d7955cd98e625a5a0d6",
+          "file": "tests/fixtures.cjs",
+          "line": 194,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::cea7f2cc50a94e6a1150e1b9f78c5e0ae08b2e3f6a0bb8580f24455c3be154de",
+          "file": "tests/fixtures.cjs",
+          "line": 197,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::3edab2f95595dea0df8ccdf6a6068d4f68b975e73b9642f368d9e9b8e532c4f9",
+          "file": "tests/fixtures.cjs",
+          "line": 197,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::c1ecaca222a2604f95e3a809b5fef6fb8268030a4a7233abe8ca5f01925578e6",
+          "file": "tests/fixtures.cjs",
+          "line": 199,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::ae0e744b6a52d73b5909381a27a7a3ecf90984a3b455b8b0547bc474be0235b4",
+          "file": "tests/layout-browser.cjs",
+          "line": 11,
+          "value": 9,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::16364c57eb5215db12b7e988ee75174219063977875073b271bd9f8ea1328fc0",
+          "file": "tests/layout-browser.cjs",
+          "line": 11,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::614a0a86a33f8c3eae944bd46fbf52333b8823d7711a3a93c6dd65f6aaed44ae",
+          "file": "tests/layout-browser.cjs",
+          "line": 14,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::8324e3779ea857489e6445989a7519067e20865336a9066d4dfa22c556586c41",
+          "file": "tests/layout-browser.cjs",
+          "line": 20,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::fc39090cfd9ebcc5268e5078b7309b65f1edb0c135ce1260e1c20a6772b37de3",
+          "file": "tests/layout-browser.cjs",
+          "line": 21,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::e620b8ca4612bc4afa84c805efef8bddb4d898169a99c899b03d04aba6f9abeb",
+          "file": "tests/layout-browser.cjs",
+          "line": 21,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::4e0c0443775128a7f13a058fec29be9ef840b1a8a4d69a5f2a0a60bbe96ca7fb",
+          "file": "tests/layout-browser.cjs",
+          "line": 22,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::5bc58bee0cbd58c274e060514cc518d9c4ab7c2b983c3b39b17090336076e459",
+          "file": "tests/layout-browser.cjs",
+          "line": 29,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::d04e97502e9209d20a3c38d489d8e6b193fdfdb712f291bef5af4c63cb8d2196",
+          "file": "tests/layout-browser.cjs",
+          "line": 31,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::afcd2bf097f18c0640674617b233f91ada20aaa0631d048e8198b074f392b051",
+          "file": "tests/layout-browser.cjs",
+          "line": 31,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::80be0a55cd92e0a5539210897c49b14c1f4ad49417f4fd4e47d3feffbf66fe95",
+          "file": "tests/layout-browser.cjs",
+          "line": 34,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::bec711eef17dc113c20b12338b5ff82b005ff387cd947971708cc267f419f832",
+          "file": "tests/layout-browser.cjs",
+          "line": 37,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::f89b10f6fee0f8c7c6c2b4716ab0dd0602b104b185bf719284606e03ab91c0b7",
+          "file": "tests/layout-browser.cjs",
+          "line": 39,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::c7ef03568c01c48f47274d24a3af793f9bec55018fe0d3aba66a1f5d091387eb",
+          "file": "tests/layout-browser.cjs",
+          "line": 44,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::f4a0ebd6f77284af9983b6b6b72627267b1412c5bbf4d54a63e571576e94d4cc",
+          "file": "tests/layout-browser.cjs",
+          "line": 45,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::943b4261cbe1b430c287b91b4ab025cadb4ed6d8d389ec4054c28ae678346a7a",
+          "file": "tests/layout-browser.cjs",
+          "line": 46,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::2b5ac14dbf2e4a511c0df27bced4d6b172537f2b376ff9f79b44e5f48ae39f85",
+          "file": "tests/layout-browser.cjs",
+          "line": 46,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::def438d91aa5048191558790db840cdc4305893173ff88302c4dc61c60170501",
+          "file": "tests/layout-browser.cjs",
+          "line": 46,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::6764069e069b36f8431e8cdf506d54ab0401436bf9b406a0a04fd5bf2a6fd160",
+          "file": "tests/layout-browser.cjs",
+          "line": 48,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::0d3579423839d2ac77d32dba8c9a3e0cfba16c099273bde585916e9c9ed65fab",
+          "file": "tests/layout-browser.cjs",
+          "line": 53,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::bec661906859218fe6dc4fe0a7d242187cf14dee6cdc9290e774f95145b2d89a",
+          "file": "tests/layout-browser.cjs",
+          "line": 55,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::3badc5fe73aea64b059f193dc0a302f9161696adc11a0c7c4efa3dc5f1b51b0d",
+          "file": "tests/layout-browser.cjs",
+          "line": 56,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::76c49078546b23880cd0b9bb7321cc69264ed1e40ab50f4c01bf92e425bb28d9",
+          "file": "tests/layout-browser.cjs",
+          "line": 58,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-browser.cjs::ast::eba49d759bbb90eac36cf542fa6c69375d9b5fc1977d2fbb5f5100f0da284d3e",
+          "file": "tests/layout-browser.cjs",
+          "line": 58,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::5c6da4b45c494d1b4536fa10dd3f60c54b1803e22f99844484042df33ce55472",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 9,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::f292f15babd93036893f8a3e6cb09269144dfaaf097561b76a8eb916e9463285",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 12,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::5d7f42fbba4a362e78f98a11d9558df63a0a77099ab88a8cdaf81b2978c8771f",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 18,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::a63054dc51290f5e2bcbb498458f040f356024e5f157cf1cf453a081dd6101ed",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 27,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::ba3d1e464f832f035ba3f93541618449a2d143291f52f1eff90885d0d61f78ae",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 32,
+          "value": 9,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::da4769e5d2dd37593d7130d2715756860073818ea5c0643aca66f4307014073f",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 44,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::0c6ecfc1252bcd2e0e77cb4ce8e835b60cdac83ffb39916e8345dcfba4c576fd",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 58,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::8db87c4f25d991dd3cb676020ca8210c22dc87cea6810a41359e0f7fb3f7ef27",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 60,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/layout-fixtures.cjs::ast::988503d067718ea356b0e292880d75bcfcfb70fc392af4dfa611a1f8cb2b362f",
+          "file": "tests/layout-fixtures.cjs",
+          "line": 74,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/pautas-fixtures.cjs::ast::5b35e22aa9f3b99abebfabca082b53a2db1529f87ef62629fb33d6e6caf73032",
+          "file": "tests/pautas-fixtures.cjs",
+          "line": 3,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/pautas-fixtures.cjs::ast::67894c1e518182e27b80ff5e2242f574578ef0fc670f37bc19a3b3c24a8f3273",
+          "file": "tests/pautas-fixtures.cjs",
+          "line": 7,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/pautas-fixtures.cjs::ast::85e633976690959b8a7d7eb85efac85685136e47fd18af98879837e1e88d22de",
+          "file": "tests/pautas-fixtures.cjs",
+          "line": 7,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/pautas-fixtures.cjs::ast::2d1037f5e3350d8de96d6d7bbd09f124e1848ddb2a248d1de13579efc017b555",
+          "file": "tests/pautas-fixtures.cjs",
+          "line": 10,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/pautas-fixtures.cjs::ast::0d4918513b3d372d5766c220a4d8f2c84c0622314d085a2e2e9239cfd806c489",
+          "file": "tests/pautas-fixtures.cjs",
+          "line": 12,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::91b1cff3d8bc6807effea561c7fe93ce6a35854dbbc2683dbc4f8b5bc647da55",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 9,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::e0dbd3884bb2e118d0097065da1d40ffdecf4a19830f5730ba443966db5cc20d",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 14,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::450b910742fd0eb27571c2e134c9c9e9c87f867ff5d91c627b8c2d15b3f83dc7",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 19,
+          "value": 8,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::2e6e29cf35ece5dca31f0a680b1d044a8497e05a03352f9243cbf9d25907f3e8",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 28,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::01bbc1edf1b3640189cc4fde3e8263ce5ade217bcc15e3cfe643ff47614af947",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 29,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::71a0252a85c3f9da4610891711421a75c0acd4a7f86fa4b74de303a1a850b79e",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 30,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::784f1727caf08172d8bd2ae606eb77c48f6531f3b8e0d2ae9aed5d98e66acae8",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 32,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::d4777d28054ab477ef350981a388ececdfa4652a55fa175a0b24fdc0258893e1",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 37,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::26653803c3506bdd5e2e9f30f0e97644bc5e203925397b90dadf6e6b4e6537c0",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 46,
+          "value": 4,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::ffb776090404c5825124e07ffecc2be6a73121847bbf113122fcf65cf3c54514",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 55,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::ec958bd1d0d0c2dc1145454adfaade79087e19b1f65d7e9d8ae857fc0daf5377",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 55,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::e427c9bbf9a874fc694a20f339ba3be173c0f635d7b865d1b6be17d61f95ce49",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 58,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::86075690021233b1efc2fb4dd5c296ccfc719bb1c9cc1b3c381e8d4489e1a3c3",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 58,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::539f1ccf9cca01b21d8e5d07bcaba38eb162b65c7af437741444648801c78299",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 59,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::47463c62832599d82bbb3704e48201bbf5f6c893cbc4e274a49e9db84e0dd3d0",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 60,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::664a96abe4a3341f8d17709c0719d94844283560e943dee4fa588aaf8655f76f",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 64,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/previas-fixtures.cjs::ast::336eda454bed45e4f4a2355340530cb094b76dae07fa8f055bcab08fe7ccd9a7",
+          "file": "tests/previas-fixtures.cjs",
+          "line": 66,
+          "value": 6,
+          "matchable": true
+        },
+        {
+          "key": "tests/pronta-fixtures.cjs::ast::b120f50d7c9e60f1e7a1ec38ae1dcc0a1a15b400c687b6234e95cbd4fa51c497",
+          "file": "tests/pronta-fixtures.cjs",
+          "line": 3,
+          "value": 3,
+          "matchable": true
+        },
+        {
+          "key": "tests/pronta-fixtures.cjs::ast::b2e541c8ce2631032a86f1f452ee12e7cf6653fc01621c9f5be761e1417cedd1",
+          "file": "tests/pronta-fixtures.cjs",
+          "line": 11,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/pronta-fixtures.cjs::ast::311ce3cdcf06309ff18a935315a1d87fa75e19eb514161eab30da83b3f89e544",
+          "file": "tests/pronta-fixtures.cjs",
+          "line": 27,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/pronta-fixtures.cjs::ast::2fac33178dd3d1ad004d3adad0c167d88eef9a7dbb12298112259d2dfaf0b275",
+          "file": "tests/pronta-fixtures.cjs",
+          "line": 30,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/pronta-fixtures.cjs::ast::895f0e4f8d64a5cc27c1f376205c246783c106b64518541c904b3122c776e600",
+          "file": "tests/pronta-fixtures.cjs",
+          "line": 32,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/versoes-fixtures.cjs::ast::34e2eb63348305ead943e200e6bf261d9076563e1c82b99a72a9643312755873",
+          "file": "tests/versoes-fixtures.cjs",
+          "line": 4,
+          "value": 1,
+          "matchable": true
+        },
+        {
+          "key": "tests/versoes-fixtures.cjs::ast::6112c2adb304c0a9bc823791e5cae8bee3686f3e0b2edf66339fc64c93c1575c",
+          "file": "tests/versoes-fixtures.cjs",
+          "line": 5,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/versoes-fixtures.cjs::ast::451448a5ef880effc87d57599f0e8d2495537a52090daafaeea7e214e6f57f30",
+          "file": "tests/versoes-fixtures.cjs",
+          "line": 6,
+          "value": 2,
+          "matchable": true
+        },
+        {
+          "key": "tests/versoes-fixtures.cjs::ast::081e0e298d6215d26795cc4f0b399d43337a38769c2a13f1a9792c6a9d68b4b6",
+          "file": "tests/versoes-fixtures.cjs",
+          "line": 10,
+          "value": 5,
+          "matchable": true
+        },
+        {
+          "key": "tests/versoes-fixtures.cjs::ast::7a94a41a58a2f41ddc99c2ed620a62fc1448b388d55ef3afe7fba204b2ca916d",
+          "file": "tests/versoes-fixtures.cjs",
+          "line": 14,
+          "value": 2,
+          "matchable": true
+        }
+      ],
+      "warnings": [
+        {
+          "key": "scripts/importar-captura.cjs::ast::bf89f0c0b0d36c259a50aa54095beae1784420c6257787a296b8f3bfe3ecfd24",
+          "file": "scripts/importar-captura.cjs",
+          "line": 5,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "scripts/screenshots-layout-v3.cjs::ast::30b874db27235e498d3f7fd5ff8026673b1bc12b0f6543ba45f130da46016422",
+          "file": "scripts/screenshots-layout-v3.cjs",
+          "line": 8,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/coleta.cjs::ast::acacfd7a3c71352965abfb6402a03e0cbd6da68956c6beb7ec1a0a003d55eabe",
+          "file": "src/coleta.cjs",
+          "line": 34,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::e5cdf26f466912a805aadcf1a85da4357d3f518adc84fc2d6b1980e8eb8043a1",
+          "file": "src/google.cjs",
+          "line": 11,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/google.cjs::ast::4be10e827f4b6cdd4b598b92013c5daf6fbcd5958d4a2c735b64ddabd24878fd",
+          "file": "src/google.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::9d6a7c01215bd7dbc99e39796d516dacfd50127cb9a7f11e97e7559f1158a537",
+          "file": "src/servidor.cjs",
+          "line": 32,
+          "value": 14,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::374c8857f4098604ae5a6e74f8a297ecd4474ce0f19c5c21f83b0599a894e5d2",
+          "file": "src/servidor.cjs",
+          "line": 38,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/servidor.cjs::ast::84c82acc4568b023ba0a6a7aa6565cfe8f3940fd24fc51e950e6d6929f4a4030",
+          "file": "src/servidor.cjs",
+          "line": 74,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::6160a0ed8a70e9bc36fd2cf1abbe39c6254c7f043b17dd58b22f6b2801364878",
+          "file": "src/snapshot.cjs",
+          "line": 30,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/snapshot.cjs::ast::702d80510ed234619df766294be9c5b3862a2758919fa5c70a09f67d909ae9fd",
+          "file": "src/snapshot.cjs",
+          "line": 136,
+          "value": 16,
+          "matchable": true
+        },
+        {
+          "key": "src/triagem.cjs::ast::17bd8b3924ba7188062a62b4875c72848402d9caaa9a85be29d7c7f72d92f2e8",
+          "file": "src/triagem.cjs",
+          "line": 37,
+          "value": 12,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::809f7c5bd501a6b9594f40088df62f4d7e8a892f80f8a65dc9d46494a4b4cb3e",
+          "file": "src/web/app.js",
+          "line": 34,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::98333c7ad65cdc212bced0bb83381bb3f3a122fca12977337507855f8f76587e",
+          "file": "src/web/app.js",
+          "line": 136,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::1fa36a5878eed47388bb6cc9c93476f94d7b18e7c55301a26706680d89dc400d",
+          "file": "src/web/app.js",
+          "line": 153,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::121b2cd4f6f0e9aba8b96d049909f5418e9d30a8396cc8b7ef467e7b8c4dc5e3",
+          "file": "src/web/app.js",
+          "line": 220,
+          "value": 13,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::8f65dabe2e6dab27bd8e0fdeaf53fba0e328a69651a5bf0c54cb65fd87db04cb",
+          "file": "src/web/app.js",
+          "line": 279,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::9c75b7250eabcff072188ed74ace12d86a67e1a2e0363b689be6ec1af6fc1bba",
+          "file": "src/web/app.js",
+          "line": 454,
+          "value": 14,
+          "matchable": true
+        },
+        {
+          "key": "src/web/app.js::ast::247064941e9cdb1e64d0a141a692b32781e667260ad73e3a6277709fcb742105",
+          "file": "src/web/app.js",
+          "line": 640,
+          "value": 11,
+          "matchable": true
+        },
+        {
+          "key": "tests/fixtures.cjs::ast::659233f77fc9ecb0c526480a61d2da6d52ecc3dd4847bf45d97e6c067e2a5208",
+          "file": "tests/fixtures.cjs",
+          "line": 172,
+          "value": 12,
+          "matchable": true
+        }
+      ]
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0",
+      "findings": [],
+      "missingFiles": []
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "baselineUpdated": false
+}

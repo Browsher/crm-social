@@ -64,7 +64,7 @@ async function servidor(t,{captura=true}={}) {
     mudarCelula(raw,'Produções',4,'data_prevista','2026-10-03');
     promoverCaptura(raw,dataDir);
   }
-  const server=criarServidor({dataDir,quadroConfigPath,port:0});
+  const server=criarServidor({dataDir,quadroConfigPath,port:0,midia:{obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}}});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   t.after(()=>new Promise(resolve=>{server.closeAllConnections();server.close(resolve);}));
   return 'http://127.0.0.1:'+server.address().port;
@@ -81,7 +81,7 @@ test('Tema: rota GET/HEAD possui MIME JavaScript, CSP intacta e guarda local',as
   assert.equal((await fetch(origin+'/theme.js',{method:'POST'})).status,405);
   assert.equal((await fetch(origin+'/theme.js',{headers:{Origin:'https://example.invalid'}})).status,403);
 });
-async function abrir(t,{scheme='light',stored,width=1440,storageThrows=false,beforeNavigate,captura=true,ready='#objetivo-mes .month-content'}={}) {
+async function abrir(t,{scheme='light',stored,width=1440,storageThrows=false,beforeNavigate,captura=true,ready='#objetivo-toggle:not(:empty)'}={}) {
   const origin=await servidor(t,{captura}),{chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE||'playwright');
   const browser=await chromium.launch();
   t.after(()=>browser.close());
@@ -158,6 +158,9 @@ for(const [scheme,stored,expected] of [['dark',undefined,'dark'],['dark','light'
   let observed;
   const page=await abrir(t,{scheme,stored,beforeNavigate:async page=>{
     await page.route('**/styles.css',async route=>{
+      // O preload pode solicitar CSS antes de executar o script; a resposta fica
+      // retida até o bootstrap síncrono aplicar o tema, ainda antes do render.
+      await page.waitForFunction(()=>Boolean(document.documentElement.dataset.theme));
       observed=await page.locator('html').getAttribute('data-theme');
       await route.continue();
     });
@@ -189,15 +192,14 @@ async function conferirContraste(page) {
 for(const scheme of ['light','dark'])for(const width of [1440,390])test('Tema: contraste AA e formatos distintos em todas as telas '+scheme+' '+width,{skip,timeout:20000},async t=>{
   const page=await abrir(t,{scheme,width});
   await conferirContraste(page);
-  const colors=await page.locator('#calendario .post').evaluateAll(nodes=>[...new Set(nodes.map(n=>getComputedStyle(n).backgroundColor))]);
-  assert.equal(colors.length,3,'Imagem, carrossel e Reels possuem superfícies distintas');
-  if(width===1440)await page.getByRole('button',{name:'Lista',exact:true}).click();
-  const rows=page.locator('#lista .agenda-row');
-  const listColors=await rows.evaluateAll(nodes=>[...new Set(nodes.map(n=>getComputedStyle(n).backgroundColor))]);
-  assert.equal(listColors.length,3,'A lista conserva a cor de cada formato');
+  const cards=page.locator('#lista .layout-card');assert.equal(await cards.count(),4);
+  assert.deepEqual([...new Set(await cards.locator('.format-label').allTextContents())].sort(),['Carrossel','Imagem','Reels']);
+  await page.locator('[data-modo="Mês"]').click();await conferirContraste(page);
+  const dots=page.locator('#calendario .month-dot');assert.equal(await dots.count(),4);
+  assert.ok((await dots.evaluateAll(ns=>ns.map(n=>n.getAttribute('aria-label')))).every(Boolean));
+  await page.locator('[data-modo="Semana"]').click();
   await conferirContraste(page);
-  if(width===1440)await page.getByRole('button',{name:'Calendário',exact:true}).click();
-  await page.locator((width===1440?'#calendario':'#lista')+' [data-producao-id="peca-4"]').click();
+  await page.locator('#lista [data-producao-id="peca-4"]').click();
   await conferirContraste(page);
   await page.keyboard.press('Escape');
   for(const screen of ['Produção','Planilha']) {

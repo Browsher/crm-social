@@ -33,7 +33,7 @@ async function abrir(t,{width=390,theme='light',editar=()=>{},download,timeoutMs
     if(url.origin===origin)return route.continue();external.push(request.url());return route.abort();
   });
   t.after(()=>{assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.ok(requests.every(r=>r.method==='GET'));});
-  await page.goto(origin);await page.locator('#objetivo-mes .month-content').waitFor();
+  await page.goto(origin);await page.locator('#objetivo-toggle:not(:empty)').waitFor();
   if(width===390)await page.locator('#menu').click();
   await page.getByRole('button',{name:'Produção',exact:true}).click();
   return {page,origin,transport,requests,responses,dir,raw,service};
@@ -96,7 +96,7 @@ function arquivoImagem(raw,id,record={}) {
 }
 for(const theme of ['light','dark'])for(const width of [1440,390])test(`Prévias US1 galeria pronta ordenada, demanda e rolagem em ${theme}/${width}`,{skip},async t=>{
   const context=await abrir(t,{width,theme}),{page,origin}=context;
-  assert.equal(pedidosMidia(context).length,0);assert.equal(context.transport.calls.length,0);
+  assert.ok(pedidosMidia(context).every(r=>/\/api\/midia\/(imagem-pagina-1|cena-inicio)$/.test(r.path)),'listas visíveis carregam somente a primeira posição');
   const piece=await abrirPeca(context),gallery=await imagensCarregadas(piece,5);
   assert.deepEqual(await idsDaGaleria(gallery),[1,2,3,4,5].map(n=>'imagem-pagina-'+n));
   assert.equal(await piece.locator('[data-publicacao] [data-previas]').count(),1);
@@ -113,8 +113,8 @@ for(const theme of ['light','dark'])for(const width of [1440,390])test(`Prévias
   }
   assert.equal(await page.locator('#dia [data-peca="peca-4"]').evaluate(node=>node.open),false);
   assert.equal(await page.locator('#dia [data-peca="peca-4"] img[src]').count(),0);
-  assert.equal(downloads(context).length,5);
-  assert.ok(pedidosMidia(context).every(request=>request.url.startsWith(origin+'/api/midia/imagem-pagina-')));
+  assert.equal(downloads(context).filter(call=>call.url.includes('imagem-pagina-')).length,5);
+  assert.ok(pedidosMidia(context).every(request=>request.url.startsWith(origin+'/api/midia/')));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.equal(await page.locator('#dia').evaluate(node=>node.scrollWidth<=node.clientWidth),true);
   await screenshot(page,theme,'galeria',width);
@@ -125,13 +125,13 @@ for(const theme of ['light','dark'])for(const width of [1440,390])test(`Prévias
     await gallery.evaluate(node=>{node.scrollLeft=0;});
   }
   await page.keyboard.press('Escape');await abrirPeca(context);await imagensCarregadas(page.locator('#dia [data-peca="peca-3"]'),5);
-  assert.equal(downloads(context).length,5,'reabrir reutiliza cache local sem novo download remoto');
+  assert.equal(downloads(context).filter(call=>call.url.includes('imagem-pagina-')).length,5,'reabrir reutiliza cache local sem novo download remoto');
   assert.equal(context.transport.calls.filter(call=>call.url.endsWith('/token')).length,1);
 });
 test('Prévias US1 cenas mostram início/final na ordem e vídeo permanece somente link',{skip},async t=>{
   const context=await abrir(t,{width:1440}),piece=await abrirPeca(context,'peca-3');await imagensCarregadas(piece,5);
   const scene=context.page.locator('#dia [data-peca="peca-4"]');
-  assert.equal(await scene.evaluate(node=>node.open),false);assert.equal(downloads(context).length,5);
+  assert.equal(await scene.evaluate(node=>node.open),false);assert.equal(downloads(context).filter(call=>call.url.includes('imagem-pagina-')).length,5);
   await piece.locator(':scope>summary').click();await scene.locator(':scope>summary').click();
   const gallery=await imagensCarregadas(scene,2);
   assert.deepEqual(await idsDaGaleria(gallery),['cena-inicio','cena-final']);
@@ -150,7 +150,7 @@ test('Prévias US1 maior versão por índice, empates e ponteiros repetidos cons
   }}),piece=await abrirPeca(context),gallery=await imagensCarregadas(piece,6);
   assert.deepEqual(await idsDaGaleria(gallery),['imagem-pagina-1','imagem-pagina-1','imagem-pagina-2','imagem-pagina-3','imagem-pagina-4','imagem-pagina-5']);
   assert.deepEqual(await gallery.locator('img').evaluateAll(nodes=>nodes.map(node=>node.alt)),['Página 1','Página 1','Página 2','Página 3','Página 4','Página 5']);
-  assert.equal(downloads(context).length,5);assert.equal(await gallery.getByText('Histórica fora da galeria').count(),0);
+  assert.equal(downloads(context).filter(call=>call.url.includes('imagem-pagina-')).length,5);assert.equal(await gallery.getByText('Histórica fora da galeria').count(),0);
 });
 test('Prévias US1 imagem sem unidades usa versão da produção e preserva arquivos empatados por ID',{skip},async t=>{
   const context=await abrir(t,{width:390,editar:raw=>{
@@ -160,7 +160,7 @@ test('Prévias US1 imagem sem unidades usa versão da produção e preserva arqu
   }}),piece=await abrirPeca(context,'peca-1'),gallery=await imagensCarregadas(piece,2);
   assert.deepEqual(await idsDaGaleria(gallery),['imagem-sem-unidade-a','imagem-sem-unidade-b']);
   assert.deepEqual(await gallery.locator('img').evaluateAll(nodes=>nodes.map(node=>node.alt)),['Imagem 1','Imagem 2']);
-  assert.equal(downloads(context).length,2);assert.equal(await piece.locator('[data-publicacao]').count(),0);
+  assert.equal(downloads(context).filter(call=>/imagem-sem-unidade-[ab]$/.test(new URL(call.url).pathname)).length,2);assert.equal(await piece.locator('[data-publicacao]').count(),0);
 });
 function arquivosOperacionais(dir) {
   return fs.readdirSync(dir,{recursive:true}).filter(name=>!name.startsWith('midias')&&fs.statSync(path.join(dir,name)).isFile())
@@ -194,7 +194,7 @@ for(const [causa,status,falhar,theme,width] of cenariosFalhas)test(`Prévias US3
   assert.equal(await failed.locator('img:visible').count(),0,'o ícone de imagem quebrada deve ficar oculto');
   assert.equal(await failed.getByRole('link').getAttribute('href'),'https://drive.google.com/file/d/imagem-sintetica-1/view');
   assert.equal(await gallery.locator('img').evaluateAll(images=>images.filter(img=>img.complete&&img.naturalWidth>0).length),4);
-  assert.deepEqual(context.responses.filter(response=>response.path.endsWith('/imagem-pagina-1')).map(response=>response.status),[status]);
+  assert.deepEqual([...new Set(context.responses.filter(response=>response.path.endsWith('/imagem-pagina-1')).map(response=>response.status))],[status]);
   assert.match(await piece.locator('[data-publicacao]').innerText(),/Pronta para publicar.*Legenda sintética.*#ExemploSintetico/s);
   assert.equal(await piece.getByRole('link',{name:'Baixar pacote',exact:true}).getAttribute('href'),'https://drive.google.com/file/d/pacote-sintetico-3/view');
   assert.equal(await piece.locator('details[data-detalhes-producao]').evaluate(node=>node.open),false);

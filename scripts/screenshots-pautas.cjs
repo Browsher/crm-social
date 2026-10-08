@@ -21,7 +21,7 @@ function preparar(root) {
   raw.capturaId='pautas-galeria-sintetica';
   redefinirHorario(raw,'2026-11-10T12:00:00.000Z','2026-11-10T12:05:00.000Z');
   assert.equal(promoverCaptura(recalcularHashes(raw),dataDir).resultado,'completa');
-  return criarServidor({dataDir,quadroConfigPath,port:0,atualizar:async()=>({resultado:'sem_alteracao'})});
+  return criarServidor({dataDir,quadroConfigPath,port:0,midia:{obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}},atualizar:async()=>({resultado:'sem_alteracao'})});
 }
 
 async function navegar(page,width,label) {
@@ -38,7 +38,7 @@ async function capturarContexto(browser,origin,theme,width) {
     await page.clock.setFixedTime(new Date('2026-11-10T12:10:00Z'));
     await page.route('**/*',route=>route.request().url().startsWith(origin+'/')?route.continue():(external.push('requisição externa'),route.abort()));
     await page.goto(origin);
-    await page.locator('#objetivo-mes .pauta-link').first().waitFor();
+    await page.locator('#objetivo-toggle:not(:empty)').waitFor();await page.locator('#objetivo-toggle').click();await page.locator('#objetivo-mes .pauta-link').first().waitFor();
     assert.equal(await page.locator('#objetivo-mes .pauta-link').count(),4);
     assert.equal(await page.locator('html').getAttribute('data-theme'),theme);
     const capture=async name=>{
@@ -46,18 +46,16 @@ async function capturarContexto(browser,origin,theme,width) {
       await page.screenshot({path:path.join(destination,`pautas-${theme}-${name}-${width}.png`),fullPage:name!=='gaveta',animations:'disabled'});
     };
     await capture('card');
-    if(width===1440)await page.getByRole('button',{name:'Lista',exact:true}).click();
+
     await page.locator('#objetivo-mes .pauta-link').nth(1).click();
-    const origem=page.locator('#lista [data-inicio-semana="2026-11-09"] .pauta-origin');
-    assert.equal(await origem.innerText(),'Pauta S2 de novembro');
-    assert.equal(await origem.isVisible(),true);
-    assert.equal(await page.locator(':focus').getAttribute('data-inicio-semana'),'2026-11-09');
+    assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-11-09');
+    assert.equal(await page.locator('#lista').evaluate(n=>document.activeElement===n),true);
     await capture('semana-origem');
     await page.locator('#lista [data-producao-id="peca-1"]').click();
     assert.equal(await page.locator('#dia-pecas .pauta-origin').innerText(),'Pauta S2 de novembro');
     await capture('gaveta');
     await page.keyboard.press('Escape');
-    await page.locator('#proximo').click();
+    await page.locator('[data-modo="Mês"]').click();await page.locator('#proximo').click();
     assert.equal(await page.locator('#objetivo-mes .pauta-link').count(),0);
     assert.match(await page.locator('#objetivo-mes').innerText(),/Resumo textual sintético de dezembro/);
     await capture('mes-sem-pautas');

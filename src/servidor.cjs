@@ -7,7 +7,7 @@ const {coletarCaptura}=require('./coleta.cjs');
 const {projetarVisao}=require('./projecao.cjs');
 const {carregarMapaQuadro}=require('./quadro-config.cjs');
 const {criarServicoMidia}=require('./midia.cjs');
-const STATIC=Object.freeze({'/':['index.html','text/html; charset=utf-8'],'/app.js':['app.js','text/javascript; charset=utf-8'],'/theme.js':['theme.js','text/javascript; charset=utf-8'],'/styles.css':['styles.css','text/css; charset=utf-8']});
+const STATIC=Object.freeze({'/':['index.html','text/html; charset=utf-8'],'/app.js':['app.js','text/javascript; charset=utf-8'],'/layout-model.js':['layout-model.js','text/javascript; charset=utf-8'],'/theme.js':['theme.js','text/javascript; charset=utf-8'],'/styles.css':['styles.css','text/css; charset=utf-8']});
 function enviar(req,res,status,type,body,headers={}) {
   res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
     'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",...headers});

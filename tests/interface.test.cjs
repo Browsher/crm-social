@@ -44,11 +44,11 @@ for(const width of [1440,390]) test('U003 card acompanha mês, conserva texto li
   const card=page.locator('#objetivo-mes');
   assert.match(await card.textContent(),/Objetivo de outubro sintético/);
   assert.deepEqual(await card.locator('li').allTextContents(),['Primeira','Segunda','Terceira','Quarta','Quinta']);
-  assert.equal(await card.locator('.more-topics').textContent(),'+2 pautas');assert.equal(await card.locator('a,button,input,textarea,img').count(),0);
-  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  assert.equal(await card.locator('.more-topics').textContent(),'+2 pautas');assert.equal(await card.locator('a,input,textarea,img').count(),0);
+  await moverMes(page,1);
   assert.match(await card.textContent(),/<img src=x onerror=alert\(1\)>/);
   assert.deepEqual(await card.locator('li').allTextContents(),['<b>Pauta literal</b>']);
-  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  await moverMes(page,1);
   assert.match(await card.textContent(),/Ainda não definido/);assert.equal(await card.locator('li').count(),0);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 });
@@ -61,32 +61,20 @@ for(const [nome,rows,objetivo,itens] of [
   ['duplicada',[['2026-10','ntv','A','Pauta A'],['2026-10','ntv','B','Pauta B']],'A confirmar',[]]
 ]) test('U003 card '+nome,{skip},async t=>{
   const page=await abrir(t,390,true,()=>{},()=>{},rows===null?capturaValida:()=>capturaMeses(rows));
-  const card=page.locator('#objetivo-mes');assert.equal(await card.locator('.month-content p').textContent(),objetivo);
+  const card=page.locator('#objetivo-mes');assert.equal((await card.locator('#objetivo-toggle').textContent()).replace(/^🎯 .* — /,''),objetivo);
   assert.deepEqual(await card.locator('li').allTextContents(),itens);assert.equal(await card.locator('.more-topics').count(),0);
 });
 for(const width of [1440,390]) {
-  test('U003 cor principal no objetivo definido e apagada só nos placeholders em '+width,{skip},async t=>{
+  test('U003 objetivo mantém texto completo ao navegar entre definido e placeholders em '+width,{skip},async t=>{
     const page=await abrir(t,width,true,()=>{},()=>{},()=>capturaMeses([
-      ['2026-10','ntv','Objetivo sintético definido','Pauta A'],
-      ['2026-11','ntv','','Pauta sem objetivo'],
-      ['2026-12','ntv','A','Pauta A'],['2026-12','ntv','B','Pauta B']
-    ]));
-    const objetivo=page.locator('#objetivo-mes .month-content p');
-    const principal=await page.evaluate(()=>getComputedStyle(document.body).color);
-    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
-    assert.equal(await objetivo.textContent(),'Ainda não definido');
-    const apagada=await objetivo.evaluate(n=>getComputedStyle(n).color);
-    assert.notEqual(apagada,principal);
-    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
-    assert.equal(await objetivo.textContent(),'A confirmar');
-    assert.equal(await objetivo.evaluate(n=>getComputedStyle(n).color),apagada);
-    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
-    assert.equal(await objetivo.textContent(),'Ainda não definido');
-    assert.equal(await objetivo.evaluate(n=>getComputedStyle(n).color),apagada);
-    for(let i=0;i<3;i++) await page.getByRole('button',{name:'Mês anterior',exact:true}).click();
-    assert.equal(await objetivo.textContent(),'Objetivo sintético definido');
-    assert.equal(await objetivo.evaluate(n=>getComputedStyle(n).color),principal,
-      'Objetivo definido deve usar a cor principal --ink depois de sair dos placeholders');
+      ['2026-10','ntv','Objetivo sintético definido','Pauta A'],['2026-11','ntv','','Pauta sem objetivo'],
+      ['2026-12','ntv','A','Pauta A'],['2026-12','ntv','B','Pauta B']]));
+    const objetivo=page.locator('#objetivo-toggle');
+    assert.match(await objetivo.textContent(),/Objetivo sintético definido/);
+    await moverMes(page,1);assert.match(await objetivo.textContent(),/Ainda não definido/);
+    await moverMes(page,1);assert.match(await objetivo.textContent(),/A confirmar/);
+    await moverMes(page,-1);await moverMes(page,-1);assert.match(await objetivo.textContent(),/Objetivo sintético definido/);
+    assert.equal(await objetivo.getAttribute('aria-expanded'),'false');assert.equal(await page.locator('#pautas-mes').isVisible(),false);
   });
   for(const [nome,pautas,marcador] of [
     ['singular','A\nB\nC\nD\nE\nF','+1 pauta'],
@@ -99,10 +87,10 @@ for(const width of [1440,390]) {
     const card=page.locator('#objetivo-mes');
     assert.equal(await card.locator('li').count(),5);
     assert.equal(await card.locator('.more-topics').count(),0);
-    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    await moverMes(page,1);
     const texto=await card.locator('.more-topics').textContent();
     assert.equal(await card.locator('li').count(),5);
-    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    await moverMes(page,1);
     assert.equal(await card.locator('li').count(),0);
     assert.equal(await card.locator('.more-topics').count(),0);
     assert.equal(texto,marcador,'O restante deve identificar pautas e flexionar o singular');
@@ -115,16 +103,16 @@ for(const width of [1440,390]) {
       [' 2026-12 ','outra','Ignorar','Ignorar']
     ]));
     const card=page.locator('#objetivo-mes');
-    assert.match(await page.locator('#mes').textContent(),/Outubro.*2026/);
-    assert.equal(await card.locator('.month-content p').textContent(),'Objetivo único');
+    await moverMes(page,0);assert.match(await page.locator('#mes').textContent(),/Outubro.*2026/);
+    assert.equal((await card.locator('#objetivo-toggle').textContent()).replace(/^🎯 .* — /,''),'Objetivo único');
     assert.deepEqual(await card.locator('li').allTextContents(),['Pauta única']);
-    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    await moverMes(page,1);
     assert.match(await page.locator('#mes').textContent(),/Novembro.*2026/);
-    assert.equal(await card.locator('.month-content p').textContent(),'A confirmar');
+    assert.equal((await card.locator('#objetivo-toggle').textContent()).replace(/^🎯 .* — /,''),'A confirmar');
     assert.equal(await card.locator('li').count(),0);
-    await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+    await moverMes(page,1);
     assert.match(await page.locator('#mes').textContent(),/Dezembro.*2026/);
-    assert.equal(await card.locator('.month-content p').textContent(),'Ainda não definido');
+    assert.equal((await card.locator('#objetivo-toggle').textContent()).replace(/^🎯 .* — /,''),'Ainda não definido');
     assert.equal(await card.locator('li').count(),0);
     await page.locator('#selo').click();await page.locator('[data-aba="Meses"]').click();
     assert.equal(await page.locator('#dados-planilha tbody tr').count(),4);
@@ -151,7 +139,8 @@ async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixtu
     promoverCaptura(recalcularHashes(raw),dataDir);
   }
   depois(dataDir);
-  const server=criarServidor({dataDir,quadroConfigPath,port:0,atualizar:async()=>({resultado:'sem_alteracao'})});
+  const midia={obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}};
+  const server=criarServidor({dataDir,quadroConfigPath,port:0,midia,atualizar:async()=>({resultado:'sem_alteracao'})});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   let browser;
   t.after(async()=>{
@@ -170,13 +159,13 @@ async function abrir(t,width=1440,captura=true,editar=()=>{},depois=()=>{},fixtu
   });
   t.after(()=>{assert.deepEqual(external,[]);assert.deepEqual(errors,[]);});
   await page.goto(origin);
-  await page.locator('#objetivo-mes .month-content, #erro:not([hidden])').first().waitFor({state:'visible'});
+  await page.locator('#objetivo-toggle:not(:empty), #erro:not([hidden])').first().waitFor({state:'visible'});
   return page;
 }
 test('U05 filtro e clique na segunda peça abrem o dia inteiro em acordeões com Esc/foco', {skip}, async t=>{
   const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
   await page.getByRole('button',{name:'Reels',exact:true}).click();
-  const trigger=page.locator('#calendario [data-producao-id="peca-4"]');
+  const trigger=page.locator('#lista [data-producao-id="peca-4"]');
   await trigger.click();
   const pecas=page.locator('#dia .peca-acordeao');
   assert.equal(await pecas.count(),2);
@@ -194,7 +183,7 @@ test('U05 filtro e clique na segunda peça abrem o dia inteiro em acordeões com
 test('U05 dia/lista e dia vazio: no máximo dois acionamentos, sem recortar a gaveta', {skip}, async t=>{
   const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
   await page.evaluate(()=>{window.acionamentos=0;document.addEventListener('click',()=>window.acionamentos++,true);});
-  await page.getByRole('button',{name:'2 de outubro',exact:true}).click();
+  await page.locator('.planning-day[data-data="2026-10-02"] .planning-day-heading').click();
   assert.equal(await page.locator('#dia .peca-acordeao').count(),2);
   assert.equal(await page.evaluate(()=>window.acionamentos),1);
   assert.ok(await page.locator('#dia').evaluate(n=>n.scrollWidth<=n.clientWidth));
@@ -203,19 +192,19 @@ test('U05 dia/lista e dia vazio: no máximo dois acionamentos, sem recortar a ga
   assert.equal(await page.evaluate(()=>window.acionamentos),2);
   assert.equal(await page.locator('#dia [data-peca="peca-4"]').evaluate(n=>n.open),true);
   await page.getByRole('button',{name:'Fechar dia',exact:true}).click();
-  await page.getByRole('button',{name:'Lista',exact:true}).click();
+  await page.getByRole('button',{name:'Semana',exact:true}).click();
   await page.locator('#lista [data-producao-id="peca-4"]').click();
   assert.equal(await page.locator('#dia .peca-acordeao').count(),2);
   await page.keyboard.press('Escape');
-  await page.getByRole('button',{name:'Calendário',exact:true}).click();
-  await page.getByRole('button',{name:'3 de outubro',exact:true}).click();
+  await page.getByRole('button',{name:'Semana',exact:true}).click();
+  await page.locator('.planning-day[data-data="2026-10-03"] .planning-day-heading').click();
   assert.equal(await page.locator('#dia .peca-acordeao').count(),0);
   assert.match(await page.locator('#dia-pecas').textContent(),/Nenhuma peça registrada/);
 });
 
 test('U06 versões/páginas/cenas e revisão vigente não se misturam ao histórico', {skip}, async t=>{
   const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const carousel=page.locator('#dia [data-peca="peca-3"]');
   assert.deepEqual(await carousel.locator('[data-unidades="paginas"] [data-versao="2"] [data-pagina]').evaluateAll(ns=>ns.map(n=>n.dataset.pagina)),['pagina-02','pagina-01']);
   assert.match(await carousel.textContent(),/Design novo: A confirmar/);
@@ -225,8 +214,8 @@ test('U06 versões/páginas/cenas e revisão vigente não se misturam ao histór
   assert.ok(!(await current.textContent()).includes('revisao-antiga'));
   assert.match(await carousel.locator('[data-revisoes="resolvidas"]').textContent(),/versão 2.*resolvida/s);
   assert.equal(await carousel.locator('[data-revisoes="resolvidas"]').getAttribute('class'),'detail-section history');
-  assert.match(await carousel.textContent(),/Com quem está.*Equipe sintética/s);
-  assert.match(await current.textContent(),/Corrige: Correção sintética · aberta/s);
+  assert.doesNotMatch(await carousel.textContent(),/Com quem está|Equipe sintética/);
+  assert.doesNotMatch(await current.textContent(),/Corrige:|Correção sintética/);
   assert.equal(await carousel.locator('.publication').count(),0);
   const reels=page.locator('#dia [data-peca="peca-4"]');await reels.locator('summary').first().click();
   assert.deepEqual(await reels.locator('[data-cena]').evaluateAll(ns=>ns.map(n=>n.dataset.cena)),['cena-02','cena-01']);
@@ -238,7 +227,7 @@ test('U06 review: API conserva escopo de página, cena e arquivo; linha visual n
     mudarCelula(raw,'Revisoes',2,'pagina_id','pagina-02');mudarCelula(raw,'Revisoes',2,'arquivo_id','arquivo-pagina');
     adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-cena',producao_id:'peca-4',cena_id:'cena-02',arquivo_id:'arquivo-clipe',versao:1,estado_tratamento:'aberta'});
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const carousel=page.locator('#dia [data-peca="peca-3"] [data-revisoes="vigentes"]');
   assert.doesNotMatch(await carousel.textContent(),/pagina-02|arquivo-pagina|revisao-atual|Decisão:|Versão:|Motivo:/);
   const reels=page.locator('#dia [data-peca="peca-4"]');await reels.locator('summary').first().click();
@@ -254,7 +243,7 @@ test('U06 review: API conserva avisos localizados; gaveta só mostra contagem e 
   const page=await abrir(t,1440,true,raw=>{
     mudarCelula(raw,'Páginas',1,'indice',-1);mudarCelula(raw,'Páginas',2,'indice',-1);
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const response=await page.request.get(new URL('/api/visao',page.url()).href),view=await response.json();
   const avisos=view.producoes.find(p=>p.producao_id==='peca-3').detalhes.avisos;
   assert.ok(avisos.some(a=>a.aba==='Páginas' && a.linha===2 && a.campo==='indice'));
@@ -281,7 +270,7 @@ test('U06 celular em tela cheia abre dia com várias peças; Esc retorna à list
 
 test('U06 Sem data abre somente o grupo da semana, em ordem ordinal', {skip}, async t=>{
   const page=await abrir(t,390,true,raw=>mudarCelula(raw,'Produções',3,'data_prevista',''),()=>{},capturaDetalhada);
-  await page.locator('#lista [data-producao-id="peca-6"]').click();
+  await page.locator('#abrir-sem-data').click();await page.locator('#lista-sem-data [data-producao-id="peca-6"]').click();
   assert.match(await page.locator('#dia-titulo').textContent(),/Sem data.*Conexões do cotidiano/);
   assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(ns=>ns.map(n=>n.dataset.peca)),['peca-3','peca-6']);
 });
@@ -294,7 +283,7 @@ test('U06 conteúdo HTML é texto; somente HTTPS Drive/Docs sem credenciais vira
       adicionarRegistro(raw,'Arquivos',{arquivo_id:'url-'+i,producao_id:'peca-3',versao:2,url});
     }
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   assert.equal(await page.locator('#dia .peca-acordeao > summary img, #dia [data-textos] img').count(),0);
   assert.equal(await page.locator('#dia [data-peca="peca-3"] > summary strong').textContent(),text);
   assert.equal(await page.locator('#dia [data-peca="peca-3"] [data-textos]').getByText('Página 1 · versão 2 · Corpo: '+text,{exact:true}).textContent(),'Página 1 · versão 2 · Corpo: '+text);
@@ -320,7 +309,7 @@ test('U-review I1 gaveta não ecoa URL recusada nem parte de credencial sintéti
     mudarCelula(raw,'Produções',3,'url_video_final','https://usuario-sintetico:senha-sintetica@docs.google.com:porta-invalida');
     adicionarRegistro(raw,'Arquivos',{arquivo_id:'url-recusada',producao_id:'peca-3',versao:2,url:'https://servidor-sintetico.invalid/registro-recusado'});
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const body=await page.locator('#dia').textContent();
   assert.doesNotMatch(body,/usuario-sintetico|senha-sintetica|servidor-sintetico\.invalid|registro-recusado/);
   const response=await page.request.get(new URL('/api/visao',page.url()).href);
@@ -339,7 +328,7 @@ test('U-regressao gaveta mantém o texto ao redor da credencial sem recebê-la',
     mudarCelula(raw,'Produções',3,'legenda','Leia ('+url+'). Depois siga @perfil.');
     mudarCelula(raw,'Arquivos',2,'origens_json',JSON.stringify({texto:'Veja '+url+' antes de revisar',contato:'equipe@example.invalid'}));
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const texto=page.locator('#dia [data-peca="peca-3"] details[data-textos]');
   await texto.locator('summary').click();
   assert.equal(await texto.locator(':scope > p').first().textContent(),'Leia ([conteúdo suprimido]). Depois siga @perfil.');
@@ -373,7 +362,7 @@ test('U-ultima I1 avisos da própria linha entram na contagem e no link da gavet
     if(campo==='data_prevista') {
       await page.locator('#abrir-sem-data').click();
       await page.locator('#lista-sem-data [data-producao-id="peca-3"]').click();
-    } else await page.locator('#calendario [data-producao-id="peca-3"]').click();
+    } else await page.locator('#lista [data-producao-id="peca-3"]').click();
     const p=page.locator('#dia [data-peca="peca-3"]');
     assert.match(await p.locator(':scope>summary .piece-hint').textContent(),/4 avisos$/);
     assert.equal(await p.locator('.data-notice>span').textContent(),'4 avisos de dados nesta peça');
@@ -385,7 +374,7 @@ test('U-ultima m1 arquivo ligado sem link permitido não afirma mídia ausente',
   for(const url of ['', 'http://drive.google.com/x', 'https://nao-permitido.invalid/x']) {
     await t.test(url || 'URL vazia',async sub=>{
       const page=await abrir(sub,1440,true,raw=>mudarCelula(raw,'Arquivos',2,'url',url),()=>{},capturaDetalhada);
-      await page.locator('#calendario [data-producao-id="peca-3"]').click();
+      await page.locator('#lista [data-producao-id="peca-3"]').click();
       const pagina=page.locator('#dia [data-pagina="pagina-02"]');
       assert.equal(await pagina.locator('.notice').textContent(),'link não permitido');
       assert.doesNotMatch(await pagina.textContent(),/Mídia ausente/);
@@ -399,7 +388,7 @@ test('U-ultima m3 texto registrado usa número/versão sem ID de página ou cena
     mudarCelula(raw,'Páginas',2,'corpo','Corpo sintético da página');
     mudarCelula(raw,'Cenas',2,'texto_tela','Texto sintético da cena');
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   await page.locator('#dia [data-peca="peca-4"]>summary').click();
   const c=page.locator('#dia [data-peca="peca-3"] details[data-textos]');
   const r=page.locator('#dia [data-peca="peca-4"] details[data-textos]');
@@ -412,7 +401,7 @@ test('U-ultima m3 texto registrado usa número/versão sem ID de página ou cena
 
 test('U-ultima m1 cena conserva ausência e link não permitido em um só aviso', {skip}, async t=>{
   const page=await abrir(t,1440,true,raw=>mudarCelula(raw,'Arquivos',3,'url','https://nao-permitido.invalid/clipe'),()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   await page.locator('#dia [data-peca="peca-4"]>summary').click();
   const notice=page.locator('#dia [data-cena="cena-02"] .notice');
   assert.equal(await notice.count(),1);
@@ -433,7 +422,7 @@ test('U-final I1 resumo fechado distingue revisão atual, a confirmar e sem revi
       if(!caso.semRevisao) adicionarRegistro(raw,'Revisoes',{revisao_id:'resumo-sintetico',producao_id:'peca-4',
         versao:caso.versao,estado_tratamento:caso.estado,pagina_id:caso.campo});
     },()=>{},capturaDetalhada);
-    await page.locator('#calendario [data-producao-id="peca-3"]').click();
+    await page.locator('#lista [data-producao-id="peca-3"]').click();
     const p=page.locator('#dia [data-peca="peca-4"]');
     assert.equal(await p.evaluate(n=>n.open),false);
     const hint=await p.locator(':scope>summary .piece-hint').textContent();
@@ -448,11 +437,11 @@ test('U-final revisão em duas linhas e adicional com plural, sem rótulos nem I
   const page=await abrir(t,1440,true,raw=>{
     adicionarRegistro(raw,'Revisoes',{revisao_id:'revisao-extra',producao_id:'peca-3',versao:2,estado_tratamento:'aberta'});
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const current=page.locator('#dia [data-peca="peca-3"] [data-revisoes="vigentes"]');
   const first=current.locator(':scope>.review-record').first();
   assert.equal(await first.locator('span').textContent(),'Revisar · versão 2 — Conferir texto de exemplo');
-  assert.equal(await first.locator('small').textContent(),'Corrige: Correção sintética · aberta');
+  assert.equal(await first.locator('small').textContent(),'aberta');assert.doesNotMatch(await first.textContent(),/Corrige:|Correção sintética/);
   assert.doesNotMatch(await first.textContent(),/Decisão:|Versão:|Motivo:|revisao-atual/);
   assert.equal(await current.locator('details>summary').textContent(),'+2 revisões abertas');
 });
@@ -462,7 +451,7 @@ test('U-final singular de página, cena e aviso e faixa sem separador pendurado'
     raw.tables.Páginas.values=raw.tables.Páginas.values.filter((row,i)=>i===0 || row[0]==='pagina-02');
     raw.tables.Cenas.values=raw.tables.Cenas.values.filter((row,i)=>i===0 || row[0]==='cena-02');
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   assert.match(await page.locator('#dia [data-peca="peca-3"] .piece-hint').textContent(),/^1 página ·/);
   assert.match(await page.locator('#dia [data-peca="peca-4"] .piece-hint').textContent(),/^1 cena · sem revisão · 1 aviso$/);
   await page.locator('#dia [data-peca="peca-4"]>summary').click();
@@ -477,7 +466,7 @@ test('U-final cena identifica imagem final ausente em um único aviso', {skip}, 
       tipo:'imagem',url:'https://drive.google.com/file/d/inicio-sintetico'});
     mudarCelula(raw,'Cenas',2,'arquivo_imagem_inicio_id','imagem-inicio');
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   await page.locator('#dia [data-peca="peca-4"]>summary').click();
   const c=page.locator('#dia [data-cena="cena-02"]');
   assert.equal(await c.locator('.notice').count(),1);
@@ -489,16 +478,16 @@ test('U-review compacta: resumo fechado, quatro dados, publicação e etapa leg�
     mudarCelula(raw,'Produções',4,'etapa_producao','Etapa_nova_original');
     mudarCelula(raw,'Produções',4,'responsavel_atual','');
   },()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const carousel=page.locator('#dia [data-peca="peca-3"]'),reels=page.locator('#dia [data-peca="peca-4"]');
   assert.equal(await carousel.locator('.piece-facts').count(),1);
-  assert.equal(await carousel.locator('.piece-facts>div').count(),4);
-  assert.match(await carousel.locator('.piece-facts').textContent(),/Prompts de imagem prontos/);
+  assert.equal(await carousel.locator('.piece-facts>div').count(),3);
+  assert.match(await carousel.locator('.piece-facts').textContent(),/Publicada/);
   assert.match(await carousel.locator('.publication').textContent(),/2026-10-02T12:04:00Z/);
   assert.match(await reels.locator('summary .piece-hint').textContent(),/2 cenas.*revisão.*\d+ avisos/);
   assert.equal(await reels.locator('.piece-body').isVisible(),false);
   await reels.locator('summary').first().click();
-  assert.match(await reels.locator('.piece-facts').textContent(),/Etapa_nova_original/);
+  assert.match(await reels.locator('.piece-facts').textContent(),/Criação/);
   assert.doesNotMatch(await reels.locator('.piece-facts').textContent(),/Com quem está|A confirmar/);
   const response=await page.request.get(new URL('/api/visao',page.url()).href),view=await response.json();
   assert.equal(view.producoes.find(p=>p.producao_id==='peca-3').etapa_producao,'prompts_imagem_prontos');
@@ -506,7 +495,7 @@ test('U-review compacta: resumo fechado, quatro dados, publicação e etapa leg�
 
 test('U-review compacta: texto, histórico e versões anteriores recolhidos, revisão adicional +N', {skip}, async t=>{
   const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   const carousel=page.locator('#dia [data-peca="peca-3"]');
   const extra=carousel.locator('[data-revisoes="vigentes"] details');
   assert.equal(await extra.locator('summary').textContent(),'+1 revisão aberta');
@@ -522,7 +511,7 @@ test('U-review compacta: texto, histórico e versões anteriores recolhidos, rev
 
 test('U-review compacta: páginas/cenas têm um aviso por linha e documentos só no fim do dia', {skip}, async t=>{
   const page=await abrir(t,1440,true,()=>{},()=>{},capturaDetalhada);
-  await page.locator('#calendario [data-producao-id="peca-3"]').click();
+  await page.locator('#lista [data-producao-id="peca-3"]').click();
   assert.equal(await page.locator('#dia [data-documentos-dia]').count(),1);
   assert.equal(await page.locator('#dia .peca-acordeao [data-documentos-dia]').count(),0);
   assert.equal(await page.locator('#dia-pecas>*').last().getAttribute('data-documentos-dia'),'');
@@ -556,19 +545,19 @@ test('U-review m1 primeira carga falha com erro visível e filtros continuam seg
   assert.equal(await page.locator('#selo').textContent(),'Consulta indisponível');
   assert.equal(await page.locator('#abrir-sem-data').isVisible(),false);
   await page.getByRole('button',{name:'Imagem',exact:true}).click();
-  await page.getByRole('button',{name:'Lista',exact:true}).click();
+  await page.getByRole('button',{name:'Semana',exact:true}).click();
   assert.equal(await page.locator('#erro').isVisible(),true);
   assert.equal(await page.locator('[data-producao-id]').count(),0);
 });
 
 test('U-review m1 Atualizar dados permanece desabilitado enquanto GET está pendente', {skip}, async t=>{
   const page=await abrir(t);
-  await page.locator('#calendario [data-producao-id]').first().waitFor();
+  await page.locator('#lista [data-producao-id]').first().waitFor();
   await page.locator('#selo').click();
   let liberar,recebido;
   const barreira=new Promise(resolve=>{liberar=resolve;}),entrada=new Promise(resolve=>{recebido=resolve;});
   await page.route('**/api/visao',async route=>{recebido();await barreira;await route.continue();});
-  const button=page.getByRole('button',{name:'Atualizar dados',exact:true});
+  const button=page.getByRole('button',{name:'⟳ Atualizar',exact:true});
   const response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
   try {
     await button.click();await entrada;
@@ -604,7 +593,7 @@ for(const scenario of estadosSelo) {
       assert.equal(await page.locator('#planilha').isVisible(),true);
     }
     assert.equal(await page.locator('#fonte-captura').textContent(),'Captura pela Central');
-    assert.equal(await page.getByRole('button',{name:'Atualizar dados',exact:true}).isVisible(),true);
+    assert.equal(await page.getByRole('button',{name:'⟳ Atualizar',exact:true}).isVisible(),true);
     assert.match(await page.locator('#releitura-aviso').textContent(),/Leitura da planilha pelo servidor local, somente leitura/);
     if(scenario.captura) {
       assert.match(await page.locator('#fim-captura').textContent(),scenario.nome==='anterior'?/02\/10\/2026.*09:05/:/04\/10\/2026.*08:05/);
@@ -628,7 +617,7 @@ test('U04 celular relê só API local, conserva falha/horário e recupera erro s
   await page.locator('#selo').click();
   const seen=[];page.on('request',req=>seen.push({url:new URL(req.url()).pathname,method:req.method()}));
   const pointer=path.join(dataDir,'atual.json'),before=fs.readFileSync(pointer,'utf8');
-  const button=page.getByRole('button',{name:'Atualizar dados',exact:true});
+  const button=page.getByRole('button',{name:'⟳ Atualizar',exact:true});
   let response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
   await button.click();await response;
   await button.waitFor({state:'visible'});
@@ -661,25 +650,25 @@ test('U01 menu exato, objetivo mensal indefinido e dia múltiplo', {skip}, async
   assert.deepEqual(await page.locator('nav [data-tela]').allTextContents(),['Planejamento','Produção','Planilha']);
   assert.match(await page.locator('#objetivo-mes').textContent(),/Ainda não definido/);
   assert.equal(await page.getByRole('button',{name:'Plano do mês'}).count(),0);
-  assert.equal(await page.locator('#calendario [data-producao-id="peca-3"]').count(),1);
-  assert.equal(await page.locator('#calendario [data-producao-id="peca-4"]').count(),0);
-  assert.equal(await page.getByRole('button',{name:'+1 no dia',exact:true}).count(),1);
+  assert.equal(await page.locator('#lista [data-producao-id="peca-3"]').count(),1);
+  assert.equal(await page.locator('#lista [data-producao-id="peca-4"]').count(),1);
+  assert.equal(await page.getByRole('button',{name:'+1 no dia',exact:true}).count(),0);
   assert.equal(await page.getByRole('button',{name:'1 sem data',exact:true}).count(),1);
 });
 test('U01 lista/filtros conservam identidades e sem data não depende do mês', {skip}, async t => {
   const page=await abrir(t);
-  await page.getByRole('button',{name:'Lista',exact:true}).click();
-  assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(nodes=>nodes.map(n=>n.dataset.producaoId))).sort(),['peca-1','peca-2','peca-3','peca-4','peca-6']);
+  await page.getByRole('button',{name:'Semana',exact:true}).click();
+  assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(nodes=>nodes.map(n=>n.dataset.producaoId))).sort(),['peca-1','peca-2','peca-3','peca-4']);
   await page.getByRole('button',{name:'Imagem',exact:true}).click();
-  assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(nodes=>nodes.map(n=>n.dataset.producaoId))).sort(),['peca-1','peca-2','peca-6']);
-  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(nodes=>nodes.map(n=>n.dataset.producaoId))).sort(),['peca-1','peca-2']);
+  await moverMes(page,1);
   await page.getByRole('button',{name:'1 sem data',exact:true}).click();
   assert.equal(await page.locator('#sem-data [data-producao-id="peca-6"]').count(),1);
-  assert.match(await page.locator('#sem-data').textContent(),/Conexões do cotidiano/);
+  assert.match(await page.locator('#sem-data').textContent(),/Sem data sintética/);
   await page.getByRole('button',{name:'Todos',exact:true}).click();
-  await page.getByRole('button',{name:'Mês anterior',exact:true}).click();
-  await page.getByRole('button',{name:'Lista',exact:true}).click();
-  assert.equal(await page.locator('#lista [data-producao-id]').count(),5);
+  await moverMes(page,-1);
+  await page.getByRole('button',{name:'Semana',exact:true}).click();
+  assert.equal(await page.locator('#lista [data-producao-id]').count(),4);
 });
 test('U02 celular começa em lista/menu recolhido e não tem corte horizontal', {skip}, async t => {
   const page=await abrir(t,390);
@@ -694,22 +683,18 @@ test('U02 celular começa em lista/menu recolhido e não tem corte horizontal', 
 });
 test('U02 desktop sem corte e ausência real sem fallback de demonstração', {skip}, async t => {
   const page=await abrir(t,1440,false);
-  await page.getByText('Peça a primeira leitura à Central.',{exact:true}).waitFor();
+  await page.getByRole('heading',{name:'Nenhuma captura disponível',exact:true}).waitFor();
   assert.equal(await page.locator('[data-producao-id]').count(),0);
   assert.equal(await page.getByRole('button',{name:'Sem dados',exact:true}).count(),1);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 });
-test('U01 peça remarcada fora do período semanal aparece no mês civil em ambas as vistas', {skip}, async t => {
+test('U01 remarcação aparece no ponto do mês e na semana civil escolhida',{skip},async t=>{
   const page=await abrir(t,1440,true,raw=>mudarCelula(raw,'Produções',3,'data_prevista','2026-11-10'));
-  assert.equal(await page.locator('#calendario [data-producao-id="peca-3"]').count(),0);
-  await page.getByRole('button',{name:'Lista',exact:true}).click();
   assert.equal(await page.locator('#lista [data-producao-id="peca-3"]').count(),0);
-  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
-  await page.getByRole('button',{name:'Calendário',exact:true}).click();
-  assert.equal(await page.locator('#calendario [data-producao-id="peca-3"]').count(),1);
-  await page.getByRole('button',{name:'Lista',exact:true}).click();
-  assert.equal(await page.locator('#lista [data-producao-id="peca-3"]').count(),1);
-  assert.match(await page.locator('#lista').textContent(),/Conexões do cotidiano/);
+  await moverMes(page,1);
+  assert.equal(await page.locator('.month-dot[aria-label="Carrossel sintético · Criação"]').count(),1);
+  await page.locator('#calendario [data-inicio-semana="2026-11-09"]').click();
+  assert.equal(await page.locator('.planning-day[data-data="2026-11-10"] [data-producao-id="peca-3"]').count(),1);
   assert.equal(await page.getByRole('button',{name:'1 sem data',exact:true}).count(),1);
 });
 
@@ -724,37 +709,38 @@ test('U-review rótulos conhecidos são legíveis; desconhecido e API preservam 
     }
     for (const [i,status] of [[1,'em_planejamento'],[2,'pronto'],[3,'publicado'],[4,'erro'],[6,'cancelado']]) mudarCelula(raw,'Produções',i,'status',status);
   });
-  await page.locator('#calendario [data-producao-id="peca-1"]').waitFor();
-  assert.equal(await page.locator('#calendario [data-producao-id="peca-1"] .status').textContent(),'Em planejamento');
-  await page.getByRole('button',{name:'Lista',exact:true}).click();
-  for (const [id,label] of [['peca-1','Em planejamento'],['peca-2','Pronto'],['peca-3','Publicado'],['peca-4','Erro'],['peca-6','Cancelado'],['peca-7','Cancelada'],['peca-8','estado_NOVO-Sintético']]) {
-    assert.equal(await page.locator('#lista [data-producao-id="'+id+'"] .row-status').textContent(),label);
+  await page.locator('#lista [data-producao-id="peca-1"]').waitFor();
+  assert.equal(await page.locator('#lista [data-producao-id="peca-1"] .simple-state').textContent(),'Criação');
+  await page.getByRole('button',{name:'Semana',exact:true}).click();
+  for (const id of ['peca-1','peca-2','peca-3','peca-4','peca-6','peca-7','peca-8']) {
+    if(id==='peca-6'){await page.locator('#abrir-sem-data').click();assert.equal(await page.locator('#lista-sem-data [data-producao-id="'+id+'"]').count(),1);}else assert.equal(await page.locator('#lista [data-producao-id="'+id+'"] .simple-state').textContent(),'Criação');
   }
   const view=await page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));
-  assert.equal(view.producoes.find(p=>p.producao_id==='peca-1').status,'em_planejamento');
-  assert.equal(view.producoes.find(p=>p.producao_id==='peca-8').status,'estado_NOVO-Sintético');
+  for(const [id,status] of [['peca-1','em_planejamento'],['peca-2','pronto'],['peca-3','publicado'],['peca-4','erro'],['peca-6','cancelado'],['peca-7','cancelada'],['peca-8','estado_NOVO-Sintético']]) {
+    assert.equal(view.producoes.find(p=>p.producao_id===id).status,status);
+  }
 });
 test('U-review mês tem inicial maiúscula e preposição minúscula na apresentação', {skip}, async t => {
   const page=await abrir(t);
-  await page.locator('.calendar-grid').waitFor();
+  await page.locator('[data-modo="Mês"]').click();await page.locator('.month-grid').waitFor();
   assert.equal(await page.locator('#mes').textContent(),'Outubro de 2026');
   assert.equal(await page.locator('#mes').evaluate(el=>getComputedStyle(el).textTransform),'none');
-  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  await moverMes(page,1);
   assert.equal(await page.locator('#mes').textContent(),'Novembro de 2026');
 });
 test('U-review calendário elimina semanas inteiras fora do mês, inclusive fevereiro de quatro semanas', {skip}, async t => {
   const page=await abrir(t);
-  await page.locator('.calendar-grid').waitFor();
-  assert.equal(await page.locator('.calendar-grid > .day').count(),35);
-  assert.equal(await page.locator('.calendar-grid').getByRole('button',{name:'2 de novembro',exact:true}).count(),0);
-  for (let i=0;i<4;i++) await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
-  assert.equal(await page.locator('.calendar-grid > .day').count(),28);
-  assert.equal(await page.locator('.calendar-grid').getByRole('button',{name:'1 de março',exact:true}).count(),0);
-  assert.equal(await page.locator('.calendar-grid .outside').count(),0);
+  await moverMes(page,0);await page.locator('.month-grid').waitFor();
+  assert.equal(await page.locator('.month-grid .month-day').count(),35);
+  assert.equal(await page.locator('.month-day[data-data="2026-11-02"]').count(),0);
+  for (let i=0;i<4;i++) await moverMes(page,1);
+  assert.equal(await page.locator('.month-grid .month-day').count(),28);
+  assert.equal(await page.locator('.month-day[data-data="2027-03-01"]').count(),0);
+  assert.equal(await page.locator('.month-grid .outside').count(),0);
 });
 test('U-review fundo lateral cobre a página longa e a página menor que a janela', {skip}, async t => {
   const page=await abrir(t);
-  await page.locator('.calendar-grid').waitFor();
+  await moverMes(page,0);await page.locator('.month-grid').waitFor();
   const coberta=()=>page.evaluate(()=>{
     const sidebar=document.querySelector('.sidebar').getBoundingClientRect();
     return {sidebar:sidebar.height,pagina:document.documentElement.scrollHeight};
@@ -766,114 +752,57 @@ test('U-review fundo lateral cobre a página longa e a página menor que a janel
   const curta=await coberta();
   assert.ok(Math.ceil(curta.sidebar)>=curta.pagina,JSON.stringify(curta));
 });
-test('U07 US4 quadro conserva colunas, cartões e registros em desktop/celular', {skip}, async t=>{
-  for(const width of [1440,390]) await t.test(width+'px',async t=>{
+test('U07 US4 projetos conservam identidades, classes da API e registros em desktop/celular',{skip},async t=>{
+  for(const width of [1440,390])await t.test(width+'px',async t=>{
     const page=await abrir(t,width,true,()=>{},()=>{},capturaQuadro,mapaQuadroSintetico(),false);
-    if(width===390)await page.locator('#menu').click();
-    await page.getByRole('button',{name:'Produção',exact:true}).click();
-    const cols=page.locator('#quadro .quadro-coluna');
-    assert.deepEqual(await cols.evaluateAll(nodes=>nodes.map(n=>n.dataset.coluna)),
-      ['Planejamento','Redação','Visual','Mídia','Revisão','Pronta','Publicada','Outras']);
-    assert.equal(await page.locator('#semana-tema').textContent(),'Conexões do cotidiano');
-    assert.match(await page.locator('#quadro-total').textContent(),/10 peças/);
-    const cards=page.locator('#quadro .quadro-card');
-    assert.deepEqual((await cards.evaluateAll(nodes=>nodes.map(n=>n.dataset.producaoId))).sort(),
-      ['peca-1','peca-10','peca-11','peca-12','peca-2','peca-3','peca-4','peca-7','peca-8','peca-9']);
-    assert.equal(await page.locator('#quadro [draggable="true"], #quadro input, #quadro select, #quadro textarea, #quadro [contenteditable="true"]').count(),0);
-    const review=page.locator('#quadro [data-coluna="Revisão"] [data-producao-id="peca-7"]');
-    assert.match(await review.textContent(),/Responsável sintético/);
-    assert.match(await review.textContent(),/Ajustar texto de exemplo/);
-    assert.match(await review.textContent(),/Corrige: Correção sintética/);
-    assert.match(await review.textContent(),/Em planejamento/);
-    assert.match(await page.locator('#quadro [data-producao-id="peca-3"]').textContent(),/Carrossel.*02\/10/s);
-    assert.match(await page.locator('#quadro [data-producao-id="peca-4"]').textContent(),/[Mm]ídia ausente|imagens ausentes/);
-    assert.equal(await page.locator('#quadro [data-coluna="Publicada"] .quadro-card').count(),1);
-    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-    assert.ok(await cards.evaluateAll(nodes=>nodes.every(n=>n.scrollWidth<=n.clientWidth)));
+    if(width===390)await page.locator('#menu').click();await page.locator('[data-tela="producao"]').click();
+    const view=await page.evaluate(()=>fetch('/api/visao').then(r=>r.json())),cards=page.locator('#quadro .project-row');
+    assert.deepEqual((await cards.evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),view.producoes.map(p=>p.producao_id).sort());
+    assert.deepEqual(view.quadro.semanas.find(w=>w.semanaId==='semana-01').colunas.map(c=>c.nome),['Planejamento','Redação','Visual','Mídia','Revisão','Pronta','Publicada','Outras']);
+    assert.equal(await page.locator('#quadro [draggable="true"],#quadro input,#quadro select,#quadro textarea,#quadro [contenteditable="true"]').count(),0);
+    assert.match(await page.locator('#quadro [data-producao-id="peca-7"]').textContent(),/Travado: precisa de correção/);
+    assert.equal(await page.locator('#quadro [data-producao-id="peca-9"] [aria-current="step"]').textContent(),'Publicada');
+    assert.doesNotMatch(await page.locator('#quadro').textContent(),/Responsável sintético|Correção sintética|Com quem está/);
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.ok(await cards.evaluateAll(ns=>ns.every(n=>n.scrollWidth<=n.clientWidth)));
     assert.equal(await page.locator('#selo').textContent(),'Dados de 02/10');
   });
 });
 
-test('U08 US4 Outras conta valores por semana e cartão abre dia inteiro por teclado', {skip}, async t=>{
+test('U08 US4 Outras permanece Criação, projetos preservam dia inteiro e Sem data',{skip},async t=>{
   for(const width of [1440,390])await t.test(width+'px',async t=>{
     const page=await abrir(t,width,true,()=>{},()=>{},capturaQuadro,mapaQuadroSintetico(),false);
-    if(width===390)await page.locator('#menu').click();
-    await page.getByRole('button',{name:'Produção',exact:true}).click();
-    const outras=page.locator('#quadro [data-coluna="Outras"]');
-    assert.equal(await outras.locator('h3').textContent(),'Outras · 2 valores novos');
-    for(const id of ['peca-10','peca-11'])assert.match(await outras.locator('[data-producao-id="'+id+'"]').textContent(),/etapa_nova_sintetica/);
-    assert.match(await outras.locator('[data-producao-id="peca-12"]').textContent(),/Não informada/);
-    const trigger=page.locator('#quadro [data-producao-id="peca-3"]');
-    await trigger.focus();await page.keyboard.press('Enter');
-    assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(nodes=>nodes.map(n=>n.dataset.peca)),
-      ['peca-10','peca-11','peca-3','peca-4','peca-7','peca-8','peca-9']);
-    assert.equal(await page.locator('#dia .peca-acordeao[open]').count(),1);
-    await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(n=>document.activeElement===n),true);
-    await outras.locator('[data-producao-id="peca-12"]').click();
-    assert.match(await page.locator('#dia-titulo').textContent(),/Sem data/);
-    assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(nodes=>nodes.map(n=>n.dataset.peca)),['peca-12']);
-    await page.keyboard.press('Escape');
-    assert.equal(await page.locator('#semana-anterior').isDisabled(),true);
-    await page.locator('#semana-proxima').click();
-    assert.equal(await page.locator('#semana-tema').textContent(),'Próxima semana sintética');
-    assert.equal(await outras.locator('h3').textContent(),'Outras · 1 valor novo');
-    assert.equal(await page.locator('#quadro .quadro-card').count(),1);
-    assert.match(await outras.textContent(),/outra_etapa_sintetica.*Publicado/s);
-    assert.equal(await page.locator('#quadro [data-coluna="Publicada"] .quadro-card').count(),0);
-    assert.equal(await page.locator('#quadro .coluna-vazia').count(),7);
-    assert.equal(await page.locator('#semana-proxima').isDisabled(),true);
-    await page.locator('#semana-anterior').click();
-    assert.equal(await outras.locator('h3').textContent(),'Outras · 2 valores novos');
-    assert.equal(await page.locator('#quadro .quadro-card').count(),10);
+    if(width===390)await page.locator('#menu').click();await page.locator('[data-tela="producao"]').click();
+    for(const id of ['peca-10','peca-11','peca-12','peca-13'])assert.equal(await page.locator('#quadro [data-producao-id="'+id+'"] [aria-current="step"]').textContent(),'Criação');
+    const trigger=page.locator('#quadro [data-producao-id="peca-3"]');await trigger.focus();await page.keyboard.press('Enter');
+    assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(ns=>ns.map(n=>n.dataset.peca)),['peca-10','peca-11','peca-3','peca-4','peca-7','peca-8','peca-9']);
+    assert.equal(await page.locator('#dia .peca-acordeao[open]').count(),1);await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(n=>document.activeElement===n),true);
+    await page.locator('#quadro [data-producao-id="peca-12"]').click();assert.match(await page.locator('#dia-titulo').textContent(),/Sem data/);
+    assert.deepEqual(await page.locator('#dia .peca-acordeao').evaluateAll(ns=>ns.map(n=>n.dataset.peca)),['peca-12']);await page.keyboard.press('Escape');
+    assert.equal(await page.locator('.project[data-semana-id="semana-02"] .project-row').count(),1);
+    const view=await page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));assert.equal(view.producoes.find(p=>p.producao_id==='peca-13').status,'publicado');
+    assert.equal(view.producoes.find(p=>p.producao_id==='peca-13').quadro.coluna,'Outras');
   });
 });
 
-test('U07-vazio US4 sem captura não inventa semana, cartão ou atividade', {skip},async t=>{
-  const page=await abrir(t,390,false);
-  await page.locator('#menu').click();await page.getByRole('button',{name:'Produção',exact:true}).click();
-  assert.match(await page.locator('#quadro-vazio').textContent(),/primeira leitura à Central/);
-  assert.equal(await page.locator('#quadro .quadro-card').count(),0);
-  assert.equal(await page.locator('#semana-anterior').isDisabled(),true);
-  assert.equal(await page.locator('#semana-proxima').isDisabled(),true);
-  assert.equal(await page.locator('#selo').textContent(),'Sem dados');
+test('U07-vazio US4 sem captura não inventa semana, cartão ou atividade',{skip},async t=>{
+  const page=await abrir(t,390,false);await page.locator('#menu').click();await page.locator('[data-tela="producao"]').click();
+  assert.equal(await page.locator('#quadro-vazio').textContent(),'Nenhuma captura disponível');assert.equal(await page.locator('#quadro .project-row').count(),0);assert.equal(await page.locator('#selo').textContent(),'Sem dados');
 });
 
-test('U08 revisão m1 filtra mídia por coluna só no cartão e conserva a API', {skip},async t=>{
-  const page=await abrir(t,1440,true,raw=>{
-    mudarCelula(raw,'Arquivos',1,'producao_id','peca-4');
-    for(let i=1;i<raw.tables.Revisoes.values.length;i++)mudarCelula(raw,'Revisoes',i,'decisao','aprovado');
-  },()=>{},capturaQuadro,mapaQuadroSintetico(),false);
-  await page.getByRole('button',{name:'Produção',exact:true}).click();
-  const view=await page.evaluate(async()=>await (await fetch('/api/visao')).json());
-  const casos=[['peca-1','Planejamento',false],['peca-2','Redação',false],['peca-3','Visual',false],
-    ['peca-4','Mídia',true],['peca-7','Revisão',true],['peca-8','Pronta',false],['peca-9','Publicada',true],['peca-10','Outras',true]];
-  for(const [id,coluna,visivel] of casos) {
-    const p=view.producoes.find(p=>p.producao_id===id);
-    assert.equal(p.quadro.coluna,coluna);
-    assert.ok(p.quadro.pendencias.some(r=>r.tipo==='midia'),'API conserva mídia em '+coluna);
-    const box=page.locator('#quadro [data-producao-id="'+id+'"] .board-pending');
-    assert.equal(await box.count(),visivel?1:0,coluna);
-    if(coluna==='Pronta')assert.equal(await page.locator('#quadro [data-producao-id="'+id+'"] .board-ready').textContent(),'Pronta para publicar');
-    if(visivel) {
-      assert.equal(await box.locator('span').first().textContent(),'Mídia ausente',coluna);
-      assert.doesNotMatch(await box.textContent(),/sem arquivo registrado nesta versão/);
-    }
+test('U08 mídia só trava a coluna Mídia e conserva todas as pendências na API',{skip},async t=>{
+  const page=await abrir(t,1440,true,raw=>{mudarCelula(raw,'Arquivos',1,'producao_id','peca-4');for(let i=1;i<raw.tables.Revisoes.values.length;i++)mudarCelula(raw,'Revisoes',i,'decisao','aprovado');},()=>{},capturaQuadro,mapaQuadroSintetico(),false);
+  await page.locator('[data-tela="producao"]').click();const view=await page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));
+  for(const [id,coluna] of [['peca-1','Planejamento'],['peca-2','Redação'],['peca-3','Visual'],['peca-4','Mídia'],['peca-7','Revisão'],['peca-8','Pronta'],['peca-9','Publicada'],['peca-10','Outras']]){
+    const p=view.producoes.find(p=>p.producao_id===id);assert.equal(p.quadro.coluna,coluna);assert.ok(p.quadro.pendencias.some(r=>r.tipo==='midia'));
+    assert.equal(await page.locator('#quadro [data-producao-id="'+id+'"] .blocked-reason').count(),coluna==='Mídia'?1:0,coluna);
   }
 });
 
-test('U08 revisão m1 mantém revisão e conta somente as pendências exibidas', {skip},async t=>{
-  const page=await abrir(t,390,true,raw=>mudarCelula(raw,'Arquivos',1,'producao_id','peca-4'),
-    ()=>{},capturaQuadro,mapaQuadroSintetico(),false);
-  await page.locator('#menu').click();await page.getByRole('button',{name:'Produção',exact:true}).click();
-  const view=await page.evaluate(async()=>await (await fetch('/api/visao')).json());
+test('U08 revisão vigente substitui passos pelo motivo curto, sem responsável técnico',{skip},async t=>{
+  const page=await abrir(t,390,true,raw=>mudarCelula(raw,'Arquivos',1,'producao_id','peca-4'),()=>{},capturaQuadro,mapaQuadroSintetico(),false);
+  await page.locator('#menu').click();await page.locator('[data-tela="producao"]').click();const view=await page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));
   assert.deepEqual(view.producoes.find(p=>p.producao_id==='peca-1').quadro.pendencias.map(r=>r.tipo),['revisao','midia']);
-  const inicial=page.locator('#quadro [data-producao-id="peca-1"] .board-pending');
-  assert.match(await inicial.textContent(),/Revisão: Exemplo/);
-  assert.match(await inicial.textContent(),/Corrige: Equipe sintética/);
-  assert.doesNotMatch(await inicial.textContent(),/Mídia ausente|\+1 pendência/);
-  const revisao=page.locator('#quadro [data-producao-id="peca-7"] .board-pending');
-  assert.match(await revisao.textContent(),/Revisão: Ajustar texto de exemplo/);
-  assert.match(await revisao.textContent(),/\+1 pendência/);
+  for(const id of ['peca-1','peca-7']){const card=page.locator('#quadro [data-producao-id="'+id+'"]');assert.equal(await card.locator('.blocked-reason').textContent(),'Travado: precisa de correção');assert.equal(await card.locator('.production-steps').count(),0);}
 });
 
 async function consultarPlanilha(page) {
@@ -941,7 +870,7 @@ for(const width of [1440,390]) {
     assert.equal(await page.locator('#avisos-dados').count(),1);
     if(width===390) {await page.locator('#menu').click();}
     await page.locator('[data-tela="planejamento"]').click();
-    const cards=width===390?'#lista':'#calendario';await page.locator(cards+' [data-producao-id="peca-3"]').click();
+    const cards='#lista';await page.locator(cards+' [data-producao-id="peca-3"]').click();
     await page.locator('#dia [data-peca="peca-3"] .data-notice a').click();
     assert.equal(await page.locator('#dia').isVisible(),false);
     assert.equal(await page.locator('#planilha').isVisible(),true);
@@ -976,7 +905,7 @@ for(const width of [1440,390]) {
     const pointer=path.join(dataDir,'atual.json'),before=fs.readFileSync(pointer,'utf8'),seen=[];
     page.on('request',req=>seen.push({url:new URL(req.url()).pathname,method:req.method()}));
     const response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
-    await page.getByRole('button',{name:'Atualizar dados',exact:true}).click();await response;
+    await page.getByRole('button',{name:'⟳ Atualizar',exact:true}).click();await response;
     await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
     assert.equal(await page.locator('#abas-planilha [data-aba="Histórico"]').getAttribute('aria-selected'),'true');
     assert.deepEqual(await page.locator('#dados-planilha [data-resultado]').evaluateAll(ns=>ns.map(n=>n.dataset.resultado)),['falhou','completa']);
@@ -1021,7 +950,7 @@ test('U10 releitura de uma nova captura atualiza tabela e Histórico sem consult
   promoverCaptura(raw,dataDir);
   const seen=[];page.on('request',req=>seen.push({url:new URL(req.url()).pathname,method:req.method()}));
   const response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
-  await page.getByRole('button',{name:'Atualizar dados',exact:true}).click();await response;
+  await page.getByRole('button',{name:'⟳ Atualizar',exact:true}).click();await response;
   await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
   assert.equal(await page.locator('#abas-planilha [data-aba="Produções"]').getAttribute('aria-selected'),'true');
   assert.equal(await page.locator('#dados-planilha tbody tr').count(),6);
@@ -1087,13 +1016,10 @@ test('U10 motivo de mídia é consolidado uma vez por aviso, sem repetir ausênc
   assert.ok(motivos.every(m=>!m.includes('Mídia ausente:') && !m.includes('neste ponteiro')));
 });
 
-test('U10 Planilha tem subtítulo próprio, inclusive ao navegar de volta', {skip},async t=>{
-  const page=await abrir(t,1440);await consultarPlanilha(page);
-  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Dados capturados da planilha, por aba');
-  await page.locator('[data-tela="planejamento"]').click();
-  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Peças registradas, semana a semana.');
-  await page.locator('[data-tela="planilha"]').click();
-  assert.equal(await page.locator('.page-heading .subtitle').textContent(),'Dados capturados da planilha, por aba');
+test('U10 título identifica Planilha e Planejamento ao navegar de volta',{skip},async t=>{
+  const page=await abrir(t,1440);await consultarPlanilha(page);assert.equal(await page.locator('#titulo').textContent(),'Planilha');
+  await page.locator('[data-tela="planejamento"]').click();assert.equal(await page.locator('#titulo').textContent(),'Planejamento');
+  await page.locator('[data-tela="planilha"]').click();assert.equal(await page.locator('#titulo').textContent(),'Planilha');
 });
 
 for(const width of [1440,390]) test('U11 escala de 500 peças: navegação, avisos e releitura em '+width, {skip},async t=>{
@@ -1108,9 +1034,9 @@ for(const width of [1440,390]) test('U11 escala de 500 peças: navegação, avis
   assert.equal(view.producoes.length,500);
   assert.equal(await page.locator('#total').textContent(),'500 peças registradas');
   assert.equal(await page.locator('#abrir-sem-data').textContent(),'46 sem data');
-  if(width===1440) await page.getByRole('button',{name:'Lista',exact:true}).click();
+  if(width===1440) await page.getByRole('button',{name:'Semana',exact:true}).click();
   assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
-    view.producoes.map(p=>p.producao_id).sort());
+    view.producoes.filter(p=>p.dataCivil&&p.dataCivil>='2026-09-28'&&p.dataCivil<='2026-10-04').map(p=>p.producao_id).sort());
   await page.locator('#abrir-sem-data').click();
   assert.deepEqual((await page.locator('#lista-sem-data [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
     view.producoes.filter(p=>p.dataCivil===null).map(p=>p.producao_id).sort());
@@ -1118,17 +1044,19 @@ for(const width of [1440,390]) test('U11 escala de 500 peças: navegação, avis
   const naveInicio=performance.now();
   await page.getByRole('button',{name:'Reels',exact:true}).click();
   assert.deepEqual((await page.locator('#lista [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
-    view.producoes.filter(p=>p.formato==='Reels').map(p=>p.producao_id).sort());
+    view.producoes.filter(p=>p.formato==='Reels'&&p.dataCivil&&p.dataCivil>='2026-09-28'&&p.dataCivil<='2026-10-04').map(p=>p.producao_id).sort());
   const trigger=page.locator('#lista [data-producao-id="peca-4"]');await trigger.click();
   assert.deepEqual((await page.locator('#dia .peca-acordeao').evaluateAll(ns=>ns.map(n=>n.dataset.peca))).sort(),
     view.dias.find(d=>d.data==='2026-10-04').ids.slice().sort());
   await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(n=>document.activeElement===n),true);
   if(width===390) await page.locator('#menu').click();
   await page.locator('[data-tela="producao"]').click();
-  const semana=view.quadro.semanas.find(s=>s.semanaId==='semana-01');
   assert.deepEqual((await page.locator('#quadro [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),
-    semana.colunas.flatMap(c=>c.ids).sort());
-  for(const coluna of semana.colunas) assert.equal(await page.locator('#quadro [data-coluna="'+coluna.nome+'"] .quadro-card').count(),coluna.ids.length);
+    view.producoes.map(p=>p.producao_id).sort());
+  for(const semana of view.semanas) {
+    const project=page.locator('.project[data-semana-id="'+(semana.semana_id??'')+'"]');
+    assert.deepEqual((await project.locator('.project-row').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),semana.ids.slice().sort());
+  }
   const navegacaoMs=performance.now()-naveInicio;
   await page.locator('#selo').click();
   const abasInicio=performance.now();
@@ -1175,3 +1103,5 @@ test('U-fase8 cartão com versão inválida não afirma mídia ausente nem perde
   await page.locator('#dia [data-peca="peca-1"] .data-notice a').click();
   assert.match(await page.locator('#avisos-dados').textContent(),/versao.*Inteiro positivo inválido/s);
 });
+
+async function moverMes(page,n) {await page.locator('[data-modo="Mês"]').click();if(n)await page.locator(n>0?'#proximo':'#anterior').click();}
