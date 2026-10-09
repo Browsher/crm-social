@@ -817,6 +817,16 @@ test('P02 formatos vêm do slot, sem mudar tipo original; desconhecido permanece
   assert.deepEqual(view.producoes.map(p=>p.formato),['Imagem','Imagem','Carrossel','Outro']);
   assert.equal(view.producoes[1].tipo_producao,'tipo-original-imagem_b');
 });
+test('P02 imagem_oferta aparece como Imagem sem alterar slot, tipo ou captura', t => {
+  const raw=capturaValida(); mudarCelula(raw,'Produções',1,'slot','imagem_oferta');
+  const original=structuredClone(raw);
+  const view=projetarVisao(estado(raw,t),NOW,mapaQuadroValido());
+  const p=view.producoes.find(p=>p.producao_id==='peca-1');
+  assert.equal(p.formato,'Imagem');
+  assert.equal(p.slot,'imagem_oferta');
+  assert.equal(p.tipo_producao,'tipo-original-imagem_a');
+  assert.deepEqual(raw,original);
+});
 test('P02 datas inválidas/seriais/vazias ficam Sem data, independentemente do mês', t => {
   const raw=capturaValida();
   for (const [i,value] of [[1,'2026-02-30'],[2,46700],[3,''],[4,'2026-10-02T00:00:00Z']]) mudarCelula(raw,'Produções',i,'data_prevista',value);

@@ -28,7 +28,7 @@ function fimSemana(inicio) {
 function ordinal(a,b) { return a<b?-1:a>b?1:0; }
 function planejar(result,origens) {
   const idsSemanas=new Set(result.semanas.map(s=>s.semana_id));
-  const formatos={imagem_a:'Imagem',imagem_b:'Imagem',carrossel:'Carrossel',reels:'Reels'};
+  const formatos={imagem_a:'Imagem',imagem_b:'Imagem',imagem_oferta:'Imagem',carrossel:'Carrossel',reels:'Reels'};
   result.producoes=result.producoes.map(p=>{
     const data=dataCivil(p.data_prevista), semanaId=idsSemanas.has(p.semana_id)?p.semana_id:null;
     if (!data) result.avisos.push({...origens.get(p),campo:'data_prevista',motivo:'Sem data civil válida'});
