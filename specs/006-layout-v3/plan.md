@@ -2,11 +2,11 @@
 
 **Branch**: `codex/006-layout-v3-parte-b` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
 **Input**: especificação única em `specs/006-layout-v3/spec.md`.
-**Estado**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação de execução](validacao.md) preserva código/gate/PNG e adjudicação factual.
+**Estado**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação de execução](validacao.md) preserva código/gate/PNG e adjudicação factual.
 
 ## Execução autorizada nesta rodada — Parte B
 
-O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B está no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. A revisão visual posterior do autor substitui o transporte temporário de Atualizar/selo/feedback para o diálogo: esses nós permanecem somente no topo da página, inerte durante showModal. Releituras recebidas com pop-up aberto mantêm as regras da mesma peça, inclusive atualização iniciada antes da abertura.
+O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B foi aprovada pelo autor e integrada pelo [PR #25](https://github.com/Browsher/crm-social/pull/25), merge c4660d7. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. A revisão visual posterior do autor substitui o transporte temporário de Atualizar/selo/feedback para o diálogo: esses nós permanecem somente no topo da página, inerte durante showModal. Releituras recebidas com pop-up aberto mantêm as regras da mesma peça, inclusive atualização iniciada antes da abertura.
 
 ## Recorte histórico da Parte A
 
@@ -20,7 +20,7 @@ As duas decisões sobre falta de imagem/contador e releitura do pop-up estão em
 
 Trocar a apresentação das três telas pelo desenho v3, preservando a consulta completa, coleta e resolução privada das imagens. Reaproveitar HTML/CSS/JavaScript nativos, gaveta, seleção de mídia e ações de publicação existentes. Separar apenas funções puras de apresentação e o pop-up, pois serão compartilhados pelas telas e verificáveis sem navegador. Não alterar projeção, coleta, snapshot, mapa de etapas ou contratos Google.
 
-A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3.html). A especificação prevalece sobre Dados e avisos, downloads e textos do mockup. A decisão do autor manteve 32 tarefas; A foi aprovada/integrada e B autorizada em 09/10, com PR próprio sem merge.
+A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3.html). A especificação prevalece sobre Dados e avisos, downloads e textos do mockup. A decisão do autor manteve 32 tarefas; A foi aprovada/integrada e B entregue em PR próprio sem merge e posteriormente aprovada/integrada em c4660d7.
 
 ## Technical Context
 
@@ -43,10 +43,10 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 | I Local e simples | PASS documental | PASS documental | mesmo servidor e tecnologia, sem instalação |
 | II Fontes e identidade | Conforme ao contrato de captura | Conforme ao escopo explícito, com trade-off visual documentado | Fonte/cobertura/instante/falhas/IDs/versões/Histórico permanecem na captura/API; UI mostra instante/falha e sinal mínimo Dados a confirmar global/no resumo da peça, sem sucesso aparente. Remoção de tabelas/agentes foi fornecida pelo autor e reiterada em B; detalhes técnicos ficam na API, sem novo estado operacional. |
 | III Papéis | PASS documental | PASS documental | sem execução editorial, nomes técnicos removidos da UI |
-| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, revisão visual código 08ba10b/gate bc74d6e PASS/756 testes, 4 PNG Instagram 08ba10b/16 PNG preservados 800d7ca; push realizado, CI estrito de 1bcb4a8 SUCCESS/Semgrep PASS e revisão independente aprovada, Minor documental corrigido; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Rodadas750/7a0/9e40 são históricas, sem atribuir aprovação à fonte nova |
+| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, revisão visual código 08ba10b/gate bc74d6e PASS/756 testes, 4 PNG Instagram 08ba10b/16 PNG preservados 800d7ca; push realizado, CI estrito a5c964c SUCCESS/Semgrep PASS; revisão independente do delta a5c964c sem achados; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Rodadas750/7a0/9e40 são históricas, sem atribuir aprovação à fonte nova |
 | V Feature única | PASS documental | PASS documental | somente pasta 006, sem design paralelo; desenho já autorizado pelo autor |
 | VI Leitura privada | PASS documental | PASS documental | mesma rota de mídia, mesmos escopos e cache; thumbnails são demanda da tela visível |
-| Governança | Conforme às decisões existentes | Sem emenda ou autorização nova | A integrada após aprovação separada; B autorizada em 09/10, PR #25 sem merge. O pedido explícito prevalece na composição visual; contratos/constituição permanecem. 32 IDs mantidos. |
+| Governança | Conforme às decisões existentes | Sem emenda ou autorização nova | A integrada após aprovação separada; B entregue sem merge, depois aprovada e integrada PR #25/c4660d7. O pedido explícito prevalece na composição visual; contratos/constituição permanecem. 32 IDs mantidos. |
 
 “PASS documental” verifica conformidade do plano, não comportamento executado. O princípio II exige capturas identificáveis e estados honestos, preservados no contrato/API e no selo; a [decisão já fornecida pelo autor](spec.md#decisão-de-apresentação-e-alcance-constitucional-já-fornecidos-pelo-autor) remove a inspeção técnica da interface pessoal, com perda de acesso direto a fonte/cobertura/avisos pela tela. Isso não foi convertido em uma nova resposta de clarify nem em emenda: dados/contratos permanecem e a UI não inventa sincronização: Dados a confirmar preserva visibilidade mínima de avisos globais e por peça, sem tabela/metadados técnicos. Revisão por head deve conferir esse alcance e o trade-off, em vez de inferir conformidade só pela ausência de alteração no backend.
 
@@ -136,7 +136,7 @@ Cinco camadas: funções puras, invariância em arquivos TEMP, integração/deri
 
 A contagem completa é 32 IDs, preservada pelo autor após a parada inicial. T001–T016 e fechamento correspondente T024–T032 pertencem à A autorizada; T017–T023 e fechamento B foram autorizados em 09/10 após aprovação/integração da A. Checkboxes globais T024–T032 só encerram depois de ambas, sem marcar jornadas futuras concluídas.
 
-Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A foi integrada após aprovação explícita; B usa codex/006-layout-v3-parte-b sobre main a5be355, sem merge B. Provas e pendências atuais em validacao.md.
+Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A foi integrada após aprovação explícita; B foi entregue na branch codex/006-layout-v3-parte-b sobre main a5be355, sem merge. A aprovação posterior do autor autorizou sua integração em c4660d7. Provas e fontes por head em validacao.md.
 
 ## Complexity Tracking
 

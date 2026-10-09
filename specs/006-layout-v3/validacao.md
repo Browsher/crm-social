@@ -1,6 +1,6 @@
 # Validação — Layout v3
 
-Como uma nova agenda para as mesmas capturas, a 006 mantém 32/32 tarefas executadas. A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. As fontes de código/gate/PNG e medições abaixo permanecem; históricos conservam seu período.
+Como uma nova agenda para as mesmas capturas, a **006 está concluída e integrada, 32/32 tarefas executadas**. A integrada PR #24; o autor aprovou B e autorizou o merge do PR #25, realizado em **c4660d78c188793dddac3f44f4d42401a3542a83**. CI/review do head aprovado a5c964c e CI da main pós-merge verificados. As fontes de código/gate/PNG, medições e registros pré-merge abaixo permanecem históricos; a restrição de não fazer merge daquela entrega foi cumprida e substituída pela autorização expressa posterior.
 
 ## Parte A — fonte e escopo históricos, anteriores à integração
 
@@ -329,10 +329,18 @@ Push do candidato **1bcb4a8057e29edf78b33f8dbe2f977c15e1face** realizado no PR #
 
 **32 IDs mantidos**, T032 com push/PR/CI verificados desse candidato, mas aberta para o fechamento final; entrega não integrada. [Review remoto automático, execução 37964300621](https://github.com/Browsher/crm-social/actions/runs/37964300621) concluiu posteriormente com **Important I1** (possível perda de foco após releitura com acionador real, ainda a reproduzir) e **Important I2** (nota histórica da interface 001/006), além de observações históricas de web/arquitetura. O coordenador suspendeu o fechamento e vai reproduzir/analisar/corrigir; não se declara aprovação remota ou final. Os resultados de checks/review do **head final** devem ser reconferidos e registrados no corpo do PR, sem atribuir antecipadamente aprovação a um próximo commit documental. Parte B continua sem merge. Este fechamento altera apenas status em Markdown; fontes, gate, screenshots, API/captura/constituição e mapas permanecem.
 
-### Adjudicação factual e fechamento documental
+### Adjudicação factual e fechamento documental — histórico pré-merge
 
 O [review remoto 6085670817](https://github.com/Browsher/crm-social/pull/25#issuecomment-6085670817) foi adjudicado com inspeção e execução focal dos **20 testes existentes reais** de Produção/Publicar/gaveta, POST, Esc/foco e remoção: **20 PASS/0 FAIL/0 SKIP**, exit 0, Node 24.19.0, nenhum arquivo alterado. I1 não se reproduziu: render em app.js:536–552 não recria dia-pecas; a origem da gaveta permanece conectada, conforme testes 141–166. Publicar nos testes 131–138 verifica fallback para #titulo quando a origem desaparece, conforme plan.md:123 e contrato:64/66. Política aprovada e testes foram preservados.
 
 I2 foi resolvido pela nota histórica 001→006 de sete linhas no contrato captura-e-consulta.md da 001; M1, pelos verbos no passado nas funções Planilha de web/arquitetura. A frase nome e sigla sintéticos públicos foi preservada. M2/M3/M4 são sugestões não bloqueantes ou conduta preexistente. Revisão independente confirmou a disposição de I1/I2 sem bloqueante confirmado; Critical 0/Important 0 de código/PNG, Minor documental nome/sigla corrigido. A alegação administrativa de ausência de gate/CI é refutada pelo relatório local e CI atual de 1bcb4a8, com link/log já registrados acima.
 
 **32/32 tarefas executadas**, T029/T032 concluídas; implementação testada/revisada e entrega não integrada no PR #25, sem merge. As verificações de checks/review do **HEAD final** devem ser reconferidas e registradas no corpo do PR; não se declara CI de um futuro SHA. Este fechamento alterou somente status/adjudicação em Markdown, preservando as edições do coordenador, fontes e gate.
+
+## Aprovação do autor e integração da 006
+
+Em 09/10/2026 o autor aprovou B e autorizou merge do PR #25 e fechamento da 006. PR #25 **MERGED em 2026-10-09T17:41:01Z**, merge **c4660d78c188793dddac3f44f4d42401a3542a83**, head aprovado **a5c964c**; main local sincronizada com origin/main. **006 concluída/integrada, 32/32 tarefas**, sem alteração de escopo ou código neste fechamento. A entrega anterior sem merge foi respeitada; a autorização posterior prevalece.
+
+[CI estrito do head aprovado, execução 37966919139/job 113943455733](https://github.com/Browsher/crm-social/actions/runs/37966919139/job/113943455733) SUCCESS, Semgrep PASS, exit 0/baselineUpdated false. [Review remoto final 6086009840](https://github.com/Browsher/crm-social/pull/25#issuecomment-6086009840): Critical 0/Important 0 de código/segurança e Minor não bloqueantes; sua condição de evidência CI foi atendida e registrada pelo coordenador no corpo do PR. Revisão independente do delta a5c964c: Critical 0/Important 0/Minor 0. [CI da main pós-merge 37968006178](https://github.com/Browsher/crm-social/actions/runs/37968006178), head c4660d78c188793dddac3f44f4d42401a3542a83, SUCCESS. Autor do merge confirmado com noreply exigido, sem coautoria.
+
+Este doc-sync atualizou apenas estado em Markdown. Gate local bc74d6e/código 08ba10b, medições e fontes dos quatro PNG novos 08ba10b/dezesseis preservados 800d7ca continuam nas provas acima; não houve nova execução de testes ou gate. Dados operacionais, JSON, PNG, output/, código, contratos históricos e mapas não foram alterados.

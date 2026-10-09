@@ -1,14 +1,14 @@
 # Roadmap — CRM Social local
 
-**Atualização desta rodada — 09/10/2026:** A integrada pelo PR #24 em `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`; B implementada/testada localmente, não integrada. Históricos anteriores preservados.
+**Atualização desta rodada — 09/10/2026:** 006 concluída e integrada, 32/32 tarefas. A PR #24/main a5be355; B aprovada pelo autor e integrada PR #25/merge c4660d78c188793dddac3f44f4d42401a3542a83. Históricos/provas preservados.
 
-## 006 — Layout v3 (Parte A integrada; Parte B revisada/testada localmente)
+## 006 — Layout v3 (concluída e integrada — 32/32 tarefas)
 
 [Spec](specs/006-layout-v3/spec.md), [plano](specs/006-layout-v3/plan.md), [contrato](specs/006-layout-v3/contracts/apresentacao.md), [32 tarefas mantidas](specs/006-layout-v3/tasks.md) e [validação](specs/006-layout-v3/validacao.md).
 
 Parte A: T001–T016 integradas pelo [PR #24](https://github.com/Browsher/crm-social/pull/24), após aprovação do autor em 09/10/2026. Topo único, objetivo recolhível, Semana/Mês e projetos semanais. [12 screenshots históricos da A](docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) preservados; [mockup sanitizado](docs/design/mockups/layout-v3.html) continua referência.
 
-Parte B: B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. Código 08ba10b; quatro PNG Instagram renovados 08ba10b/dezesseis B preservados 800d7ca. [Validação](specs/006-layout-v3/validacao.md) e [galeria](docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b). Revisões/biblioteca permanecem futuras.
+Parte B: B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. Código 08ba10b; quatro PNG Instagram renovados 08ba10b/dezesseis B preservados 800d7ca. [Validação](specs/006-layout-v3/validacao.md) e [galeria](docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b). Revisões/biblioteca permanecem futuras.
 
 Histórico das entregas anteriores: como um álbum que ganha páginas em entregas pequenas, o CRM tem a 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 001 entregue; 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](specs/001-consulta-local-producao/validacao.md). 003 concluída, 15/15 tarefas, com código integrado pelo PR #15; 004 implementada/testada localmente, no [PR #20](https://github.com/Browsher/crm-social/pull/20), com integração condicionada ao gate/review do head vigente. Equipe/Workflow somente v2 ilustrativo. A captura histórica da 001 conserva seu limite de tipagem; a T021 da 002 resolveu a tipagem da coleta direta, mantendo avisos de vínculos/versões distintas e mídia ausente. Evidências sanitizadas na [validação da 002](specs/002-consulta-planilhas/validacao.md).
 

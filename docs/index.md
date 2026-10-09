@@ -1,8 +1,8 @@
 # Documentação
 
-## Feature 006 — Layout v3 (A integrada; B implementada/testada)
+## Feature 006 — Layout v3 (concluída e integrada — 32/32 tarefas)
 
-Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação](../specs/006-layout-v3/validacao.md) registra adjudicação e fontes distintas de código/gate/PNG.
+Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação](../specs/006-layout-v3/validacao.md) registra adjudicação e fontes distintas de código/gate/PNG.
 
 | Documento | Uso |
 | --- | --- |

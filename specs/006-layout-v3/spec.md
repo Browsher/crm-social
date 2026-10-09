@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/006-layout-v3`
 **Created**: 2026-10-08
-**Status**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação](validacao.md) preserva fontes 08ba10b/bc74d6e e PNG divididos 08ba10b/800d7ca.
+**Status**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação](validacao.md) preserva fontes 08ba10b/bc74d6e e PNG divididos 08ba10b/800d7ca.
 **Input**: Pedido do autor em 08/10/2026: reorganizar a apresentação do CRM pessoal em Planejamento, Produção e Publicar, com referência visual aprovada, sem mudar dados/captura ou escrita operacional.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -11,7 +11,7 @@
 
 Escopo integral mantido com 32 tarefas. Parte A: fundação, topo com ⟳ Atualizar, Planejamento Semana/Mês/objetivo em linha e Produção por semana, com regressões dessas telas. Menu intermediário mantém Planejamento, Produção e Planilha; não oferece Publicar ou Ver no Instagram. Planilha e sua consulta/atalhos permanecem funcionais, com o botão de atualização realocado para o topo comum, sem duplicação.
 
-Parte B: pop-up, Publicar, Ver no Instagram na Produção, remoção visual da Planilha e regressões restantes. O autor aprovou A e autorizou seu merge e o início de B em 09/10/2026. Requisitos de menu final/remoção valem para B. B tem PR próprio, gate/review do head final e screenshots, sem merge.
+Parte B: pop-up, Publicar, Ver no Instagram na Produção, remoção visual da Planilha e regressões restantes. O autor aprovou A e autorizou seu merge e o início de B em 09/10/2026. Requisitos de menu final/remoção valem para B. B foi entregue em PR próprio com gate/review/screenshots, sem merge; depois aprovada pelo autor e integrada em c4660d7.
 
 ### Ajustes autorizados — Session 2026-10-09
 
@@ -20,7 +20,7 @@ Parte B: pop-up, Publicar, Ver no Instagram na Produção, remoção visual da P
 
 ### Revisão visual do pop-up — pedido do autor em 2026-10-09
 
-Reproduzir a função abrir e a moldura .phone do mockup aprovado, sem mudar captura, dados, seleção de posições ou navegação. Esta revisão reutiliza os 32 IDs de tarefas da 006, em especial T017–T019 e regressões/fechamento T024–T032, no mesmo PR #25 e sem merge. As provas anteriores continuam históricas; o ajuste exige novo gate/review e quatro screenshots de carrossel (claro/escuro × 1440/390), preservando as outras dezesseis imagens.
+Reproduzir a função abrir e a moldura .phone do mockup aprovado, sem mudar captura, dados, seleção de posições ou navegação. Esta revisão reutiliza os 32 IDs de tarefas da 006, em especial T017–T019 e regressões/fechamento T024–T032, no mesmo PR #25, entregue sem merge antes da autorização posterior de integração. As provas anteriores continuam históricas; o ajuste exige novo gate/review e quatro screenshots de carrossel (claro/escuro × 1440/390), preservando as outras dezesseis imagens.
 
 - Moldura de celular com cerca de 360 px, borda escura de 10 px, cantos de 38 px e fundo preto nos dois temas; em 390 px conserva margem. Fechar fica acima e fora da moldura, dentro do diálogo acessível.
 - Cabeçalho tem avatar circular com a sigla sintética configurada, nome do perfil em negrito, “Prévia · não publicado” abaixo e ⋯ decorativo à direita.
@@ -40,7 +40,7 @@ O trade-off autorizado é deixar fonte detalhada, cobertura e avisos técnicos c
 ### Clarifications — Session 2026-10-08
 
 - Página sem prévia no pop-up mostra “prévia indisponível” naquela posição; o contador conta todas as páginas, inclusive as indisponíveis. Imagem única mantém sua posição 1/1 mesmo sem arquivo; nenhuma página é eliminada para reduzir o contador.
-- ⟳ Atualizar com pop-up aberto mantém o pop-up aberto com a versão nova da mesma peça. Se a peça não existir mais, fecha e devolve o foco. Ao reduzir páginas, limitar o índice ao último existente; falha de releitura conserva a versão já exibida. Estas regras estão implementadas/testadas e a Parte B está entregável no PR #25, não integrada; resultados por fonte/head estão em validacao.md.
+- ⟳ Atualizar com pop-up aberto mantém o pop-up aberto com a versão nova da mesma peça. Se a peça não existir mais, fecha e devolve o foco. Ao reduzir páginas, limitar o índice ao último existente; falha de releitura conserva a versão já exibida. Estas regras estão implementadas/testadas e a Parte B foi aprovada e integrada pelo PR #25 em c4660d7; resultados por fonte/head estão em validacao.md.
 
 ### User Story 1 - Acompanhar semana e mês (Priority: P1)
 
@@ -144,8 +144,8 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 - **FR-026**: Prévia e miniaturas DEVEM reutilizar imagens autorizadas da consulta vigente, permitir falha individual e não expor credenciais ou buscar mídias fora do serviço local existente.
 - **FR-027**: A referência visual aprovada DEVE ser copiada como mockup sanitizado em docs/design/mockups/layout-v3.html e citada em docs/design/telas.md; o pedido escrito prevalece nas divergências da referência.
 - **FR-028**: Testes e evidências DEVEM usar somente fixtures sintéticas, incluindo semana com oferta, carrossel de cinco páginas e Reels travado; nenhuma leitura da operação real é necessária.
-- **FR-029**: Entrega DEVE incluir screenshots das vistas de cada parte nos dois temas e larguras, quality-gate verde e review do head final em dois PRs, um por parte; A foi integrada por autorização explícita posterior, B deve permanecer sem merge. A inclui Semana/Mês/Produção; B inclui Publicar/pop-up e regressões visuais finais.
-- **FR-030**: A contagem gerada é 32, mantida pelo autor após a parada inicial. A foi integrada após aprovação explícita; B foi autorizada em 09/10/2026 e deve ser entregue em PR separado sem merge.
+- **FR-029**: Entrega DEVE incluir screenshots das vistas de cada parte nos dois temas e larguras, quality-gate verde e review do head final em dois PRs, um por parte; A foi integrada por autorização explícita posterior, B foi entregue sem merge e integrada somente após aprovação expressa posterior do autor. A inclui Semana/Mês/Produção; B inclui Publicar/pop-up e regressões visuais finais.
+- **FR-030**: A contagem gerada é 32, mantida pelo autor após a parada inicial. A foi integrada após aprovação explícita; B foi autorizada em 09/10/2026 e foi entregue em PR separado sem merge, antes da autorização expressa posterior de integração.
 
 ### Key Entities *(include if feature involves data)*
 
