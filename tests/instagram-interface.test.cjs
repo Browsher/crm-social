@@ -89,7 +89,15 @@ for(const theme of ['light','dark'])for(const width of [1440,390]) {
     assert.ok(count.x>=media.x+media.width/2&&count.x+count.width<=media.x+media.width&&count.y>=media.y&&count.y+count.height<media.y+50,'contador no alto à direita');
     const dots=await dialog.locator('#instagram-pontos').boundingBox();assert.ok(dots.y>=media.y+media.height-1,'pontos abaixo da arte');
     const actions=dialog.locator('.instagram-actions');assert.equal(await actions.getAttribute('aria-hidden'),'true');
-    for(const icon of ['♡','💬','↗','🔖'])assert.ok((await actions.textContent()).includes(icon),'ícone decorativo '+icon);
+    for(const icon of ['♡','💬','↗'])assert.ok((await actions.textContent()).includes(icon),'ícone decorativo '+icon);
+    assert.doesNotMatch(await actions.textContent(),/🔖/,'salvar usa desenho monocromático');
+    const save=actions.locator('span.instagram-save'),svg=save.locator('svg'),path=svg.locator('path');
+    assert.equal(await save.count(),1);assert.equal(await svg.getAttribute('aria-hidden'),'true');
+    assert.equal(await svg.getAttribute('viewBox'),'0 0 24 24');assert.equal(await path.count(),1);
+    assert.equal(await path.getAttribute('fill'),'none');assert.equal(await path.getAttribute('stroke'),'currentColor');
+    assert.equal(await path.evaluate(n=>getComputedStyle(n).stroke),await save.evaluate(n=>getComputedStyle(n).color),'traço herda a cor única do tema');
+    assert.equal(await actions.locator('button,a,[tabindex]:not([tabindex="-1"])').count(),0,'ícones ficam fora do percurso de teclado');
+    assert.equal(await save.evaluate(n=>{const before=document.activeElement;n.focus();return document.activeElement===before;}),true,'salvar decorativo não recebe foco');
     const caption=dialog.locator('#instagram-legenda-perfil');
     assert.equal(await caption.textContent(),'perfil.exemplo');assert.equal(await caption.evaluate(n=>n.tagName==='STRONG'),true);
     assert.equal(await caption.locator('..').textContent(),'perfil.exemplo Legenda visual sintética');
@@ -102,6 +110,25 @@ for(const theme of ['light','dark'])for(const width of [1440,390]) {
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   });
 }
+for(const theme of ['light','dark'])for(const width of [1440,390])test('Instagram avatar cabe no círculo com siglas de três e quatro letras '+theme+'/'+width,{skip},async t=>{
+  const context=await preparar(t,{theme,width}),{page}=context,fora=[];
+  for(const sigla of ['NTV','DEMO','WWW','WWWW']) {
+    await page.evaluate(value=>{globalThis.CrmPerfil.siglaMarca=value;},sigla);await abrir(context);
+    const avatar=page.locator('#instagram-avatar');assert.equal(await avatar.textContent(),sigla,'sigla permanece literal');
+    const measure=await avatar.evaluate(n=>{
+      const circle=n.getBoundingClientRect(),style=getComputedStyle(n),range=document.createRange();range.selectNodeContents(n);
+      const text=range.getBoundingClientRect(),border=parseFloat(style.borderLeftWidth),folga=2;
+      return {width:text.width,height:text.height,circleWidth:circle.width,circleHeight:circle.height,
+        left:text.left-circle.left-border,right:circle.right-border-text.right,top:text.top-circle.top-border,bottom:circle.bottom-border-text.bottom,
+        cabe:text.left>=circle.left+border+folga-0.5&&text.right<=circle.right-border-folga+0.5&&text.top>=circle.top+border+folga-0.5&&text.bottom<=circle.bottom-border-folga+0.5};
+    });
+    assert.ok(measure.width>0&&measure.height>0,'Range mede o texto visível');
+    assert.ok(Math.abs(measure.circleWidth-measure.circleHeight)<1,'avatar circular conserva proporção');
+    if(!measure.cabe)fora.push({sigla,...measure});
+  }
+  assert.deepEqual(fora,[],'siglas precisam caber com folga horizontal e vertical');
+});
+
 test('Instagram avatar usa sigla configurada, normaliza maiúsculas e recusa controles',{skip},async t=>{
   const context=await preparar(t),{page}=context;await abrir(context);
   assert.equal(await page.locator('#instagram-avatar').count(),1,'avatar de perfil disponível');

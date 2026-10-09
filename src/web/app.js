@@ -29,6 +29,7 @@ function abrirDia(data,ids,semanaId=null) {
   $('#dia').querySelectorAll('.peca-acordeao[open]').forEach(iniciarPrevias);
 }
 function rotuloPauta(pauta) {return 'Pauta S'+pauta.semana+' de '+civil(pauta.mes+'-01',{month:'long'});}
+function pautaComTema(pauta,rotulo) {return rotulo+(preenchido(pauta.tema)?' · '+pauta.tema:'');}
 function origemPauta(week) {return week.pautaOrigem?node('p',rotuloPauta(week.pautaOrigem),'pauta-origin'):null;}
 function origensDoDia(registros,data,semanaId) {
   const semanas=new Set(registros.map(p=>p.semanaId)),pautas=new Set(),origens=[];
@@ -358,7 +359,7 @@ function posicionarSemana() {
   if(rolagemSemanas.has(state.inicioSemana))region.scrollLeft=rolagemSemanas.get(state.inicioSemana);
   else if(today && region.scrollWidth>region.clientWidth) {
     region.scrollLeft+=today.getBoundingClientRect().left-region.getBoundingClientRect().left-(region.clientWidth-today.clientWidth)/2;
-  }
+  } else region.scrollLeft=0;
 }
 function miniatura(p) {
   const box=node('span',undefined,'piece-thumbnail'),posicao=imagensDaPeca(p)[0];
@@ -463,7 +464,7 @@ function projetoSemana(week) {
   const header=node('header',undefined,'project-heading'),title=node('div');
   title.append(node('small',week.periodo.inicio?civil(week.periodo.inicio,{day:'2-digit',month:'short'})+' – '+civil(week.periodo.fim,{day:'2-digit',month:'short'}):(week.semana_id===null?'Sem semana':'Período não identificado')));
   title.append(node('h2',week.tema || 'Tema não informado'));
-  if(week.pautaOrigem)title.append(node('p','S'+week.pautaOrigem.semana+' · '+week.pautaOrigem.tema,'project-topic'));
+  if(week.pautaOrigem)title.append(node('p',pautaComTema(week.pautaOrigem,'S'+week.pautaOrigem.semana),'project-topic'));
   header.append(title,progressoProjeto(pecas));project.append(header,...pecas.map(linhaProjeto));return project;
 }
 function renderProducao() {
@@ -526,8 +527,8 @@ function cabecalhoPlanejamento() {
     civil(state.inicioSemana,{day:'2-digit',month:'long'})+' – '+civil(dataMais(state.inicioSemana,6),{day:'2-digit',month:'long'});
   const semanas=state.view.semanas.filter(w=>layout.segundaDaSemana(w.periodo.inicio)===state.inicioSemana);
   const pauta=(state.view.pautas??[]).find(p=>p.inicio_semana===state.inicioSemana);
-  $('#week-title').textContent=semanas.map(w=>w.pautaOrigem?'S'+w.pautaOrigem.semana+' · '+w.pautaOrigem.tema:w.tema).filter(Boolean).join(' · ') ||
-    (!semanas.length&&pauta?rotuloPauta(pauta)+' · '+pauta.tema:'');
+  $('#week-title').textContent=semanas.map(w=>w.pautaOrigem?pautaComTema(w.pautaOrigem,'S'+w.pautaOrigem.semana):w.tema).filter(Boolean).join(' · ') ||
+    (!semanas.length&&pauta?pautaComTema(pauta,rotuloPauta(pauta)):'');
   $('#week-progress').textContent=progressoTexto(pecasDaSemana().filter(aceito));
   $('#week-title').hidden=mensal;$('#week-progress').hidden=mensal;
   $('#anterior').setAttribute('aria-label',mensal?'Mês anterior':'Semana anterior');

@@ -30,7 +30,12 @@
   }
   function icones() {
     const acoes=el('div');acoes.className='instagram-actions';acoes.setAttribute('aria-hidden','true');
-    for(const icone of ['♡','💬','↗','…','🔖'])acoes.append(el('span',null,icone));
+    for(const icone of ['♡','💬','↗','…'])acoes.append(el('span',null,icone));
+    const salvar=el('span'),svg=document.createElementNS('http://www.w3.org/2000/svg','svg');salvar.className='instagram-save';
+    svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+    const desenho=document.createElementNS('http://www.w3.org/2000/svg','path');
+    desenho.setAttribute('d','M6 3h12v18l-6-4-6 4Z');desenho.setAttribute('fill','none');desenho.setAttribute('stroke','currentColor');
+    desenho.setAttribute('stroke-width','1.7');desenho.setAttribute('stroke-linejoin','round');svg.append(desenho);salvar.append(svg);acoes.append(salvar);
     return acoes;
   }
   function iniciarGesto(tipo,ponto,id) {gesto={tipo,id,x:ponto.clientX,y:ponto.clientY};}

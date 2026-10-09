@@ -392,6 +392,21 @@ test('Layout A Semana móvel começa mostrando hoje e preserva rolagem ao filtra
   assert.equal(await region.evaluate(n=>n.scrollLeft),0,'rolagem escolhida permanece no mesmo período');
 });
 
+for(const theme of ['light','dark'])test('Layout ajustes Semana móvel nova começa no início e retorno conserva memória '+theme,{skip},async t=>{
+  const {page}=await abrirLayout(t,{width:390,theme}),region=page.locator('#lista');
+  const initial=await region.evaluate(n=>n.scrollLeft),today=await page.locator('.planning-day.today').boundingBox(),box=await region.boundingBox();
+  assert.ok(initial>0,'semana inicial posiciona hoje');assert.ok(today.x>=box.x&&today.x+today.width<=box.x+box.width,'hoje permanece visível');
+  await page.locator('#proximo').click();assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-12');
+  assert.equal(await page.locator('.planning-day.today').count(),0);assert.equal(await region.evaluate(n=>n.scrollLeft),0,'semana sem hoje e memória começa na primeira coluna');
+  await region.evaluate(n=>{n.scrollLeft=137;});await page.locator('[data-formato="Imagem"]').click();
+  assert.equal(await region.evaluate(n=>n.scrollLeft),137,'filtro preserva a posição da semana');
+  await page.locator('#proximo').click();assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-19');
+  assert.equal(await region.evaluate(n=>n.scrollLeft),0,'outra semana nova também começa no início');
+  await page.locator('#anterior').click();assert.equal(await region.evaluate(n=>n.scrollLeft),137,'retorno restaura memória desta semana');
+  await page.locator('#anterior').click();assert.equal(await region.evaluate(n=>n.scrollLeft),initial,'retorno conserva a posição inicial de hoje');
+  assert.equal(await page.locator('[data-formato="Imagem"]').getAttribute('aria-pressed'),'true','navegação conserva filtro escolhido');
+});
+
 test('Layout A rolagem volta após atualizar pela Produção',{skip},async t=>{
   const context=await abrirLayout(t,{width:390}),{page}=context,region=page.locator('#lista');
   await region.evaluate(n=>{n.scrollLeft=137;});
@@ -419,6 +434,29 @@ test('Layout A cabeçalho mostra pauta confirmada da semana',{skip},async t=>{
   await page.locator('#proximo').click();
   assert.match(await page.locator('#week-title').textContent(),/S2.*Conexões da próxima semana/);
 });
+
+for(const [nome,tema] of [['vazio',''],['espaços','   ']]) {
+  test('Layout ajustes pauta com tema '+nome+' conserva número sem separador',{skip},async t=>{
+    const {page}=await abrirLayout(t,{editar:raw=>mudarPorId(raw,'Pautas','pauta-outubro-1','tema',tema)});
+    assert.equal(await page.locator('#week-title').textContent(),'S1');
+    await page.locator('#proximo').click();assert.equal(await page.locator('#week-title').textContent(),'S2 · Conexões da próxima semana','tema preenchido conserva separador e texto');
+    await navegar(page,'producao');assert.equal(await page.locator('.project[data-semana-id="semana-01"] .project-topic').textContent(),'S1');
+    assert.equal(await page.locator('.project[data-semana-id="semana-proxima"] .project-topic').textContent(),'S2 · Conexões da próxima semana');
+  });
+  test('Layout ajustes pauta sem semana confirmada e tema '+nome+' conserva rótulo sem separador',{skip},async t=>{
+    const {page}=await abrirLayout(t,{editar:raw=>{
+      mudarPorId(raw,'Pautas','pauta-outubro-3','tema',tema);
+      const table=raw.tables.Semanas,index=table.values[0].indexOf('semana_id');
+      table.values=table.values.filter((row,i)=>!i||row[index]!=='semana-futura');recalcularHashes(raw);
+    }});
+    await page.locator('#proximo').click();await page.locator('#proximo').click();
+    assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-19');
+    assert.equal(await page.locator('#week-title').textContent(),'Pauta S3 de outubro');
+    const view=await (await page.request.get(new URL('/api/visao',page.url()).href)).json();
+    assert.equal(view.semanas.some(w=>w.periodo.inicio==='2026-10-19'),false,'sem semana confirmada nesse período');
+    assert.equal(view.pautas.some(p=>p.pauta_id==='pauta-outubro-3'),true,'pauta continua capturada');
+  });
+}
 
 test('Layout A cabeçalho não confirma pauta pelo início quando a Semana diverge',{skip},async t=>{
   const {page}=await abrirLayout(t,{editar:raw=>{
