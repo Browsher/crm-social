@@ -23,7 +23,7 @@ function preparar(root) {
   raw.capturaId='tema-atual-sintetica';
   redefinirHorario(raw,'2026-10-03T12:00:00.000Z','2026-10-03T12:05:00.000Z');
   assert.equal(promoverCaptura(recalcularHashes(raw),dataDir).resultado,'completa');
-  return criarServidor({dataDir,quadroConfigPath,port:0,atualizar:async()=>({resultado:'sem_alteracao'})});
+  return criarServidor({dataDir,quadroConfigPath,port:0,midia:{obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}},atualizar:async()=>({resultado:'sem_alteracao'})});
 }
 async function capturarContexto(browser,origin,theme,width) {
       const context=await browser.newContext({viewport:{width,height:1050},colorScheme:theme});
@@ -34,13 +34,13 @@ async function capturarContexto(browser,origin,theme,width) {
       await page.clock.setFixedTime(new Date('2026-10-04T12:00:00Z'));
       await page.route('**/*',route=>route.request().url().startsWith(origin+'/')?route.continue():(external.push('requisição externa'),route.abort()));
       await page.goto(origin);
-      await page.locator('#objetivo-mes .month-content').waitFor();
+      await page.locator('#objetivo-toggle:not(:empty)').waitFor();
       assert.equal(await page.locator('html').getAttribute('data-theme'),theme);
       const capture=async name=>{
         await page.screenshot({path:path.join(destination,`tema-${theme}-${name}-${width}.png`),fullPage:name!=='gaveta',animations:'disabled'});
       };
       await capture('planejamento');
-      await page.locator((width===1440?'#calendario':'#lista')+' [data-producao-id="peca-4"]').click();
+      await page.locator('#lista [data-producao-id="peca-4"]').click();
       await capture('gaveta');await page.keyboard.press('Escape');
       for(const [label,name] of [['Produção','producao'],['Planilha','planilha']]) {
         if(width===390)await page.locator('#menu').click();

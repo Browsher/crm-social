@@ -2,6 +2,26 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
+## 006 — Layout v3 Parte A
+
+Doze screenshots do aplicativo, regenerados em 08/10/2026 às 17:41:25–30, mostram Semana, Mês e Produção em claro/escuro e larguras 1440/390. Fonte de código/testes/PNG: `01d772bd66a6116c04d0a52ecd5a311e8afc0bb9`, na branch `codex/006-layout-v3`, baseada em `2be585a`. `layout-v3-light-semana-1440.png` mudou em quatro pixels do contorno das miniaturas e foi inspecionado/aprovado pelo coordenador; onze PNG ficaram idênticos em bytes aos anteriores já aprovados. Rodadas históricas: 4ab855e às 17:17:12–22 (um Semana light/1440 alterado aprovado/onze idênticos); 5725b9f às 16:51:53–58 (quatro Semana novos aprovados/oito idênticos), d996002 às 16:41:45–50 (um alterado aprovado/onze idênticos) e 5ac5d7c às 16:17 (doze inspecionados). Viewports 1440×1050 e 390×844; Produção fullPage. Parte A implementada/testada localmente, não integrada; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado. Revisão independente, CI e review remoto têm resultados registrados por head no PR; aprovação do head final é exigida antes de concluir a entrega. Publicar/perfil/pop-up/Instagram pertencem à B, não iniciada.
+
+| Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Semana | [Abrir](layout-v3-parte-a/layout-v3-light-semana-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-light-semana-390.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-semana-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-semana-390.png) |
+| Mês | [Abrir](layout-v3-parte-a/layout-v3-light-mes-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-light-mes-390.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-mes-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-mes-390.png) |
+| Produção | [Abrir](layout-v3-parte-a/layout-v3-light-producao-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-light-producao-390.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-producao-1440.png) | [Abrir](layout-v3-parte-a/layout-v3-dark-producao-390.png) |
+
+[scripts/screenshots-layout-v3.cjs](../../../scripts/screenshots-layout-v3.cjs) usa [layout-browser.cjs](../../../tests/layout-browser.cjs) e [layout-fixtures.cjs](../../../tests/layout-fixtures.cjs): oferta, carrossel de cinco páginas e Reels travado, PNG 1080×1350 exclusivamente sintéticos. Promove captura apenas em TEMP validado por prefixo, inicia servidor/serviço reais em porta efêmera, usa credencial efêmera e transporte falso de mídia, bloqueia rede externa e verifica erros de página/overflow. Encerra navegador/servidor antes da limpeza restrita do TEMP criado. Não usa CRM, captura ou conta do autor.
+
+Reprodução com Node/Playwright existentes configurados:
+
+```powershell
+& $env:CRM_NODE_PATH scripts/screenshots-layout-v3.cjs
+```
+
+Miniaturas 4:5 usam contain; Semana móvel permite rolar os sete dias, começa em hoje e conserva rolagem visual. Mês não solicita mídia; Produção mostra projetos, passos ou motivo travado, progresso e período/frase da futura vazia. A prova é sintética: não demonstra acesso Google/Instagram, conteúdo de ZIP, aprovação, publicação ou operação editorial. [Validação e gate local](../../../specs/006-layout-v3/validacao.md). As galerias seguintes preservam as provas históricas das 001–005. Os geradores vigentes usam o aplicativo atual da 006; executá-los hoje reproduz essa UI, sem reconstruir automaticamente o código antigo. Para reproduzir uma imagem histórica, usar o checkout da fonte documentada naquela galeria; os PNG históricos versionados conservam suas fontes antigas.
+
 ## 005 — Prévias de imagens
 
 Doze PNG sintéticos atualizados em 08/10/2026 mostram galeria, imagem ampliada e falha localizada em Pronta, nos temas claro/escuro e larguras 1440/390. Fonte do código/testes/PNGs: `452197514b8d10a14bcc466e8bc83bfdfb601e95`; o coordenador inspecionou todos. As cinco páginas têm texto v3 e imagens v2/v1/v1/v2/v3, geradas por [previas-fixtures.cjs](../../../tests/previas-fixtures.cjs) como PNG 1080×1350. Miniaturas usam caixas 4:5 com contain; a ampliação mantém a imagem inteira, proporcional e centralizada, sem corte inferior. Não há conteúdo real. Este conjunto substitui os 12 PNG anteriores da fonte `392e109`; a rodada original permanece histórica na validação.

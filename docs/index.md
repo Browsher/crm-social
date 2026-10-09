@@ -1,10 +1,30 @@
 # Documentação
 
+## Feature 006 — Layout v3 (Parte A implementada/testada, não integrada)
+
+Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 concluídas na main conforme o autor. O escopo mantém 32 tarefas em duas partes autorizadas. T001–T016 verificadas na A; T017–T023 e fechamento B não iniciados, aguardando ok explícito na A. A mantém Planilha e entrega topo/objetivo/Semana/Mês/projetos; gate oficial final Windows da fonte de código/testes/PNG 01d772b passou (680 PASS); [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado após commits/push. Revisão independente, CI e review remoto têm acompanhamento/resultados no PR por head, com aprovação exigida no head final antes de concluir a entrega. Sem merge. Provas antigas abaixo permanecem históricas.
+
+| Documento | Uso |
+| --- | --- |
+| [Spec](../specs/006-layout-v3/spec.md) | Quatro jornadas, requisitos, aceite, bordas e assunções |
+| [Plano](../specs/006-layout-v3/plan.md) | Solução de apresentação e fronteira de execução |
+| [Pesquisa](../specs/006-layout-v3/research.md) | Reuso, acoplamentos, alternativas e Context7 |
+| [Modelo](../specs/006-layout-v3/data-model.md) | Derivados temporários sem mudança de captura |
+| [Contrato](../specs/006-layout-v3/contracts/apresentacao.md) | Estados/bloqueios, progresso, fila, mídia, perfil e foco |
+| [Tarefas](../specs/006-layout-v3/tasks.md) | 32 IDs, execução A/B e fechamento por recorte |
+| [Quickstart sintético](../specs/006-layout-v3/quickstart.md) | Reprodução da Parte A e cenários futuros da B separados |
+| [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
+| [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate oficial Windows, fonte 01d772b: 680 PASS, cobertura 95,5492%, baseline preservada |
+| [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
+| [Checklist](../specs/006-layout-v3/checklists/requirements.md) | Revisão de completude anterior ao plano |
+| [Mockup sanitizado](design/mockups/layout-v3.html) | Referência aprovada, não aplicativo |
+| [Decisões das telas](design/telas.md) | Precedência do pedido sobre divergências do mockup |
+
 Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](../specs/001-consulta-local-producao/validacao.md). A captura histórica da 001 mantém seu limite; tipagem da coleta direta resolvida na T021, com categorias remanescentes na validação da 002. A 003 está concluída, 15/15 tarefas; demonstração pelo CRM conferida com uma linha fictícia marcada como teste, sem publicar conteúdo.
 
 ## Ordem de leitura
 
-Estado atual em 08/10/2026: versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`; [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). Pronta integrada pelo PR #21; 001–004 concluídas na main conforme o autor. Trabalho atual: [005 — Prévias de imagens](#feature-005--prévias-de-imagens), implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. As 21 tarefas foram aprovadas pelo autor em 08/10 após a parada inicial e estão concluídas; T002 confirmada pelo autor nessa data, sem teste de acesso real pelo agente. Constituição 1.2.0 aplicada na branch. [Evidência, entrega e checks/review por fonte](../specs/005-previas-imagens/validacao.md). Os demais registros preservam as rodadas e numeração históricas.
+**Histórico das entregas anteriores à 006:** Estado em 08/10/2026: versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`; [validação](reports/versoes-unidades-validacao.md) e [galeria sintética](design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas). Pronta integrada pelo PR #21; 001–004 concluídas na main conforme o autor. Trabalho atual: [005 — Prévias de imagens](#feature-005--prévias-de-imagens), implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. As 21 tarefas foram aprovadas pelo autor em 08/10 após a parada inicial e estão concluídas; T002 confirmada pelo autor nessa data, sem teste de acesso real pelo agente. Constituição 1.2.0 aplicada na branch. [Evidência, entrega e checks/review por fonte](../specs/005-previas-imagens/validacao.md). Os demais registros preservam as rodadas e numeração históricas.
 
 Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-planejamento/spec.md), implementada/testada localmente; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação e limites](../specs/004-pautas-planejamento/validacao.md).
 
@@ -41,9 +61,10 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
 | [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/pacote de publicação/quadro e cópias dos mínimos/opcionais capturados para seis tabelas e Meses/Pautas opcionais; origem semanal e Histórico confirmado |
 | [Pautas](modules/pautas.md) | src/pautas.cjs; identidade/calendário, duplicatas e origem semanal por ID/marca/início, sem inferência ou I/O |
-| [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, mídia por ID interno, quatro estáticos e guardas de origem |
+| [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, mídia por ID interno, cinco estáticos explícitos e guardas de origem |
 | [Iniciador Windows](modules/iniciador.md) | Abrir CRM.cmd por duplo clique, reabertura por GET local e sucesso sem pause; Iniciar CRM.ps1, Node existente, processo oculto, confirmação, retorno e logs privados |
-| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; calendário/lista/filtros, gaveta compacta, quadro, seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça, Pronta com pacote/legenda/cópia local e tema claro/escuro local; galeria sob demanda, ampliação e fallback005 |
+| [Modelo visual](modules/layout-model.md) | src/web/layout-model.js; seis funções puras compartilhadas pela Parte A |
+| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; Parte A com Semana/Mês/projetos/topo, gaveta compacta, Planilha preservada e histórico 001–005; seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça, Pronta com pacote/legenda/cópia local e tema claro/escuro local; galeria sob demanda, ampliação e fallback005 |
 
 ## Feature 001 canônica
 

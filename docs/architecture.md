@@ -6,7 +6,9 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-Trabalho atual **005 — Prévias de imagens**, implementado/testado localmente em 08/10/2026, no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Acrescenta mídia sob demanda pelo servidor, cache privado e galeria/ampliação na gaveta. O autor aprovou as 21 tarefas após a parada inicial; 21/21 concluídas. T002 confirmada pelo autor em 08/10/2026: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. [Validação por fonte e checks/review da entrega](../specs/005-previas-imagens/validacao.md). Versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review; Pronta já integrada pelo PR #21. O registro da 004 na introdução preserva sua rodada histórica.
+A 006 Parte A está implementada/testada localmente, não integrada. Acrescenta o [modelo visual puro](modules/layout-model.md), topo com Atualizar único, Semana/Mês e Produção por projetos. Planilha/atalhos e API completa permanecem. Parte B (perfil/pop-up/Instagram/Publicar e remoção de Planilha) aguarda ok explícito na A. A única mudança do servidor é o estático /layout-model.js; captura/projeção/coleta/cache/constituição/configuração/CI/gate e dependências permanecem. [Validação e limites](../specs/006-layout-v3/validacao.md).
+
+**Histórico da entrega 005:** **005 — Prévias de imagens**, implementado/testado localmente em 08/10/2026, no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Acrescenta mídia sob demanda pelo servidor, cache privado e galeria/ampliação na gaveta. O autor aprovou as 21 tarefas após a parada inicial; 21/21 concluídas. T002 confirmada pelo autor em 08/10/2026: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. [Validação por fonte e checks/review da entrega](../specs/005-previas-imagens/validacao.md). Versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review; Pronta já integrada pelo PR #21. O registro da 004 na introdução preserva sua rodada histórica.
 
 ```mermaid
 flowchart LR
@@ -16,6 +18,17 @@ flowchart LR
   Iniciador["Iniciar CRM.ps1"] -->|Node existente, processo oculto| Server
   CLI["scripts/importar-captura.cjs"] --> Snapshot["src/snapshot.cjs"]
   subgraph Evidencia["Ferramenta sintética de evidência: somente TEMP"]
+    ScreenshotsLayout["scripts/screenshots-layout-v3.cjs"] --> LayoutBrowser["tests/layout-browser.cjs"]
+    LayoutBrowser --> LayoutFixtures["tests/layout-fixtures.cjs"]
+    LayoutBrowser --> Fixtures
+    LayoutBrowser --> Snapshot
+    LayoutBrowser --> Google
+    LayoutBrowser --> Midia
+    LayoutFixtures --> Fixtures
+    LayoutFixtures --> FixturesPrevias["tests/previas-fixtures.cjs"]
+    LayoutFixtures --> FixturesPautas
+    LayoutFixtures --> FixturesPronta["tests/pronta-fixtures.cjs"]
+    LayoutBrowser -->|TEMP, porta efêmera, transporte de mídia falso| Server
     Screenshots["scripts/screenshots-tema.cjs"] --> Fixtures["tests/fixtures.cjs"]
     ScreenshotsPautas["scripts/screenshots-pautas.cjs"] --> FixturesPautas["tests/pautas-fixtures.cjs"]
     ScreenshotsPautas --> Fixtures
@@ -25,6 +38,8 @@ flowchart LR
   Screenshots -->|cria servidor isolado, porta efêmera| Server
   ScreenshotsPautas -->|promove somente fixtures em TEMP| Snapshot
   ScreenshotsPautas -->|cria servidor isolado, porta efêmera| Server
+  Screenshots -->|mídia falsa 503, sem cliente Google| Server
+  ScreenshotsPautas -->|mídia falsa 503, sem cliente Google| Server
   Snapshot --> Captura["src/captura.cjs"]
   Snapshot --> Triagem["src/triagem.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
@@ -59,6 +74,8 @@ flowchart LR
   System["prefers-color-scheme"] --> Theme
   Theme -->|data-theme| CSS
   HTML --> CSS["/styles.css"]
+  HTML -->|defer antes de app.js| LayoutModel["/layout-model.js"]
+  JS -->|seis funções puras| LayoutModel
   JS -->|GET /api/visao, POST /api/atualizar e img local /api/midia/ID| Server
   Snapshot --> FS["node:fs / node:path"]
   Captura --> Crypto["node:crypto"]
@@ -78,9 +95,10 @@ flowchart LR
 | google | Configuração externa, JWT RS256 com scope por finalidade, tokens separados em RAM; Sheets tipado e Drive binário limitado | [Google](modules/google.md) |
 | midia | Resolve arquivo no snapshot NTV vigente, confere bytes/hash, cache privado e fingerprint final; cliente Drive lazy | [Mídia](modules/midia.md) |
 | coleta | Duas leituras de seis grades e Meses/Pautas quando existem, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
-| servidor | HTTP local com seis rotas fixas, quatro estáticos e rota dinâmica restrita de mídia; Host/Origin, Sec-Fetch-Site na mídia e respostas resumidas | [Servidor](modules/servidor.md) |
+| servidor | HTTP local com rotas existentes, cinco estáticos explícitos e rota dinâmica restrita de mídia; Host/Origin, Sec-Fetch-Site na mídia e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Entrada Abrir CRM.cmd por duplo clique, reconhecimento de instância existente por GET local; Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| web | Planejamento/calendário/lista/filtros, Produção, Planilha e gaveta; Pautas, Pronta, tema e galeria local sob demanda com ampliação/fallback | [Interface](modules/web.md) |
+| layout-model | Seis funções puras de estado/travamento/progresso/seleção de imagens/datas/ordem, sem I/O ou mutação | [Modelo visual](modules/layout-model.md) |
+| web | Parte A com Semana/Mês/objetivo/projetos, topo único, Planilha/atalhos e gaveta; Pautas, Pronta, tema, miniaturas visíveis e galeria/ampliação | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -192,6 +210,8 @@ Por decisão do autor, a triagem em texto livre e recibo substitui somente peda�
 Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-consulta-local-producao/quickstart.md). O [iniciador](modules/iniciador.md) confirma a linha de início do Node em até dez segundos, retorna PID/URL/logDir/orientação de encerramento e mantém logs em `<DataDir>/runtime/`. Em erro encerra somente o filho criado por sua chamada; nunca o ocupante da porta. A 001 foi demonstrada com captura oficial; a leitura direta da 002 foi demonstrada na T021 e preserva os campos/identidades do [contrato](../specs/001-consulta-local-producao/contracts/captura-e-consulta.md); hashes coerentes de fixture não comprovam coleta real.
 
 ## O que já aparece e o que falta
+
+A Parte A substituiu calendário/lista de entrada e quadro técnico por Semana/Mês e projetos. O selo continua levando à Planilha, mantida nesta parte, e Atualizar está no topo comum. Miniaturas das peças visíveis também pedem mídia local; gaveta mantém seleção/versões/conteúdo e retirou responsáveis/ferramentas da apresentação. O restante desta seção conserva a implementação histórica 001–005; o módulo web descreve o recorte vigente.
 
 Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” global, objetivo/pautas do mês exibido em Meses opcional, estados indefinido/A confirmar e gaveta do dia inteiro em acordeões. Peça remarcada segue sua data civil no mês e continua agrupada pela semana registrada. Seis status literais recebem rótulos legíveis só na UI; desconhecidos e API mantêm o original. Mês usa somente inicial maiúscula; calendário inclui apenas semanas com dia do mês e sidebar desktop acompanha a altura da página. Desktop usa calendário; 390 px começa em lista e menu recolhido. [Screenshots](design/screenshots/LEIA-ME.md) são da aplicação com dados fictícios.
 

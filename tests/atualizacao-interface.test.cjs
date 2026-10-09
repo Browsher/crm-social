@@ -13,7 +13,7 @@ async function abrir(t,width,fixture=capturaValida,proxima=capturaValida){
   const root=temporario(t),dataDir=path.join(root,'dados'),map=path.join(root,'mapa.json');
   fs.writeFileSync(map,JSON.stringify(mapaQuadroValido()));promoverCaptura(fixture(),dataDir);
   let release,mode='sucesso',calls=0,warning=false;
-  const server=criarServidor({dataDir,port:0,quadroConfigPath:map,atualizar:()=>atualizarCaptura(dataDir,async()=>{
+  const server=criarServidor({dataDir,port:0,quadroConfigPath:map,midia:{obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}},atualizar:()=>atualizarCaptura(dataDir,async()=>{
     calls++;await new Promise(r=>{release=r;});if(mode==='falha')throw falha('rede');
     const raw=proxima();raw.source='google-sheets-api';raw.capturaId='direta-interface-'+calls;
     if(mode==='desatualizada')return raw;

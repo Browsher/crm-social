@@ -10,7 +10,7 @@ const skip=process.env.CI==='true'?'Interface exclusiva do computador; Playwrigh
 async function abrir(t,{width=390,theme='light',editar=()=>{}}={}) {
   const dir=temporario(t),raw=capturaVersoes();editar(raw);
   assert.equal(promoverCaptura(recalcularHashes(raw),dir).resultado,'completa');
-  const server=criarServidor({dataDir:dir,port:0});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  const server=criarServidor({dataDir:dir,port:0,midia:{obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}}});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   let browser;
   t.after(async()=>{try{if(browser)await browser.close();}finally{await new Promise(resolve=>server.close(resolve));}});
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE||'playwright');browser=await chromium.launch();
@@ -23,10 +23,10 @@ async function abrir(t,{width=390,theme='light',editar=()=>{}}={}) {
     return request.url().startsWith(origin+'/')?route.continue():route.abort();
   });
   t.after(()=>{assert.deepEqual(errors,[]);assert.ok(requests.every(r=>r.startsWith('GET ')));});
-  await page.goto(origin);await page.locator('#objetivo-mes .month-content').waitFor();
+  await page.goto(origin);await page.locator('#objetivo-toggle:not(:empty)').waitFor();
   if(width===390)await page.locator('#menu').click();
   await page.getByRole('button',{name:'Produção',exact:true}).click();
-  await page.locator('#quadro [data-coluna="Pronta"] [data-producao-id="peca-3"]').click();
+  await page.locator('#quadro [data-producao-id="peca-3"]').click();
   const p=page.locator('#dia [data-peca="peca-3"]');
   await p.locator('details[data-detalhes-producao]>summary').click();
   return {page,p};

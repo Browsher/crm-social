@@ -12,7 +12,7 @@ async function abrir(t,{width=1440,scheme='light',raw=capturaPautas(),depois=()=
   const root=temporario(t),dataDir=path.join(root,'dados'),quadroConfigPath=path.join(root,'quadro.json');
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroValido()));
   assert.equal(promoverCaptura(raw,dataDir).resultado,'completa');depois(dataDir);
-  const server=criarServidor({dataDir,quadroConfigPath,port:0,atualizar:atualizar?()=>atualizar(dataDir):async()=>({resultado:'sem_alteracao'})});
+  const server=criarServidor({dataDir,quadroConfigPath,port:0,midia:{obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}},atualizar:atualizar?()=>atualizar(dataDir):async()=>({resultado:'sem_alteracao'})});
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   const origin='http://127.0.0.1:'+server.address().port;
   const {chromium}=require(process.env.CRM_PLAYWRIGHT_MODULE||'playwright'),browser=await chromium.launch();
@@ -24,7 +24,7 @@ async function abrir(t,{width=1440,scheme='light',raw=capturaPautas(),depois=()=
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',route=>route.request().url().startsWith(origin+'/')?route.continue():(external.push(route.request().url()),route.abort()));
   t.after(()=>{assert.deepEqual(external,[]);assert.deepEqual(errors,[]);});
-  await page.goto(origin);await page.locator('#objetivo-mes .month-content').waitFor();
+  await page.goto(origin);await page.locator('#objetivo-toggle:not(:empty)').waitFor();await page.locator('#objetivo-toggle').click();
   return page;
 }
 async function contraste(page) {
@@ -50,19 +50,16 @@ for(const width of [1440,390])for(const scheme of ['light','dark'])test('U004 ca
   assert.match(await card.textContent(),/Objetivo mensal sintético/);
   assert.equal(await card.locator('.pauta-link').count(),4);
   const lines=await card.locator('.pauta-link').allTextContents();
-  for(let i=0;i<4;i++)assert.match(lines[i],new RegExp('S'+(i+1)+' · Tema sintético '+(i+1)+' · cabo · Planejada'));
-  assert.equal(await card.locator('.pauta-author').count(),1);
-  assert.match(await card.locator('li').filter({hasText:'do autor'}).textContent(),/S2/);
+  for(let i=0;i<4;i++)assert.match(lines[i],new RegExp('S'+(i+1)+' · Tema sintético '+(i+1)+' · cabo'));
+  assert.equal(await card.locator('.pauta-author').count(),0);
   assert.doesNotMatch(await card.textContent(),/Resumo textual sintético/);
   await contraste(page);
   for(const [index,date] of [[0,'2026-11-02'],[1,'2026-11-09'],[2,'2026-11-16'],[3,'2026-11-23']]) {
     const link=card.locator('.pauta-link').nth(index);await link.focus();await page.keyboard.press(index%2?'Space':'Enter');
-    const target=page.locator((width===1440?'#calendario .day':'#lista .agenda-week')+'[data-inicio-semana="'+date+'"]');
-    assert.equal(await target.isVisible(),true);assert.equal(await target.evaluate(n=>document.activeElement===n),true);
-    assert.match(await target.getAttribute('aria-label'),/Semana de/);
+    const target=page.locator('#lista');assert.equal(await target.isVisible(),true);
+    assert.equal(await target.locator('.planning-day').first().getAttribute('data-data'),date);assert.equal(await target.evaluate(n=>document.activeElement===n),true);
   }
-  if(width===1440)await page.getByRole('button',{name:'Lista',exact:true}).click();
-  assert.match(await page.locator('#lista .pauta-origin').textContent(),/Pauta S2 de novembro/);
+  await card.locator('.pauta-link').nth(1).click();assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
   await contraste(page);
   await page.locator('#lista [data-producao-id="peca-1"]').click();
   assert.deepEqual(await page.locator('#dia-pecas .pauta-origin').allTextContents(),['Pauta S2 de novembro']);
@@ -76,37 +73,20 @@ test('U004 calendário e gaveta reúnem todas as origens únicas do dia, sem inf
   mudarCelula(raw,'Produções',3,'semana_id','semana-2');mudarCelula(raw,'Produções',3,'data_prevista','2026-11-10');
   mudarCelula(raw,'Produções',4,'semana_id','semana-orfa');mudarCelula(raw,'Produções',4,'data_prevista','2026-11-10');
   const page=await abrir(t,{raw});
-  assert.deepEqual(await page.locator('#calendario .pauta-origin').allTextContents(),['Pauta S2 de novembro','Pauta S3 de novembro']);
-  await page.getByRole('button',{name:'10 de novembro',exact:true}).click();
+  await page.locator('.planning-day[data-data="2026-11-10"] .planning-day-heading').click();
   assert.deepEqual(await page.locator('#dia-pecas .pauta-origin').allTextContents(),['Pauta S2 de novembro','Pauta S3 de novembro']);
   await page.keyboard.press('Escape');await page.locator('#selo').click();
   assert.match(await page.locator('#avisos-tabela').textContent(),/Semanas.*pauta_id/s);
 });
 
-for(const width of [1440,390])for(const scheme of ['light','dark'])test('U004 semana destacada na lista conserva folga e texto integral '+width+' '+scheme,{skip},async t=>{
-  const page=await abrir(t,{width,scheme});
-  if(width===1440)await page.getByRole('button',{name:'Lista',exact:true}).click();
-  const week=page.locator('#lista [data-inicio-semana="2026-11-09"]');
-  const before=await week.evaluate(n=>({width:n.offsetWidth,height:n.offsetHeight,padding:getComputedStyle(n).padding}));
-  await page.locator('#objetivo-mes .pauta-link').nth(1).focus();await page.keyboard.press('Enter');
-  assert.equal(await week.evaluate(n=>document.activeElement===n),true,'A navegação conserva o foco na semana');
-  assert.equal(await week.locator('header small').textContent(),'09 de nov. – 15 de nov.');
-  assert.equal(await week.locator('.pauta-origin').textContent(),'Pauta S2 de novembro');
-  const layout=await week.evaluate(n=>{
-    const style=getComputedStyle(n),box=n.getBoundingClientRect();
-    const texts=[...n.querySelectorAll('header h3,header small,.pauta-origin')].map(child=>{
-      const range=document.createRange();range.selectNodeContents(child);
-      return {text:child.textContent,rects:[...range.getClientRects()].map(r=>({left:r.left-box.left,right:box.right-r.right,top:r.top-box.top,bottom:box.bottom-r.bottom}))};
-    });
-    return {width:n.offsetWidth,height:n.offsetHeight,padding:style.padding,left:parseFloat(style.paddingLeft),right:parseFloat(style.paddingRight),
-      outline:parseFloat(style.outlineWidth),peers:[...n.parentElement.querySelectorAll('.agenda-week')].filter(p=>p!==n).map(p=>getComputedStyle(p).padding),texts};
-  });
-  assert.deepEqual({width:layout.width,height:layout.height,padding:layout.padding},before,'Focar não desloca nem redimensiona a semana');
-  assert.ok(layout.left>=8&&layout.right>=8,'Todas as semanas reservam folga interna para título, origem e data');
-  assert.ok(layout.left>layout.outline&&layout.right>layout.outline,'A moldura de foco não cobre o conteúdo');
-  assert.ok(layout.peers.length>0&&layout.peers.every(p=>p===layout.padding),'A semana destacada usa o mesmo espaçamento das demais');
-  for(const text of layout.texts)for(const rect of text.rects)assert.ok(rect.left>=layout.left-.5&&rect.right>=layout.right-.5&&rect.top>=layout.outline&&rect.bottom>=layout.outline,'Texto integral dentro da moldura: '+text.text);
-  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Página sem corte horizontal');
+for(const width of [1440,390])for(const scheme of ['light','dark'])test('U004 semana focada conserva região e texto integral '+width+' '+scheme,{skip},async t=>{
+  const page=await abrir(t,{width,scheme}),week=page.locator('#lista');
+  const before=await week.boundingBox();await page.locator('.pauta-link').nth(1).focus();await page.keyboard.press('Enter');
+  assert.equal(await week.evaluate(n=>document.activeElement===n),true);
+  assert.equal(await week.locator('.planning-day').first().getAttribute('data-data'),'2026-11-09');
+  assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
+  const after=await week.boundingBox();assert.equal(after.width,before.width);assert.equal(after.height,before.height);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await contraste(page);
 });
 
 test('U004 semana atravessando mês conserva origem e não cria pauta no mês seguinte',{skip},async t=>{
@@ -114,9 +94,8 @@ test('U004 semana atravessando mês conserva origem e não cria pauta no mês se
   adicionarPautas(raw,[{...row,pauta_id:'pauta-setembro-4',mes:'2026-09',semana:4,inicio_semana:'2026-09-28'}]);
   mudarCelula(raw,'Semanas',1,'inicio_semana','2026-09-28');mudarCelula(raw,'Semanas',1,'pauta_id','pauta-setembro-4');
   for(let i=1;i<=4;i++)mudarCelula(raw,'Produções',i,'data_prevista','2026-10-02');
-  const page=await abrir(t,{width:390,raw});await page.getByRole('button',{name:'Mês anterior',exact:true}).click();
-  assert.equal(await page.locator('#objetivo-mes .pauta-link').count(),0);
-  assert.equal(await page.locator('#lista .pauta-origin').textContent(),'Pauta S4 de setembro');
+  const page=await abrir(t,{width:390,raw});await page.locator('[data-modo="Mês"]').click();await page.locator('#anterior').click();
+  await page.locator('#calendario [data-inicio-semana="2026-09-28"]').click();assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-09-28');
   await page.locator('#lista [data-producao-id="peca-1"]').click();
   assert.equal(await page.locator('#dia-pecas .pauta-origin').textContent(),'Pauta S4 de setembro');
 });
@@ -126,9 +105,9 @@ test('U004 fallback 003 preserva resumo, duplicata e objetivo indefinido sem aç
   adicionarPautas(raw,[]);const page=await abrir(t,{raw,width:390}),card=page.locator('#objetivo-mes');
   assert.deepEqual(await card.locator('li').allTextContents(),['A','B','C','D','E']);
   assert.equal(await card.locator('.more-topics').textContent(),'+1 pauta');
-  assert.equal(await card.locator('a,button').count(),0);
-  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();assert.match(await card.textContent(),/A confirmar/);
-  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();assert.match(await card.textContent(),/Ainda não definido/);
+  assert.equal(await card.locator('#pautas-mes a,#pautas-mes button').count(),0);
+  await page.locator('[data-modo="Mês"]').click();await page.locator('#proximo').click();assert.match(await card.textContent(),/A confirmar/);
+  await page.locator('[data-modo="Mês"]').click();await page.locator('#proximo').click();assert.match(await card.textContent(),/Ainda não definido/);
 });
 
 test('U004 Pautas sem Meses conserva texto literal, tabela completa, teclado e releitura',{skip},async t=>{
@@ -164,19 +143,18 @@ test('U004 vocabulários desconhecidos são texto da fonte e não viram rótulos
   const raw=capturaPautas();mudarCelula(raw,'Pautas',1,'status','constructor');mudarCelula(raw,'Pautas',1,'modelo_carrossel','modelo de teste');
   mudarCelula(raw,'Pautas',1,'origem','Autor');mudarCelula(raw,'Produções',1,'data_prevista','');
   const page=await abrir(t,{raw,width:390});
-  assert.match(await page.locator('.pauta-link').first().textContent(),/modelo de teste · constructor/);
-  assert.equal(await page.locator('.pauta-author').count(),1);
+  assert.match(await page.locator('.pauta-link').first().textContent(),/modelo de teste/);
+  assert.equal(await page.locator('.pauta-author').count(),0);assert.doesNotMatch(await page.locator('.pauta-link').first().textContent(),/constructor/);
+  const view=await (await page.request.get(new URL('/api/visao',page.url()).href)).json();assert.equal(view.pautas[0].status,'constructor');
   await page.locator('#abrir-sem-data').click();await page.locator('#lista-sem-data [data-producao-id="peca-1"]').click();
   assert.deepEqual(await page.locator('#dia-pecas .pauta-origin').allTextContents(),['Pauta S2 de novembro']);
 });
 
-test('U004 destino semanal acessível identifica a segunda sem renomear outros dias',{skip},async t=>{
-  const page=await abrir(t);
-  const terca=page.getByRole('button',{name:'10 de novembro',exact:true}).locator('..');
-  assert.equal(await terca.getAttribute('aria-label'),null);
-  await page.locator('.pauta-link').nth(1).click();
-  const semana=page.getByRole('group',{name:'Semana de 9 de novembro de 2026',exact:true});
-  assert.equal(await semana.evaluate(n=>document.activeElement===n),true);
+test('U004 destino semanal acessível identifica sete dias e devolve foco à região',{skip},async t=>{
+  const page=await abrir(t);await page.locator('.pauta-link').nth(1).click();
+  assert.equal(await page.locator('#lista').getAttribute('role'),'region');
+  assert.equal(await page.locator('#lista').evaluate(n=>document.activeElement===n),true);
+  assert.equal(await page.locator('.planning-day').count(),7);
 });
 
 test('U004 dia vazio usa só origem confirmada da semana capturada que cobre a data',{skip},async t=>{
@@ -184,7 +162,10 @@ test('U004 dia vazio usa só origem confirmada da semana capturada que cobre a d
   adicionarRegistro(raw,'Semanas',{semana_id:'semana-orfa',marca_id:'ntv',inicio_semana:'2026-11-23',tema:'Órfã',pauta_id:'pauta-ausente'});
   const page=await abrir(t,{raw});
   for(const [dia,origens] of [[9,['Pauta S2 de novembro']],[15,['Pauta S2 de novembro']],[8,[]],[16,[]],[23,[]]]) {
-    await page.getByRole('button',{name:dia+' de novembro',exact:true}).click();
+    await page.locator('[data-modo="Mês"]').click();const date='2026-11-'+String(dia).padStart(2,'0');
+    const start=new Date(date+'T12:00:00Z');start.setUTCDate(start.getUTCDate()-((start.getUTCDay()+6)%7));
+    await page.locator('#calendario [data-inicio-semana="'+start.toISOString().slice(0,10)+'"]').click();
+    await page.locator('.planning-day[data-data="'+date+'"] .planning-day-heading').click();
     assert.deepEqual(await page.locator('#dia-pecas .pauta-origin').allTextContents(),origens,'Origem do dia '+dia);
     assert.equal(await page.locator('#dia-quantidade').textContent(),'0 peças registradas');
     assert.match(await page.locator('#dia-pecas').textContent(),/Nenhuma peça registrada neste dia/);
@@ -193,31 +174,24 @@ test('U004 dia vazio usa só origem confirmada da semana capturada que cobre a d
   }
 });
 
-test('U004 captura antiga preserva ordem física das semanas na lista e em Sem data',{skip},async t=>{
-  const raw=capturaValida();
-  mudarCelula(raw,'Semanas',1,'inicio_semana','2026-11-16');mudarCelula(raw,'Semanas',1,'tema','Semana física A');
+test('U004 captura antiga preserva todas as peças sem data e semanas na API',{skip},async t=>{
+  const raw=capturaValida();mudarCelula(raw,'Semanas',1,'inicio_semana','2026-11-16');
   adicionarRegistro(raw,'Semanas',{semana_id:'semana-invalida',marca_id:'ntv',inicio_semana:'data inválida',tema:'Semana sem início válido'});
   adicionarRegistro(raw,'Semanas',{semana_id:'semana-antecipada',marca_id:'ntv',inicio_semana:'2026-11-02',tema:'Semana física B'});
   mudarCelula(raw,'Produções',2,'semana_id','semana-invalida');mudarCelula(raw,'Produções',3,'semana_id','semana-antecipada');
   for(let i=1;i<=4;i++)mudarCelula(raw,'Produções',i,'data_prevista','');
   const page=await abrir(t,{width:390,raw});await page.locator('#abrir-sem-data').click();
-  assert.deepEqual({lista:await page.locator('#lista .agenda-week>header h3').allTextContents(),
-    semData:await page.locator('#lista-sem-data .agenda-week>header h3').allTextContents()},
-  {lista:['Semana física A','Semana sem início válido','Semana física B'],
-    semData:['Semana física A','Semana sem início válido','Semana física B']});
-  assert.match(await page.locator('#lista .agenda-week').nth(1).textContent(),/Período não identificado/);
+  assert.deepEqual((await page.locator('#lista-sem-data [data-producao-id]').evaluateAll(ns=>ns.map(n=>n.dataset.producaoId))).sort(),['peca-1','peca-2','peca-3','peca-4']);
+  const view=await (await page.request.get(new URL('/api/visao',page.url()).href)).json();
+  assert.deepEqual(view.semanas.filter(w=>w.semana_id).map(w=>w.semana_id),['semana-01','semana-invalida','semana-antecipada']);
 });
 
-test('U004 destino sintético identifica a pauta sem se apresentar como semana capturada',{skip},async t=>{
+test('U004 pauta sem peças não cria semana capturada e conserva a consulta',{skip},async t=>{
   const page=await abrir(t,{width:390});await page.locator('.pauta-link').first().click();
-  const destino=page.locator('#lista [data-inicio-semana="2026-11-02"]');
-  assert.equal(await destino.locator('h3').textContent(),'Pauta S1 de novembro · Tema sintético 1');
-  assert.equal(await destino.evaluate(n=>document.activeElement===n),true);
-  assert.equal(await destino.locator('.pauta-origin').count(),0);
-  const capturada=page.locator('#lista [data-inicio-semana="2026-11-09"]');
-  assert.equal(await capturada.locator('h3').textContent(),'Conexões do cotidiano');
-  assert.equal(await capturada.locator('.pauta-origin').textContent(),'Pauta S2 de novembro');
-  await page.locator('#selo').click();
-  assert.equal(await page.locator('#dados-planilha tbody tr').count(),1);
+  assert.equal(await page.locator('#week-title').textContent(),'Pauta S1 de novembro · Tema sintético 1');
+  assert.equal(await page.locator('#lista [data-producao-id]').count(),0);
+  assert.equal(await page.locator('#lista').evaluate(n=>document.activeElement===n),true);
+  await page.locator('.pauta-link').nth(1).click();assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
+  await page.locator('#selo').click();assert.equal(await page.locator('#dados-planilha tbody tr').count(),1);
   assert.equal(await page.locator('#dados-planilha tbody tr td').first().textContent(),'semana-01');
 });

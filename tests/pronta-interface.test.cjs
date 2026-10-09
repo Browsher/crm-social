@@ -10,7 +10,7 @@ const skip=process.env.CI==='true'?'Interface exclusiva do computador; Playwrigh
 async function abrir(t,{width=390,theme='light',editar=()=>{}}={}) {
   const dir=temporario(t),raw=capturaPronta();editar(raw);
   assert.equal(promoverCaptura(recalcularHashes(raw),dir).resultado,'completa');
-  const server=criarServidor({dataDir:dir,port:0});
+  const server=criarServidor({dataDir:dir,port:0,midia:{obter:async()=>{throw Object.assign(new Error('Prévia sintética indisponível'),{status:503});}}});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   let browser;
   t.after(async()=>{try{if(browser)await browser.close();}finally{await new Promise(resolve=>server.close(resolve));}});
@@ -27,7 +27,7 @@ async function abrir(t,{width=390,theme='light',editar=()=>{}}={}) {
   await page.route('**/*',route=>{const request=route.request();requests.push(request.method()+' '+new URL(request.url()).pathname);
     return request.url().startsWith(origin+'/')?route.continue():route.abort();});
   t.after(()=>{assert.deepEqual(errors,[]);assert.ok(requests.every(r=>r.startsWith('GET ')));});
-  await page.goto(origin);await page.locator('#objetivo-mes .month-content').waitFor();
+  await page.goto(origin);await page.locator('#objetivo-toggle:not(:empty)').waitFor();
   if(width===390)await page.locator('#menu').click();
   await page.getByRole('button',{name:'Produção',exact:true}).click();
   return page;
@@ -43,8 +43,8 @@ async function screenshot(page,name,theme,width) {
   await page.screenshot({path:path.join(destination,`pronta-${theme}-${name}-${width}.png`),fullPage:name==='quadro',animations:'disabled'});
 }
 for(const theme of ['light','dark'])for(const width of [1440,390])test(`Pronta quadro, gaveta, cópia e avisos em ${theme}/${width}`,{skip},async t=>{
-  const page=await abrir(t,{width,theme}),card=page.locator('#quadro [data-coluna="Pronta"] [data-producao-id="peca-3"]');
-  await card.waitFor();assert.match(await card.innerText(),/Pronta para publicar/);
+  const page=await abrir(t,{width,theme}),card=page.locator('#quadro [data-producao-id="peca-3"]');
+  await card.waitFor();assert.equal(await card.locator('[aria-current="step"]').textContent(),'Pronta');
   assert.equal(await card.locator('.board-pending').count(),0);
   await card.scrollIntoViewIfNeeded();await screenshot(page,'quadro',theme,width);
   const p=await gaveta(page),section=p.locator('[data-publicacao]');
@@ -74,12 +74,12 @@ test('Pronta preserva revisão vigente na gaveta após a seção de publicação
     revisao_id:'revisao-liberada-sintetica',producao_id:'peca-3',versao:2,decisao:'revisar',
     motivo:'Correção sintética ainda registrada',responsavel_correcao:'Equipe sintética',estado_tratamento:'aberta'
   })});
-  const card=page.locator('#quadro [data-coluna="Pronta"] [data-producao-id="peca-3"]');
-  assert.match(await card.innerText(),/Pronta para publicar/);
+  const card=page.locator('#quadro [data-producao-id="peca-3"]');
+  assert.equal(await card.locator('[aria-current="step"]').textContent(),'Pronta');
   assert.equal(await card.locator('.board-pending').count(),0);
   const p=await gaveta(page),review=p.locator('[data-revisoes="vigentes"]');
   assert.equal(await review.isVisible(),true);
-  assert.match(await review.innerText(),/Revisão vigente.*Correção sintética ainda registrada.*Equipe sintética/is);
+  assert.match(await review.innerText(),/Revisão vigente.*Correção sintética ainda registrada/is);
   assert.equal(await p.evaluate(el=>Boolean(el.querySelector('[data-publicacao]').compareDocumentPosition(
     el.querySelector('[data-revisoes="vigentes"]'))&Node.DOCUMENT_POSITION_FOLLOWING)),true);
 });
