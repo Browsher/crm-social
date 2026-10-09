@@ -1,8 +1,8 @@
 # Implementation Plan: 006 — Layout v3
 
-**Branch**: `codex/006-layout-v3` | **Date**: 2026-10-08 | **Spec**: [spec.md](spec.md)
+**Branch**: `codex/006-layout-v3-parte-b` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
 **Input**: especificação única em `specs/006-layout-v3/spec.md`.
-**Estado**: Parte A integrada no PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada em 09/10/2026 e em implementação na branch codex/006-layout-v3-parte-b; 32 tarefas mantidas. [Validação de execução](validacao.md).
+**Estado**: Parte A integrada no PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada em 09/10/2026 e implementada/testada localmente, não integrada, na branch codex/006-layout-v3-parte-b; 32 tarefas mantidas. [Validação de execução](validacao.md).
 
 ## Execução autorizada nesta rodada — Parte B
 
@@ -20,7 +20,7 @@ As duas decisões sobre falta de imagem/contador e releitura do pop-up estão em
 
 Trocar a apresentação das três telas pelo desenho v3, preservando a consulta completa, coleta e resolução privada das imagens. Reaproveitar HTML/CSS/JavaScript nativos, gaveta, seleção de mídia e ações de publicação existentes. Separar apenas funções puras de apresentação e o pop-up, pois serão compartilhados pelas telas e verificáveis sem navegador. Não alterar projeção, coleta, snapshot, mapa de etapas ou contratos Google.
 
-A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3.html). A especificação prevalece sobre Dados e avisos, downloads e textos do mockup. A decisão do autor manteve 32 tarefas e autorizou somente A nesta rodada; B aguarda seu ok explícito na A.
+A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3.html). A especificação prevalece sobre Dados e avisos, downloads e textos do mockup. A decisão do autor manteve 32 tarefas; A foi aprovada/integrada e B autorizada em 09/10, com PR próprio sem merge.
 
 ## Technical Context
 
@@ -31,7 +31,7 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 **Target Platform**: computador Windows do autor; navegador em 1440×1050 e 390×844; cenário adicional de viewport baixa.
 **Project Type**: aplicativo local de consulta, sem deploy.
 **Performance Goals**: uma miniatura por peça visível, nenhuma imagem de tela oculta; Mês não busca mídia; reutilizar URL/cache da 005, sem polling ou prefetch global.
-**Constraints**: captura/API iguais, só três telas, sem agentes/metadados operacionais, XSS via texto literal, allowlist de links, teclado/foco, sem dados reais, gate/review e nenhum merge.
+**Constraints**: captura/API iguais, só três telas, sem agentes/metadados operacionais, XSS via texto literal, allowlist de links, teclado/foco, sem dados reais, gate/review e nenhum merge B.
 **Scale/Scope**: quatro jornadas; vinte screenshots de cinco vistas × dois temas × duas larguras. Quantidade de tarefas definida por speckit-tasks, sem condensação para caber no teto.
 
 ## Constitution Check
@@ -43,7 +43,7 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 | I Local e simples | PASS documental | PASS documental | mesmo servidor e tecnologia, sem instalação |
 | II Fontes e identidade | PASS documental | PASS documental | API, planilha, versões e hashes não mudam; derivados só no navegador |
 | III Papéis | PASS documental | PASS documental | sem execução editorial, nomes técnicos removidos da UI |
-| IV Evidência | PASS documental | PASS documental | Parte A: RED/GREEN, TEMP, cinco camadas, 12 screenshots e gate final executados; B não iniciada |
+| IV Evidência | PASS documental | PASS documental | A: evidências históricas preservadas; B: RED/GREEN, TEMP, cinco camadas, 20 screenshots e gate final executados; remoto pendente |
 | V Feature única | PASS documental | PASS documental | somente pasta 006, sem design paralelo; desenho já autorizado pelo autor |
 | VI Leitura privada | PASS documental | PASS documental | mesma rota de mídia, mesmos escopos e cache; thumbnails são demanda da tela visível |
 | Governança | PASS documental | PASS documental | sem emenda, merge proibido; 32 IDs mantidos pelo autor em A/B, B depende de ok explícito |
@@ -67,7 +67,7 @@ specs/006-layout-v3/
 └── validacao.md
 ```
 
-[validacao.md](validacao.md) registra a execução da Parte A e pendências da B. O relatório analyze é emitido sem gravar arquivo, conforme a skill.
+[validacao.md](validacao.md) registra fontes/execução de ambas e pendências remotas da B. O relatório analyze é emitido sem gravar arquivo, conforme a skill.
 
 ### Source Code (repository root)
 
@@ -80,21 +80,21 @@ src/
     ├── theme.js                 # comportamento preservado
     ├── app.js                   # renderização, navegação, atualização e gaveta
     ├── layout-model.js          # NOVO, derivados puros e seleção de imagens
-    ├── perfil-config.js         # FUTURO B, configuração pública sintética
-    └── instagram.js             # FUTURO B, pop-up e navegação/foco
+    ├── perfil-config.js         # IMPLEMENTADO B, configuração pública sintética
+    └── instagram.js             # IMPLEMENTADO B, pop-up e navegação/foco
 tests/
 ├── layout-browser.cjs           # NOVO A, servidor/serviço TEMP e transporte falso
 ├── layout-fixtures.cjs          # NOVO, deriva das fixtures existentes
 ├── layout-model.test.cjs        # NOVO, estados/grupos/contagens/ordem
 ├── layout-http.test.cjs         # NOVO, estáticos/API/persistência intactas
 ├── layout-interface.test.cjs    # NOVO, topo/Planejamento/Produção/Publicar
-└── instagram-interface.test.cjs # FUTURO B, modal/teclado/gesto/falha
+└── instagram-interface.test.cjs # IMPLEMENTADO B, modal/teclado/gesto/falha
 scripts/screenshots-layout-v3.cjs # NOVO, TEMP/porta efêmera/mídia falsa
 tests/screenshots-layout-v3.test.cjs # NOVO, guardas reais do gerador
 docs/design/screenshots/layout-v3-parte-a/*.png # 12 evidências A executadas
 ```
 
-**Structure Decision**: módulos pequenos reutilizáveis, sem dividir em muitos componentes. Configuração em JS declarativo servido como estático para evitar endpoint/alteração de API. layout-model.js exporta as mesmas funções para navegador e CommonJS, sem ler DOM/arquivos/rede. instagram.js recebe peça, imagens resolvidas, perfil e acionador; não consulta Google. app.js mantém a integração DOM.
+**Structure Decision**: módulos pequenos reutilizáveis, sem dividir em muitos componentes. Configuração em JS declarativo servido como estático para evitar endpoint/alteração de API. layout-model.js exporta as mesmas funções para navegador e CommonJS, sem ler DOM/arquivos/rede. instagram.js recebe peça e acionador, deriva posições com layout-model e lê perfil-config; não consulta Google. app.js resolve ID na vista vigente no clique, inclusive gaveta após releitura. app.js mantém a integração DOM.
 
 ## Phase 0 — Research
 
@@ -108,7 +108,7 @@ Pesquisa registrada em [research.md](research.md): funções e acoplamentos atua
 
 Peças aparecem uma vez por projeto da semana registrada; sem vínculo ficam em Semana não identificada. Planejamento usa dataCivil, incluindo remarcações, sem duplicar a peça em uma semana diferente por associação original. São agrupamentos distintos, explicitados no contrato. Progresso de Planejamento usa a semana civil após o filtro de formato, concordando com os cartões visíveis; Produção usa o projeto inteiro pela semana registrada, independente desse filtro. Futuro compara segundas-feiras civis normalizadas; semana registrada sem período conserva identidade e mostra Período não identificado.
 
-### Integração sem Planilha visual — planejada para Parte B
+### Integração sem Planilha visual — implementada na Parte B
 
 Retirar HTML/controles de Planilha e funções de renderização de tabelas. objetivoMensal continua lendo Meses de view.planilha; preservá-lo na API. Selo torna-se indicador de estado, sem destino de navegação. Mover resultado-atualizacao e botão para o topo, com mensagem curta acessível. Remover atalhos “ver na Planilha”, fatos de responsável, nomes de ferramentas e histórico técnico visual; gaveta continua apresentando conteúdo, unidades, versões e revisão em linguagem simples.
 
@@ -128,15 +128,15 @@ Reutilizar tokens e comportamento de theme.js. Objetivo com botão/aria-expanded
 
 ### Testes e compatibilidade
 
-[Quickstart](quickstart.md) define validação sintética. Testes precedem cada comportamento. Na A, atualizar somente quadro de oito colunas, entrada Calendário/Lista, topo e gatilho de miniaturas; Planilha/atalhos permanecem. Na B, adaptar expectativas de Planilha removida e novas jornadas; preservar testes de backend/API, identidade, versões, segurança e falhas. Geradores históricos que participam do gate terão seletores ajustados para testar o layout vigente, sem reescrever evidências antigas ou atribuir-lhes prova da 006.
+[Quickstart](quickstart.md) define validação sintética. Testes precedem cada comportamento. Na A, atualizar somente quadro de oito colunas, entrada Calendário/Lista, topo e gatilho de miniaturas; Planilha/atalhos permanecem. Na B, adaptar expectativas de Planilha removida e novas jornadas; preservar testes de backend/API, identidade, versões, segurança e falhas. Geradores históricos que participam do gate tiveram seletores ajustados para testar o layout vigente, sem reescrever evidências antigas ou atribuir-lhes prova da 006.
 
 Cinco camadas: funções puras, invariância em arquivos TEMP, integração/derivados, HTTP real, navegador. Não escrever testes que apenas comparem markup de implementação. Verificar ausência de rede externa, duplo POST, captura/hashes antes/depois de GET, token/perfil inválido, foco, clipboard e URL recusada.
 
 ## Delivery and execution boundary
 
-A contagem completa é 32 IDs, preservada pelo autor após a parada inicial. T001–T016 e fechamento correspondente T024–T032 pertencem à A autorizada; T017–T023 e fechamento B aguardam ok explícito na A. Checkboxes globais T024–T032 só encerram depois de ambas, sem marcar jornadas futuras concluídas.
+A contagem completa é 32 IDs, preservada pelo autor após a parada inicial. T001–T016 e fechamento correspondente T024–T032 pertencem à A autorizada; T017–T023 e fechamento B foram autorizados em 09/10 após aprovação/integração da A. Checkboxes globais T024–T032 só encerram depois de ambas, sem marcar jornadas futuras concluídas.
 
-Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A usa codex/006-layout-v3; a branch/base B serão decididas após o ok, sem integração antecipada. Provas e pendências atuais em validacao.md.
+Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A foi integrada após aprovação explícita; B usa codex/006-layout-v3-parte-b sobre main a5be355, sem merge B. Provas e pendências atuais em validacao.md.
 
 ## Complexity Tracking
 

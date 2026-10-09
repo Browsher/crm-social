@@ -1,6 +1,6 @@
 # Pesquisa — Layout v3
 
-Data: 08/10/2026. Pesquisa documental anterior à implementação; não é prova de execução. A Parte A foi depois implementada/testada localmente, com [validação própria](validacao.md); decisões de perfil/modal/fila e retirada de Planilha pertencem à B, ainda não iniciada.
+Data: 08/10/2026. Pesquisa documental anterior à implementação; não é prova de execução. A Parte A foi depois implementada/testada localmente, com [validação própria](validacao.md); A foi integrada após aprovação em 09/10; perfil/modal/fila e retirada de Planilha da B estão implementados/testados localmente. [Validação](validacao.md) registra fontes e pendências remotas.
 
 ## Decisão 1 — preservar a tecnologia existente
 
@@ -26,7 +26,7 @@ Versões e vínculos permanecem como PR #22/005: unidades vigentes por índice, 
 
 ## Decisão 5 — configuração de perfil declarativa
 
-**Decisão:** src/web/perfil-config.js será um arquivo de configuração público, com nomePerfil sintético perfil.exemplo, carregado antes de instagram.js/app.js. **Motivo:** atende ao nome fora da lógica sem endpoint, conta autenticada ou dado operacional versionado. **Alternativas:** literal dentro do pop-up viola o requisito; configurar pelo snapshot muda dados; JSON remoto/API nova é desnecessário. Configuração ausente/inválida mostra “Perfil não configurado”.
+**Decisão:** src/web/perfil-config.js é um arquivo de configuração público, com nomePerfil sintético perfil.exemplo, carregado antes de instagram.js/app.js. **Motivo:** atende ao nome fora da lógica sem endpoint, conta autenticada ou dado operacional versionado. **Alternativas:** literal dentro do pop-up viola o requisito; configurar pelo snapshot muda dados; JSON remoto/API nova é desnecessário. Configuração ausente/inválida mostra “Perfil não configurado”.
 
 ## Decisão 6 — referências e responsividade
 
@@ -37,6 +37,10 @@ Versões e vínculos permanecem como PR #22/005: unidades vigentes por índice, 
 **Decisão:** usar a instalação atual do Playwright, node:test e assert/strict; teclado real de automação, dialog nativo e eventos touch sintéticos para comprovar o handler de arrasto. **Motivo:** documentação atual confirma Escape em dialog e dispatchEvent para gestos. Eventos touch disparados não têm isTrusted; a prova é de comportamento automatizado, não gesto físico em aparelho real.
 
 Context7: resolve-library-id Playwright → /microsoft/playwright (fonte High; documentação oficial); query-docs focada em dialog, Escape, foco, teclado e arrasto. Fontes primárias: [testes oficiais de teclado](https://github.com/microsoft/playwright/blob/main/tests/page/page-keyboard.spec.ts) e [documentação de eventos touch](https://github.com/microsoft/playwright/blob/main/docs/src/touch-events.md). Não se instala @playwright/test: adaptar os exemplos ao runner já existente.
+
+## Complementos verificados na Parte B
+
+Atualização em 09/10/2026: a prévia nativa torna o fundo inerte; os nós únicos de selo/Atualizar/feedback são movidos ao dialog e restaurados, permitindo atualizar por teclado sem clone. Botões resolvem ID na vista vigente no clique, conservando decisão de nova versão/remoção. A data de publicação usa validação ISO com dia civil real compartilhada, evitando Date.parse normalizar 30 de fevereiro. Mês usa o alias visual Imagem → Oferta conforme mockup e pedido, sem inferência de pauta/elegibilidade. Slots completos do modal são derivados separados da seleção histórica da galeria. [Contrato](contracts/apresentacao.md).
 
 ## Assunções de produto
 

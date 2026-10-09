@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/006-layout-v3`
 **Created**: 2026-10-08
-**Status**: Parte A aprovada e integrada pelo PR #24 em 09/10/2026, main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. Parte B autorizada e em implementação na branch `codex/006-layout-v3-parte-b`, com PR próprio sem merge. Evidências e pendências em [validacao.md](validacao.md).
+**Status**: Parte A aprovada e integrada pelo PR #24 em 09/10/2026, main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. Parte B autorizada, implementada/testada localmente e não integrada na branch `codex/006-layout-v3-parte-b`, com PR próprio sem merge. Evidências e pendências em [validacao.md](validacao.md).
 **Input**: Pedido do autor em 08/10/2026: reorganizar a apresentação do CRM pessoal em Planejamento, Produção e Publicar, com referência visual aprovada, sem mudar dados/captura ou escrita operacional.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -21,7 +21,7 @@ Parte B: pop-up, Publicar, Ver no Instagram na Produção, remoção visual da P
 ### Clarifications — Session 2026-10-08
 
 - Página sem prévia no pop-up mostra “prévia indisponível” naquela posição; o contador conta todas as páginas, inclusive as indisponíveis. Imagem única mantém sua posição 1/1 mesmo sem arquivo; nenhuma página é eliminada para reduzir o contador.
-- ⟳ Atualizar com pop-up aberto mantém o pop-up aberto com a versão nova da mesma peça. Se a peça não existir mais, fecha e devolve o foco. Ao reduzir páginas, limitar o índice ao último existente; falha de releitura conserva a versão já exibida. Estas regras serão implementadas/testadas na Parte B.
+- ⟳ Atualizar com pop-up aberto mantém o pop-up aberto com a versão nova da mesma peça. Se a peça não existir mais, fecha e devolve o foco. Ao reduzir páginas, limitar o índice ao último existente; falha de releitura conserva a versão já exibida. Estas regras estão implementadas/testadas localmente na Parte B; entrega remota permanece pendente.
 
 ### User Story 1 - Acompanhar semana e mês (Priority: P1)
 
@@ -35,7 +35,7 @@ Como autor que acompanha a produção e publica manualmente, quero localizar pe�
 1. **Given** peças em datas variadas, **When** abrir o CRM, **Then** Semana é o padrão, há sete colunas de segunda a domingo, hoje está destacado e cada peça mostra miniatura, formato, título e estado simples.
 2. **Given** objetivo e pautas capturados, **When** ativar a linha “🎯 Outubro — objetivo”, **Then** pautas S1 · tema · modelo aparecem logo abaixo; recolhidas, não reservam espaço.
 3. **Given** uma semana com duas peças prontas/publicadas entre quatro peças, **When** consultar seu cabeçalho, **Then** tema/pauta e “2 de 4 prontas” correspondem ao registro, sem meta de três.
-4. **Given** visão Mês, **When** ativar uma semana com mouse ou teclado, **Then** a visão muda para Semana no período escolhido, inclusive vazio; pontos de peças usam cor do estado simples e nomes acessíveis.
+4. **Given** visão Mês, **When** ativar uma semana com mouse ou teclado, **Then** a visão muda para Semana no período escolhido, inclusive vazio; pontos de peças usam cor do estado simples, tipo curto Oferta (Imagem)/Carrossel/Reels e nomes acessíveis.
 5. **Given** duas peças no mesmo dia, **When** ativar uma delas, **Then** a gaveta apresenta o dia inteiro e permite consultar ambas.
 
 ### User Story 2 - Acompanhar projetos por semana (Priority: P1)
@@ -112,7 +112,7 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 - **FR-013**: A classificação existente DEVE mapear Planejamento para Planejada; Redação, Visual, Mídia e Outras para Criação; Revisão para Revisão; liberação literal liberado para Pronta; publicação preenchida para Publicada, conservando a precedência de publicação.
 - **FR-014**: Peça travada DEVE ser identificada somente por mídia ausente quando a classificação atual é Mídia ou por revisão vigente pedindo correção; o motivo curto substitui o indicador de passos, sem responsável técnico.
 - **FR-015**: Semana futura sem peças DEVE mostrar somente “Planejamento na sexta-feira” no corpo, além da identificação do período.
-- **FR-016**: Produção e Publicar DEVEM oferecer “Ver no Instagram”, inclusive para imagem única, sem abrir Instagram, executar publicação ou conferir aprovação.
+- **FR-016**: Produção, Publicar e a gaveta do dia DEVEM oferecer “Ver no Instagram”, inclusive para imagem única, sem abrir Instagram, executar publicação ou conferir aprovação. A abertura DEVE resolver a identidade da peça na vista vigente, inclusive após atualizar com gaveta aberta; peça removida não reabre uma versão antiga.
 - **FR-017**: O pop-up DEVE ter forma de celular, perfil vindo de configuração versionada, arte proporcional 4:5 sem corte e legenda/hashtags literais embaixo.
 - **FR-018**: Carrossel DEVE preservar ordem/vigência dos vínculos existentes, oferecer setas, pontos, contador atual/total e navegação por ← → e arrasto horizontal; imagem única permanece em 1/1.
 - **FR-019**: Pop-up DEVE ser modal por teclado, fechar por botão/Esc e restaurar foco; fechamento não fecha a gaveta de origem. Página sem prévia DEVE mostrar “prévia indisponível” na posição, incluída no contador total. Atualizar DEVE manter aberto com a versão nova da mesma peça; peça removida fecha/devolve foco; índice excedente é limitado à última posição e falha de releitura conserva conteúdo anterior.
@@ -125,7 +125,7 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 - **FR-026**: Prévia e miniaturas DEVEM reutilizar imagens autorizadas da consulta vigente, permitir falha individual e não expor credenciais ou buscar mídias fora do serviço local existente.
 - **FR-027**: A referência visual aprovada DEVE ser copiada como mockup sanitizado em docs/design/mockups/layout-v3.html e citada em docs/design/telas.md; o pedido escrito prevalece nas divergências da referência.
 - **FR-028**: Testes e evidências DEVEM usar somente fixtures sintéticas, incluindo semana com oferta, carrossel de cinco páginas e Reels travado; nenhuma leitura da operação real é necessária.
-- **FR-029**: Entrega DEVE incluir screenshots das vistas de cada parte nos dois temas e larguras, quality-gate verde e review do head final em dois PRs, um por parte, sem merge. A inclui Semana/Mês/Produção; B inclui Publicar/pop-up e regressões visuais finais.
+- **FR-029**: Entrega DEVE incluir screenshots das vistas de cada parte nos dois temas e larguras, quality-gate verde e review do head final em dois PRs, um por parte; A foi integrada por autorização explícita posterior, B deve permanecer sem merge. A inclui Semana/Mês/Produção; B inclui Publicar/pop-up e regressões visuais finais.
 - **FR-030**: A contagem gerada é 32, mantida pelo autor após a parada inicial. A foi integrada após aprovação explícita; B foi autorizada em 09/10/2026 e deve ser entregue em PR separado sem merge.
 
 ### Key Entities *(include if feature involves data)*

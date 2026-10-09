@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "feature": "006-layout-v3",
+  "part": "B",
+  "sourceCommit": "60ef6282ce937fc13a8d92cc15278be2a98d79bc",
+  "screenshotSourceCommit": "3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20",
+  "date": "2026-10-09",
+  "environment": "Windows local, somente fixtures sintéticas e TEMP",
+  "command": "node tools/quality-gate.mjs",
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "skipped": 0,
+      "state": "PASS",
+      "name": "tests",
+      "count": 728
+    },
+    {
+      "percent": 95.50717924965262,
+      "state": "PASS",
+      "name": "coverage",
+      "drop": 0,
+      "mode": "full"
+    },
+    {
+      "metricCount": 683,
+      "warningCount": 17,
+      "state": "PASS",
+      "maximum": 16.0,
+      "name": "complexity"
+    },
+    {
+      "state": "SKIP",
+      "name": "semgrep",
+      "reason": "Semgrep CE 1.179.0 ausente localmente; CI estrito exige sua verificação"
+    },
+    {
+      "state": "N/A",
+      "name": "audit",
+      "reason": "sem package.json/dependências de aplicação"
+    }
+  ],
+  "limits": [
+    "UI app.js/theme.js/instagram.js/perfil-config.js fora do LCOV; comportamento verificado por Playwright local",
+    "drop zero no modo full não representa comparação histórica",
+    "prova local não substitui CI e review do head final",
+    "screenshots gerados em 3fd9e0f; delta 60ef628 move somente botão interno da gaveta, fora dos 20 enquadramentos"
+  ]
+}

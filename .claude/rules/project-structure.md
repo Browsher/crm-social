@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-Trabalho atual: 005 Prévias de imagens, implementada/testada localmente no [PR #23](https://github.com/Browsher/crm-social/pull/23), integração condicionada ao gate/review do head final; [validação](../../specs/005-previas-imagens/validacao.md). T1 integrada pelo PR #22; 21/21 concluídas, T002 confirmada pelo autor em 08/10, sem acesso real pelo agente.
+Trabalho atual: 006 Layout v3; A integrada pelo PR #24 em `a5be355`; B implementada/testada localmente na branch codex/006-layout-v3-parte-b, PR/CI/review final pendentes, merge B proibido; [validação](../../specs/006-layout-v3/validacao.md).
 T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/15), T002/T015 conferidas com registro fictício, 004 implementada/testada localmente, [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente, resultados por head na [validação da 004](../../specs/004-pautas-planejamento/validacao.md); 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
@@ -10,7 +10,7 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - docs/design/telas.md define telas; mockups/ e prototype/ são demonstrações históricas.
 - docs/design/screenshots/ mostra aplicação real com fixture fictícia, nunca produção.
 - docs/index.md é o índice; docs/architecture.md documenta o código e suas fronteiras.
-- docs/modules/ detalha captura, coleta, google, midia, triagem, pautas, snapshot, importador, quadro-config, projeção, servidor, iniciador e web.
+- docs/modules/ detalha captura, coleta, google, midia, triagem, pautas, snapshot, importador, quadro-config, projeção, servidor, iniciador, layout-model, instagram, perfil-config e web.
 - EntryPoint real: scripts/importar-captura.cjs <arquivo-local> [--data-dir <diretorio>].
 - EntryPoint real: src/servidor.cjs [--data-dir <diretorio>] [--port <porta>].
 - EntryPoint Windows: Iniciar CRM.ps1 [-DataDir <diretorio>] [-Port <porta>] [-NodePath <exe>].
@@ -49,10 +49,10 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - Suítes em tests/: node:test, assert/strict, diretórios TEMP e HTTP em porta efêmera.
 - Executar com Node 24.19.0 existente por CRM_NODE_PATH e seu diretório à frente do PATH.
 - Testes: node --test; gate: node tools/quality-gate.mjs; zero testes significa FAIL.
-- Interface usa Playwright já instalado por CRM_PLAYWRIGHT_MODULE, sem pacote novo.
-- M8: UI fora do LCOV e pulos UI/PowerShell no Linux; CLI coberta; aceite Windows local exige zero pulos.
-- US4: Pronta mostra Pronta para publicar e recolhe páginas/cenas sem avisos de mídia; demais colunas conservam primeira pendência/+N; API/Planilha mantêm avisos.
-- US5: abas por teclado/foco, rolagem própria e Histórico confirmado; releitura conserva aba disponível.
+- Interface usa Playwright existente por CRM_PLAYWRIGHT_MODULE, sem pacote novo; M8: UI fora do LCOV e pulos UI/PowerShell no Linux; CLI coberta; aceite Windows local exige zero pulos.
+- Pronta mantém pacote/cópia e páginas/cenas recolhidas; projetos usam cinco passos ou motivo travado; API preserva avisos.
+- 006 B: menu Planejamento/Produção/Publicar; Planilha/avisos/Histórico técnicos ficam na API; Mês usa Oferta/Carrossel/Reels junto à cor.
+- Prévia local compartilha dialog em Produção/Publicar/gaveta; slots ausentes contam; Atualizar único é movido para modal aberto e restaura ao fechar.
 - T039 captura real, T040 gate e T041 onboarding concluídos; resultados/limites só na validação.
 - Google/coleta: JWT/fetch nativos; Sheets readonly/POST sob lock; midia importa google/snapshot/triagem e lê Drive readonly sob demanda.
 - Chave externa/env CRM_GOOGLE_CREDENTIALS_FILE e CRM_SPREADSHEET_ID; sem browser/log.

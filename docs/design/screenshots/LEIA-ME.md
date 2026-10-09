@@ -2,9 +2,31 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
+## 006 — Layout v3 Parte B
+
+Vinte screenshots exclusivamente sintéticos mostram Semana, Mês, Produção, Publicar e prévia de carrossel com cinco páginas (contador 1/5), nos dois temas e larguras. Parte B implementada/testada localmente, não integrada; PR/CI/review final pendentes, merge proibido. Fonte da geração: `3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20`; a fonte final de código/testes/gate é `60ef6282ce937fc13a8d92cc15278be2a98d79bc`, cujo delta só move o botão da gaveta depois do bloco Pronta, fora destes enquadramentos. Todos os 20 PNG foram inspecionados pelo coordenador; a galeria A e os históricos 001–005 permanecem intactos.
+
+| Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Semana | [Abrir](layout-v3-parte-b/layout-v3-light-semana-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-light-semana-390.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-semana-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-semana-390.png) |
+| Mês com tipos | [Abrir](layout-v3-parte-b/layout-v3-light-mes-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-light-mes-390.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-mes-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-mes-390.png) |
+| Produção | [Abrir](layout-v3-parte-b/layout-v3-light-producao-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-light-producao-390.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-producao-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-producao-390.png) |
+| Publicar | [Abrir](layout-v3-parte-b/layout-v3-light-publicar-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-light-publicar-390.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-publicar-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-publicar-390.png) |
+| Instagram — carrossel 1/5 | [Abrir](layout-v3-parte-b/layout-v3-light-instagram-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-light-instagram-390.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-instagram-1440.png) | [Abrir](layout-v3-parte-b/layout-v3-dark-instagram-390.png) |
+
+Viewports 1440×1050 e 390×844; Produção fullPage em 1440×1763/390×2823 e Publicar móvel em 390×1402. Relógio/captura fixos em 08/10/2026, oferta, Reels travado e carrossel com PNG sintético 1080×1350; a data exibida corresponde à fixture, não à operação. Mês mostra Oferta (alias visual de Imagem), Carrossel/Reels com pontos coloridos; arte inteira 4:5 com contain, pontos únicos e textos sem corte em 390.
+
+[screenshots-layout-v3.cjs](../../../scripts/screenshots-layout-v3.cjs) usa [layout-browser.cjs](../../../tests/layout-browser.cjs)/[layout-fixtures.cjs](../../../tests/layout-fixtures.cjs), servidor/serviço reais em TEMP validado por prefixo e porta efêmera, transporte/credencial efêmeros e bloqueio de rede externa. Fecha navegador/servidor antes de limpar apenas o TEMP criado; saída explícita grava só a galeria B. Três testes do gerador (duas VM e uma CLI) verificam script real, guardas/falha/limpeza e preservação da A.
+
+```powershell
+& $env:CRM_NODE_PATH scripts/screenshots-layout-v3.cjs
+```
+
+[Validação/gate/fontes](../../../specs/006-layout-v3/validacao.md). A prova não demonstra Google/Instagram real, ZIP, gesto físico, aprovação ou publicação. Geradores históricos de tema/pautas agora executam Publicar sob nomes legados de saída TEMP que contêm “planilha”; isso mantém compatibilidade de seus testes, sem regenerar PNG históricos nem atribuir-lhes a fonte B.
+
 ## 006 — Layout v3 Parte A
 
-Doze screenshots do aplicativo, regenerados em 08/10/2026 às 17:41:25–30, mostram Semana, Mês e Produção em claro/escuro e larguras 1440/390. Fonte de código/testes/PNG: `01d772bd66a6116c04d0a52ecd5a311e8afc0bb9`, na branch `codex/006-layout-v3`, baseada em `2be585a`. `layout-v3-light-semana-1440.png` mudou em quatro pixels do contorno das miniaturas e foi inspecionado/aprovado pelo coordenador; onze PNG ficaram idênticos em bytes aos anteriores já aprovados. Rodadas históricas: 4ab855e às 17:17:12–22 (um Semana light/1440 alterado aprovado/onze idênticos); 5725b9f às 16:51:53–58 (quatro Semana novos aprovados/oito idênticos), d996002 às 16:41:45–50 (um alterado aprovado/onze idênticos) e 5ac5d7c às 16:17 (doze inspecionados). Viewports 1440×1050 e 390×844; Produção fullPage. Parte A implementada/testada localmente, não integrada; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado. Revisão independente, CI e review remoto têm resultados registrados por head no PR; aprovação do head final é exigida antes de concluir a entrega. Publicar/perfil/pop-up/Instagram pertencem à B, não iniciada.
+Registro histórico do fechamento A, anterior à autorização de integração em 09/10 (PR #24, main a5be355). Doze screenshots do aplicativo, regenerados em 08/10/2026 às 17:41:25–30, mostram Semana, Mês e Produção em claro/escuro e larguras 1440/390. Fonte de código/testes/PNG: `01d772bd66a6116c04d0a52ecd5a311e8afc0bb9`, na branch `codex/006-layout-v3`, baseada em `2be585a`. `layout-v3-light-semana-1440.png` mudou em quatro pixels do contorno das miniaturas e foi inspecionado/aprovado pelo coordenador; onze PNG ficaram idênticos em bytes aos anteriores já aprovados. Rodadas históricas: 4ab855e às 17:17:12–22 (um Semana light/1440 alterado aprovado/onze idênticos); 5725b9f às 16:51:53–58 (quatro Semana novos aprovados/oito idênticos), d996002 às 16:41:45–50 (um alterado aprovado/onze idênticos) e 5ac5d7c às 16:17 (doze inspecionados). Viewports 1440×1050 e 390×844; Produção fullPage. Parte A implementada/testada localmente, não integrada; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado. Revisão independente, CI e review remoto têm resultados registrados por head no PR; aprovação do head final é exigida antes de concluir a entrega. Publicar/perfil/pop-up/Instagram pertencem à B, não iniciada.
 
 | Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
 | --- | --- | --- | --- | --- |

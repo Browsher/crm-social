@@ -4,7 +4,7 @@
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md e contracts/apresentacao.md.
 **Tests**: solicitados pelo autor e pelas regras locais; RED → GREEN antes de cada comportamento.
 **Organization**: por jornada, com responsabilidades/arquivos delimitados.
-**Estado**: 32 tarefas mantidas; Parte A integrada em 09/10/2026 pelo PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada e em implementação na branch codex/006-layout-v3-parte-b. Fechamento e evidências pendentes são acompanhados abaixo.
+**Estado**: 32 tarefas mantidas; Parte A integrada em 09/10/2026 pelo PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada, implementada/testada localmente e não integrada na branch codex/006-layout-v3-parte-b. Fechamento e evidências pendentes são acompanhados abaixo.
 
 ## Format: ID, P, Story, description
 
@@ -14,15 +14,15 @@
 
 | Item compartilhado | Parte A | Parte B |
 | --- | --- | --- |
-| T024 Regressões gerais | executadas; menu/dias/escala migrados e verdes | não iniciada |
-| T025 Regressões das features | executadas; vínculos/versões/pacote/galeria preservados; isolamento final 103 PASS/0 SKIP | não iniciada |
-| T026 Acessibilidade/temas | executadas no recorte A, 1440/390, claro/escuro, teclado/contraste/overflow; 16 casos TDD adicionais na rodada d996002, mais 2 RED→GREEN na 5725b9f; rolagem existente coberta por 1 GREEN; rodada 4ab855e com mais 3 RED→GREEN; focal 4ab855e com 109 PASS/0 SKIP; rodada 01d772b acrescentou 5 RED→GREEN (um caso legado migrado), focal final 113 PASS/0 SKIP (50 UI Layout + 45 modelo + 18 Pautas) | não iniciada |
-| T027 Gerador/evidência | implementado/testado, incluído no gate final | não iniciada |
-| T028 Screenshots | 12 PNG regenerados em 08/10 às 17:41:25–30, fonte 01d772b; Semana light/1440 alterado inspecionado/aprovado (quatro pixels no contorno das miniaturas), onze idênticos aos anteriores aprovados | não iniciada |
-| T029 Review | revisão focal 6998d22→d996002 sem achados remanescentes naquele delta; correções/revisão independente/review remoto e resultados finais acompanhados no [PR #24](https://github.com/Browsher/crm-social/pull/24) por head; aprovação exigida no head final antes da entrega | não iniciada |
-| T030 Gate | oficial Windows fonte código/testes/PNG 01d772b PASS: 680 testes, 95,5492%, 635 métricas/máximo 16/19 avisos, exit 0; baseline preservada; Semgrep SKIP/audit N/A; tentativa histórica 4ab855e exit 1 não reproduzida, separada na validação | não iniciada |
-| T031 Documentação | doc-sync-onboarding executado; fontes e pendências na validação | não iniciada |
-| T032 PR/CI | commits/push realizados; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado; resultados de CI/review registrados no PR por head, com aprovação exigida no head final; sem merge | não iniciada |
+| T024 Regressões gerais | executadas; menu/dias/escala migrados e verdes | executadas; 212 PASS no recorte de regressões (102 interface + 110 outras), API completa preservada |
+| T025 Regressões das features | executadas; vínculos/versões/pacote/galeria preservados; isolamento final 103 PASS/0 SKIP | vínculos/versões/pacote/galeria/clipboard preservados; Pronta 14 PASS após correção 60ef628 |
+| T026 Acessibilidade/temas | executadas no recorte A, 1440/390, claro/escuro, teclado/contraste/overflow; 16 casos TDD adicionais na rodada d996002, mais 2 RED→GREEN na 5725b9f; rolagem existente coberta por 1 GREEN; rodada 4ab855e com mais 3 RED→GREEN; focal 4ab855e com 109 PASS/0 SKIP; rodada 01d772b acrescentou 5 RED→GREEN (um caso legado migrado), focal final 113 PASS/0 SKIP (50 UI Layout + 45 modelo + 18 Pautas) | 1440/390, claro/escuro, foco/teclado/contraste/slots/viewport baixa; rótulos completos e pontos únicos; 67 UI Layout e 17 prévia |
+| T027 Gerador/evidência | implementado/testado, incluído no gate final | gerador B real verificado: 3 PASS (duas VM e uma CLI), preservação da A |
+| T028 Screenshots | 12 PNG regenerados em 08/10 às 17:41:25–30, fonte 01d772b; Semana light/1440 alterado inspecionado/aprovado (quatro pixels no contorno das miniaturas), onze idênticos aos anteriores aprovados | 20 PNG fonte 3fd9e0f, todos inspecionados; Semana/Mês com tipos/Produção/Publicar/Instagram em quatro combinações |
+| T029 Review | revisão focal 6998d22→d996002 sem achados remanescentes naquele delta; correções/revisão independente/review remoto e resultados finais acompanhados no [PR #24](https://github.com/Browsher/crm-social/pull/24) por head; aprovação exigida no head final antes da entrega | Important gaveta corrigido em 3fd9e0f e revisão focal sem novo achado; gate final verde; revisão final de docs/head pendente |
+| T030 Gate | oficial Windows fonte código/testes/PNG 01d772b PASS: 680 testes, 95,5492%, 635 métricas/máximo 16/19 avisos, exit 0; baseline preservada; Semgrep SKIP/audit N/A; tentativa histórica 4ab855e exit 1 não reproduzida, separada na validação | oficial Windows fonte 60ef628 PASS: 728 testes/0 SKIP, 95,5072%, 683 métricas/máximo 16/17 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A |
+| T031 Documentação | doc-sync-onboarding executado; fontes e pendências na validação | doc-sync-onboarding após gate final, somente .md; fontes/limites e histórico preservados |
+| T032 PR/CI | commits/push realizados; [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado; resultados de CI/review registrados no PR por head; merge aprovado pelo autor e realizado em a5be355 | fonte código/testes push 60ef628; PR/anexo/CI/review final pendentes, merge proibido |
 
 [P] somente para arquivos exclusivos sem dependência entre tarefas. Fonte usa src/, testes tests/ e evidências docs/. Código compartilhado app.js/index.html/styles.css tem um único responsável e integração sequencial; preservar edições de outros agentes. Eventual delegação exige entrada, interface e aceite da tarefa.
 
@@ -82,13 +82,13 @@
 
 ### Tests
 
-- [ ] T017 [US3] Parte B: testes RED em tests/instagram-interface.test.cjs de imagem única 1/1/carrossel 1/5, ordem/vigência, perfil de configuração e fallback inválido, 4:5 contain, setas/pontos/teclado, legenda/hashtags; página sem arquivo ou bytes mantém seu slot “prévia indisponível” e entra no contador total; sem contato externo. FR-016/017/018/019/026; SC-003/004/006.
-- [ ] T018 [US3] Parte B: testes RED em tests/instagram-interface.test.cjs para modal/foco/Esc, gaveta preservada, arrasto horizontal ≥40 px versus vertical, limites sem wrap e viewport baixa; Atualizar mantém aberta mesma peça com versão nova e índice limitado ao total novo; peça removida fecha/devolve foco; falha conserva versão anterior. FR-018/019/025; SC-004.
+- [X] T017 [US3] Parte B: testes RED em tests/instagram-interface.test.cjs de imagem única 1/1/carrossel 1/5, ordem/vigência, perfil de configuração e fallback inválido, 4:5 contain, setas/pontos/teclado, legenda/hashtags; página sem arquivo ou bytes mantém seu slot “prévia indisponível” e entra no contador total; sem contato externo. FR-016/017/018/019/026; SC-003/004/006.
+- [X] T018 [US3] Parte B: testes RED em tests/instagram-interface.test.cjs para modal/foco/Esc, gaveta preservada, arrasto horizontal ≥40 px versus vertical, limites sem wrap e viewport baixa; Atualizar mantém aberta mesma peça com versão nova e índice limitado ao total novo; peça removida fecha/devolve foco; falha conserva versão anterior. FR-018/019/025; SC-004.
 
 ### Implementation
 
-- [ ] T019 [US3] Parte B: implementar src/web/instagram.js, src/web/perfil-config.js, estáticos em src/servidor.cjs e estilos; dialog/perfil/4:5/texto/setas/pontos/contador preservam slots indisponíveis; carregar posição atual local, validar perfil e guardas HTTP em tests/layout-http.test.cjs. FR-016/017/018/019/026; SC-004/006.
-- [ ] T020 [US3] Implementar teclado/arrasto/fechamento/foco em src/web/instagram.js e integrar acionador da Produção em src/web/app.js; disponibilizar a mesma abertura para Publicar, sem duplicar lógica ou fechar a gaveta. FR-016/018/019/025; SC-001/004.
+- [X] T019 [US3] Parte B: implementar src/web/instagram.js, src/web/perfil-config.js, estáticos em src/servidor.cjs e estilos; dialog/perfil/4:5/texto/setas/pontos/contador preservam slots indisponíveis; carregar posição atual local, validar perfil e guardas HTTP em tests/layout-http.test.cjs. FR-016/017/018/019/026; SC-004/006.
+- [X] T020 [US3] Implementar teclado/arrasto/fechamento/foco em src/web/instagram.js e integrar acionador da Produção em src/web/app.js; disponibilizar a mesma abertura para Publicar e gaveta, com ID vigente resolvida no clique, sem duplicar lógica ou fechar a gaveta. FR-016/018/019/025; SC-001/004.
 
 ## Phase 6: User Story 4 — Publicar (P1)
 
@@ -97,26 +97,26 @@
 
 ### Tests
 
-- [ ] T021 [US4] Escrever e executar RED em tests/layout-interface.test.cjs para fila literal/ordem/hoje/contador, liberação versus publicação, dez publicadas recentes com datas inválidas ao final, travadas, clipboard vazio/falha, link de pacote exato/ambíguo/URL recusada e abertura do modal. FR-020/021/022/023/026; SC-001/003/004/006.
+- [X] T021 [US4] Escrever e executar RED em tests/layout-interface.test.cjs para fila literal/ordem/hoje/contador, liberação versus publicação, dez publicadas recentes com datas inválidas ao final, travadas, clipboard vazio/falha, link de pacote exato/ambíguo/URL recusada e abertura do modal. FR-020/021/022/023/026; SC-001/003/004/006.
 
 ### Implementation
 
-- [ ] T022 [US4] Parte B: remover Planilha visual/renderizadores/atalhos em src/web/app.js/src/web/index.html, manter dados na API, implementar menu final e fila/contador de Publicar em src/web/app.js/src/web/styles.css, por data/hoje/miniatura/textos. FR-001/020/021/023/024/026; SC-001/003.
-- [ ] T023 [US4] Integrar em src/web/app.js as ações de cópia/pacote já existentes e o modal compartilhado, além das seções Publicadas recentes/Travadas; 390 px coloca as laterais após a fila e não cria ação editorial. FR-016/021/022/024/025; SC-001/003/004/006.
+- [X] T022 [US4] Parte B: remover Planilha visual/renderizadores/atalhos em src/web/app.js/src/web/index.html, manter dados na API, implementar menu final e fila/contador de Publicar em src/web/app.js/src/web/styles.css, por data/hoje/miniatura/textos. FR-001/020/021/023/024/026; SC-001/003.
+- [X] T023 [US4] Integrar em src/web/app.js as ações de cópia/pacote já existentes e o modal compartilhado, além das seções Publicadas recentes/Travadas; 390 px coloca as laterais após a fila e não cria ação editorial. FR-016/021/022/024/025; SC-001/003/004/006.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
 **Purpose**: compatibilidade com as regras preservadas, prova visual e entrega.
 
-- [ ] T024 Adaptar tests/interface.test.cjs, tests/atualizacao-interface.test.cjs e tests/tema.test.cjs aos contratos deliberadamente substituídos (Planilha visual/quadro antigo/topo), preservando cenários de falha, no-op, segurança, cinco camadas, preferência/contraste e retorno de foco; não apagar cobertura de API. Atualizar seletores de scripts/screenshots-tema.cjs quando necessários ao gate. FR-001/002/003/025; SC-001/006.
-- [ ] T025 Adaptar tests/pautas-interface.test.cjs, tests/pronta-interface.test.cjs, tests/versoes-interface.test.cjs e tests/previas-interface.test.cjs para layout v3, mantendo identidade/vigência/pacote/galeria/falha e substituindo somente expectativas removidas; ajustar scripts/screenshots-pautas.cjs se usado no gate, sem regenerar evidências históricas como prova nova. FR-003/005/010/018/021/026; SC-002/003/006.
-- [ ] T026 Validar e ajustar src/web/styles.css, src/web/index.html, src/web/app.js e src/web/instagram.js com tests/layout-interface.test.cjs/tests/instagram-interface.test.cjs: 1440/390, claro/escuro, teclado/foco, contraste 4,5:1 para texto, regiões internas sem overflow da página, conteúdo seguro e ausência de metadados/explicações operacionais. FR-024/025; SC-001/004/006.
-- [ ] T027 Criar scripts/screenshots-layout-v3.cjs e tests/screenshots-layout-v3.test.cjs em RED/GREEN, usando exclusivamente tests/layout-fixtures.cjs, TEMP com validação de prefixo, porta efêmera, relógio fixo, bloqueio de rede externa e limpeza restrita; cobrir o script real e sua falha/guardas. FR-028/029; SC-005/006.
-- [ ] T028 Gerar e inspecionar evidências por parte: A tem 12 PNG em docs/design/screenshots/layout-v3-parte-a/ (Semana/Mês/Produção × dois temas × 1440/390); B acrescenta Publicar/pop-up e regressões visuais finais. Registrar fonte/limites em docs/design/screenshots/LEIA-ME.md sem dado operacional; screenshots do aplicativo, não do mockup. FR-027/028/029; SC-005.
+- [X] T024 Adaptar tests/interface.test.cjs, tests/atualizacao-interface.test.cjs e tests/tema.test.cjs aos contratos deliberadamente substituídos (Planilha visual/quadro antigo/topo), preservando cenários de falha, no-op, segurança, cinco camadas, preferência/contraste e retorno de foco; não apagar cobertura de API. Atualizar seletores de scripts/screenshots-tema.cjs quando necessários ao gate. FR-001/002/003/025; SC-001/006.
+- [X] T025 Adaptar tests/pautas-interface.test.cjs, tests/pronta-interface.test.cjs, tests/versoes-interface.test.cjs e tests/previas-interface.test.cjs para layout v3, mantendo identidade/vigência/pacote/galeria/falha e substituindo somente expectativas removidas; ajustar scripts/screenshots-pautas.cjs se usado no gate, sem regenerar evidências históricas como prova nova. FR-003/005/010/018/021/026; SC-002/003/006.
+- [X] T026 Validar e ajustar src/web/styles.css, src/web/index.html, src/web/app.js e src/web/instagram.js com tests/layout-interface.test.cjs/tests/instagram-interface.test.cjs: 1440/390, claro/escuro, teclado/foco, contraste 4,5:1 para texto, regiões internas sem overflow da página, conteúdo seguro e ausência de metadados/explicações operacionais. FR-024/025; SC-001/004/006.
+- [X] T027 Criar scripts/screenshots-layout-v3.cjs e tests/screenshots-layout-v3.test.cjs em RED/GREEN, usando exclusivamente tests/layout-fixtures.cjs, TEMP com validação de prefixo, porta efêmera, relógio fixo, bloqueio de rede externa e limpeza restrita; cobrir o script real e sua falha/guardas. FR-028/029; SC-005/006.
+- [X] T028 Gerar e inspecionar evidências por parte: A tem 12 PNG em docs/design/screenshots/layout-v3-parte-a/ (Semana/Mês/Produção × dois temas × 1440/390); B acrescenta Publicar/pop-up e regressões visuais finais. Registrar fonte/limites em docs/design/screenshots/LEIA-ME.md sem dado operacional; screenshots do aplicativo, não do mockup. FR-027/028/029; SC-005.
 - [ ] T029 Executar revisão independente dos arquivos src/web/, src/servidor.cjs, tests/layout-*.cjs/tests/instagram-interface.test.cjs e scripts/screenshots-layout-v3.cjs, seguindo .claude/agents/reviewer.md; resolver Critical, segurança e regressões com RED/GREEN e repetir somente verificações afetadas. FR-003/026/029; SC-006/007.
-- [ ] T030 Executar quality-gate completo no Windows com Node/Playwright existentes: node tools/quality-gate.mjs, sem pulos locais e baseline preservada; guardar resultados sanitizados/fonte em specs/006-layout-v3/validacao.md. Etapa penúltima de fechamento local, após correções/review. FR-028/029; SC-006/007.
-- [ ] T031 Executar doc-sync-onboarding conforme .claude/agents/doc-sync-onboarding.md, como última etapa de alterações de código; sincronizar AGENTS.md, README.md, ROADMAP.md, docs/index.md, docs/architecture.md, docs/modules/web.md, docs/modules/servidor.md, docs/design/telas.md e specs/006-layout-v3/validacao.md somente com o realmente implementado/testado, preservando históricos e referência sanitizada. Confirmar ausência de mapa Graphify antes de decidir sua atualização. FR-003/027/029; SC-006/007.
-- [ ] T032 Fechar cada parte separadamente: conferir git diff sem dados privados, commitar com 204295625+Browsher@users.noreply.github.com sem coautoria, push somente Browsher/crm-social e abrir/anexar PR próprio; conferir CI/review no head final e entregar link/review/screenshots sem merge. A usa codex/006-layout-v3; B aguarda ok explícito. Registrar em specs/006-layout-v3/validacao.md. FR-028/029; SC-007.
+- [X] T030 Executar quality-gate completo no Windows com Node/Playwright existentes: node tools/quality-gate.mjs, sem pulos locais e baseline preservada; guardar resultados sanitizados/fonte em specs/006-layout-v3/validacao.md. Etapa penúltima de fechamento local, após correções/review. FR-028/029; SC-006/007.
+- [X] T031 Executar doc-sync-onboarding conforme .claude/agents/doc-sync-onboarding.md, como última etapa de alterações de código; sincronizar AGENTS.md, README.md, ROADMAP.md, docs/index.md, docs/architecture.md, docs/modules/web.md, docs/modules/servidor.md, docs/design/telas.md e specs/006-layout-v3/validacao.md somente com o realmente implementado/testado, preservando históricos e referência sanitizada. Confirmar ausência de mapa Graphify antes de decidir sua atualização. FR-003/027/029; SC-006/007.
+- [ ] T032 Fechar cada parte separadamente: conferir git diff sem dados privados, commitar com 204295625+Browsher@users.noreply.github.com sem coautoria, push somente Browsher/crm-social e abrir/anexar PR próprio; conferir CI/review no head final e entregar link/review/screenshots sem merge. A usa codex/006-layout-v3 e foi integrada após autorização separada; B autorizada usa codex/006-layout-v3-parte-b, merge B proibido. Registrar em specs/006-layout-v3/validacao.md. FR-028/029; SC-007.
 
 ## Dependencies & Execution Order
 
@@ -154,6 +154,6 @@ Contagem dos IDs gerados: **32**.
 | US4 Publicar | T021–T023 | 3 |
 | Regressões, acessibilidade, evidências e entrega | T024–T032 | 9 |
 
-**32 tarefas: parada inicial resolvida pelo autor; Parte B autorizada em 09/10/2026**, conforme FR-030/SC-008 e instrução direta do autor. Marcar T001–T016 quando verificadas; registrar o fechamento A de T024–T032 na tabela, mantendo seus checkboxes globais abertos até B. Não compactar suítes ou gestos/foco/mídia para alterar artificialmente a contagem.
+**32 tarefas: parada inicial resolvida pelo autor; Parte B autorizada em 09/10/2026**, conforme FR-030/SC-008 e instrução direta do autor. Marcar T001–T016 quando verificadas; registrar o fechamento A de T024–T032 na tabela, fechando os checkboxes globais pelas provas de ambas; T029/T032 aguardam suas verificações finais. Não compactar suítes ou gestos/foco/mídia para alterar artificialmente a contagem.
 
 O peso principal é a troca de três telas, o modal compartilhado com teclado/gesto/foco e a migração de regressões das 001–005. O autor manteve esse escopo de 32 IDs e autorizou a divisão em duas entregas.

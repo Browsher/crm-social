@@ -1,8 +1,8 @@
 # Documentação
 
-## Feature 006 — Layout v3 (Parte A implementada/testada, não integrada)
+## Feature 006 — Layout v3 (A integrada; B implementada/testada)
 
-Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 concluídas na main conforme o autor. O escopo mantém 32 tarefas em duas partes autorizadas. T001–T016 verificadas na A; T017–T023 e fechamento B não iniciados, aguardando ok explícito na A. A mantém Planilha e entrega topo/objetivo/Semana/Mês/projetos; gate oficial final Windows da fonte de código/testes/PNG 01d772b passou (680 PASS); [PR #24](https://github.com/Browsher/crm-social/pull/24) aberto/anexado após commits/push. Revisão independente, CI e review remoto têm acompanhamento/resultados no PR por head, com aprovação exigida no head final antes de concluir a entrega. Sem merge. Provas antigas abaixo permanecem históricas.
+Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. Parte A integrada pelo [PR #24](https://github.com/Browsher/crm-social/pull/24), main `a5be355`; B implementada/testada localmente na branch `codex/006-layout-v3-parte-b`, sem integração. Mantém 32 tarefas e entrega menu Planejamento/Produção/Publicar, prévia compartilhada e rótulos no Mês. Gate local da fonte `60ef628` verde (728 PASS/0 SKIP); PR/CI/review final B pendentes, merge proibido. Fontes e limites na validação.
 
 | Documento | Uso |
 | --- | --- |
@@ -12,9 +12,11 @@ Rodada de 08/10/2026, branch `codex/006-layout-v3`, base `2be585a`; 001–005 co
 | [Modelo](../specs/006-layout-v3/data-model.md) | Derivados temporários sem mudança de captura |
 | [Contrato](../specs/006-layout-v3/contracts/apresentacao.md) | Estados/bloqueios, progresso, fila, mídia, perfil e foco |
 | [Tarefas](../specs/006-layout-v3/tasks.md) | 32 IDs, execução A/B e fechamento por recorte |
-| [Quickstart sintético](../specs/006-layout-v3/quickstart.md) | Reprodução da Parte A e cenários futuros da B separados |
+| [Quickstart sintético](../specs/006-layout-v3/quickstart.md) | Reprodução sintética vigente da B e fontes históricas da A |
 | [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
 | [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate oficial Windows, fonte 01d772b: 680 PASS, cobertura 95,5492%, baseline preservada |
+| [Relatório gate Parte B](reports/006-parte-b-local-gate.json) | Gate oficial Windows da fonte 60ef628: 728 PASS/0 SKIP, 95,5072%, baseline preservada |
+| [Galeria Parte B](design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) | 20 PNG: Semana/Mês/Produção/Publicar/Instagram nos dois temas e larguras |
 | [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
 | [Checklist](../specs/006-layout-v3/checklists/requirements.md) | Revisão de completude anterior ao plano |
 | [Mockup sanitizado](design/mockups/layout-v3.html) | Referência aprovada, não aplicativo |
@@ -61,10 +63,12 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | [Configuração do quadro](modules/quadro-config.md) | src/quadro-config.cjs e config/quadro-etapas.json; mapa validado e aplicado na US4 |
 | [Projeção](modules/projecao.md) | src/projecao.cjs; seleção NTV, datas/formatos, frescor, detalhes/pacote de publicação/quadro e cópias dos mínimos/opcionais capturados para seis tabelas e Meses/Pautas opcionais; origem semanal e Histórico confirmado |
 | [Pautas](modules/pautas.md) | src/pautas.cjs; identidade/calendário, duplicatas e origem semanal por ID/marca/início, sem inferência ou I/O |
-| [Servidor](modules/servidor.md) | src/servidor.cjs; seis rotas fixas, mídia por ID interno, cinco estáticos explícitos e guardas de origem |
+| [Servidor](modules/servidor.md) | src/servidor.cjs; API existente, mídia por ID interno, sete estáticos explícitos e guardas de origem |
 | [Iniciador Windows](modules/iniciador.md) | Abrir CRM.cmd por duplo clique, reabertura por GET local e sucesso sem pause; Iniciar CRM.ps1, Node existente, processo oculto, confirmação, retorno e logs privados |
-| [Modelo visual](modules/layout-model.md) | src/web/layout-model.js; seis funções puras compartilhadas pela Parte A |
-| [Web/Planejamento, Produção e Planilha](modules/web.md) | src/web; Parte A com Semana/Mês/projetos/topo, gaveta compacta, Planilha preservada e histórico 001–005; seis abas/Meses/Pautas opcionais/Histórico, card mensal e navegação/origem de pauta, releitura, avisos por peça, Pronta com pacote/legenda/cópia local e tema claro/escuro local; galeria sob demanda, ampliação e fallback005 |
+| [Modelo visual](modules/layout-model.md) | src/web/layout-model.js; dez funções puras para estados, mídia, datas e filas |
+| [Prévia Instagram](modules/instagram.md) | src/web/instagram.js; modal local, slots completos, teclado/gesto/foco e atualização |
+| [Configuração visual do perfil](modules/perfil-config.md) | src/web/perfil-config.js; objeto público sintético e validação no consumidor |
+| [Web/Planejamento, Produção e Publicar](modules/web.md) | src/web; Semana/Mês, objetivo, projetos, fila, topo único e gaveta; API completa sem Planilha visual, histórico 001–005 preservado |
 
 ## Feature 001 canônica
 

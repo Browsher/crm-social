@@ -1,8 +1,8 @@
 # Validação — Layout v3
 
-A Parte A entrega uma nova forma de acompanhar as mesmas capturas. O autor manteve 32 tarefas e autorizou duas entregas em 08/10/2026. **Parte A implementada e testada localmente, não integrada; Parte B não iniciada e dependente do ok explícito do autor na A. Nenhum merge autorizado.**
+Como uma nova agenda para as mesmas capturas, a 006 mantém 32 tarefas em duas partes. **A integrada após aprovação explícita em 09/10/2026**, PR #24/main a5be355; **B implementada/testada localmente, não integrada**, PR/CI/review final pendentes e merge B proibido. As seções da A abaixo conservam o registro histórico anterior à integração.
 
-## Parte A — fonte e escopo
+## Parte A — fonte e escopo históricos, anteriores à integração
 
 Base: `2be585a` (main com 005 integrada). Branch: `codex/006-layout-v3`. Fonte corrigida de código/testes/PNG: `01d772bd66a6116c04d0a52ecd5a311e8afc0bb9`, após adjudicação do review e3. O gate oficial final dessa fonte passou; as medições anteriores permanecem históricas. Fontes anteriores 5ac5d7c/6998d22/d996002/5725b9f/7fc1996/4ab855e e seus resultados ficam históricos. O relatório final identifica essa fonte exata em sourceCommit. Implementados T001–T016: modelo puro, topo único, objetivo recolhível, Semana/Mês e projetos semanais. Planilha/avisos/atalhos permanecem; Publicar/perfil/pop-up/Instagram não implementados.
 
@@ -112,7 +112,7 @@ Comando oficial: `node tools/quality-gate.mjs`, Node **24.19.0** e Playwright ex
 Histórico, sem substituir a medição final: o retry oficial 4ab855e teve 676 PASS, cobertura 95,54924242424242%, complexidade PASS/635 métricas/máximo 16/19 avisos, exit 0 e baseline preservada. Fonte 7fc1996 teve 673 PASS, cobertura 95,54924242424242%, complexidade PASS/635 métricas/máximo 16/19 avisos, exit 0 e baseline preservada. Fonte d996002 teve 670 PASS, cobertura 95,40719696969697%, complexidade PASS/635 métricas/máximo 16/19 avisos, exit 0 e baseline preservada. Fonte 5ac5d7c teve 654 PASS, cobertura 95,40719696969697%, complexidade PASS/634 métricas/máximo 16/19 avisos, exit 0 e baseline preservada; preliminar anterior teve 654 PASS, cobertura 95,123106%, 632 métricas/máximo 16/19 avisos. Nessas execuções locais, Semgrep SKIP/audit N/A. As tentativas 5725b9f exit 1 (expectativas Pautas migradas) e 4ab855e exit 1 (não reproduzido, causa não identificada), o diagnóstico integral e o retry oficial estão registrados separadamente acima.
 
 Prova local não substitui CI/review do head final; Semgrep SKIP não é PASS. Metadados documentais posteriores não mudam código/PNG/testes medidos, mas precisam de conferência do próprio head no PR.
-## Fechamento e entrega
+## Fechamento e entrega históricos da Parte A
 
 T024–T028 executadas no recorte A; T031 doc-sync-onboarding sincronizou AGENTS/README/ROADMAP, índice, arquitetura/import-map, módulos web/servidor/modelo, telas/mockups/galeria e artefatos 006. Não há mapa Graphify neste checkout; Mermaid da arquitetura registra app → layout-model e gerador → layout-browser → fixtures/servidor com mídia falsa. Só documentos `.md` foram alterados por doc-sync; templates/skills e constituição foram preservados. Sonnet/Haiku indisponíveis neste host; documentação usou fallback GPT-6.1-sol High.
 
@@ -124,8 +124,59 @@ Prova remota histórica do head inicial `6998d22a9292e3b166be27cc97c332876a07e83
 
 Prova remota da fonte corrigida `d9960021192d25f401f1336820bfc50fab3d2d47`: [CI quality-gate estrito, execução 37834181148](https://github.com/Browsher/crm-social/actions/runs/37834181148), job `113506892559`, PASS. O coordenador conferiu no log Semgrep PASS, exit 0 e baseline preservada. O head final após metadados documentais exige conferência própria no PR, inclusive review remoto; não atribuir automaticamente estas aprovações ao head posterior.
 
-O full gate local final da fonte 01d772b passou com 680 PASS. O retry oficial histórico da fonte 4ab855e passou; sua tentativa anterior exit 1 não foi reproduzida e a causa permanece não identificada. Resultados de revisão independente, CI e review remoto são registrados e conferidos no PR por head, incluindo o head final; correções posteriores de código exigem repetir verificações afetadas. Commits usam noreply sem coautoria. Nenhum merge autorizado; Parte B não iniciada e aguardando ok explícito do autor na A.
+O full gate local final da fonte 01d772b passou com 680 PASS. O retry oficial histórico da fonte 4ab855e passou; sua tentativa anterior exit 1 não foi reproduzida e a causa permanece não identificada. Resultados de revisão independente, CI e review remoto são registrados e conferidos no PR por head, incluindo o head final; correções posteriores de código exigem repetir verificações afetadas. Commits usam noreply sem coautoria. Estado histórico no fechamento A: nenhum merge então autorizado, B ainda não iniciada. A aprovação/integração em 09/10 e a execução B estão registradas abaixo.
 
-## Parte B — não iniciada
+## Parte B — implementada e testada localmente
 
-T017–T023 e fechamento B de T024–T032 aguardam autorização explícita do autor após entrega da A. Perfil/modal/Instagram/Publicar e remoção visual de Planilha não têm implementação, screenshots ou validação nesta rodada. Os checkboxes globais de fechamento ficam abertos até ambas as partes estarem verificadas; a tabela de [tarefas](tasks.md) acompanha cada recorte separadamente.
+Como uma prévia do material que será publicado manualmente, B acrescenta o celular de demonstração e a fila Publicar sem comandar a operação. Autorização em 09/10/2026 após aprovação da A; branch `codex/006-layout-v3-parte-b`, base/main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. O outro chat já havia feito o merge aprovado do [PR #24](https://github.com/Browsher/crm-social/pull/24); o coordenador conferiu SHA local/remoto e preservou os testes iniciados ali. B permanece **não integrada**, com PR próprio/CI/review final pendentes e **sem autorização de merge**.
+
+### Fonte e fronteiras
+
+Fonte final de código/testes: `60ef6282ce937fc13a8d92cc15278be2a98d79bc`. T017–T023 implementadas/testadas; regressões/acessibilidade/gerador/evidências/fechamento local T024–T028/T030/T031 executados. T029 tem correção/revisão focal confirmada; revisão final da documentação ainda pendente. T032 exige PR/anexo e CI/review do head final, sem antecipar aprovação.
+
+instagram.js/configuração de perfil públicas sintéticas, dez derivados puros, Publicar e menu final sem Planilha. Servidor acrescenta somente /perfil-config.js e /instagram.js à allowlist existente. API inteira e view.planilha para objetivo permanecem; coleta, snapshot, cache, configuração operacional, constituição 1.2.0, CI/gate/baseline e dependências preservados. Sem operação real, conta/ID de planilha, credenciais ou dados privados em evidência.
+
+### TDD, regressões e correções
+
+| Recorte | Evidência observada |
+| --- | --- |
+| Derivados B | RED 44 PASS/13 FAIL antes de fila/publicadas/slots; GREEN 57 PASS, sem mutação, galerias/vigência preservadas. |
+| Pop-up real | RED 15 FAIL com módulos inexistentes; GREEN 17 PASS/0 SKIP, imagem única/carrossel/slots/controles/gesto/foco/configuração/atualização. Falha anterior de permissão TEMP não foi tratada como RED de comportamento. |
+| UI B inicial | RED 0 PASS/10 FAIL para fila/menu/tipos/abertura; implementação e migração de seletores mobile ocultos/escopo Produção produziram GREEN. |
+| Data publicada impossível | RED 1 FAIL (30 de fevereiro normalizado indevidamente); validação ISO/dia real compartilhada e UI corrigidas. Modelo/UI então 119 PASS = 57 modelo + 62 UI. |
+| Regressões anteriores | 212 PASS: 102 interface e 110 demais selecionadas; API/66 mínimos/opcionais/avisos/Histórico preservados, clipboard, versões, galeria, links, falha/no-op e contraste. Expectativas deliberadamente removidas migradas, sem diminuir contrato backend. |
+| Mês em 390 | Assert de texto completo: RED 2 PASS/2 FAIL, rótulo Carrossel cortado; ajuste de espaçamento deu 4 PASS nos dois temas/larguras. |
+| Visual da prévia | Inspeção detectou pontos duplicados; CSS passou a desenhar somente um ponto por posição, preservando nome acessível. 17 casos de prévia e focal 6 (quatro combinações/duas alturas baixas) passaram. |
+| Gerador real | 3 PASS (duas VM e uma CLI); saída 20 PNG e preservação da A, guardas/limpeza/falha verificadas. |
+| HTTP | 6 PASS incluindo novos estáticos GET/HEAD e guardas; bytes de captura/recibos preservados em TEMP. |
+
+A revisão independente com fallback GPT-6-astra High encontrou Important: US3 previa abertura pela gaveta, mas ela faltava e o teste antigo criava um acionador sintético e chamava diretamente o módulo real. Cinco novos testes com clique no acionador real observaram RED 5 FAIL; integração do botão e resolução de ID vigente no clique produziram GREEN focal 6 PASS (incluindo Produção), em quatro configurações e remoção. Fonte da correção: `3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20`; UI Layout passou a 67 casos. Revisão focal confirmou o Important resolvido, sem novo achado, condicionada ao gate/docs/head final.
+
+O gate nessa fonte falhou; diagnóstico TAP: 728 casos, 724 PASS/4 FAIL/0 SKIP, todos na suíte Pronta. O botão da prévia antes do bloco Pronta alterava a ordem esperada. RED focal 1 FAIL; correção `60ef628` moveu o botão depois de Pronta, sem mudar a asserção de regressão; suíte Pronta: 14 PASS/0 SKIP. O gate oficial final dessa fonte passou, abaixo. Não apagar essas falhas nem atribuir os números da fonte preliminar 09139b à fonte final.
+
+### Screenshots e isolamento
+
+[20 PNG B](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b), gerados na fonte **3fd9e0f**, todos inspecionados: Semana/Mês com tipos/Produção/Publicar/Instagram × claro/escuro × 1440/390. A fonte 60ef628 move apenas botão interno da gaveta fora desses enquadramentos; não atribuir a geração dos PNG à fonte 60ef628. Captura/relógio 08/10/2026, perfil.exemplo e arte gradiente 1080×1350 sintéticos; oferta, carrossel de cinco páginas com contador 1/5 e Reels travado. Viewports 1440×1050/390×844; Produção fullPage 1440×1763/390×2823 e Publicar390×1402.
+
+Galeria A de 12 PNG e históricos 001–005 intactos. Geradores históricos de tema/pautas executam agora Publicar sob nomes legados TEMP com “planilha”, sem regenerar evidência versionada antiga. Servidor/serviço reais em TEMP validado/porta efêmera, transporte/credencial falsos, rede externa bloqueada, nenhuma escrita Google/publicação. Testes de gesto não demonstram arrasto físico ou todos os conteúdos futuros.
+
+### Quality gate Windows — Parte B final
+
+Comando oficial `node tools/quality-gate.mjs`, Node **24.19.0**, Playwright existente, Windows local. [Relatório sanitizado](../../docs/reports/006-parte-b-local-gate.json) identifica sourceCommit **60ef6282ce937fc13a8d92cc15278be2a98d79bc** e screenshotSourceCommit **3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20**.
+
+| Verificação | Resultado final local |
+| --- | --- |
+| Testes | **728 PASS, 0 SKIP**, cinco camadas locais |
+| Cobertura | **95,50717924965262%**, PASS, modo full/drop 0; zero não é comparação histórica |
+| Complexidade | PASS, **683 métricas**, máximo **16**, **17 avisos** |
+| Semgrep | SKIP local: CE 1.179.0 ausente; CI estrito deve verificar |
+| Audit | N/A, sem package.json/dependências de aplicação |
+| Exit / baseline | **0 / baselineUpdated false**, preservada |
+
+App/theme/instagram/perfil-config ficam fora do LCOV; comportamento verificado por Playwright. Layout-model e geradores sintéticos são medidos. CI Linux conserva pulos UI/PowerShell (M8); prova local não substitui CI estrito/review do head final. Nenhum código de CI/gate ou baseline foi alterado.
+
+### Doc-sync e entrega pendente
+
+doc-sync-onboarding executado após o gate oficial final, conforme a regra local, exclusivamente em .md. Onboarding/roadmap/índice, arquitetura/Mermaid, módulos web/servidor/modelo e novos instagram/perfil-config, telas/galeria e artefatos 006 sincronizados. Não há mapa Graphify neste checkout; imports reais ficam no Mermaid. Fontes de código e PNG diferenciadas, 32 IDs preservados e históricos intactos. Sonnet/Haiku indisponíveis no host: documentação usou fallback herdado. Conferência documental: 792 caminhos relativos existentes, cercas balanceadas, índice cobrindo todos os .md autorais de docs/, 32 IDs únicos e somente T029/T032 abertos; git diff --check sem erro.
+
+Push de código autorizado somente Browsher/crm-social; commits com noreply do autor sem coautoria. PR próprio B, anexo, CI e revisão final por head ainda pendentes. O relatório local verde não autoriza merge nem declara aprovação remota. T029/T032 permanecem abertos até suas etapas finais; o coordenador registra links/resultados por head no PR e nesta validação quando confirmados.
