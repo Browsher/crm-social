@@ -33,9 +33,9 @@ Reproduzir a função abrir e a moldura .phone do mockup aprovado, sem mudar cap
 
 Ajuste pequeno autorizado, sem nova feature Spec Kit e sem reabrir as 32 tarefas concluídas da 006. Branch `codex/006-ajustes-visuais`, base main `596dc4f` após fechamento documental PR #26; implementado/testado localmente, não integrado. Checks/review do head final são registrados no [PR #27](https://github.com/Browsher/crm-social/pull/27). [Validação sintética](../../docs/reports/006-ajustes-visuais-validacao.md).
 
-- Avatar circular de 40 px/borda 2 px usa fonte adaptativa `min(10,30/sigla-normalizada.length)`: comprimento final 1–3 usa 10 px, 4 usa 7,5 px e 5 usa 6 px. Preserva validação original 1–5 após trim, sem controles C0/DEL, e conversão para maiúsculas; expansão Unicode usa o comprimento final e fallback • permanece legível. Testes incluem cinco letras largas.
+- Avatar circular de 40 px/borda 2 px usa fonte adaptativa `min(10,30/sigla-normalizada.length)`: comprimento final 1–3 usa 10 px, 4 usa 7,5 px e 5 usa 6 px. Preserva validação original 1–5 após trim, sem controles C0/DEL, e conversão para maiúsculas; expansão Unicode usa o comprimento final e fallback • permanece legível. Testes incluem cinco letras largas. Limitação Unicode aceita sem mudar validação ou texto literal: `.length` conta unidades UTF-16; cinco ß normalizam para dez S, com fonte de 3 px, explicitamente pequena. Melhorar essa legibilidade fica como sugestão futura.
 - Salvar usa SVG decorativo com traço `currentColor`, aria-hidden e `focusable=false` verificado diretamente pelo teste, sem foco; substitui o emoji da composição histórica, mantendo contraste nos dois temas.
-- Tema de pauta vazio/somente espaços deixa somente o rótulo em Semana, Produção e fallback, sem separador pendente.
+- Tema de pauta vazio/somente espaços deixa somente o rótulo em Semana, Produção e fallback, sem separador pendente. O painel de objetivo/pautas mantém intencionalmente “Não informado” para tema vazio; não participa desta omissão.
 - Em 390, selecionar semana nova sem hoje nem rolagem memorizada inicia em scroll 0; restauração por semana, filtro e centralização em hoje continuam.
 - Dados, API, captura, cache, perfil configurado e contratos de teclado/foco permanecem. Aceite por fixtures sintéticas nos dois temas/larguras e regressões existentes.
 

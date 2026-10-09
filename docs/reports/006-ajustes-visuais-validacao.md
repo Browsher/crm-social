@@ -31,6 +31,18 @@ Fixtures exclusivamente sintéticas. Primeira rodada histórica 028778a: **RED 1
 
 Gate oficial `node tools/quality-gate.mjs`, Windows/Node 24.19.0, fonte 7939e70: **PASS, 766 testes**, cobertura **95,5216989843%**, complexidade PASS (**689 métricas, máximo 16, 18 avisos**), **exit 0**, `baselineUpdated=false`. Semgrep **SKIP local** por ferramenta ausente; audit **N/A**, zero dependências de aplicação. A prova oficial anterior 028778a teve os mesmos totais de testes/cobertura/complexidade, exit 0 e baseline preservada; o [relatório sanitizado atual](006-ajustes-visuais-local-gate.json) identifica 7939e70. Não atribuir SKIP remoto, Semgrep PASS remoto ou cobertura de UI ao resultado local: módulos DOM continuam fora do LCOV e são exercidos pelo Playwright.
 
+## Adjudicação do review — head 05f67af
+
+O [review automático](https://github.com/Browsher/crm-social/pull/27#issuecomment-6087251563) do head `05f67af720a0ab04cb5d5f446feddd7f3fd5159b` registrou **Critical 0, Important 0 e três Minor**. A revisão independente confirmou a disposição segura: dois Minor aceitos/documentados, sem alteração de código, validação ou literal.
+
+| Achado | Disposição |
+| --- | --- |
+| M1 — expansão Unicode | Aceito: o cálculo usa `.length` UTF-16 após maiúsculas; cinco ß tornam-se dez S e usam fonte de 3 px, explicitamente pequena. Melhor legibilidade permanece sugestão futura; fallback e validação original preservados. |
+| M2 — prova de ausência de pulos | Fechado por execução complementar `node --test` com TAP no Windows/Node 24.19.0, head 05f67af: **766 PASS, 0 FAIL, 0 SKIP, 0 cancelled, exit 0**, duração **213260,1186 ms**. |
+| M3 — painel de objetivo/pautas | Aceito: mantém “Não informado” para tema vazio. Omitir separador aplica-se somente a Semana, Produção e fallback, conforme escopo. |
+
+A prova de **0 SKIP da suíte completa pertence exclusivamente à execução complementar TAP do head 05f67af**; não é atribuída retroativamente ao gate 7939e70, cujo relatório compacto não guarda esse contador. O [CI estrito 05f67af](https://github.com/Browsher/crm-social/actions/runs/37976138751/job/113974803004) foi conferido pelo coordenador: SUCCESS, Semgrep PASS, exit 0 e baseline preservada. Essa prova é por head e ficará histórica após o fechamento documental; checks/review do head final são registrados no PR #27. Código e PNG continuam na fonte 7939e70; 006 integrada, 32/32 tarefas; manutenção não integrada e sem merge.
+
 ## Evidência visual e limites
 
 [Oito PNG antes/depois](../design/screenshots/LEIA-ME.md#006--ajustes-visuais): quatro anteriores da fonte 596dc4f e quatro posteriores novamente gerados na fonte 7939e70, claro/escuro × 1440/390. Os bytes depois são idênticos aos da prova 028778a porque DEMO conserva quatro letras/fonte 7,5 px; a regeneração comprova a fonte atual sem alterar os históricos. Gerador existente `scripts/screenshots-layout-v3.cjs.gerar({output:temporario})`: vinte PNG por fase em saída customizada; somente quatro Instagram de cada fase copiados à nova galeria. Históricos A/B e demais PNG intactos.
