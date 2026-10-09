@@ -4,7 +4,7 @@ Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplic
 
 ## 006 — Layout v3 Parte B
 
-Vinte screenshots exclusivamente sintéticos mostram Semana, Mês, Produção, Publicar e prévia de carrossel com cinco páginas (contador 1/5), nos dois temas e larguras. Parte B implementada/testada localmente, não integrada; PR/CI/review final pendentes, merge proibido. Fonte da geração: `3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20`; a fonte final de código/testes/gate é `60ef6282ce937fc13a8d92cc15278be2a98d79bc`, cujo delta só move o botão da gaveta depois do bloco Pronta, fora destes enquadramentos. Todos os 20 PNG foram inspecionados pelo coordenador; a galeria A e os históricos 001–005 permanecem intactos.
+Vinte screenshots exclusivamente sintéticos mostram Semana, Mês, Produção, Publicar e prévia de carrossel com cinco páginas (contador 1/5), nos dois temas e larguras. Parte B implementada/testada localmente, não integrada, no [PR #25](https://github.com/Browsher/crm-social/pull/25), aberto/anexado; merge proibido. Fonte final comum de código/testes/gate/20 PNG: `f46db33389b1d8bde53068de8b555e56d5baf05a`, após correções de selo/slots/cenas/geradores. Todos os 20 PNG foram regenerados e inspecionados pelo coordenador. Galeria A e históricos 001–005 intactos. Histórico B: geração anterior em 3fd9e0f, seguida por gate 60ef628 (728 PASS); os PNG desta galeria agora correspondem a f46db33. CI estrito dessa fonte aprovado; CI/review do head documental final pendentes.
 
 | Vista | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
 | --- | --- | --- | --- | --- |
@@ -22,7 +22,7 @@ Viewports 1440×1050 e 390×844; Produção fullPage em 1440×1763/390×2823 e P
 & $env:CRM_NODE_PATH scripts/screenshots-layout-v3.cjs
 ```
 
-[Validação/gate/fontes](../../../specs/006-layout-v3/validacao.md). A prova não demonstra Google/Instagram real, ZIP, gesto físico, aprovação ou publicação. Geradores históricos de tema/pautas agora executam Publicar sob nomes legados de saída TEMP que contêm “planilha”; isso mantém compatibilidade de seus testes, sem regenerar PNG históricos nem atribuir-lhes a fonte B.
+[Validação/gate/fontes](../../../specs/006-layout-v3/validacao.md). A prova não demonstra Google/Instagram real, ZIP, gesto físico, aprovação ou publicação. Os geradores de tema/pautas agora gravam, por padrão, somente em **tema-layout-v3/** e **pautas-layout-v3/** abaixo desta pasta, com telas chamadas **publicar**. A saída normal é a galeria do workspace; só as cópias de teste CLI usam galeria TEMP. A rodada f46db33 verificou, em cópias CLI TEMP, a preservação byte a byte de 16/20 arquivos com nomes históricos e marcadores sintéticos no destino antigo; os PNG históricos versionados permanecem intactos. Não regenerar nem atribuir fonte B às galerias históricas abaixo.
 
 ## 006 — Layout v3 Parte A
 

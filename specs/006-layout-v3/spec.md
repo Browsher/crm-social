@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/006-layout-v3`
 **Created**: 2026-10-08
-**Status**: Parte A aprovada e integrada pelo PR #24 em 09/10/2026, main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. Parte B autorizada, implementada/testada localmente e não integrada na branch `codex/006-layout-v3-parte-b`, com PR próprio sem merge. Evidências e pendências em [validacao.md](validacao.md).
+**Status**: Parte A aprovada e integrada pelo PR #24 em 09/10/2026, main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. Parte B autorizada, implementada/testada localmente e não integrada na branch `codex/006-layout-v3-parte-b`, no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge; gate/CI de código f46db33 aprovados, CI/review do head documental final pendentes. Evidências e pendências em [validacao.md](validacao.md).
 **Input**: Pedido do autor em 08/10/2026: reorganizar a apresentação do CRM pessoal em Planejamento, Produção e Publicar, com referência visual aprovada, sem mudar dados/captura ou escrita operacional.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -17,6 +17,14 @@ Parte B: pop-up, Publicar, Ver no Instagram na Produção, remoção visual da P
 
 - Mês mostra o ponto colorido e o tipo curto ao lado: “● Oferta”, “● Carrossel”, “● Reels”, conforme o mockup. Nesta visão, o formato Imagem usa o rótulo curto Oferta; isso não altera o formato nem classifica conteúdo operacional. Cor continua representando o estado simples, e o nome acessível conserva título/data/estado.
 - O botão único ⟳ Atualizar e o selo são temporariamente apresentados dentro do pop-up aberto e retornam ao topo ao fechar, preservando seus controles e o POST existente. Isso permite acionar a atualização por teclado mesmo com o fundo inerte do diálogo nativo.
+
+### Decisão de apresentação e alcance constitucional já fornecidos pelo autor
+
+O escopo original da 006 determinou: “A página Planilha e a página de dados saem da interface (os dados continuam na API)” e “Sem informação de agentes na interface”, incluindo a retirada de “Com quem está”. O pedido da Parte B em 09/10/2026 reiterou a remoção da Planilha e a ausência de metadados de agentes. Esta seção registra essas decisões já fornecidas; não é uma nova resposta de clarify, aprovação adicional ou emenda à constituição 1.2.0.
+
+A captura continua identificando fonte, período coberto, instante, falhas, IDs, versões e histórico, conforme o princípio II e os contratos de captura/consulta inalterados. GET /api/visao preserva captura, avisos localizados, view.planilha e Histórico. A UI mantém selo com instante em São Paulo e falha ativa, inclusive sem captura válida; projetos preservam o motivo simples de travamento editorial. O campo legado selo.destino = planilha permanece na API, mas o cliente o ignora porque esse destino visual foi retirado.
+
+O trade-off autorizado é deixar fonte detalhada, cobertura e avisos técnicos consultáveis pela API, em vez de manter tabelas e metadados operacionais nas três telas pessoais. A UI perde essa inspeção técnica direta; não perde ou altera os registros capturados, não apresenta dado antigo/incompleto como coleta concluída e não cria estado operacional concorrente. A interpretação de conformidade verifica os dados da captura/contrato e a honestidade do selo, além do escopo explícito do usuário; não pressupõe que todos os metadados devam aparecer em toda tela. Contratos, autoridade da planilha/Drive e emenda 1.2.0 permanecem inalterados.
 
 ### Clarifications — Session 2026-10-08
 
@@ -98,7 +106,7 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 ### Functional Requirements
 
 - **FR-001**: O menu DEVE conter somente Planejamento, Produção e Publicar, removendo da interface Planilha, página de dados, tabelas, histórico técnico e atalhos que levavam a essas páginas.
-- **FR-002**: Todas as telas DEVEM mostrar no topo o selo da última atualização e “⟳ Atualizar”, com a mesma coleta explícita existente e os quatro estados de frescor, preservação da captura e prevenção de cliques simultâneos.
+- **FR-002**: Todas as telas DEVEM mostrar no topo o selo da última atualização e “⟳ Atualizar”, com a mesma coleta explícita existente e os quatro estados de frescor, preservação da captura e prevenção de cliques simultâneos. Captura anterior DEVE conservar data/hora em São Paulo; falha inicial sem captura DEVE aparecer como Atualização falhou · sem dados, sem aparentar sucesso.
 - **FR-003**: A mudança DEVE ser exclusivamente de apresentação: mesma captura, IDs, relações, versões, avisos e dados disponíveis na consulta; sem novo estado ou operação editorial.
 - **FR-004**: Objetivo mensal DEVE ocupar uma única linha fechada, com mês e objetivo; sua ativação acessível DEVE expandir/recolher pautas S1 · tema · modelo logo abaixo, sem espaço reservado quando fechado.
 - **FR-005**: Objetivo/pautas ausentes ou ambíguos DEVEM conservar os critérios da consulta existente, com “Ainda não definido” ou “A confirmar” e sem associação inventada.

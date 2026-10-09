@@ -6,7 +6,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-A 006 Parte A foi integrada pelo PR #24 em `a5be355`; B está implementada/testada localmente, ainda não integrada. Menu final Planejamento/Produção/Publicar, topo único, objetivo/Semana/Mês/projetos e prévia local compartilhada. Planilha visual/atalhos saíram; API completa permanece. B acrescenta somente `/perfil-config.js` e `/instagram.js` à allowlist do servidor, sem alteração de captura/projeção/coleta/cache/constituição/CI/gate ou dependências. [Validação e fontes](../specs/006-layout-v3/validacao.md).
+A 006 Parte A foi integrada pelo PR #24 em `a5be355`; B está implementada/testada localmente no [PR #25](https://github.com/Browsher/crm-social/pull/25), ainda não integrada. Menu final Planejamento/Produção/Publicar, topo único, objetivo/Semana/Mês/projetos e prévia local compartilhada. Planilha visual/atalhos saíram; API completa permanece. B acrescenta somente `/perfil-config.js` e `/instagram.js` à allowlist do servidor, sem alteração de captura/projeção/coleta/cache/constituição/CI/gate ou dependências. [Validação e fontes](../specs/006-layout-v3/validacao.md).
 
 **Histórico da entrega 005:** **005 — Prévias de imagens**, implementado/testado localmente em 08/10/2026, no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Acrescenta mídia sob demanda pelo servidor, cache privado e galeria/ampliação na gaveta. O autor aprovou as 21 tarefas após a parada inicial; 21/21 concluídas. T002 confirmada pelo autor em 08/10/2026: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. [Validação por fonte e checks/review da entrega](../specs/005-previas-imagens/validacao.md). Versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review; Pronta já integrada pelo PR #21. O registro da 004 na introdução preserva sua rodada histórica.
 
@@ -40,6 +40,8 @@ flowchart LR
   ScreenshotsPautas -->|cria servidor isolado, porta efêmera| Server
   Screenshots -->|mídia falsa 503, sem cliente Google| Server
   ScreenshotsPautas -->|mídia falsa 503, sem cliente Google| Server
+  Screenshots -->|saída padrão dedicada, históricos preservados| TemaGallery[tema-layout-v3]
+  ScreenshotsPautas -->|saída padrão dedicada, históricos preservados| PautasGallery[pautas-layout-v3]
   Snapshot --> Captura["src/captura.cjs"]
   Snapshot --> Triagem["src/triagem.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
@@ -81,7 +83,7 @@ flowchart LR
   Instagram --> LayoutModel
   Instagram --> Perfil
   Instagram -->|GET /api/midia/ID selecionado| Server
-  JS -->|dez funções puras| LayoutModel
+  JS -->|funções puras| LayoutModel
   JS -->|GET /api/visao, POST /api/atualizar e img local /api/midia/ID| Server
   Snapshot --> FS["node:fs / node:path"]
   Captura --> Crypto["node:crypto"]
@@ -220,7 +222,7 @@ Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-con
 
 ## O que já aparece e o que falta
 
-A Parte A substituiu calendário/lista de entrada e quadro técnico por Semana/Mês e projetos. B removeu a Planilha visual e o destino do selo, acrescentou fila Publicar e prévia compartilhada por Produção/Publicar/gaveta. O Mês usa rótulos curtos junto ao ponto, com Imagem → Oferta somente nessa apresentação. Atualizar/selo/feedback são movidos para a prévia aberta e restaurados ao fechar. O restante desta seção conserva a implementação histórica 001–005; o módulo web descreve a interface vigente.
+A Parte A substituiu calendário/lista de entrada e quadro técnico por Semana/Mês e projetos. B removeu a Planilha visual e o destino do selo, acrescentou fila Publicar e prévia compartilhada por Produção/Publicar/gaveta. O Mês usa rótulos curtos junto ao ponto, com Imagem → Oferta somente nessa apresentação. Atualizar/selo/feedback são movidos para a prévia aberta e restaurados ao fechar. O selo conserva data/hora/falha da captura, inclusive falha inicial; a API preserva o destino legado planilha, ignorado pelo cliente. Fonte/cobertura/avisos técnicos continuam nos dados por decisão explícita do autor, com trade-off documentado no Constitution Check da 006. O restante desta seção conserva a implementação histórica 001–005; o módulo web descreve a interface vigente.
 
 Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” global, objetivo/pautas do mês exibido em Meses opcional, estados indefinido/A confirmar e gaveta do dia inteiro em acordeões. Peça remarcada segue sua data civil no mês e continua agrupada pela semana registrada. Seis status literais recebem rótulos legíveis só na UI; desconhecidos e API mantêm o original. Mês usa somente inicial maiúscula; calendário inclui apenas semanas com dia do mês e sidebar desktop acompanha a altura da página. Desktop usa calendário; 390 px começa em lista e menu recolhido. [Screenshots](design/screenshots/LEIA-ME.md) são da aplicação com dados fictícios.
 

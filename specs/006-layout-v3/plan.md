@@ -6,7 +6,7 @@
 
 ## Execução autorizada nesta rodada — Parte B
 
-O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B terá PR próprio sem merge. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. Atualizar/selo/feedback únicos são movidos para o diálogo aberto e restaurados ao fechar, permitindo teclado com fundo inerte.
+O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B está no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. Atualizar/selo/feedback únicos são movidos para o diálogo aberto e restaurados ao fechar, permitindo teclado com fundo inerte.
 
 ## Recorte histórico da Parte A
 
@@ -41,14 +41,14 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 | Princípio | Antes | Após desenho | Evidência/limite |
 | --- | --- | --- | --- |
 | I Local e simples | PASS documental | PASS documental | mesmo servidor e tecnologia, sem instalação |
-| II Fontes e identidade | PASS documental | PASS documental | API, planilha, versões e hashes não mudam; derivados só no navegador |
+| II Fontes e identidade | Conforme ao contrato de captura | Conforme ao escopo explícito, com trade-off visual documentado | Fonte/cobertura/instante/falhas/IDs/versões/Histórico permanecem na captura/API; UI mostra instante e falhas sem sucesso aparente. Remoção de tabelas/agentes foi fornecida pelo autor e reiterada em B; detalhes técnicos ficam na API, sem novo estado operacional. |
 | III Papéis | PASS documental | PASS documental | sem execução editorial, nomes técnicos removidos da UI |
 | IV Evidência | PASS documental | PASS documental | A: evidências históricas preservadas; B: RED/GREEN, TEMP, cinco camadas, 20 screenshots e gate final executados; remoto pendente |
 | V Feature única | PASS documental | PASS documental | somente pasta 006, sem design paralelo; desenho já autorizado pelo autor |
 | VI Leitura privada | PASS documental | PASS documental | mesma rota de mídia, mesmos escopos e cache; thumbnails são demanda da tela visível |
-| Governança | PASS documental | PASS documental | sem emenda, merge proibido; 32 IDs mantidos pelo autor em A/B, B depende de ok explícito |
+| Governança | Conforme às decisões existentes | Sem emenda ou autorização nova | A integrada após aprovação separada; B autorizada em 09/10, PR #25 sem merge. O pedido explícito prevalece na composição visual; contratos/constituição permanecem. 32 IDs mantidos. |
 
-“PASS documental” verifica conformidade do plano, não comportamento executado.
+“PASS documental” verifica conformidade do plano, não comportamento executado. O princípio II exige capturas identificáveis e estados honestos, preservados no contrato/API e no selo; a [decisão já fornecida pelo autor](spec.md#decisão-de-apresentação-e-alcance-constitucional-já-fornecidos-pelo-autor) remove a inspeção técnica da interface pessoal, com perda de acesso direto a fonte/cobertura/avisos pela tela. Isso não foi convertido em uma nova resposta de clarify nem em emenda: dados/contratos permanecem e a UI não inventa sincronização. Revisão por head deve conferir esse alcance e o trade-off, em vez de inferir conformidade só pela ausência de alteração no backend.
 
 ## Project Structure
 

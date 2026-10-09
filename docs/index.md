@@ -2,7 +2,7 @@
 
 ## Feature 006 — Layout v3 (A integrada; B implementada/testada)
 
-Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. Parte A integrada pelo [PR #24](https://github.com/Browsher/crm-social/pull/24), main `a5be355`; B implementada/testada localmente na branch `codex/006-layout-v3-parte-b`, sem integração. Mantém 32 tarefas e entrega menu Planejamento/Produção/Publicar, prévia compartilhada e rótulos no Mês. Gate local da fonte `60ef628` verde (728 PASS/0 SKIP); PR/CI/review final B pendentes, merge proibido. Fontes e limites na validação.
+Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. Parte A integrada pelo [PR #24](https://github.com/Browsher/crm-social/pull/24), main `a5be355`; B implementada/testada localmente na branch `codex/006-layout-v3-parte-b`, sem integração. Mantém 32 tarefas e entrega menu Planejamento/Produção/Publicar, prévia compartilhada e rótulos no Mês. Gate local repetido da fonte `f46db33` verde (740 PASS/0 SKIP), código/testes/20 PNG na mesma fonte; [PR #25](https://github.com/Browsher/crm-social/pull/25) aberto/anexado e CI estrito f46db33 aprovado. CI/review do head documental final pendentes, merge proibido. Fontes e limites na validação.
 
 | Documento | Uso |
 | --- | --- |
@@ -15,7 +15,7 @@ Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. Parte A integr
 | [Quickstart sintético](../specs/006-layout-v3/quickstart.md) | Reprodução sintética vigente da B e fontes históricas da A |
 | [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
 | [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate oficial Windows, fonte 01d772b: 680 PASS, cobertura 95,5492%, baseline preservada |
-| [Relatório gate Parte B](reports/006-parte-b-local-gate.json) | Gate oficial Windows da fonte 60ef628: 728 PASS/0 SKIP, 95,5072%, baseline preservada |
+| [Relatório gate Parte B](reports/006-parte-b-local-gate.json) | Gate oficial Windows repetido da fonte f46db33: 740 PASS/0 SKIP, 95,5134%, baseline preservada |
 | [Galeria Parte B](design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) | 20 PNG: Semana/Mês/Produção/Publicar/Instagram nos dois temas e larguras |
 | [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
 | [Checklist](../specs/006-layout-v3/checklists/requirements.md) | Revisão de completude anterior ao plano |

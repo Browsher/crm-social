@@ -1,6 +1,6 @@
 # Modelo de apresentação — Layout v3
 
-Este modelo organiza a vista já consultada; não define captura, migração ou escrita. Parte A integrada; B implementada/testada localmente, não integrada, incluindo fila/perfil/estado de pop-up. [Provas e limites](validacao.md). Os nomes abaixo são derivados efêmeros do navegador.
+Este modelo organiza a vista já consultada; não define captura, migração ou escrita. Selo visual conserva instante e falha da captura; selo.destino legado permanece apenas como dado na API. Parte A integrada; B implementada/testada localmente, não integrada, incluindo fila/perfil/estado de pop-up. [Provas e limites](validacao.md). Os nomes abaixo são derivados efêmeros do navegador.
 
 ## Peça apresentada
 
@@ -39,4 +39,4 @@ Configuração versionada pública: nomePerfil é string não vazia após trim, 
 
 ## Estado visual temporário
 
-Tela ativa; modo Semana/Mês; semana/mês; objetivo expandido; referência de acionador; pop-up aberto e índice inteiro 0 ≤ índice < total. Nenhum dado persiste além da preferência de tema existente. Imagem única tem total=1 e 1/1 mesmo sem arquivo. Carrossel conta todas as páginas vigentes, com placeholder “prévia indisponível” nos slots sem imagem. Releitura da mesma peça atualiza conteúdo e limita índice ao total novo; remoção fecha/restaura foco; falha conserva o conteúdo anterior. Modal implementado na Parte B. A abertura consulta a identidade vigente; controles comuns únicos são realocados ao dialog e retornam ao topo no fechamento.
+Tela ativa; modo Semana/Mês; semana/mês; objetivo expandido; referência de acionador; pop-up aberto e índice inteiro 0 ≤ índice < total. Nenhum dado persiste além da preferência de tema existente. Imagem única tem total=1 e 1/1 mesmo sem arquivo, conservando a primeira posição lógica null em vez de saltar à imagem seguinte; sem posições usa a seleção/fallback 005. Carrossel conta todas as páginas vigentes, com placeholder “prévia indisponível” nos slots sem imagem. Releitura da mesma peça atualiza conteúdo e limita índice ao total novo; remoção fecha/restaura foco; falha conserva o conteúdo anterior. Modal implementado na Parte B; Reels usa nomes acessíveis por Cena N · início/final, reaplicados em releitura mesmo com total constante. A abertura consulta a identidade vigente; controles comuns únicos são realocados ao dialog e retornam ao topo no fechamento.

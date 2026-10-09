@@ -42,11 +42,11 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | Host/Origin recusados | 403, antes da avaliação de método/rota |
 | Estado/recibo confirmado inválido ou identidade/vínculo recusado na projeção | 503 genérico, sem alteração da última captura ou reparo dos arquivos |
 
-A allowlist de `STATIC` contém cinco arquivos explícitos: HTML, aplicativo, modelo visual, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A escolha das rotas existentes descarta query sem alterar configuração/caminho; atualização e mídia recusam query no contrato próprio. A mídia é uma rota dinâmica restrita por ID interno; nunca expõe data/ como diretório estático ou proxy genérico.
+A allowlist de `STATIC` contém sete arquivos explícitos: HTML, aplicativo, modelo visual, configuração de perfil, prévia Instagram, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A escolha das rotas existentes descarta query sem alterar configuração/caminho; atualização e mídia recusam query no contrato próprio. A mídia é uma rota dinâmica restrita por ID interno; nunca expõe data/ como diretório estático ou proxy genérico.
 
 ## Estáticos da 006 — Partes A/B
 
-A acrescentou `/layout-model.js`; B acrescenta somente `/perfil-config.js` e `/instagram.js`, sob a mesma allowlist explícita, GET/HEAD, MIME, CSP e guardas de Host/método. São sete arquivos: HTML, aplicativo, modelo visual, configuração de perfil, prévia Instagram, tema e CSS. Nenhum endpoint de dados, ambiente, dependência ou captura/cache mudou. `tests/layout-http.test.cjs` cobre seis casos, incluindo os dois novos estáticos, métodos recusados, Host e invariância de bytes de captura/recibos/API em TEMP. B implementada/testada localmente, não integrada; [validação](../../specs/006-layout-v3/validacao.md).
+A acrescentou `/layout-model.js`; B acrescenta somente `/perfil-config.js` e `/instagram.js`, sob a mesma allowlist explícita, GET/HEAD, MIME, CSP e guardas de Host/método. São sete arquivos: HTML, aplicativo, modelo visual, configuração de perfil, prévia Instagram, tema e CSS. Nenhum endpoint de dados, ambiente, dependência ou captura/cache mudou. `tests/layout-http.test.cjs` cobre seis casos, incluindo os dois novos estáticos, métodos recusados, Host e invariância de bytes de captura/recibos/API em TEMP. B implementada/testada localmente no PR #25, não integrada; a API conserva selo.destino = planilha como dado legado, ignorado pelo cliente. Captura/fonte/cobertura/instante/falhas e avisos técnicos continuam no GET existente; a retirada dessas tabelas visuais não alterou o contrato. [Validação](../../specs/006-layout-v3/validacao.md).
 
 ## Origem e conteúdo
 

@@ -41,7 +41,7 @@ Hoje e semana atual são civis de America/Sao_Paulo; semana inicia segunda e ter
 
 Resultado final da Parte B: somente Planejamento, Produção e Publicar. Remover Planilha/Dados e avisos, seus renderizadores e atalhos; manter os dados completos na API, inclusive view.planilha consumida por objetivoMensal.
 
-Selo é indicador, sem navegação para tela removida. Botão ⟳ Atualizar e feedback acessível ficam no topo comum. Usa o POST existente com JSON {} e GET posterior, botão desabilitado até o término de ambos. GET isolado/no-op não apaga falha ativa; falha conserva visão anterior e mensagens curtas existentes. Ausência inicial não menciona agentes.
+Selo é indicador, sem navegação para tela removida. Botão ⟳ Atualizar e feedback acessível ficam no topo comum. Usa o POST existente com JSON {} e GET posterior, botão desabilitado até o término de ambos. GET isolado/no-op não apaga falha ativa; falha conserva visão anterior e mensagens curtas existentes. Captura antiga mostra data/hora completa em America/Sao_Paulo; falha com captura conserva esse instante, e falha inicial fica vermelha com Atualização falhou · sem dados. title contém data/hora da captura, quando há uma. Ausência inicial sem falha continua Sem dados, sem agentes. O campo legado selo.destino = planilha é preservado na API e ignorado pelo cliente; fonte/cobertura/avisos permanecem identificados nos dados da captura/consulta, conforme a decisão explícita do autor na spec.
 
 ## Objetivo, Semana e Mês
 
@@ -59,11 +59,11 @@ Parte B implementada/testada localmente: perfil vem de src/web/perfil-config.js;
 
 ## Pop-up Instagram
 
-Parte B implementada/testada localmente: modal nativo em formato de celular, sem contato com Instagram. Recebe peça e posições já resolvidas. Perfil, arte 4:5, legenda e hashtags; carrossel tem setas, pontos com nomes, contador atual/total e índice sem wrap. Contar todas as páginas vigentes, inclusive as sem arquivo/bytes; cada posição indisponível mostra “prévia indisponível”. Imagem única conserva uma posição 1/1 mesmo sem arquivo, com setas indisponíveis. Reels sem imagem exibe placeholder; vídeo continua link na gaveta. A seleção de slots do pop-up não filtra páginas indisponíveis; a galeria histórica da 005 preserva seu contrato.
+Parte B implementada/testada localmente: modal nativo em formato de celular, sem contato com Instagram. Recebe peça/acionador e deriva posições pelo layout-model. Perfil, arte 4:5, legenda e hashtags; carrossel tem setas, pontos com nomes, contador atual/total e índice sem wrap. Contar todas as páginas vigentes, inclusive as sem arquivo/bytes; cada posição indisponível mostra “prévia indisponível”. Imagem única conserva a primeira posição lógica em 1/1 mesmo sem arquivo, sem saltar para a próxima imagem disponível; ausência de posições delega o fallback já contratado da 005. Setas ficam indisponíveis. Reels sem imagem exibe placeholder; vídeo continua link na gaveta. A seleção de slots do pop-up não filtra páginas indisponíveis; a galeria histórica da 005 preserva seu contrato.
 
 Releitura bem-sucedida com modal aberto resolve novamente a mesma producao_id na vista nova: atualizar texto, versão e posições sem fechar; preservar índice quando válido e limitá-lo à última posição quando o total diminuir. Se não houver mais a peça, fechar e devolver foco ao acionador conectado ou ao título da tela. Falha de releitura mantém a vista anterior e o modal com o conteúdo anterior. Nenhuma atualização inicia publicação ou busca peça por título. Produção/Publicar/gaveta resolvem producao_id na vista vigente antes de abrir; peça removida não reabre objeto anterior. Selo/Atualizar/feedback únicos são movidos para o dialog aberto, com marcadores de origem e restauração ao fechar, permitindo uso por teclado com fundo inerte.
 
-←/→ funcionam apenas no modal aberto; arrasto horizontal ≥40 px e dominante sobre vertical navega uma posição. Arrasto vertical não troca página. Foco contido no modal; Fechar/Esc fecha só o modal e restaura acionador; se ele não existir mais, título da tela. A posição da imagem falha permanece na navegação. Contador muda com anúncio acessível, sem legenda explicativa permanente.
+←/→ funcionam apenas no modal aberto; arrasto horizontal ≥40 px e dominante sobre vertical navega uma posição. Arrasto vertical não troca página. Foco contido no modal; Fechar/Esc fecha só o modal e restaura acionador; se ele não existir mais, título da tela. A posição da imagem falha permanece na navegação. Contador muda com anúncio acessível, sem legenda explicativa permanente. Reels anuncia Cena N · início/final no grupo/pontos/setas de destino, atualizados em releitura inclusive quando o total não muda; carrossel anuncia Página.
 
 ## Publicar e ações
 
@@ -71,7 +71,7 @@ Fila: liberação literal liberado e publicação vazia, mesmo se arquivo/pacote
 
 Texto copiado: legenda/hashtags preenchidas unidas por duas quebras de linha; vazio desabilita cópia, falha oferece seleção manual. Pacote é o único detalhes.pacotePublicacao já validado por produção, tipo pacote, extensão zip e pacote_versao positivos/exatos. Link HTTPS drive.google.com sem credenciais/porta não padrão, aberto só por clique. Recusa/ausência/ambiguidade: Pacote indisponível. Ver no Instagram abre o mesmo modal.
 
-Publicadas recentes: até dez, data ISO com fuso/horário/dia civil real válida decrescente, preenchidas inválidas depois por ID; não converter data inválida em zero ou normalizar dia impossível. Inválida mostra Data de publicação a confirmar. Travadas: mesmas regras acima, em seção separada. Em 390 px, seções seguem a fila; não há botão de publicar, escrita ou geração.
+Publicadas recentes: até dez, data ISO com fuso/horário/dia civil real válida decrescente, preenchidas inválidas depois por ID; não converter data inválida em zero ou normalizar dia impossível. Inválida mostra Data de publicação a confirmar. Travadas: mesmas regras acima, em seção separada, ordem da API sem limite próprio. Em 390 px, seções seguem a fila; não há botão de publicar, escrita ou geração.
 
 ## Gaveta, conteúdo e ausência de agentes
 

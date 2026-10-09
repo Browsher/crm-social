@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "feature": "006-layout-v3",
   "part": "B",
-  "sourceCommit": "60ef6282ce937fc13a8d92cc15278be2a98d79bc",
-  "screenshotSourceCommit": "3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20",
+  "sourceCommit": "f46db33389b1d8bde53068de8b555e56d5baf05a",
+  "screenshotSourceCommit": "f46db33389b1d8bde53068de8b555e56d5baf05a",
   "date": "2026-10-09",
   "environment": "Windows local, somente fixtures sintéticas e TEMP",
   "command": "node tools/quality-gate.mjs",
@@ -15,18 +15,18 @@
       "skipped": 0,
       "state": "PASS",
       "name": "tests",
-      "count": 728
+      "count": 740
     },
     {
-      "percent": 95.50717924965262,
+      "percent": 95.51341350601295,
       "state": "PASS",
       "name": "coverage",
       "drop": 0,
       "mode": "full"
     },
     {
-      "metricCount": 683,
-      "warningCount": 17,
+      "metricCount": 684,
+      "warningCount": 18,
       "state": "PASS",
       "maximum": 16.0,
       "name": "complexity"
@@ -46,6 +46,6 @@
     "UI app.js/theme.js/instagram.js/perfil-config.js fora do LCOV; comportamento verificado por Playwright local",
     "drop zero no modo full não representa comparação histórica",
     "prova local não substitui CI e review do head final",
-    "screenshots gerados em 3fd9e0f; delta 60ef628 move somente botão interno da gaveta, fora dos 20 enquadramentos"
+    "screenshots regenerados e inspecionados na mesma fonte de código/testes f46db33"
   ]
 }
