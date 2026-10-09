@@ -1,6 +1,6 @@
 # Modelo de apresentação — Layout v3
 
-Este modelo organiza a vista já consultada; não define captura, migração ou escrita. Selo visual conserva instante e falha da captura; badge global Dados a confirmar deriva captura presente + view.avisos, e resumo da peça deriva detalhes.avisos, sem novo estado capturado; selo.destino legado permanece apenas como dado na API. Parte A integrada; B implementada/testada localmente, não integrada, incluindo fila/perfil/estado de pop-up. [Provas e limites](validacao.md). Os nomes abaixo são derivados efêmeros do navegador.
+Este modelo organiza a vista já consultada; não define captura, migração ou escrita. Selo visual conserva instante e falha da captura; badge global Dados a confirmar deriva captura presente + view.avisos, e resumo da peça deriva detalhes.avisos, sem novo estado capturado; selo.destino legado permanece apenas como dado na API. Parte A integrada; B implementada/testada e entregável, 32/32 tarefas executadas e não integrada, incluindo fila/perfil/estado de pop-up. CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais reconferidos por head no PR. [Provas e limites](validacao.md). Os nomes abaixo são derivados efêmeros do navegador.
 
 ## Peça apresentada
 
@@ -11,7 +11,7 @@ Entrada: producao_id, semanaId, dataCivil, titulo, formato, versao, estado_liber
 | estadoSimples | um de Planejada, Criação, Revisão, Pronta, Publicada; mapa do contrato |
 | motivoTravado | vazio ou motivo curto de correção vigente/mídia na etapa Mídia |
 | imagens | Parte A preserva a seleção da galeria da 005; falha de bytes mantém placeholder. posicoesInstagram preserva na B todos os slots, inclusive sem arquivo, no contador |
-| miniatura | primeira posição ou Prévia indisponível |
+| miniatura | primeira imagem disponível da seleção histórica 005 ou Prévia indisponível; pode diferir da primeira posição lógica ausente de Imagem única no modal |
 | textoCopia | legenda/hashtags preenchidas unidas por duas quebras de linha |
 | pacote | detalhes.pacotePublicacao já resolvido; link sujeito à allowlist atual |
 

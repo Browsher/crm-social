@@ -6,7 +6,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-A 006 Parte A foi integrada pelo PR #24 em `a5be355`; B está implementada/testada localmente no [PR #25](https://github.com/Browsher/crm-social/pull/25), ainda não integrada. Menu final Planejamento/Produção/Publicar, topo único, objetivo/Semana/Mês/projetos e prévia local compartilhada. Planilha visual/atalhos saíram; API completa permanece. B acrescenta somente `/perfil-config.js` e `/instagram.js` à allowlist do servidor, sem alteração de captura/projeção/coleta/cache/constituição/CI/gate ou dependências. [Validação e fontes](../specs/006-layout-v3/validacao.md).
+A 006 Parte A foi integrada pelo PR #24 em `a5be355`; B está implementada/testada e entregável, com 32/32 tarefas executadas, no [PR #25](https://github.com/Browsher/crm-social/pull/25), ainda não integrada. Menu final Planejamento/Produção/Publicar, topo único, objetivo/Semana/Mês/projetos e prévia local compartilhada. Planilha visual/atalhos saíram; API completa permanece. B acrescenta somente `/perfil-config.js` e `/instagram.js` à allowlist do servidor, sem alteração de captura/projeção/coleta/cache/constituição/CI/gate ou dependências. [Validação e fontes](../specs/006-layout-v3/validacao.md) registra CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais são reconferidos por head no PR.
 
 **Histórico da entrega 005:** **005 — Prévias de imagens**, implementado/testado localmente em 08/10/2026, no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Acrescenta mídia sob demanda pelo servidor, cache privado e galeria/ampliação na gaveta. O autor aprovou as 21 tarefas após a parada inicial; 21/21 concluídas. T002 confirmada pelo autor em 08/10/2026: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. [Validação por fonte e checks/review da entrega](../specs/005-previas-imagens/validacao.md). Versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review; Pronta já integrada pelo PR #21. O registro da 004 na introdução preserva sua rodada histórica.
 
@@ -236,8 +236,8 @@ US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do r
 
 ## Planilha: mínimos, avisos e Histórico — projeção preservada; interface histórica
 
-Como folhas de consulta do mesmo álbum, as seis tabelas mostram a captura NTV
-completa; o atalho da gaveta localiza os avisos relacionados à peça.
+Na apresentação histórica 001–005, como folhas de consulta do mesmo álbum, as seis tabelas mostravam a captura NTV
+completa; o atalho da gaveta localizava os avisos relacionados à peça. A projeção permanece na API; esses destinos visuais foram removidos na 006 B. O diagrama abaixo conserva o fluxo histórico da interface.
 
 ```mermaid
 flowchart TD
@@ -265,11 +265,11 @@ vazia permanece nos mínimos, exceto `etapa_producao`; o original fica privado.
 Histórico mostra todas as tentativas confirmadas, sem órfãos nem novo recibo por
 no-op. As tabelas e o Histórico não criam rotas ou escritores adicionais; a triagem compartilhada está descrita acima.
 
-`renderPlanilha` em [src/web/app.js](../src/web/app.js) conserva a aba disponível; setas, Home e End
-mudam seleção e foco, e tabelas largas têm região própria de rolagem. Sem captura,
-somente Histórico e orientação à Central. O link da gaveta abre Produções e dá
+Na interface histórica 001–005, `renderPlanilha` em [src/web/app.js](../src/web/app.js) conservava a aba disponível; setas, Home e End
+mudavam seleção e foco, e tabelas largas tinham região própria de rolagem. Sem captura,
+apareciam somente Histórico e orientação à Central. O link da gaveta abria Produções e dava
 rolagem/foco ao painel da peça, sem recortar as seis tabelas; menu/selo/Todos os
-avisos restauram os avisos gerais. Painel fica oculto em Histórico ou sem avisos.
+avisos restauravam os avisos gerais. O painel ficava oculto em Histórico ou sem avisos. Esses renderizadores/atalhos não existem na 006 B.
 
 `celulaPlanilha` no mesmo [app.js](../src/web/app.js) troca somente URL dedicada recusada por
 **link não permitido**, mantendo o marcador exato de supressão. A API pode conservar

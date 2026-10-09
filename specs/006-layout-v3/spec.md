@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/006-layout-v3`
 **Created**: 2026-10-08
-**Status**: Parte A aprovada e integrada pelo PR #24 em 09/10/2026, main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. Parte B autorizada, implementada/testada localmente e não integrada na branch `codex/006-layout-v3-parte-b`, no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge; gate local 7a0dd56 aprovado, PNG 800d7ca, CI do head anterior b5af415 aprovado; CI/review do novo head final pendentes. Evidências e pendências em [validacao.md](validacao.md).
+**Status**: Parte A aprovada e integrada pelo PR #24 em 09/10/2026, main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. Parte B autorizada, implementada/testada e entregável, 32/32 tarefas executadas e não integrada na branch `codex/006-layout-v3-parte-b`, no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge; gate local 7a0dd56 aprovado, PNG 800d7ca, CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida. Metadados finais são reconferidos por head no PR. Evidências e limites em [validacao.md](validacao.md).
 **Input**: Pedido do autor em 08/10/2026: reorganizar a apresentação do CRM pessoal em Planejamento, Produção e Publicar, com referência visual aprovada, sem mudar dados/captura ou escrita operacional.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -29,7 +29,7 @@ O trade-off autorizado é deixar fonte detalhada, cobertura e avisos técnicos c
 ### Clarifications — Session 2026-10-08
 
 - Página sem prévia no pop-up mostra “prévia indisponível” naquela posição; o contador conta todas as páginas, inclusive as indisponíveis. Imagem única mantém sua posição 1/1 mesmo sem arquivo; nenhuma página é eliminada para reduzir o contador.
-- ⟳ Atualizar com pop-up aberto mantém o pop-up aberto com a versão nova da mesma peça. Se a peça não existir mais, fecha e devolve o foco. Ao reduzir páginas, limitar o índice ao último existente; falha de releitura conserva a versão já exibida. Estas regras estão implementadas/testadas localmente na Parte B; entrega remota permanece pendente.
+- ⟳ Atualizar com pop-up aberto mantém o pop-up aberto com a versão nova da mesma peça. Se a peça não existir mais, fecha e devolve o foco. Ao reduzir páginas, limitar o índice ao último existente; falha de releitura conserva a versão já exibida. Estas regras estão implementadas/testadas e a Parte B está entregável no PR #25, não integrada; resultados por fonte/head estão em validacao.md.
 
 ### User Story 1 - Acompanhar semana e mês (Priority: P1)
 

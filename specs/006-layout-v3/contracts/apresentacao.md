@@ -1,10 +1,10 @@
 # Contrato de apresentação — Layout v3
 
-Como a legenda de uma agenda, este contrato transforma somente a apresentação da vista v1. Estado em 09/10/2026: A integrada pelo PR #24 em a5be355; B implementada/testada localmente, não integrada. GET /api/visao, POST /api/atualizar, GET /api/midia/ID e captura permanecem com os mesmos dados e guardas.
+Como a legenda de uma agenda, este contrato transforma somente a apresentação da vista v1. Estado em 09/10/2026: A integrada pelo PR #24 em a5be355; B implementada/testada e entregável, 32/32 tarefas executadas, não integrada. GET /api/visao, POST /api/atualizar, GET /api/midia/ID e captura permanecem com os mesmos dados e guardas.
 
 ## Recorte de entrega autorizado
 
-A preservou Planilha/atalhos e entregou topo/Semana/Mês/objetivo/projetos; após aprovação explícita, foi integrada. B autorizada em 09/10 entrega Publicar, configuração de perfil, modal compartilhado e retirada visual de Planilha, além de tipos no Mês. Cada parte tem PR/gate/review próprios; merge B proibido e verificações remotas do head final pendentes.
+A preservou Planilha/atalhos e entregou topo/Semana/Mês/objetivo/projetos; após aprovação explícita, foi integrada. B autorizada em 09/10 entrega Publicar, configuração de perfil, modal compartilhado e retirada visual de Planilha, além de tipos no Mês. Cada parte tem PR/gate/review próprios; CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais reconferidos por head no PR e merge B proibido.
 
 ## Estado simples e prioridade
 

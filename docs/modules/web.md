@@ -2,9 +2,9 @@
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-## Layout v3 — Parte A integrada; Parte B vigente localmente
+## Layout v3 — Parte A integrada; Parte B entregável, não integrada
 
-Como páginas de uma agenda, Semana e Mês localizam peças, Produção acompanha projetos e Publicar reúne o material para a publicação manual. A integrada pelo PR #24; B implementada/testada localmente, não integrada; [validação](../../specs/006-layout-v3/validacao.md). As seções históricas 001–005 abaixo preservam dados/provas e identificam a apresentação substituída.
+Como páginas de uma agenda, Semana e Mês localizam peças, Produção acompanha projetos e Publicar reúne o material para a publicação manual. A integrada pelo PR #24; B implementada/testada e entregável, 32/32 tarefas executadas, não integrada; [validação](../../specs/006-layout-v3/validacao.md). CI estrito da099ab SUCCESS/Semgrep PASS e revisão independente completa aprovada; review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida, com metadados finais reconferidos por head no PR. As seções históricas 001–005 abaixo preservam dados/provas e identificam a apresentação substituída.
 
 index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model → perfil-config → instagram → app. app.js usa [dez funções puras](layout-model.md), mantendo DOM, atualização e gaveta. [instagram.js](instagram.md) cuida do dialog/navegação/foco, e [perfil-config.js](perfil-config.md) fornece somente o nome sintético público.
 
@@ -27,6 +27,8 @@ index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model 
 renderPlanilha, celulaPlanilha e atalhos foram removidos; detalhesCaptura permanece simplificada para atualizar o selo. Principais integrações: renderPublicar, textosPublicacao, acoesPublicacao, botaoInstagram, renderProducao/projetoSemana, semanaPlanejamento, calendario, objetivoMensal e abrirDia/acordeaoPeca. A data inválida em publicação recente usa **Data de publicação a confirmar**, sem normalizar dia impossível; publicação preenchida continua fora da fila.
 
 API mantém o campo legado selo.destino = planilha; o cliente ignora esse destino, sem recriar a página removida. Travadas conserva ordem recebida da API sem limite próprio; formato vazio conserva texto vazio, sem novo rótulo inventado. Falha de GET com modal aberto preserva vista/controle/erro existente; a mensagem de resultado do botão ainda resume o POST. Esses limites não criam operação editorial.
+
+Dívidas de manutenção sugeridas no review: prontaParaPublicar e acoesPublicacao ainda repetem ações de cópia/pacote; uma consolidação futura deve preservar os contratos de clipboard e allowlist. Há tokens/estilos CSS legados sem uso a revisar em limpeza própria. Essas sugestões não são falhas reproduzidas do contrato e não alteraram código nesta entrega. A verificação de acessibilidade foi por Playwright; anúncios de role=status quando um nó deixa hidden e possíveis redundâncias precisam de ensaio futuro com leitor de tela real, que não foi realizado.
 
 LCOV não inclui app/theme/instagram/perfil-config; layout-model e geradores sintéticos são medidos. Playwright verifica 1440/390, temas, foco/teclado/contraste, conteúdo literal e invariância; CI Linux mantém pulos UI/PowerShell na dívida M8. [20 screenshots da B](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-b), [12 históricos da A](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-a); gate local não substitui CI/review no head final.
 
@@ -130,12 +132,12 @@ Grid preserva oito colunas em ordem: quatro em 1440 px, duas até 1100 px e uma 
 
 ## Planilha, Histórico e avisos
 
-Como folhas de consulta do mesmo álbum, seis abas obrigatórias e as opcionais capturadas mantêm o conjunto NTV completo.
-O atalho da gaveta localiza somente os avisos relacionados à peça, sem reduzir as
-tabelas. A tela usa `planilha`, `historico`, `avisos` e `detalhes.avisos` da API
-existente; não há nova consulta remota nem escrita.
+Na apresentação histórica 001–005, como folhas de consulta do mesmo álbum, seis abas obrigatórias e as opcionais capturadas mantinham o conjunto NTV completo.
+O atalho da gaveta localizava somente os avisos relacionados à peça, sem reduzir as
+tabelas. A tela usava `planilha`, `historico`, `avisos` e `detalhes.avisos` da API
+existente, sem nova consulta remota nem escrita. Na 006 B esses destinos visuais foram removidos; os dados continuam completos na API.
 
-| Seção / controle | Apresentação atual |
+| Seção / controle | Apresentação histórica 001–005 |
 | --- | --- |
 | Subtítulo | Dados capturados da planilha, por aba; ao voltar às demais telas, Peças registradas, semana a semana. |
 | Origem e atualização | Fonte, fim e cobertura; falha ativa em uma linha e contador de avisos gerais como link, sem repetir os motivos |
@@ -154,8 +156,8 @@ as seis abas e Meses/Pautas se capturadas; `tabPlanilha` e `escolherAba` sincron
 `aria-selected` e `aria-labelledby`, com rolagem da aba até a área visível. Se a
 aba deixa de existir, a primeira disponível é selecionada.
 
-`avisosPeca` fecha a gaveta, chama `navegar` com a produção, abre
-Produções e dá rolagem/foco a `#avisos-dados`. `renderAvisosPlanilha` usa os
+`avisosPeca` fechava a gaveta, chamava `navegar` com a produção, abria
+Produções e dava rolagem/foco a `#avisos-dados` na interface histórica. `renderAvisosPlanilha` usa os
 avisos relacionados da peça; todas as tabelas permanecem globais à captura NTV.
 Menu e selo entram sem filtro; **Todos os avisos** restaura os gerais no painel.
 O link **N avisos de dados** de Origem também restaura os gerais, seleciona Produções
@@ -216,7 +218,7 @@ O diálogo nativo recebe título de data/sem data, quantidade e **todas** as pe�
 | Avisos da peça | Quantidade de aviso(s) de dados nesta peça e link ver na Planilha, com plural correto e sem separador pendurado; aba/linha/campo permanecem na API |
 | Documentos da semana | Uma seção no fim do dia; cada semana representada tem Plano/Redação/Visual uma vez, com — para ausentes, inclusive sem semana identificada |
 
-O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. O link dos avisos fecha a gaveta, abre Produções na Planilha e dá rolagem/foco ao painel detalhado da peça; Origem conserva a falha ativa e o contador geral, com os motivos somente no painel.
+O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. Na interface histórica 001–005, o link dos avisos fechava a gaveta, abria Produções na Planilha e dava rolagem/foco ao painel detalhado da peça; Origem conservava a falha ativa e o contador geral, com os motivos somente no painel. Esses atalhos foram removidos na 006 B.
 
 Publicação preenchida permanece como registro explícito e conserva o valor original. Quando formato/fuso são inválidos ou o instante excede o fim da captura, a projeção acrescenta um aviso localizado em `publicado_em`; a gaveta conserva o registro e resume a quantidade de avisos, sem verificar publicação remotamente. Campo vazio omite a linha, sem comprovar publicação. IDs de escopo/revisão e seus valores completos continuam na API, sem rótulos técnicos na linha visual. A API ainda conserva `detalhes.responsavelRegistrado='A confirmar'` quando vazio, mas a faixa usa `responsavel_atual` e omite esse campo vazio.
 

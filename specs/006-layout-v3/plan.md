@@ -2,7 +2,7 @@
 
 **Branch**: `codex/006-layout-v3-parte-b` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
 **Input**: especificação única em `specs/006-layout-v3/spec.md`.
-**Estado**: Parte A integrada no PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada em 09/10/2026 e implementada/testada localmente, não integrada, na branch codex/006-layout-v3-parte-b; 32 tarefas mantidas. [Validação de execução](validacao.md).
+**Estado**: Parte A integrada no PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada em 09/10/2026, implementada/testada e entregável, não integrada, na branch codex/006-layout-v3-parte-b; 32/32 tarefas executadas. CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais reconferidos por head no PR. [Validação de execução](validacao.md).
 
 ## Execução autorizada nesta rodada — Parte B
 
@@ -43,7 +43,7 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 | I Local e simples | PASS documental | PASS documental | mesmo servidor e tecnologia, sem instalação |
 | II Fontes e identidade | Conforme ao contrato de captura | Conforme ao escopo explícito, com trade-off visual documentado | Fonte/cobertura/instante/falhas/IDs/versões/Histórico permanecem na captura/API; UI mostra instante/falha e sinal mínimo Dados a confirmar global/no resumo da peça, sem sucesso aparente. Remoção de tabelas/agentes foi fornecida pelo autor e reiterada em B; detalhes técnicos ficam na API, sem novo estado operacional. |
 | III Papéis | PASS documental | PASS documental | sem execução editorial, nomes técnicos removidos da UI |
-| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, PNG 800d7ca/gate 7a0dd56 executados; CI do head anterior b5af415 aprovado, novo head remoto pendente |
+| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, PNG 800d7ca/gate 7a0dd56 executados; CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; fontes de código/PNG e head documental distintos |
 | V Feature única | PASS documental | PASS documental | somente pasta 006, sem design paralelo; desenho já autorizado pelo autor |
 | VI Leitura privada | PASS documental | PASS documental | mesma rota de mídia, mesmos escopos e cache; thumbnails são demanda da tela visível |
 | Governança | Conforme às decisões existentes | Sem emenda ou autorização nova | A integrada após aprovação separada; B autorizada em 09/10, PR #25 sem merge. O pedido explícito prevalece na composição visual; contratos/constituição permanecem. 32 IDs mantidos. |

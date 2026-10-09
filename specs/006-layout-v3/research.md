@@ -1,6 +1,6 @@
 # Pesquisa — Layout v3
 
-Data: 08/10/2026. Pesquisa documental anterior à implementação; não é prova de execução. A Parte A foi depois implementada/testada localmente, com [validação própria](validacao.md); A foi integrada após aprovação em 09/10; perfil/modal/fila e retirada de Planilha da B estão implementados/testados localmente. [Validação](validacao.md) registra fontes e pendências remotas.
+Data: 08/10/2026. Pesquisa documental anterior à implementação; não é prova de execução. A Parte A foi depois implementada/testada localmente, com [validação própria](validacao.md); A foi integrada após aprovação em 09/10; perfil/modal/fila e retirada de Planilha da B estão implementados/testados e entregáveis no PR #25, não integrados, com 32/32 tarefas executadas. [Validação](validacao.md) registra fontes distintas de código/testes/PNG e CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais reconferidos por head no PR.
 
 ## Decisão 1 — preservar a tecnologia existente
 

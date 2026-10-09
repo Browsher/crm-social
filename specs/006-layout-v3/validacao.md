@@ -1,6 +1,6 @@
 # Validação — Layout v3
 
-Como uma nova agenda para as mesmas capturas, a 006 mantém 32 tarefas em duas partes. **A integrada após aprovação explícita em 09/10/2026**, PR #24/main a5be355; **B implementada/testada localmente, não integrada**, PR #25 aberto/anexado e gate local 7a0dd56 e CI estrito do head anterior b5af415 aprovados; CI/review do novo head final pendentes e merge B proibido. As seções da A abaixo conservam o registro histórico anterior à integração.
+Como uma nova agenda para as mesmas capturas, a 006 mantém 32 tarefas em duas partes. **A integrada após aprovação explícita em 09/10/2026**, PR #24/main a5be355; **B implementada/testada e entregável, 32/32 tarefas executadas, não integrada**, PR #25 aberto/anexado, gate local 7a0dd56 aprovado e PNG 800d7ca. CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais reconferidos por head no PR e merge B proibido. As seções da A abaixo conservam o registro histórico anterior à integração.
 
 ## Parte A — fonte e escopo históricos, anteriores à integração
 
@@ -126,7 +126,7 @@ Prova remota da fonte corrigida `d9960021192d25f401f1336820bfc50fab3d2d47`: [CI 
 
 O full gate local final da fonte 01d772b passou com 680 PASS. O retry oficial histórico da fonte 4ab855e passou; sua tentativa anterior exit 1 não foi reproduzida e a causa permanece não identificada. Resultados de revisão independente, CI e review remoto são registrados e conferidos no PR por head, incluindo o head final; correções posteriores de código exigem repetir verificações afetadas. Commits usam noreply sem coautoria. Estado histórico no fechamento A: nenhum merge então autorizado, B ainda não iniciada. A aprovação/integração em 09/10 e a execução B estão registradas abaixo.
 
-## Parte B — implementada e testada localmente
+## Parte B — registros históricos de implementação e testes locais
 
 Como uma prévia do material que será publicado manualmente, B acrescenta o celular de demonstração e a fila Publicar sem comandar a operação. Autorização em 09/10/2026 após aprovação da A; branch `codex/006-layout-v3-parte-b`, base/main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. O outro chat já havia feito o merge aprovado do [PR #24](https://github.com/Browsher/crm-social/pull/24); o coordenador conferiu SHA local/remoto e preservou os testes iniciados ali. B permanece **não integrada**, no [PR #25](https://github.com/Browsher/crm-social/pull/25), aberto/anexado, com CI/review do head documental final pendentes e **sem autorização de merge**.
 
@@ -162,7 +162,7 @@ Galeria A de 12 PNG e históricos 001–005 intactos. Na primeira implementaçã
 
 ### Quality gate Windows — Parte B histórico 60ef628
 
-Comando oficial `node tools/quality-gate.mjs`, Node **24.19.0**, Playwright existente, Windows local. Naquele fechamento, o relatório então registrava sourceCommit **60ef6282ce937fc13a8d92cc15278be2a98d79bc** e screenshotSourceCommit **3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20**. O [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica f46db33, cuja medição final está descrita abaixo.
+Comando oficial `node tools/quality-gate.mjs`, Node **24.19.0**, Playwright existente, Windows local. Naquele fechamento, o relatório então registrava sourceCommit **60ef6282ce937fc13a8d92cc15278be2a98d79bc** e screenshotSourceCommit **3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20**. O [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica código/testes 7a0dd56 e PNG 800d7ca, cuja medição final está descrita abaixo; o registro 60ef628 acima permanece histórico.
 
 | Verificação | Resultado final local |
 | --- | --- |
@@ -199,7 +199,7 @@ A revisão independente do delta f46db33 não encontrou achados funcionais/de se
 
 A primeira execução oficial de f46db33 teve **exit 1**, testes FAIL com contagem 740 e cobertura FAIL; o TAP detalhado não foi retido. Não há evidência para atribuir a falha a um caso, timeout ou correção. O diagnóstico integral `node --test --experimental-test-coverage` na **mesma fonte, sem mudança de código**, observou **740 PASS, 0 FAIL, 0 SKIP, exit 0**. A execução oficial seguinte também passou, sem alteração interveniente. A causa inicial permanece não identificada e não reproduzida.
 
-Comando oficial daquela rodada: `node tools/quality-gate.mjs`, Windows/Node **24.19.0**, Playwright existente. O relatório então registrava sourceCommit e screenshotSourceCommit iguais a **f46db33389b1d8bde53068de8b555e56d5baf05a**; o [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica o fechamento7a0dd56/PNG 800d7ca descrito abaixo.
+Comando oficial daquela rodada: `node tools/quality-gate.mjs`, Windows/Node **24.19.0**, Playwright existente. O relatório então registrava sourceCommit e screenshotSourceCommit iguais a **f46db33389b1d8bde53068de8b555e56d5baf05a**; o [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica o fechamento 7a0dd56/PNG 800d7ca descrito abaixo.
 
 | Verificação | Execução oficial final repetida |
 | --- | --- |
@@ -256,8 +256,34 @@ Comando final `node tools/quality-gate.mjs`, Windows/Node **24.19.0**, Playwrigh
 
 20 PNG B regenerados/inspecionados em **800d7ca**, com mesmas combinações/viewports/dimensões e fixtures sintéticas da galeria; 7a0dd56 não mudou nenhum PNG. Não atribuir sua geração ao commit de teste. App/theme/instagram/perfil-config fora do LCOV e comportamento verificado em navegador; modelo/geradores medidos. T030 registra o gate vigente, sem confundir a falha de 800 e a correção 7a0 com a causa não identificada de f46.
 
-### CI anterior comprovado; novo head ainda exige checks/review
+### CI anterior comprovado; novo head ainda exige checks/review — registro histórico anterior a da099ab
 
 O coordenador verificou o [CI estrito do head b5af415, execução 37951532786](https://github.com/Browsher/crm-social/actions/runs/37951532786), **SUCCESS**, Semgrep PASS, exit 0/baseline false. Head exato: **b5af4152d7f6705afcaadef03f737a9917bb3196**; diff f46db33→b5af415 contém somente 21 .md e 1 JSON, sem fonte de produção/testes/PNG. Essa prova documental anterior não aprova automaticamente 800d7ca/7a0dd56 nem o novo head posterior.
 
 doc-sync-onboarding executado novamente como última etapa depois do gate 7a0dd56, exclusivamente nos 21 .md de onboarding/feature006. Fontes de código/testes e PNG diferenciadas, históricos f46/740/60ef/728/A/001–005 preservados; Sonnet/Haiku indisponíveis, fallback herdado. Não há mapa Graphify no checkout, e Mermaid reflete relações reais. Conferência documental: 797 caminhos relativos existentes, cercas balanceadas, índice cobrindo todos os .md de docs/, regra de estrutura com 60 linhas e diff --check dos .md sem erro. **32 IDs mantidos; T029/T032 ficam abertos** para revisão independente completa, CI/review do head final e entrega. PR #25 aberto/anexado, **merge B proibido**.
+
+## Fechamento entregável da Parte B — candidato da099ab
+
+Como a conferência final de um álbum, este fechamento verifica o código testado e os metadados que o apresentam. **32/32 tarefas executadas**, incluindo T029/T032; Parte B entregável no [PR #25](https://github.com/Browsher/crm-social/pull/25), aberto/anexado e **não integrada, merge proibido**. Os registros anteriores de etapas então pendentes permanecem históricos.
+
+| Fonte / verificação | Prova e limite |
+| --- | --- |
+| Código/testes local | **7a0dd56375ff06436fa9cecf8e59f14bc35a7585**; gate oficial Windows/Node 24.19.0: **750 PASS/0 SKIP**, cobertura **95,51341350601295%**, **685 métricas/máximo 16/18 avisos**, exit 0/baselineUpdated false; Semgrep SKIP local CE 1.179.0 ausente/audit N/A. Nenhuma alteração posterior de fonte/testes nesta rodada documental. |
+| Screenshots | **800d7ca2930284da4566f33dae5f3699e0eecc84**, 20 PNG regenerados e inspecionados; 7a0dd56 alterou somente uma expectativa de teste, sem código/PNG. [Galeria B](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) identifica essa fonte, com carrossel 1/5/Publicar/Mês rotulado nos dois temas e larguras. |
+| Candidato documental | **da099ab2157805416594d9c2e5195a435fcb50e8**. Coordenador e revisão independente confirmaram por Git que o delta 7a0dd56→da099ab contém somente **21 .md + 1 JSON sanitizado**, sem mudança de código/testes/PNG/CI/gate/constituição. O JSON é o relatório local; não é artefato de CI. |
+| Revisão independente completa — T029 | Candidato da099ab: **Critical 0, Important 0, Minor novos 0**, aprovação técnica. A revisão completa incluiu fonte, contratos, testes, scripts e documentação; não é uma aprovação formal de review no GitHub. |
+| CI estrito — T032 | [Execução 37955832783](https://github.com/Browsher/crm-social/actions/runs/37955832783), head exato da099ab, **SUCCESS**; [job 113905993015](https://github.com/Browsher/crm-social/actions/runs/37955832783/job/113905993015). O coordenador confirmou no log **Semgrep PASS, exit 0 e baselineUpdated false**. A lista de artefatos da execução está vazia: o workflow não reteve JSON de CI. Check/log remoto e relatório local são evidências distintas. |
+| Review remoto | [Comentário 6084549816](https://github.com/Browsher/crm-social/pull/25#issuecomment-6084549816), lido integralmente pelo coordenador: sem bloqueio de código, arquitetura ou segurança. A condição administrativa de evidência CI foi atendida pela execução real acima, registrada no corpo do PR; não houve merge ou aprovação formal fabricada. |
+
+As seguintes observações Minor são sugestões de manutenção, sem falha reproduzida do contrato e sem trabalho novo autorizado nesta entrega:
+
+| Sugestão | Registro / limite |
+| --- | --- |
+| M1 — atalhos históricos | A coluna Planilha/Histórico/avisos do módulo web identifica **apresentação histórica 001–005**, e seus atalhos na arquitetura/web foram colocados no passado. Na 006 B não existe página ou atalho visual Planilha. |
+| M2 — personalização de perfil | O arquivo público versionado continua sintético. Override local ignorado é dívida futura para reduzir o risco de commit acidental da personalização; não foi implementado/autorizado aqui e não implica novo endpoint. Nenhum nome real foi fornecido ou consultado. |
+| M3 — helpers de publicação | prontaParaPublicar e acoesPublicacao ainda repetem cópia/pacote; consolidar futuramente exige preservar clipboard e allowlist, sem alteração de código nesta rodada. |
+| M4 — CSS legado | Tokens/estilos órfãos permanecem como limpeza futura, sem regressão visual reproduzida ou alteração de CSS neste fechamento. |
+| M5 — anúncios assistivos | Teclado/foco/estados foram verificados por Playwright. Anúncio de status ao sair de hidden e possível redundância de ponto, tipo e nome da semana no Mês pedem ensaio futuro com leitor de tela real; esse ensaio não foi realizado e não é alegado como aprovado. |
+| M6 — redação constitucional | Sugestão de emenda patch para explicitar o alcance visual é pendência de governança futura, não requisito adicional desta feature. Constituição 1.2.0 e contratos permanecem; a decisão explícita do autor sobre remoção de páginas/agentes e o sinal mínimo de incerteza já estão registrados no spec/plano. Nenhuma emenda, resposta de clarify ou aprovação adicional foi fabricada. |
+
+doc-sync-onboarding repetido como última etapa após o gate, exclusivamente nos 21 .md de onboarding/006; código/testes/PNG/JSON e arquivos de operação preservados. Sonnet/Haiku indisponíveis neste host: documentação usou fallback herdado. Não há mapa Graphify no checkout; Mermaid conserva relações reais. Este registro cita as provas já executadas do candidato da099ab e separa suas fontes das provas locais. Conferência documental deste fechamento: **21 .md alterados**, **798 caminhos relativos existentes**, cercas balanceadas, índice cobrindo os **27 .md autorais de docs/**, **32 IDs únicos/32 checkboxes X**, regra de estrutura com **60 linhas** e git diff --check dos .md sem erro. Nenhuma mudança de código, testes, PNG ou JSON nesta rodada; output/ do usuário permanece intocado. O coordenador verifica novamente CI/review do commit final de metadados e registra o resultado **por head no corpo do PR**, evitando atribuir a um documento o SHA do próprio commit ainda não criado.

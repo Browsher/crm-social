@@ -2,7 +2,7 @@
 
 Como o nome impresso no topo de um cartão, esta configuração identifica a prévia local. Ela não conecta uma conta nem autentica serviços.
 
-[src/web/perfil-config.js](../../src/web/perfil-config.js) define somente `globalThis.CrmPerfil={nomePerfil:'perfil.exemplo'}`. O valor é sintético, público e versionado; não incluir credenciais, endereço de conta, ID de serviço ou dados operacionais. Implementado e testado na Parte B da 006, ainda não integrada.
+[src/web/perfil-config.js](../../src/web/perfil-config.js) define somente `globalThis.CrmPerfil={nomePerfil:'perfil.exemplo'}`. O valor é sintético, público e versionado; não incluir credenciais, endereço de conta, ID de serviço ou dados operacionais. Implementado e testado na Parte B da 006, entregável e não integrada, com 32/32 tarefas executadas. CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais são reconferidos por head no PR.
 
 | Campo | Validação no consumidor |
 | --- | --- |
@@ -11,6 +11,8 @@ Como o nome impresso no topo de um cartão, esta configuração identifica a pr�
 `index.html` carrega o arquivo com `defer` antes de [instagram.js](instagram.md); o consumidor valida o objeto e escreve o nome com `textContent`. O servidor oferece somente `/perfil-config.js` pela allowlist explícita de estáticos, sob as mesmas guardas de método/Host/CSP/MIME. Não há nova variável de ambiente, endpoint de dados ou dependência.
 
 Para personalizar o nome neste computador, editar nomePerfil somente no checkout local. O nome real do perfil é personalização privada: **não commitar**, publicar em PR/log nem usar em screenshots compartilhados. Antes de preparar um commit, restaurar o exemplo sintético versionado. Nenhum nome real foi fornecido ou consultado nesta entrega; não há mecanismo de configuração ignorada ou variável de ambiente implementado para essa personalização.
+
+Dívida de processo sugerida no review: editar o arquivo versionado exige cuidado para não incluir a personalização privada em um commit. Um override local ignorado reduziria esse risco em trabalho futuro; ele não foi implementado nem autorizado como parte desta entrega e não implica novo endpoint. A configuração pública continua exclusivamente sintética.
 
 ```mermaid
 flowchart LR
