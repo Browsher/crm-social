@@ -2,6 +2,24 @@
 
 Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplicação executável, preenchida somente com dados fictícios. São capturas de tela do código implementado em `src/web/`, diferentes do mockup e do protótipo históricos.
 
+## 006 — Ajustes visuais
+
+Oito screenshots exclusivamente sintéticos comparam a prévia de Instagram antes/depois, nos temas claro/escuro e larguras 1440/390. Antes: main `596dc4f`, fechamento documental PR #26. Depois: código/testes `7939e70524c5fa6d20600f2216433d9dfa0077f2`. Os quatro PNG depois foram regenerados nesta fonte e continuam byte a byte idênticos à prova anterior 028778a: DEMO tem quatro letras e conserva fonte de 7,5 px. As oito imagens foram inspecionadas. Manutenção implementada/testada localmente, não integrada; checks/review do head final são registrados no PR. A 006 continua integrada com 32/32 tarefas. [Validação](../../reports/006-ajustes-visuais-validacao.md) e [gate local](../../reports/006-ajustes-visuais-local-gate.json).
+
+| Fonte | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
+| --- | --- | --- | --- | --- |
+| Antes — 596dc4f | [Antes claro 1440](layout-v3-ajustes/antes-light-1440.png) | [Antes claro 390](layout-v3-ajustes/antes-light-390.png) | [Antes escuro 1440](layout-v3-ajustes/antes-dark-1440.png) | [Antes escuro 390](layout-v3-ajustes/antes-dark-390.png) |
+| Depois — 7939e70 | [Depois claro 1440](layout-v3-ajustes/depois-light-1440.png) | [Depois claro 390](layout-v3-ajustes/depois-light-390.png) | [Depois escuro 1440](layout-v3-ajustes/depois-dark-1440.png) | [Depois escuro 390](layout-v3-ajustes/depois-dark-390.png) |
+
+O [gerador existente](../../../scripts/screenshots-layout-v3.cjs) produziu vinte PNG por fase em diretório temporário customizado; somente os quatro Instagram de cada fase foram copiados para esta galeria. As imagens A/B e demais históricos não foram sobrescritos. Para reproduzir, usar o checkout da fonte desejada e o Playwright já configurado, sempre com `output` próprio:
+
+```powershell
+$crmScreenshotsTemp = Join-Path ([IO.Path]::GetTempPath()) ('crm-ajustes-' + [guid]::NewGuid().ToString('N'))
+node -e "require('./scripts/screenshots-layout-v3.cjs').gerar({output:process.argv[1]}).catch(()=>{process.exitCode=1})" $crmScreenshotsTemp
+```
+
+A chamada gera as vinte vistas em TEMP; selecionar apenas `layout-v3-{light|dark}-instagram-{1440|390}.png` para um destino separado. Rodar o código atual não reconstrói a fonte anterior. As imagens comprovam a composição sintética da prévia; pauta sem tema e rolagem semanal móvel têm prova de comportamento nos testes descritos na validação.
+
 ## 006 — Layout v3 Parte B
 
 Vinte screenshots exclusivamente sintéticos mostram Semana, Mês, Produção, Publicar e carrossel de cinco páginas (1/5), nos temas claro/escuro e larguras 1440/390. A 006 está concluída, 32/32 tarefas; Parte B aprovada pelo autor e integrada em c4660d7 pelo [PR #25](https://github.com/Browsher/crm-social/pull/25). CI estrito do head aprovado a5c964c SUCCESS/Semgrep PASS e revisão independente do delta sem achados; provas completas na validação. A revisão visual pedida pelo autor renovou **somente os quatro PNG Instagram**, gerados/inspecionados com código **08ba10b561ad3c4d818e3ceacbc75a8adae93b53**. Os **outros dezesseis PNG B** (Semana/Mês/Produção/Publicar) permanecem **byte a byte da fonte 800d7ca2930284da4566f33dae5f3699e0eecc84**. Gate oficial da revisão executado em **bc74d6e91af6089e673d65d4be6754a4cc7ec9ec** (apenas quatro PNG acrescentados após código 08ba10b): **756 testes/PASS** no gate oficial; TAP diagnóstico na mesma fonte confirma **756 PASS/0 SKIP**, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Galeria A/históricos 001–005 intactos. Provas anteriores 750/7a0/800/9e40 conservam suas fontes históricas; a aprovação desta revisão visual corresponde ao head a5c964c integrado pelo PR #25.
