@@ -100,6 +100,7 @@
     return posicao.contexto.startsWith('Cena ')?prefixo+posicao.contexto:original;
   }
   function marcarPosicao() {
+    const foco=document.activeElement,setas=[elementos.anterior,elementos.proximo];
     elementos.contador.textContent=(indice+1)+'/'+posicoes.length;
     elementos.anterior.disabled=indice===0;elementos.proximo.disabled=indice===posicoes.length-1;
     elementos.anterior.setAttribute('aria-label',rotuloPosicao(indice-1,'Anterior: ','Página anterior'));
@@ -110,6 +111,7 @@
       ponto.classList.toggle('active',i===indice);
       if(i===indice)ponto.setAttribute('aria-current','true');else ponto.removeAttribute('aria-current');
     });
+    if(setas.includes(foco)&&foco.disabled)(setas.find(seta=>!seta.disabled)||elementos.fecharBotao).focus({preventScroll:true});
   }
   function selecionar(novo) {
     if(!peca)return;

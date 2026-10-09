@@ -236,7 +236,7 @@ function resumoPeca(d) {
     .map(([tipo,n])=>plural(n,tipo==='paginas'?'página':'cena'));
   const revisao=d.revisoes.vigentes.length?'revisão aberta':
     (d.revisoes.ambiguas.length || d.revisoes.anteriores.length?'revisão a confirmar':'sem revisão');
-  return [...unidades,revisao].join(' · ');
+  return [...unidades,revisao,...(d.avisos.length?['Dados a confirmar']:[])].join(' · ');
 }
 function prontaParaPublicar(p) {
   const section=secaoDetalhe('Pronta para publicar');section.dataset.publicacao='';section.classList.add('publication-ready');
@@ -592,6 +592,7 @@ function detalhesCaptura() {
     estado==='anterior_hoje'?'Dados de '+instante:selo.texto;
   $('#selo').textContent=texto;$('#selo').className='badge '+(falhou?'vermelho':selo.cor);
   $('#selo').title=instante?'Dados de '+instante:'';
+  $('#dados-a-confirmar').hidden=!(captura&&state.view.avisos.length);
 }
 async function reler({manterDesabilitado=false}={}) {
   $('#atualizar').disabled=true;

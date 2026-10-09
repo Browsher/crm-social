@@ -5,6 +5,42 @@ const {mudarPorId,adicionarRegistro,recalcularHashes}=require('./layout-fixtures
 
 const combinacoes=['light','dark'].flatMap(theme=>[1440,390].map(width=>({theme,width})));
 for(const config of combinacoes) {
+  test('Layout B avisos sinalizam dados a confirmar no topo, peça e modal '+config.theme+'/'+config.width,{skip},async t=>{
+    const context=await abrirLayout(t,{...config,editar:raw=>mudarPorId(raw,'Produções','peca-3','versao','inválida sintética')}),{page}=context;
+    const before=await (await page.request.get(context.origin+'/api/visao')).json();
+    assert.ok(before.avisos.length>0);assert.ok(before.producoes.find(p=>p.producao_id==='peca-3').detalhes.avisos.length>0);
+    const stamp=await page.locator('#selo').textContent();
+    for(const tela of ['planejamento','producao','publicar']) {
+      await navegar(page,tela);assert.equal(await page.locator('#dados-a-confirmar').isVisible(),true);
+      assert.equal(await page.locator('#dados-a-confirmar').textContent(),'Dados a confirmar');await semOverflow(page);
+    }
+    await navegar(page,'producao');await page.locator('#quadro .project-open[data-producao-id="peca-3"]').click();
+    assert.match(await page.locator('#dia .peca-acordeao[data-peca="peca-3"] .piece-hint').textContent(),/Dados a confirmar/);
+    await page.locator('#dia [data-instagram-id="peca-3"]').click();
+    assert.equal(await page.locator('#instagram #dados-a-confirmar').isVisible(),true);assert.equal(await page.locator('#dados-a-confirmar').count(),1);
+    context.setMode('sem_alteracao');await atualizar(context);assert.equal(await page.locator('#selo').textContent(),stamp);
+    context.setMode('falha');await atualizar(context);assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de/);
+    assert.equal(await page.locator('#dados-a-confirmar').isVisible(),true);
+    if(config.width===390) {await page.setViewportSize({width:390,height:480});await semOverflow(page);const box=await page.getByRole('button',{name:'Fechar prévia',exact:true}).boundingBox();assert.ok(box.y>=0&&box.y+box.height<=480);}
+    assert.deepEqual((await (await page.request.get(context.origin+'/api/visao')).json()).avisos,
+      [...before.avisos,{motivo:'Última importação falhou; captura anterior preservada'}]);
+    await page.keyboard.press('Escape');assert.equal(await page.locator('.page-heading #dados-a-confirmar').isVisible(),true);
+  });
+  test('Layout B aviso de dados fica oculto sem captura ou após captura sem avisos '+config.theme+'/'+config.width,{skip},async t=>{
+    const context=await abrirLayout(t,{...config,semCaptura:true}),{page}=context;
+    assert.equal(await page.locator('#dados-a-confirmar').isVisible(),false);
+    context.setMode('completa');await atualizar(context);assert.equal(await page.locator('#dados-a-confirmar').isVisible(),true);
+    await navegar(page,'publicar');await page.locator('#publicar [data-instagram-id="peca-3"]').click();
+    for(const table of Object.values(context.raw.tables))table.values=[table.values[0]];
+    recalcularHashes(context.raw);await atualizar(context);
+    assert.equal(await page.locator('#instagram').isVisible(),false);assert.equal(await page.locator('#dados-a-confirmar').isVisible(),false);
+    const after=await (await page.request.get(context.origin+'/api/visao')).json();assert.ok(after.captura);assert.deepEqual(after.avisos,[]);
+    context.setMode('falha');await atualizar(context);
+    const failed=await (await page.request.get(context.origin+'/api/visao')).json();assert.equal(failed.avisos.length,1);assert.equal(failed.producoes.length,0);
+    assert.equal(await page.locator('#dados-a-confirmar').isVisible(),true,'aviso global sem peça também sinalizado');
+  });
+}
+for(const config of combinacoes) {
   test('Layout B falha inicial permanece visível após recarregar '+config.theme+'/'+config.width,{skip},async t=>{
     const context=await abrirLayout(t,{...config,semCaptura:true}),{page}=context;
     assert.equal(await page.locator('#selo').textContent(),'Sem dados');context.setMode('falha');await atualizar(context);await page.reload();

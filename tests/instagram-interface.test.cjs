@@ -165,6 +165,37 @@ test('Instagram botão Próxima até o limite conserva foco modal com Tab e Shif
   for(let i=0;i<4;i++)await dialog.getByRole('button',{name:'Próxima página',exact:true}).click();await indice(page,'5/5');
   for(const tecla of ['Tab','Shift+Tab']) {await page.keyboard.press(tecla);assert.equal(await page.evaluate(()=>!!document.activeElement.closest('#instagram')),true);}
 });
+test('Instagram limites transferem imediatamente foco para a seta habilitada',{skip},async t=>{
+  const context=await preparar(t),{page}=context,dialog=await abrir(context);
+  const proximo=dialog.getByRole('button',{name:'Próxima página',exact:true});
+  const anterior=dialog.getByRole('button',{name:'Página anterior',exact:true});
+  await proximo.focus();
+  for(let i=0;i<4;i++)await page.keyboard.press('Enter');await indice(page,'5/5');
+  assert.equal(await proximo.isDisabled(),true);
+  assert.equal(await anterior.evaluate(node=>node===document.activeElement),true,'última página devolve foco à seta anterior');
+  for(let i=0;i<4;i++)await anterior.click();await indice(page,'1/5');
+  assert.equal(await anterior.isDisabled(),true);
+  assert.equal(await proximo.evaluate(node=>node===document.activeElement),true,'primeira página devolve foco à próxima seta');
+  for(const tecla of ['Tab','Shift+Tab']) {await page.keyboard.press(tecla);assert.equal(await page.evaluate(()=>!!document.activeElement.closest('#instagram')),true);}
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#instagram-acionador-teste').evaluate(node=>node===document.activeElement),true);
+});
+test('Instagram releitura que desabilita ambas as setas devolve foco a Fechar',{skip},async t=>{
+  const context=await preparar(t),{page}=context,dialog=await abrir(context);
+  await dialog.getByRole('button',{name:'Ir para página 5',exact:true}).click();
+  await dialog.getByRole('button',{name:'Página anterior',exact:true}).focus();
+  await page.evaluate(async()=>{
+    const view=await (await fetch('/api/visao')).json(),p=view.producoes.find(p=>p.producao_id==='peca-3');
+    p.detalhes.paginas=p.detalhes.paginas.filter(pagina=>pagina.indice<=1);globalThis.CrmInstagram.atualizar(p);
+  });
+  await indice(page,'1/1');
+  assert.equal(await dialog.getByRole('button',{name:'Página anterior',exact:true}).isDisabled(),true);
+  assert.equal(await dialog.getByRole('button',{name:'Próxima página',exact:true}).isDisabled(),true);
+  assert.equal(await dialog.getByRole('button',{name:'Fechar prévia',exact:true}).evaluate(node=>node===document.activeElement),true);
+  for(const tecla of ['Shift+Tab','Tab']) {await page.keyboard.press(tecla);assert.equal(await page.evaluate(()=>!!document.activeElement.closest('#instagram')),true);}
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#instagram-acionador-teste').evaluate(node=>node===document.activeElement),true);
+});
 test('Instagram releitura mesma peça preserva índice/limita total e remoção restaura foco ao título',{skip},async t=>{
   const context=await preparar(t),{page}=context;await abrir(context);
   await page.getByRole('button',{name:'Ir para página 5',exact:true}).click();

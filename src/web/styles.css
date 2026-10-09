@@ -282,6 +282,7 @@ summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 }
 /* Layout v3 · Parte A */
 .capture-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.capture-actions #dados-a-confirmar{padding-inline:6px;font-size:10px}
 .publish-count{margin-left:auto;padding:2px 7px;border-radius:999px;background:var(--amber-fill);color:var(--orange);font-size:11px}
 .instagram-action{border:1px solid var(--line-strong);border-radius:6px;padding:8px 11px;color:var(--green-dark);font-size:12px;white-space:nowrap;background:var(--surface)}
 .publish-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,280px);gap:22px;align-items:start}
