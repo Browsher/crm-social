@@ -22,7 +22,7 @@ Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. A integrada PR
 | [Mockup sanitizado](design/mockups/layout-v3.html) | Referência aprovada, não aplicativo |
 | [Decisões das telas](design/telas.md) | Precedência do pedido sobre divergências do mockup |
 | [Validação da manutenção visual](reports/006-ajustes-visuais-validacao.md) | Ajustes pós-integração, RED/GREEN, fontes e limites; manutenção não integrada |
-| [Gate local da manutenção visual](reports/006-ajustes-visuais-local-gate.json) | Fonte 028778a, gate PASS/766 testes, baseline preservada |
+| [Gate local da manutenção visual](reports/006-ajustes-visuais-local-gate.json) | Fonte 7939e70, gate PASS/766 testes, baseline preservada |
 | [Antes/depois da manutenção](design/screenshots/LEIA-ME.md#006--ajustes-visuais) | Oito PNG sintéticos, quatro por fonte e dois temas/larguras |
 
 Como o índice de um álbum, esta página localiza decisões, módulos e evidências: 001 implementada, testada e demonstrada com captura real: T001–T041 concluídas (41 de 41 tarefas). 002 concluída com T021 demonstrada; resultados históricos da 001 na [validação](../specs/001-consulta-local-producao/validacao.md). A captura histórica da 001 mantém seu limite; tipagem da coleta direta resolvida na T021, com categorias remanescentes na validação da 002. A 003 está concluída, 15/15 tarefas; demonstração pelo CRM conferida com uma linha fictícia marcada como teste, sem publicar conteúdo.

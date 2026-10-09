@@ -4,12 +4,12 @@ Como fotografias de uma agenda de demonstração, estes arquivos mostram a aplic
 
 ## 006 — Ajustes visuais
 
-Oito screenshots exclusivamente sintéticos comparam a prévia de Instagram antes/depois, nos temas claro/escuro e larguras 1440/390. Antes: main `596dc4f`, fechamento documental PR #26. Depois: código/testes `028778a63e417da3a0c4115bc1b952595fafd106`. As oito imagens foram inspecionadas. Manutenção implementada/testada localmente, não integrada; checks/review do head final são registrados no PR. A 006 continua integrada com 32/32 tarefas. [Validação](../../reports/006-ajustes-visuais-validacao.md) e [gate local](../../reports/006-ajustes-visuais-local-gate.json).
+Oito screenshots exclusivamente sintéticos comparam a prévia de Instagram antes/depois, nos temas claro/escuro e larguras 1440/390. Antes: main `596dc4f`, fechamento documental PR #26. Depois: código/testes `7939e70524c5fa6d20600f2216433d9dfa0077f2`. Os quatro PNG depois foram regenerados nesta fonte e continuam byte a byte idênticos à prova anterior 028778a: DEMO tem quatro letras e conserva fonte de 7,5 px. As oito imagens foram inspecionadas. Manutenção implementada/testada localmente, não integrada; checks/review do head final são registrados no PR. A 006 continua integrada com 32/32 tarefas. [Validação](../../reports/006-ajustes-visuais-validacao.md) e [gate local](../../reports/006-ajustes-visuais-local-gate.json).
 
 | Fonte | Claro 1440 | Claro 390 | Escuro 1440 | Escuro 390 |
 | --- | --- | --- | --- | --- |
 | Antes — 596dc4f | [Antes claro 1440](layout-v3-ajustes/antes-light-1440.png) | [Antes claro 390](layout-v3-ajustes/antes-light-390.png) | [Antes escuro 1440](layout-v3-ajustes/antes-dark-1440.png) | [Antes escuro 390](layout-v3-ajustes/antes-dark-390.png) |
-| Depois — 028778a | [Depois claro 1440](layout-v3-ajustes/depois-light-1440.png) | [Depois claro 390](layout-v3-ajustes/depois-light-390.png) | [Depois escuro 1440](layout-v3-ajustes/depois-dark-1440.png) | [Depois escuro 390](layout-v3-ajustes/depois-dark-390.png) |
+| Depois — 7939e70 | [Depois claro 1440](layout-v3-ajustes/depois-light-1440.png) | [Depois claro 390](layout-v3-ajustes/depois-light-390.png) | [Depois escuro 1440](layout-v3-ajustes/depois-dark-1440.png) | [Depois escuro 390](layout-v3-ajustes/depois-dark-390.png) |
 
 O [gerador existente](../../../scripts/screenshots-layout-v3.cjs) produziu vinte PNG por fase em diretório temporário customizado; somente os quatro Instagram de cada fase foram copiados para esta galeria. As imagens A/B e demais históricos não foram sobrescritos. Para reproduzir, usar o checkout da fonte desejada e o Playwright já configurado, sempre com `output` próprio:
 

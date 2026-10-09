@@ -1,5 +1,5 @@
 {
-  "source": "028778a63e417da3a0c4115bc1b952595fafd106",
+  "source": "7939e70524c5fa6d20600f2216433d9dfa0077f2",
   "nodeVersion": "24.19.0",
   "exitCode": 0,
   "baselineUpdated": false,
@@ -19,7 +19,7 @@
   "complexity": {
     "state": "PASS",
     "metrics": 689,
-    "max": 16,
+    "max": 16.0,
     "warnings": 18
   },
   "semgrep": {

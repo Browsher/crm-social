@@ -2,16 +2,16 @@
 
 Como pequenos ajustes numa página da agenda, esta manutenção melhora a apresentação sem mudar a leitura dos dados. A 006 segue concluída e integrada, 32/32 tarefas, pelo PR #25/merge `c4660d78c188793dddac3f44f4d42401a3542a83`; seu fechamento documental pelo PR #26 é a base main `596dc4f`.
 
-Manutenção autorizada em 09/10/2026, sem nova feature Spec Kit nem reabertura de tarefas. Branch `codex/006-ajustes-visuais`: implementada/testada localmente, não integrada. Checks e review do head final são registrados no [PR #27](https://github.com/Browsher/crm-social/pull/27); esta prova local não declara aprovação de CI remoto.
+Manutenção autorizada em 09/10/2026, sem nova feature Spec Kit nem reabertura de tarefas. Branch `codex/006-ajustes-visuais`: implementada/testada localmente, não integrada. Checks e review do head final são registrados no [PR #27](https://github.com/Browsher/crm-social/pull/27); esta prova local não declara aprovação de CI remoto. Entrega da manutenção sem merge.
 
 ## Escopo e fonte
 
-Fonte de código/testes/depois: `028778a63e417da3a0c4115bc1b952595fafd106`.
+Fonte atual de código/testes/depois: `7939e70524c5fa6d20600f2216433d9dfa0077f2`. A primeira prova `028778a63e417da3a0c4115bc1b952595fafd106` e os checks/review do head 910 permanecem históricos no PR #27.
 
 | Ajuste | Comportamento verificado |
 | --- | --- |
-| Avatar em instagram/styles | Círculo de 40 px/fonte 7,5 px acomoda siglas sintéticas de três/quatro caracteres, incluindo WWW/WWWW. |
-| Salvar em instagram | SVG decorativo com traço currentColor, aria-hidden/focusable=false; substitui o emoji sem acrescentar ação. |
+| Avatar em instagram/styles | Círculo de 40 px/borda 2 px; fonte min(10,30/sigla-normalizada.length): 1–3 usa 10 px, 4 usa 7,5 px, 5 usa 6 px. Validação original 1–5, maiúsculas e fallback preservados; cinco letras largas e expansão Unicode testadas. |
+| Salvar em instagram | SVG decorativo com traço currentColor, aria-hidden/focusable=false; o teste confere diretamente o atributo focusable=false. Substitui o emoji sem acrescentar ação. |
 | Pauta em app | Tema vazio/somente espaços deixa só o rótulo em Semana, Produção e fallback, sem separador pendente. |
 | Semana móvel em app | Em 390, nova semana sem hoje nem memória começa em scroll 0; restauração, filtro e hoje preservados. |
 
@@ -19,7 +19,7 @@ Não muda API, captura, coleta, projeção, cache, configuração de perfil, dep
 
 ## Testes e gate
 
-Fixtures exclusivamente sintéticas. Ciclo focal: **RED 14 FAIL/0 SKIP, exit 1 → GREEN 14 PASS/0 SKIP** em `tests/instagram-interface.test.cjs` e `tests/layout-interface.test.cjs`. A revisão independente do código 028778a encontrou **Critical 0, Important 0, Minor 0**; o delta documental e os checks do head final são conferidos no PR.
+Fixtures exclusivamente sintéticas. Primeira rodada histórica 028778a: **RED 14 FAIL/0 SKIP, exit 1 → GREEN 14 PASS/0 SKIP**, revisão independente do código **Critical 0, Important 0, Minor 0**. O review automático do head 910 apontou três Minor (cinco letras, fonte pequena para sigla curta e teste SVG), resolvidos nesta rodada: **RED 4 FAIL/0 SKIP → GREEN 14 PASS/0 SKIP** em `tests/instagram-interface.test.cjs` e `tests/layout-interface.test.cjs`. Checks/review do head final ficam no PR #27; os anteriores não aprovam a nova fonte.
 
 | Camada | Prova nesta manutenção |
 | --- | --- |
@@ -29,11 +29,11 @@ Fixtures exclusivamente sintéticas. Ciclo focal: **RED 14 FAIL/0 SKIP, exit 1 �
 | Serviços/projeções | N/A para comportamento novo: sem alteração; suítes existentes executadas no gate completo. |
 | HTTP/API/segurança | N/A para comportamento novo: sem alteração; suítes existentes executadas no gate completo. |
 
-Gate oficial `node tools/quality-gate.mjs`, Windows/Node 24.19.0, fonte 028778a: **PASS, 766 testes**, cobertura **95,5216989843%**, complexidade PASS (**689 métricas, máximo 16, 18 avisos**), **exit 0**, `baselineUpdated=false`. Semgrep **SKIP local** por ferramenta ausente; audit **N/A**, zero dependências de aplicação. [Relatório sanitizado](006-ajustes-visuais-local-gate.json). Não atribuir SKIP remoto, Semgrep PASS remoto ou cobertura de UI ao resultado local: módulos DOM continuam fora do LCOV e são exercidos pelo Playwright.
+Gate oficial `node tools/quality-gate.mjs`, Windows/Node 24.19.0, fonte 7939e70: **PASS, 766 testes**, cobertura **95,5216989843%**, complexidade PASS (**689 métricas, máximo 16, 18 avisos**), **exit 0**, `baselineUpdated=false`. Semgrep **SKIP local** por ferramenta ausente; audit **N/A**, zero dependências de aplicação. A prova oficial anterior 028778a teve os mesmos totais de testes/cobertura/complexidade, exit 0 e baseline preservada; o [relatório sanitizado atual](006-ajustes-visuais-local-gate.json) identifica 7939e70. Não atribuir SKIP remoto, Semgrep PASS remoto ou cobertura de UI ao resultado local: módulos DOM continuam fora do LCOV e são exercidos pelo Playwright.
 
 ## Evidência visual e limites
 
-[Oito PNG antes/depois](../design/screenshots/LEIA-ME.md#006--ajustes-visuais): quatro anteriores da fonte 596dc4f e quatro posteriores da fonte 028778a, claro/escuro × 1440/390. Gerador existente `scripts/screenshots-layout-v3.cjs.gerar({output:temporario})`: vinte PNG por fase em saída customizada; somente quatro Instagram de cada fase copiados à nova galeria. Históricos A/B e demais PNG intactos.
+[Oito PNG antes/depois](../design/screenshots/LEIA-ME.md#006--ajustes-visuais): quatro anteriores da fonte 596dc4f e quatro posteriores novamente gerados na fonte 7939e70, claro/escuro × 1440/390. Os bytes depois são idênticos aos da prova 028778a porque DEMO conserva quatro letras/fonte 7,5 px; a regeneração comprova a fonte atual sem alterar os históricos. Gerador existente `scripts/screenshots-layout-v3.cjs.gerar({output:temporario})`: vinte PNG por fase em saída customizada; somente quatro Instagram de cada fase copiados à nova galeria. Históricos A/B e demais PNG intactos.
 
 A evidência sintética não demonstra acesso real ao Drive/Instagram, arrasto físico, leitor de tela real ou publicação. Esta rodada não altera a seleção de mídia nem a política aprovada de retorno de foco.
 
