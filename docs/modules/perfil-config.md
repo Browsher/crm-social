@@ -10,10 +10,12 @@ Como o nome impresso no topo de um cartão, esta configuração identifica a pr�
 
 `index.html` carrega o arquivo com `defer` antes de [instagram.js](instagram.md); o consumidor valida o objeto e escreve o nome com `textContent`. O servidor oferece somente `/perfil-config.js` pela allowlist explícita de estáticos, sob as mesmas guardas de método/Host/CSP/MIME. Não há nova variável de ambiente, endpoint de dados ou dependência.
 
+Para personalizar o nome neste computador, editar nomePerfil somente no checkout local. O nome real do perfil é personalização privada: **não commitar**, publicar em PR/log nem usar em screenshots compartilhados. Antes de preparar um commit, restaurar o exemplo sintético versionado. Nenhum nome real foi fornecido ou consultado nesta entrega; não há mecanismo de configuração ignorada ou variável de ambiente implementado para essa personalização.
+
 ```mermaid
 flowchart LR
   HTML[index.html] -->|defer| Perfil[perfil-config.js / CrmPerfil]
   Perfil -->|nomePerfil validado| IG[instagram.js / texto do perfil]
 ```
 
-Testes reais de HTTP e de navegador cobrem disponibilidade, guardas, valor sintético e fallback inválido. Este arquivo também fica fora do LCOV; [contrato](../../specs/006-layout-v3/contracts/apresentacao.md) e [validação](../../specs/006-layout-v3/validacao.md) registram a evidência da fonte final f46db33, sem atribuir o CI de código a um head documental posterior.
+Testes reais de HTTP e de navegador cobrem disponibilidade, guardas, valor sintético e fallback inválido. Este arquivo também fica fora do LCOV; [contrato](../../specs/006-layout-v3/contracts/apresentacao.md) e [validação](../../specs/006-layout-v3/validacao.md) registram a evidência da fonte de código/testes final 7a0dd56, sem atribuir o CI de código a um head documental posterior.

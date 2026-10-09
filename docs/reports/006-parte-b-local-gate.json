@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "feature": "006-layout-v3",
   "part": "B",
-  "sourceCommit": "f46db33389b1d8bde53068de8b555e56d5baf05a",
-  "screenshotSourceCommit": "f46db33389b1d8bde53068de8b555e56d5baf05a",
+  "sourceCommit": "7a0dd56375ff06436fa9cecf8e59f14bc35a7585",
+  "screenshotSourceCommit": "800d7ca2930284da4566f33dae5f3699e0eecc84",
   "date": "2026-10-09",
   "environment": "Windows local, somente fixtures sintéticas e TEMP",
   "command": "node tools/quality-gate.mjs",
@@ -15,7 +15,7 @@
       "skipped": 0,
       "state": "PASS",
       "name": "tests",
-      "count": 740
+      "count": 750
     },
     {
       "percent": 95.51341350601295,
@@ -25,7 +25,7 @@
       "mode": "full"
     },
     {
-      "metricCount": 684,
+      "metricCount": 685,
       "warningCount": 18,
       "state": "PASS",
       "maximum": 16.0,
@@ -46,6 +46,6 @@
     "UI app.js/theme.js/instagram.js/perfil-config.js fora do LCOV; comportamento verificado por Playwright local",
     "drop zero no modo full não representa comparação histórica",
     "prova local não substitui CI e review do head final",
-    "screenshots regenerados e inspecionados na mesma fonte de código/testes f46db33"
+    "screenshots regenerados e inspecionados na fonte 800d7ca; 7a0dd56 altera somente uma expectativa de teste, sem mudar código ou PNG"
   ]
 }

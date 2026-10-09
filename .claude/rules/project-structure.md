@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-Trabalho atual: 006 Layout v3; A integrada pelo PR #24 em `a5be355`; B implementada/testada localmente na branch codex/006-layout-v3-parte-b, [PR #25](https://github.com/Browsher/crm-social/pull/25) aberto/anexado; gate f46db33 740 PASS e CI estrito dessa fonte aprovados; CI/review do head documental final pendentes, merge B proibido; [validação](../../specs/006-layout-v3/validacao.md).
+Trabalho atual: 006 Layout v3; A integrada pelo PR #24 em `a5be355`; B implementada/testada localmente na branch codex/006-layout-v3-parte-b, [PR #25](https://github.com/Browsher/crm-social/pull/25) aberto/anexado; gate 7a0dd56 750 PASS, PNG 800d7ca e CI estrito do head anterior b5af415 aprovados; CI/review do novo head final pendentes, merge B proibido; [validação](../../specs/006-layout-v3/validacao.md).
 T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/15), T002/T015 conferidas com registro fictício, 004 implementada/testada localmente, [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente, resultados por head na [validação da 004](../../specs/004-pautas-planejamento/validacao.md); 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.
@@ -52,7 +52,7 @@ T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/
 - Interface usa Playwright existente por CRM_PLAYWRIGHT_MODULE, sem pacote novo; M8: UI fora do LCOV e pulos UI/PowerShell no Linux; CLI coberta; aceite Windows local exige zero pulos.
 - Pronta mantém pacote/cópia e páginas/cenas recolhidas; projetos usam cinco passos ou motivo travado; API preserva avisos.
 - 006 B: menu Planejamento/Produção/Publicar; Planilha/avisos/Histórico técnicos ficam na API; Mês usa Oferta/Carrossel/Reels junto à cor.
-- Prévia local compartilha dialog em Produção/Publicar/gaveta; slots ausentes contam; Atualizar único é movido para modal aberto e restaura ao fechar.
+- Prévia compartilha dialog/slots/foco; Atualizar/selo/Dados a confirmar são movidos ao modal; sinal global/resumo conserva incerteza, detalhes técnicos na API.
 - T039 captura real, T040 gate e T041 onboarding concluídos; resultados/limites só na validação.
 - Google/coleta: JWT/fetch nativos; Sheets readonly/POST sob lock; midia importa google/snapshot/triagem e lê Drive readonly sob demanda.
 - Chave externa/env CRM_GOOGLE_CREDENTIALS_FILE e CRM_SPREADSHEET_ID; sem browser/log.
