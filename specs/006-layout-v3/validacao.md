@@ -1,6 +1,6 @@
 # Validação — Layout v3
 
-Como uma nova agenda para as mesmas capturas, a 006 mantém 32 tarefas em duas partes. **A integrada após aprovação explícita em 09/10/2026**, PR #24/main a5be355; **B implementada/testada e entregável, 32/32 tarefas executadas, não integrada**, PR #25 aberto/anexado, gate local 7a0dd56 aprovado e PNG 800d7ca. CI estrito da099ab SUCCESS/Semgrep PASS, revisão independente completa aprovada e review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais reconferidos por head no PR e merge B proibido. As seções da A abaixo conservam o registro histórico anterior à integração.
+Como uma nova agenda para as mesmas capturas, a 006 mantém 32 IDs em duas partes. A integrada após aprovação em 09/10/2026, PR #24/main a5be355; B implementada/testada localmente e não integrada, PR #25 aberto/anexado, merge proibido. Revisão visual do Instagram solicitada pelo autor: código/testes 08ba10b, gate oficial bc74d6e PASS/756 testes; TAP diagnóstico confirma 756 PASS/0 SKIP. Quatro PNG Instagram novos 08ba10b e dezesseis B preservados 800d7ca; push/CI/review do novo head pendentes, T029/T032 reabertas nesta reiteração. Fechamentos anteriores 32/32/750/7a0/800/9e40 e suas aprovações conservam fontes históricas e não aprovam a revisão visual atual.
 
 ## Parte A — fonte e escopo históricos, anteriores à integração
 
@@ -162,7 +162,7 @@ Galeria A de 12 PNG e históricos 001–005 intactos. Na primeira implementaçã
 
 ### Quality gate Windows — Parte B histórico 60ef628
 
-Comando oficial `node tools/quality-gate.mjs`, Node **24.19.0**, Playwright existente, Windows local. Naquele fechamento, o relatório então registrava sourceCommit **60ef6282ce937fc13a8d92cc15278be2a98d79bc** e screenshotSourceCommit **3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20**. O [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica código/testes 7a0dd56 e PNG 800d7ca, cuja medição final está descrita abaixo; o registro 60ef628 acima permanece histórico.
+Comando oficial `node tools/quality-gate.mjs`, Node **24.19.0**, Playwright existente, Windows local. Naquele fechamento, o relatório então registrava sourceCommit **60ef6282ce937fc13a8d92cc15278be2a98d79bc** e screenshotSourceCommit **3fd9e0f7d4e75ee6600e48a933707dd5b15f4d20**. O [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica gate bc74d6e/código 08ba10b e as fontes divididas de PNG descritas no último fechamento abaixo; o registro 60ef628 permanece histórico.
 
 | Verificação | Resultado final local |
 | --- | --- |
@@ -199,7 +199,7 @@ A revisão independente do delta f46db33 não encontrou achados funcionais/de se
 
 A primeira execução oficial de f46db33 teve **exit 1**, testes FAIL com contagem 740 e cobertura FAIL; o TAP detalhado não foi retido. Não há evidência para atribuir a falha a um caso, timeout ou correção. O diagnóstico integral `node --test --experimental-test-coverage` na **mesma fonte, sem mudança de código**, observou **740 PASS, 0 FAIL, 0 SKIP, exit 0**. A execução oficial seguinte também passou, sem alteração interveniente. A causa inicial permanece não identificada e não reproduzida.
 
-Comando oficial daquela rodada: `node tools/quality-gate.mjs`, Windows/Node **24.19.0**, Playwright existente. O relatório então registrava sourceCommit e screenshotSourceCommit iguais a **f46db33389b1d8bde53068de8b555e56d5baf05a**; o [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica o fechamento 7a0dd56/PNG 800d7ca descrito abaixo.
+Comando oficial daquela rodada: `node tools/quality-gate.mjs`, Windows/Node **24.19.0**, Playwright existente. O relatório então registrava sourceCommit e screenshotSourceCommit iguais a **f46db33389b1d8bde53068de8b555e56d5baf05a**; o [relatório atual](../../docs/reports/006-parte-b-local-gate.json) identifica gate bc74d6e/código 08ba10b e fontes divididas de PNG, descritos no último fechamento abaixo; 7a0/800 permanecem históricos.
 
 | Verificação | Execução oficial final repetida |
 | --- | --- |
@@ -262,14 +262,14 @@ O coordenador verificou o [CI estrito do head b5af415, execução 37951532786](h
 
 doc-sync-onboarding executado novamente como última etapa depois do gate 7a0dd56, exclusivamente nos 21 .md de onboarding/feature006. Fontes de código/testes e PNG diferenciadas, históricos f46/740/60ef/728/A/001–005 preservados; Sonnet/Haiku indisponíveis, fallback herdado. Não há mapa Graphify no checkout, e Mermaid reflete relações reais. Conferência documental: 797 caminhos relativos existentes, cercas balanceadas, índice cobrindo todos os .md de docs/, regra de estrutura com 60 linhas e diff --check dos .md sem erro. **32 IDs mantidos; T029/T032 ficam abertos** para revisão independente completa, CI/review do head final e entrega. PR #25 aberto/anexado, **merge B proibido**.
 
-## Fechamento entregável da Parte B — candidato da099ab
+## Fechamento entregável da Parte B — candidato da099ab (histórico anterior à revisão visual)
 
 Como a conferência final de um álbum, este fechamento verifica o código testado e os metadados que o apresentam. **32/32 tarefas executadas**, incluindo T029/T032; Parte B entregável no [PR #25](https://github.com/Browsher/crm-social/pull/25), aberto/anexado e **não integrada, merge proibido**. Os registros anteriores de etapas então pendentes permanecem históricos.
 
 | Fonte / verificação | Prova e limite |
 | --- | --- |
 | Código/testes local | **7a0dd56375ff06436fa9cecf8e59f14bc35a7585**; gate oficial Windows/Node 24.19.0: **750 PASS/0 SKIP**, cobertura **95,51341350601295%**, **685 métricas/máximo 16/18 avisos**, exit 0/baselineUpdated false; Semgrep SKIP local CE 1.179.0 ausente/audit N/A. Nenhuma alteração posterior de fonte/testes nesta rodada documental. |
-| Screenshots | **800d7ca2930284da4566f33dae5f3699e0eecc84**, 20 PNG regenerados e inspecionados; 7a0dd56 alterou somente uma expectativa de teste, sem código/PNG. [Galeria B](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) identifica essa fonte, com carrossel 1/5/Publicar/Mês rotulado nos dois temas e larguras. |
+| Screenshots | **800d7ca2930284da4566f33dae5f3699e0eecc84**, 20 PNG regenerados e inspecionados; 7a0dd56 alterou somente uma expectativa de teste, sem código/PNG. [Galeria B](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) então identificava essa fonte; agora separa quatro Instagram renovados em 08ba10b e dezesseis preservados em 800d7ca. O registro histórico tinha carrossel 1/5/Publicar/Mês rotulado nos dois temas e larguras. |
 | Candidato documental | **da099ab2157805416594d9c2e5195a435fcb50e8**. Coordenador e revisão independente confirmaram por Git que o delta 7a0dd56→da099ab contém somente **21 .md + 1 JSON sanitizado**, sem mudança de código/testes/PNG/CI/gate/constituição. O JSON é o relatório local; não é artefato de CI. |
 | Revisão independente completa — T029 | Candidato da099ab: **Critical 0, Important 0, Minor novos 0**, aprovação técnica. A revisão completa incluiu fonte, contratos, testes, scripts e documentação; não é uma aprovação formal de review no GitHub. |
 | CI estrito — T032 | [Execução 37955832783](https://github.com/Browsher/crm-social/actions/runs/37955832783), head exato da099ab, **SUCCESS**; [job 113905993015](https://github.com/Browsher/crm-social/actions/runs/37955832783/job/113905993015). O coordenador confirmou no log **Semgrep PASS, exit 0 e baselineUpdated false**. A lista de artefatos da execução está vazia: o workflow não reteve JSON de CI. Check/log remoto e relatório local são evidências distintas. |
@@ -287,3 +287,38 @@ As seguintes observações Minor são sugestões de manutenção, sem falha repr
 | M6 — redação constitucional | Sugestão de emenda patch para explicitar o alcance visual é pendência de governança futura, não requisito adicional desta feature. Constituição 1.2.0 e contratos permanecem; a decisão explícita do autor sobre remoção de páginas/agentes e o sinal mínimo de incerteza já estão registrados no spec/plano. Nenhuma emenda, resposta de clarify ou aprovação adicional foi fabricada. |
 
 doc-sync-onboarding repetido como última etapa após o gate, exclusivamente nos 21 .md de onboarding/006; código/testes/PNG/JSON e arquivos de operação preservados. Sonnet/Haiku indisponíveis neste host: documentação usou fallback herdado. Não há mapa Graphify no checkout; Mermaid conserva relações reais. Este registro cita as provas já executadas do candidato da099ab e separa suas fontes das provas locais. Conferência documental deste fechamento: **21 .md alterados**, **798 caminhos relativos existentes**, cercas balanceadas, índice cobrindo os **27 .md autorais de docs/**, **32 IDs únicos/32 checkboxes X**, regra de estrutura com **60 linhas** e git diff --check dos .md sem erro. Nenhuma mudança de código, testes, PNG ou JSON nesta rodada; output/ do usuário permanece intocado. O coordenador verifica novamente CI/review do commit final de metadados e registra o resultado **por head no corpo do PR**, evitando atribuir a um documento o SHA do próprio commit ainda não criado.
+
+## Revisão visual do Instagram — pedido do autor em 09/10/2026
+
+Como o celular da referência aprovada, a prévia agora reproduz a moldura .phone dentro do mesmo PR #25 e dos mesmos 32 IDs. Código/testes implementados e verificados localmente; **push, revisão independente/remota e CI do novo head ainda pendentes**, T029/T032 reabertas para esta reiteração. Parte B não integrada e **merge proibido**. Provas de da099ab e esclarecimento documental 9e40ede acima/anteriores conservam seu período; não antecipam aprovação deste código.
+
+| Fonte / escopo | Registro |
+| --- | --- |
+| Código/testes | **08ba10b561ad3c4d818e3ceacbc75a8adae93b53**. Moldura/estilos de src/web/instagram.js, siglaMarca sintética em perfil-config.js e testes/helper sintéticos foram revistos. Spec/plano/contrato canônicos já registravam o pedido do autor; doc-sync preservou suas decisões. |
+| Execução do gate oficial | **bc74d6e91af6089e673d65d4be6754a4cc7ec9ec**, cujo delta desde 08ba10b contém apenas quatro PNG Instagram; código/testes iguais. Comando normal node tools/quality-gate.mjs, Windows/Node 24.19.0/Playwright existentes, exit 0/baselineUpdated false. |
+| Screenshots novos | **4 PNG Instagram**, claro/escuro ×1440/390, fonte **08ba10b561ad3c4d818e3ceacbc75a8adae93b53**, regenerados e inspecionados pelo coordenador. Carrossel sintético de cinco páginas/contador 1/5. |
+| Screenshots preservados | **16 PNG B** de Semana/Mês/Produção/Publicar, byte a byte da fonte **800d7ca2930284da4566f33dae5f3699e0eecc84**. Galeria A e históricos 001–005 intactos. [Galeria atual com fontes por vista](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b). |
+| Dados/fronteiras | API, coleta, captura, projeção, seleção de slots/miniaturas, cache/Drive, mapa de etapas, tecnologia, CI/gate/baseline e constituição não mudaram. Sem operação editorial, dependência, endpoint ou dado privado novo. |
+
+### Composição e atualização vigentes
+
+Moldura preta nos dois temas, largura próxima de 360 px com margem em 390, borda escura 10 px/cantos 38 px; Fechar acima/fora. Avatar circular exibe siglaMarca configurada DEMO (trim, até cinco caracteres sem C0/DEL, uppercase literal; inválida •), perfil em negrito/subtítulo Prévia · não publicado/⋯ decorativo. Arte 4:5 contain com setas/contador sobrepostos, pontos abaixo; ícones decorativos ♡ 💬 ↗ … 🔖 e legenda com perfil em negrito seguido de espaço/texto literal/hashtags azuis. Imagem única conserva 1/1, sem setas/pontos. Nome acessível do diálogo permanece; título visível e controles de captura não entram no pop-up.
+
+Selo/Dados a confirmar/Atualizar/feedback ficam somente na página, inerte durante showModal. Usuário fecha a prévia para iniciar outra atualização pelo topo. A regra de releitura recebida permanece: mesma peça atualiza conteúdo/limita índice, removida fecha/restaura foco, falha mantém a vista anterior. Novo teste de clique real em Atualizar antes da abertura comprova POST recebido durante o modal; helper programático no botão real durante o modal testa a releitura, sem alegar acionamento pelo usuário no fundo inerte. Seta desabilitada transfere foco à outra habilitada/Fechar; seta ou ponto ocultados na redução a 1/1 transferem foco a Fechar.
+
+### TDD e verificação local
+
+- **RED 5 FAIL**: quatro casos visuais e um de avatar configurável, antes da implementação.
+- **GREEN 109 PASS/0 SKIP**:26 casos Instagram +83 Layout, incluindo foco de ponto recriado/ocultado e seta→1/1/Fechar; regras de identidade/remoção/falha e gaveta preservadas.
+- Após ajuste CSS de centralização por fit-content, **focal 6 PASS/0 SKIP** de composição/viewport baixa, sem ampliar o escopo.
+- **Gate oficial normal PASS**,756 testes, cobertura **95,52169898430286%**, complexidade PASS (**688 métricas/máximo 16/18 avisos**), exit 0/baseline false; Semgrep SKIP local CE 1.179.0 ausente/audit N/A.
+
+Uma execução diagnóstica posterior na mesma fonte bc74d6e usou observador que apenas preserva stdout/stderr e retorna o resultado original, sem mudar tooling/código/CI/baseline. O coordenador conferiu TAP completo: **tests 756 / pass 756 / fail 0 / cancelled 0 / skipped 0 / todo 0 / suites 0**, exit 0/baseline false e cobertura exatamente 95,52169898430286%. Essa coleta comprova explicitamente **756 PASS/0 SKIP**; a prova principal continua sendo o gate oficial normal. [Relatório local sanitizado](../../docs/reports/006-parte-b-local-gate.json) identifica sourceCommit bc74d6e, codeSourceCommit 08ba10b, screenshotSourceCommit 08ba10b/updatedScreenshots 4 e retainedScreenshotSourceCommit 800d7ca/retainedScreenshots 16; não é um artefato de CI.
+
+### Documentação e fechamento remoto
+
+doc-sync-onboarding executado depois do gate como última etapa técnica, exclusivamente nos 21 .md de onboarding/006. Atualizados composição/avatares/foco/controles somente na página, estado remoto pendente e fontes separadas da galeria. Sem nova feature/spec, IDs, fase de aprovação ou emenda. Sonnet/Haiku indisponíveis neste host; fallback herdado. Não há mapa Graphify neste checkout; nenhuma aresta de import mudou e o Mermaid existente foi preservado. Código/testes/PNG/JSON/CI/gate/constituição/output/ não foram alterados por doc-sync.
+
+Conferência documental desta revisão: **21 .md alterados**, **799 caminhos relativos existentes**, cercas balanceadas, índice cobrindo **27 .md de docs/**, **32 IDs únicos**, somente **T029/T032 abertos**, regra de estrutura com **60 linhas** e git diff --check dos .md sem erro. O JSON sanitizado do coordenador e output/ foram preservados; nenhum arquivo fora da posse foi escrito.
+
+O coordenador fará push e verificará revisão/CI do novo head, registrando provas por head no corpo do PR; não inserir neste texto o SHA do próprio próximo commit documental nem atribuir a ele a aprovação remota anterior. Não foi executado teste de código novo após doc-sync por se tratar somente de .md. Provas sintéticas não demonstram leitor de tela real, gesto físico, Google/Instagram ou publicação.

@@ -2,7 +2,7 @@
 
 ## Feature 006 — Layout v3 (A integrada; B implementada/testada)
 
-Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. Parte A integrada pelo [PR #24](https://github.com/Browsher/crm-social/pull/24), main `a5be355`; B implementada/testada e entregável na branch `codex/006-layout-v3-parte-b`, sem integração. Mantém 32/32 tarefas executadas e entrega menu Planejamento/Produção/Publicar, prévia compartilhada e rótulos no Mês. Gate local da fonte de código/testes `7a0dd56` verde (750 PASS/0 SKIP), PNG regenerados/inspecionados em `800d7ca`; [PR #25](https://github.com/Browsher/crm-social/pull/25) aberto/anexado e CI estrito da099ab SUCCESS/Semgrep PASS. Revisão independente completa aprovada, review remoto sem bloqueio de código/arquitetura/segurança, condição CI atendida; metadados finais reconferidos por head no PR, merge proibido. Fontes e limites na validação.
+Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. A integrada pelo [PR #24](https://github.com/Browsher/crm-social/pull/24), main a5be355; B implementada/testada localmente, não integrada, com revisão visual do Instagram solicitada pelo autor em 09/10/2026 e validada localmente. 32 IDs mantidos; revisão/entrega do novo head pendentes. [PR #25](https://github.com/Browsher/crm-social/pull/25) aberto/anexado. Fonte de código/testes 08ba10b; gate oficial executado em bc74d6e: 756 PASS/0 SKIP, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Quatro PNG Instagram novos em 08ba10b; dezesseis PNG B preservados em 800d7ca. Push/CI/review do novo head pendentes; merge B proibido. Fontes e limites na validação; a aprovação de CI/review anterior não vale para a revisão visual atual.
 
 | Documento | Uso |
 | --- | --- |
@@ -15,8 +15,8 @@ Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. Parte A integr
 | [Quickstart sintético](../specs/006-layout-v3/quickstart.md) | Reprodução sintética vigente da B e fontes históricas da A |
 | [Validação](../specs/006-layout-v3/validacao.md) | RED/GREEN, regressões, gate, fontes e pendências A/B |
 | [Relatório gate Parte A](reports/006-parte-a-local-gate.json) | Gate oficial Windows, fonte 01d772b: 680 PASS, cobertura 95,5492%, baseline preservada |
-| [Relatório gate Parte B](reports/006-parte-b-local-gate.json) | Gate oficial Windows da fonte 7a0dd56: 750 PASS/0 SKIP, 95,5134%, baseline preservada; PNG 800d7ca |
-| [Galeria Parte B](design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) | 20 PNG: Semana/Mês/Produção/Publicar/Instagram nos dois temas e larguras |
+| [Relatório gate Parte B](reports/006-parte-b-local-gate.json) | Gate oficial bc74d6e PASS/756 testes, código 08ba10b, 95,5217%, baseline preservada; 4 PNG novos 08ba10b/16 preservados 800d7ca |
+| [Galeria Parte B](design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) | 20 PNG: 4 Instagram renovados08ba10b e 16 Semana/Mês/Produção/Publicar preservados 800d7ca, temas/larguras |
 | [Galeria Parte A](design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) | 12 PNG sintéticos Semana/Mês/Produção nos dois temas e larguras |
 | [Checklist](../specs/006-layout-v3/checklists/requirements.md) | Revisão de completude anterior ao plano |
 | [Mockup sanitizado](design/mockups/layout-v3.html) | Referência aprovada, não aplicativo |
