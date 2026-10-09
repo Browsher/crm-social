@@ -1,7 +1,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {abrirLayout,navegar,atualizar,pedidosMidia,skip}=require('./layout-browser.cjs');
-const {mudarPorId,adicionarRegistro}=require('./layout-fixtures.cjs');
+const {mudarPorId,adicionarRegistro,recalcularHashes}=require('./layout-fixtures.cjs');
 
 const combinacoes=['light','dark'].flatMap(theme=>[1440,390].map(width=>({theme,width})));
 for(const config of combinacoes) {
@@ -73,6 +73,33 @@ test('Layout B nova publicação atualiza fila e modal conserva peça com foco d
   assert.equal(await page.locator('#titulo').evaluate(n=>n===document.activeElement),true,'acionador removido usa título');
   assert.equal(await page.locator('#fila-publicar [data-producao-id="peca-1"]').count(),0);
   assert.equal(await page.locator('#publicadas-recentes [data-publicada-id="peca-1"]').count(),1);
+});
+for(const config of combinacoes)test('Layout B Instagram da gaveta restaura foco e reabre versão atual '+config.theme+'/'+config.width,{skip},async t=>{
+  const context=await abrirLayout(t,config),{page}=context;
+  await page.locator('.planning-week [data-producao-id="peca-3"]').click();
+  const button=page.locator('#dia [data-instagram-id="peca-3"]');
+  assert.equal(await button.count(),1,'gaveta tem acionador real');await button.click();
+  assert.equal(await page.locator('#instagram-contador').textContent(),'1/5');
+  context.setMode('nova');mudarPorId(context.raw,'Produções','peca-3','legenda','Nova legenda da gaveta sintética');
+  await atualizar(context);assert.equal(await page.locator('#instagram-legenda').textContent(),'Nova legenda da gaveta sintética');
+  await page.keyboard.press('Escape');assert.equal(await page.locator('#dia').isVisible(),true);
+  assert.equal(await button.evaluate(n=>n===document.activeElement),true);
+  await button.click();assert.equal(await page.locator('#instagram-legenda').textContent(),'Nova legenda da gaveta sintética','reabertura resolve captura vigente');
+  await page.keyboard.press('Escape');await page.keyboard.press('Escape');assert.equal(await page.locator('#dia').isVisible(),false);
+});
+test('Layout B acionador da gaveta não reabre peça removida na releitura',{skip},async t=>{
+  const context=await abrirLayout(t,{width:1440}),{page}=context;
+  await page.locator('.planning-week [data-producao-id="peca-3"]').click();
+  const button=page.locator('#dia [data-instagram-id="peca-3"]');
+  assert.equal(await button.count(),1);await button.click();context.setMode('nova');
+  for(const nome of ['Produções','Páginas','Arquivos','Revisoes']) {
+    const table=context.raw.tables[nome],index=table.values[0].indexOf('producao_id');
+    table.values=table.values.filter((row,i)=>!i||row[index]!=='peca-3');
+  }
+  recalcularHashes(context.raw);await atualizar(context);
+  assert.equal(await page.locator('#instagram').isVisible(),false);assert.equal(await page.locator('#dia').isVisible(),true);
+  assert.equal(await button.evaluate(n=>n===document.activeElement),true);
+  await button.click();assert.equal(await page.locator('#instagram').isVisible(),false,'sem fallback para objeto antigo');
 });
 async function semOverflow(page) {assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'página sem rolagem horizontal');}
 async function modo(page,value) {

@@ -259,7 +259,10 @@ function prontaParaPublicar(p) {
 }
 function botaoInstagram(p) {
   const button=node('button','Ver no Instagram','instagram-action');button.type='button';button.dataset.instagramId=p.producao_id;
-  button.addEventListener('click',()=>globalThis.CrmInstagram.abrir({peca:p,acionador:button}));return button;
+  button.addEventListener('click',()=>{
+    const atual=state.view.producoes.find(item=>item.producao_id===button.dataset.instagramId);
+    if(atual)globalThis.CrmInstagram.abrir({peca:atual,acionador:button});
+  });return button;
 }
 function textosPublicacao(p,section) {
   section.append(node('p',preenchido(p.legenda)?p.legenda:'Legenda não informada','publication-caption'),
@@ -315,6 +318,7 @@ function acordeaoPeca(p,aberto) {
   summary.append(node('span',p.formato,'format-label'),node('strong',p.titulo || 'Título não informado'),node('span',layout.estadoSimples(p),'status'),
     node('small',resumoPeca(d),'piece-hint'));
   const body=node('div',undefined,'piece-body');
+  body.append(botaoInstagram(p));
   if(p.quadro.coluna==='Pronta')body.append(prontaParaPublicar(p));
   body.append(fatosPeca(p));
   if(p.quadro.coluna!=='Pronta') {const gallery=galeriaPrevias(p);if(gallery)body.append(gallery);}
