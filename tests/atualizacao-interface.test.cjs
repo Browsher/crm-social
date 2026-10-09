@@ -58,7 +58,7 @@ for(const width of [1440,390])test('U002 POST pendente, sucesso, falha e recuper
   await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
   await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
   assert.equal(await status.textContent(),'Não foi possível ler a planilha; tente novamente');
-  assert.equal((await visao(page)).captura.completedAt,previous);assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.equal((await visao(page)).captura.completedAt,previous);assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de \d{2}\/\d{2}\/\d{4} às \d{2}:\d{2}$/);
   a.setMode('sucesso');await button.click();await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
   await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);assert.equal(await status.textContent(),'Dados atualizados');
   assert.ok(a.seen.some(([url,method])=>url==='/api/atualizar'&&method==='POST'));

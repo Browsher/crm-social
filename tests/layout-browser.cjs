@@ -8,9 +8,9 @@ const google=require('../src/google.cjs');
 const {criarServicoMidia}=require('../src/midia.cjs');
 const skip=process.env.CI==='true'?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
 
-async function abrirLayout(t,{width=390,theme='light',editar=()=>{},captura=capturaLayout,download}={}) {
+async function abrirLayout(t,{width=390,theme='light',editar=()=>{},captura=capturaLayout,download,semCaptura=false}={}) {
   const dir=temporario(t),raw=captura();editar(raw);
-  assert.equal(promoverCaptura(recalcularHashes(raw),dir).resultado,'completa','fixture completa em TEMP');
+  if(!semCaptura)assert.equal(promoverCaptura(recalcularHashes(raw),dir).resultado,'completa','fixture completa em TEMP');
   const credentials=credencialSintetica(t),transport=transporteFalso({download:download||(async(url,options)=>{
     const id=decodeURIComponent(new URL(url).pathname.split('/').at(-1));
     assert.match(id,/^drive-sintetico-/);

@@ -72,6 +72,38 @@ test('Instagram imagem única permanece 1/1 inclusive sem mídia, Reels placehol
   await page.keyboard.press('ArrowRight');await indice(page,'2/2');
   assert.equal(await page.locator('#instagram-indisponivel').isVisible(),true);
 });
+test('Instagram Reels identifica destinos por cena e início/final nos controles acessíveis',{skip},async t=>{
+  const context=await preparar(t,{editar:raw=>{
+    adicionarRegistro(raw,'Cenas',{cena_id:'cena-v3-2',producao_id:'peca-4',versao:3,indice:2,texto:'Segunda cena sintética'});
+    adicionarRegistro(raw,'Cenas',{cena_id:'cena-v2-2',producao_id:'peca-4',versao:2,indice:2,texto:'Cena histórica sintética'});
+  }}),{page}=context,dialog=await abrir(context,'peca-4');
+  await indice(page,'1/4');
+  const nomes=['Ir para Cena 1 · início','Ir para Cena 1 · final','Ir para Cena 2 · início','Ir para Cena 2 · final'];
+  for(const nome of nomes)assert.equal(await dialog.getByRole('button',{name:nome,exact:true}).count(),1,'destino '+nome);
+  assert.equal(await dialog.getByRole('group',{name:'Cenas da prévia',exact:true}).count(),1);
+  assert.equal(await dialog.getByRole('button',{name:'Anterior: Cena 1 · início',exact:true}).isDisabled(),true);
+  await dialog.getByRole('button',{name:'Próxima: Cena 1 · final',exact:true}).click();await indice(page,'2/4');
+  assert.equal(await dialog.getByRole('button',{name:'Anterior: Cena 1 · início',exact:true}).isDisabled(),false);
+  await page.keyboard.press('ArrowRight');await indice(page,'3/4');
+  assert.equal(await dialog.getByRole('button',{name:'Anterior: Cena 1 · final',exact:true}).count(),1);
+  await dialog.getByRole('button',{name:'Ir para Cena 2 · final',exact:true}).click();await indice(page,'4/4');
+  assert.equal(await dialog.getByRole('button',{name:'Próxima: Cena 2 · final',exact:true}).isDisabled(),true);
+  await page.evaluate(async()=>{
+    const view=await (await fetch('/api/visao')).json(),p=view.producoes.find(p=>p.producao_id==='peca-4');
+    p.detalhes.cenas.forEach(cena=>{cena.indice+=3;});globalThis.CrmInstagram.atualizar(p);
+  });
+  await indice(page,'4/4');
+  assert.equal(await dialog.getByRole('button',{name:'Ir para Cena 5 · final',exact:true}).count(),1,'releitura troca contexto com total igual');
+  assert.equal(await dialog.getByRole('button',{name:'Anterior: Cena 5 · início',exact:true}).count(),1);
+  await page.evaluate(async()=>{
+    const view=await (await fetch('/api/visao')).json(),p=view.producoes.find(p=>p.producao_id==='peca-3');
+    p.detalhes.paginas=p.detalhes.paginas.filter(pagina=>pagina.indice<=4);
+    globalThis.CrmInstagram.abrir({peca:p,acionador:document.querySelector('#instagram-acionador-teste')});
+  });
+  await indice(page,'1/4');
+  assert.equal(await dialog.getByRole('button',{name:'Ir para página 4',exact:true}).count(),1,'carrossel com mesmo total conserva nomes');
+  assert.equal(await dialog.getByRole('button',{name:'Próxima página',exact:true}).count(),1);
+});
 test('Instagram slots sem arquivo/bytes mantêm ordem, vigência e contador',{skip},async t=>{
   const context=await preparar(t,{editar:raw=>{
     const paginas=raw.tables['Páginas'].values,header=paginas[0],id=header.indexOf('pagina_id'),indice=header.indexOf('indice');

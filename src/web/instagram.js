@@ -95,10 +95,18 @@
     },{once:true});
     elementos.midia.append(img);img.src='/api/midia/'+encodeURIComponent(posicao.arquivo.arquivo_id);
   }
+  function rotuloPosicao(novo,prefixo,original) {
+    const posicao=posicoes[Math.max(0,Math.min(novo,posicoes.length-1))];
+    return posicao.contexto.startsWith('Cena ')?prefixo+posicao.contexto:original;
+  }
   function marcarPosicao() {
     elementos.contador.textContent=(indice+1)+'/'+posicoes.length;
     elementos.anterior.disabled=indice===0;elementos.proximo.disabled=indice===posicoes.length-1;
+    elementos.anterior.setAttribute('aria-label',rotuloPosicao(indice-1,'Anterior: ','Página anterior'));
+    elementos.proximo.setAttribute('aria-label',rotuloPosicao(indice+1,'Próxima: ','Próxima página'));
+    elementos.pontos.setAttribute('aria-label',peca.formato==='Reels'?'Cenas da prévia':'Páginas da prévia');
     [...elementos.pontos.children].forEach((ponto,i)=>{
+      ponto.setAttribute('aria-label',rotuloPosicao(i,'Ir para ','Ir para página '+(i+1)));
       ponto.classList.toggle('active',i===indice);
       if(i===indice)ponto.setAttribute('aria-current','true');else ponto.removeAttribute('aria-current');
     });
@@ -111,7 +119,7 @@
   function criarPontos() {
     if(elementos.pontos.children.length===posicoes.length)return;
     const foco=document.activeElement,restaurar=elementos.pontos.contains(foco);elementos.pontos.replaceChildren();
-    posicoes.forEach((_,i)=>{const ponto=botao('●','Ir para página '+(i+1));ponto.addEventListener('click',()=>selecionar(i));elementos.pontos.append(ponto);});
+    posicoes.forEach((_,i)=>{const ponto=botao('●',rotuloPosicao(i,'Ir para ','Ir para página '+(i+1)));ponto.addEventListener('click',()=>selecionar(i));elementos.pontos.append(ponto);});
     if(restaurar)elementos.pontos.children[indice].focus({preventScroll:true});
   }
   function apresentar() {

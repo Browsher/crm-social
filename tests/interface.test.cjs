@@ -309,9 +309,9 @@ test('U-review I1 gaveta não ecoa URL recusada nem parte de credencial sintéti
 });
 const estadosSelo=[
   {nome:'hoje',texto:'Atualizado hoje, 08:05',cor:'verde',fim:'2026-10-04T11:05:00Z',captura:true},
-  {nome:'anterior',texto:'Dados de 02/10',cor:'âmbar',fim:'2026-10-02T12:05:00Z',captura:true},
-  {nome:'falha',texto:'Atualização falhou',cor:'vermelho',fim:'2026-10-04T11:05:00Z',captura:true},
-  {nome:'ausente',texto:'Sem dados',cor:'cinza',captura:false}
+  {nome:'anterior',texto:'Dados de 02/10/2026 às 09:05',cor:'âmbar',fim:'2026-10-02T12:05:00Z',captura:true},
+  {nome:'falha',texto:'Atualização falhou · dados de 04/10/2026 às 08:05',cor:'vermelho',fim:'2026-10-04T11:05:00Z',captura:true},
+  {nome:'ausente',texto:'Atualização falhou · sem dados',cor:'vermelho',captura:false}
 ];
 
 test('U-regressao gaveta mantém o texto ao redor da credencial sem recebê-la', {skip}, async t=>{
@@ -611,7 +611,7 @@ test('U04 celular relê só API local, conserva falha/horário e recupera erro s
   let response=page.waitForResponse(r=>r.url().endsWith('/api/visao'));
   await button.click();await response;
   await button.waitFor({state:'visible'});
-  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de \d{2}\/\d{2}\/\d{4} às \d{2}:\d{2}$/);
   assert.equal((await consultarVisao(page)).captura.completedAt,'2026-10-04T11:05:00Z');
   assert.equal(fs.readFileSync(pointer,'utf8'),before);
   assert.equal(await page.locator('#planejamento').isVisible(),true);
@@ -756,7 +756,7 @@ test('U07 US4 projetos conservam identidades, classes da API e registros em desk
     assert.equal(await page.locator('#quadro [data-producao-id="peca-9"] [aria-current="step"]').textContent(),'Publicada');
     assert.doesNotMatch(await page.locator('#quadro').textContent(),/Responsável sintético|Correção sintética|Com quem está/);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.ok(await cards.evaluateAll(ns=>ns.every(n=>n.scrollWidth<=n.clientWidth)));
-    assert.equal(await page.locator('#selo').textContent(),'Dados de 02/10');
+    assert.match(await page.locator('#selo').textContent(),/^Dados de 02\/10\/2026 às \d{2}:\d{2}$/);
   });
 });
 
@@ -876,7 +876,7 @@ for(const width of [1440,390]) {
     assert.deepEqual((await consultarVisao(page)).historico,view.historico);
     assert.equal(fs.readFileSync(pointer,'utf8'),before);
     consultaComMiniaturas(seen);
-    assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+    assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de \d{2}\/\d{2}\/\d{4} às \d{2}:\d{2}$/);
   });
   test('U10 sem captura conserva API vazia e não menciona agentes em '+width, {skip},async t=>{
     const page=await abrir(t,width,false),view=await consultarVisao(page);
@@ -894,7 +894,7 @@ test('U10 primeira importação falha sem inventar captura; histórico permanece
   const view=await consultarVisao(page);await semPlanilhaVisual(page);
   assert.equal(view.captura,null);assert.deepEqual(view.historico.map(r=>r.resultado),['falhou']);
   assert.equal(view.historico[0].motivoResumo,'Cenas complete: inválido');
-  assert.equal(await page.locator('#selo').textContent(),'Sem dados');
+  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou · sem dados');
   assert.equal(view.ultimaTentativa.resultado,'falhou');
 });
 test('U10 releitura de uma nova captura atualiza dados e histórico na API sem consultar Google', {skip},async t=>{
@@ -954,7 +954,7 @@ test('U10 falha ativa e avisos permanecem na API; selo não leva a lista técnic
   const view=await consultarVisao(page);await semPlanilhaVisual(page);
   assert.equal(view.ultimaTentativa.resultado,'falhou');
   assert.ok(view.avisos.some(a=>a.motivo==='Última importação falhou; captura anterior preservada'));
-  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de \d{2}\/\d{2}\/\d{4} às \d{2}:\d{2}$/);
   assert.equal(await page.locator('#selo').getAttribute('role'),'status');
   assert.equal(await page.getByRole('button',{name:'Todos os avisos',exact:true}).count(),0);
 });
@@ -1037,7 +1037,7 @@ for(const width of [1440,390]) test('U11 escala de 500 peças: navegação, avis
   await page.locator('#atualizar').click();await response;
   await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
   const releituraMs=performance.now()-releituraInicio;
-  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de \d{2}\/\d{2}\/\d{4} às \d{2}:\d{2}$/);
   assert.equal(fs.readFileSync(pointer,'utf8'),aposFalha);
   const atual=await consultarVisao(page);
   assert.equal(atual.planilha.find(a=>a.nome==='Produções').quantidadeLinhas,500);

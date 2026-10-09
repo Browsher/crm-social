@@ -36,8 +36,11 @@
       contexto:pagina?'Página '+u.indice:'Cena '+u.indice+' · '+(index===0?'início':'final')})));
   }
   function posicoesInstagram(p) {
-    if(p.formato==='Imagem')return [{arquivo:imagensDaPeca(p)[0]?.arquivo??null,contexto:'Imagem 1'}];
     const posicoes=[...posicoesDasUnidades(p,'paginas'),...posicoesDasUnidades(p,'cenas')];
+    if(p.formato==='Imagem') {
+      const arquivo=posicoes.length?posicoes[0].arquivo:imagensDaPeca(p)[0]?.arquivo??null;
+      return [{arquivo,contexto:'Imagem 1'}];
+    }
     return posicoes.length?posicoes:[{arquivo:null,contexto:'Prévia indisponível'}];
   }
   const preenchido=value=>value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');

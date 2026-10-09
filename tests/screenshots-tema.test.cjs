@@ -28,7 +28,7 @@ for(const invalid of ['fora do TEMP','prefixo alheio'])test('Screenshots: limpez
   assert.equal(fs.readFileSync(marker,'utf8'),'arquivo sintético preservado');
 });
 
-test('Screenshots: CLI gera 16 PNG em cópia TEMP e preserva diretório alheio',{
+test('Screenshots: CLI padrão preserva 16 PNG históricos e gera tema-layout-v3 com Publicar em TEMP',{
   skip:process.env.CI==='true'?'Interface exclusiva do computador; Playwright não é instalado no CI':false,
   timeout:60000
 },t=>{
@@ -37,6 +37,14 @@ test('Screenshots: CLI gera 16 PNG em cópia TEMP e preserva diretório alheio',
   fs.copyFileSync(script,path.join(copy,'scripts/screenshots-tema.cjs'));
   fs.copyFileSync(path.join(__dirname,'fixtures.cjs'),path.join(copy,'tests/fixtures.cjs'));
   fs.cpSync(path.join(project,'src'),path.join(copy,'src'),{recursive:true});
+  const gallery=path.join(copy,'docs/design/screenshots');fs.mkdirSync(gallery,{recursive:true});
+  const historical=new Map();
+  for(const theme of ['light','dark'])for(const screen of ['planejamento','gaveta','producao','planilha'])for(const width of [1440,390]){
+    const name=`tema-${theme}-${screen}-${width}.png`,bytes=Buffer.from('PNG histórico sintético preservado: '+name);
+    historical.set(name,bytes);fs.writeFileSync(path.join(gallery,name),bytes);
+  }
+  const unrelated=path.join(gallery,'pautas-light-card-1440.png');
+  fs.writeFileSync(unrelated,'Outra galeria sintética preservada');
   const other=path.join(temp,'crm-tema-sintetico-preservar');fs.mkdirSync(other,{recursive:true});
   fs.writeFileSync(path.join(other,'preservar.txt'),'arquivo sintético preservado');
   const result=spawnSync(process.execPath,[path.join(copy,'scripts/screenshots-tema.cjs')],{
@@ -45,9 +53,14 @@ test('Screenshots: CLI gera 16 PNG em cópia TEMP e preserva diretório alheio',
   assert.equal(result.error,undefined);
   assert.equal(result.status,0,result.stderr);
   assert.equal(result.stdout,'Screenshots sintéticos: 16; passou\n');
-  const output=path.join(copy,'docs/design/screenshots');
+  for(const [name,bytes] of historical)assert.ok(fs.readFileSync(path.join(gallery,name)).equals(bytes),
+    'A execução padrão não pode sobrescrever a evidência histórica '+name);
+  assert.equal(fs.readFileSync(unrelated,'utf8'),'Outra galeria sintética preservada');
+  assert.deepEqual(fs.readdirSync(gallery).sort(),[...historical.keys(),path.basename(unrelated),'tema-layout-v3'].sort());
+  const output=path.join(gallery,'tema-layout-v3');
   assert.equal(fs.readdirSync(output).length,16);
-  for(const theme of ['light','dark'])for(const screen of ['planejamento','gaveta','producao','planilha'])for(const width of [1440,390]){
+  assert.ok(fs.readdirSync(output).every(name=>!name.includes('planilha')));
+  for(const theme of ['light','dark'])for(const screen of ['planejamento','gaveta','producao','publicar'])for(const width of [1440,390]){
     const png=fs.readFileSync(path.join(output,`tema-${theme}-${screen}-${width}.png`));
     assert.deepEqual(png.subarray(0,8),Buffer.from([137,80,78,71,13,10,26,10]));
     assert.equal(png.readUInt32BE(16),width);

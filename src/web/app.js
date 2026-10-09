@@ -584,7 +584,14 @@ function controles() {
   $('#atualizar').addEventListener('click',atualizar);
 }
 function detalhesCaptura() {
-  $('#selo').textContent=state.view.selo.texto;$('#selo').className='badge '+state.view.selo.cor;
+  const {selo,captura,ultimaTentativa,estado}=state.view;
+  const falhou=ultimaTentativa?.resultado==='falhou';
+  const instante=captura?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'})
+    .format(new Date(captura.completedAt)).replace(', ',' às '):null;
+  const texto=falhou?'Atualização falhou · '+(instante?'dados de '+instante:'sem dados'):
+    estado==='anterior_hoje'?'Dados de '+instante:selo.texto;
+  $('#selo').textContent=texto;$('#selo').className='badge '+(falhou?'vermelho':selo.cor);
+  $('#selo').title=instante?'Dados de '+instante:'';
 }
 async function reler({manterDesabilitado=false}={}) {
   $('#atualizar').disabled=true;

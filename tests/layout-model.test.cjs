@@ -300,6 +300,34 @@ test('Layout Instagram imagem única sem mídia ou com só unidade histórica ma
   ]}};
   assert.deepEqual(layout.posicoesInstagram(congelar(historica)),[{arquivo:null,contexto:'Imagem 1'}]);
 });
+test('Layout Instagram imagem única conserva a primeira página vigente indisponível, sem avançar à segunda',()=>{
+  const raw=capturaLayout();
+  mudarPorId(raw,'Produções','peca-3','slot','imagem_a');
+  mudarPorId(raw,'Páginas','pagina-v3-1','arquivo_imagem_id','arquivo-ausente');
+  const p=congelar(projetar(raw).producoes.find(p=>p.producao_id==='peca-3'));
+  assert.equal(p.detalhes.paginas.filter(pagina=>pagina.vigente).length,5);
+  assert.equal(layout.imagensDaPeca(p)[0].arquivo.arquivo_id,'imagem-pagina-2');
+  assert.deepEqual(layout.posicoesInstagram(p),[{arquivo:null,contexto:'Imagem 1'}]);
+});
+test('Layout Instagram imagem única preserva ordem por ID de empate vigente sem retornar à página histórica',()=>{
+  const raw=capturaLayout();mudarPorId(raw,'Produções','peca-3','slot','imagem_a');
+  adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-empate',producao_id:'peca-3',versao:3,indice:1,arquivo_imagem_id:''});
+  const p=congelar(projetar(raw).producoes.find(p=>p.producao_id==='peca-3'));
+  assert.equal(p.detalhes.paginas.filter(pagina=>pagina.vigente&&pagina.indice===1).length,2);
+  assert.equal(layout.imagensDaPeca(p)[0].arquivo.arquivo_id,'imagem-pagina-1');
+  assert.deepEqual(layout.posicoesInstagram(p),[{arquivo:null,contexto:'Imagem 1'}]);
+});
+test('Layout Instagram imagem única com cenas conserva início indisponível e precedência de páginas',()=>{
+  const raw=capturaPrevias();mudarPorId(raw,'Produções','peca-4','slot','imagem_a');
+  mudarPorId(raw,'Cenas','cena-v3-1','arquivo_imagem_inicio_id','arquivo-ausente');
+  const p=congelar(projetar(raw).producoes.find(p=>p.producao_id==='peca-4'));
+  assert.equal(layout.imagensDaPeca(p)[0].arquivo.arquivo_id,'cena-final');
+  assert.deepEqual(layout.posicoesInstagram(p),[{arquivo:null,contexto:'Imagem 1'}]);
+  const cenaCompleta=structuredClone(p);cenaCompleta.detalhes.cenas[0].arquivos[0]={arquivo_id:'inicio-sintetico'};
+  cenaCompleta.detalhes.paginas=[{pagina_id:'pagina-sintetica',vigente:true,indice:2,arquivos:[null]}];
+  assert.equal(layout.imagensDaPeca(cenaCompleta)[0].arquivo.arquivo_id,'inicio-sintetico');
+  assert.deepEqual(layout.posicoesInstagram(congelar(cenaCompleta)),[{arquivo:null,contexto:'Imagem 1'}]);
+});
 test('Layout Instagram Reels conta início e final por cena vigente mesmo com ausências e ignora vídeo',()=>{
   const p=congelar(projetar(capturaPrevias()).producoes.find(p=>p.producao_id==='peca-4'));
   assert.deepEqual(layout.posicoesInstagram(p).map(i=>[i.arquivo?.arquivo_id??null,i.contexto]),[

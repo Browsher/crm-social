@@ -5,6 +5,32 @@ const {mudarPorId,adicionarRegistro,recalcularHashes}=require('./layout-fixtures
 
 const combinacoes=['light','dark'].flatMap(theme=>[1440,390].map(width=>({theme,width})));
 for(const config of combinacoes) {
+  test('Layout B falha inicial permanece visível após recarregar '+config.theme+'/'+config.width,{skip},async t=>{
+    const context=await abrirLayout(t,{...config,semCaptura:true}),{page}=context;
+    assert.equal(await page.locator('#selo').textContent(),'Sem dados');context.setMode('falha');await atualizar(context);await page.reload();
+    await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+    assert.equal(await page.locator('#selo').textContent(),'Atualização falhou · sem dados');
+    assert.match(await page.locator('#selo').getAttribute('class'),/vermelho/);
+    for(const tela of ['planejamento','producao','publicar']) {await navegar(page,tela);assert.equal(await page.locator('#selo').isVisible(),true);await semOverflow(page);}
+    const view=await (await page.request.get(context.origin+'/api/visao')).json();assert.equal(view.captura,null);assert.equal(view.ultimaTentativa.resultado,'falhou');
+  });
+  test('Layout B falha conserva instante visível da captura e no-op '+config.theme+'/'+config.width,{skip},async t=>{
+    const context=await abrirLayout(t,config),{page}=context;
+    const before=await (await page.request.get(context.origin+'/api/visao')).json();
+    const stamp=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(before.captura.completedAt)).replace(', ',' às ');
+    context.setMode('falha');await atualizar(context);const esperado='Atualização falhou · dados de '+stamp;
+    assert.equal(await page.locator('#selo').textContent(),esperado);context.setMode('sem_alteracao');await atualizar(context);
+    assert.equal(await page.locator('#selo').textContent(),esperado);await page.reload();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+    for(const tela of ['planejamento','producao','publicar']) {await navegar(page,tela);assert.equal(await page.locator('#selo').textContent(),esperado);await semOverflow(page);}
+    await page.locator('#publicar [data-instagram-id="peca-3"]').click();assert.equal(await page.locator('#instagram #selo').textContent(),esperado);await semOverflow(page);
+    if(config.width===390) {
+      await page.setViewportSize({width:390,height:480});await semOverflow(page);
+      for(const name of ['Fechar prévia','Próxima página']) {const box=await page.getByRole('button',{name,exact:true}).boundingBox();assert.ok(box.y>=0&&box.y+box.height<=480,'controle acessível em altura baixa');}
+    }
+    assert.equal((await (await page.request.get(context.origin+'/api/visao')).json()).captura.completedAt,before.captura.completedAt);
+  });
+}
+for(const config of combinacoes) {
   test('Layout B Publicar fila literal, hoje, contador e ações '+config.theme+'/'+config.width,{skip},async t=>{
     const context=await abrirLayout(t,config),{page}=context;await navegar(page,'publicar');
     const queue=page.locator('#fila-publicar .publish-card');
@@ -234,10 +260,10 @@ test('Layout A atualização pendente faz um POST, preserva falha no no-op e obj
   assert.equal(await page.locator('#atualizar').isDisabled(),true);
   await page.locator('#atualizar').evaluate(n=>n.click());assert.equal(context.calls(),1,'clique simultâneo não duplica coleta');
   context.release();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
-  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de 08\/10\/2026 às 10:50$/);
   assert.equal(await page.locator('#objetivo-mes').textContent(),objective);
   context.setMode('sem_alteracao');await atualizar(context);
-  assert.equal(await page.locator('#selo').textContent(),'Atualização falhou','no-op não apaga falha ativa');
+  assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de 08\/10\/2026 às 10:50$/,'no-op não apaga falha ativa');
   assert.notEqual(stamp,'Atualização falhou');
   const posts=context.requests.filter(r=>r.path==='/api/atualizar'&&r.method==='POST');
   assert.equal(posts.length,2);assert.ok(posts.every(r=>r.body==='{}'));
