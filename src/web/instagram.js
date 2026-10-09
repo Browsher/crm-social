@@ -145,7 +145,9 @@
   function apresentar() {
     posicoes=globalThis.CrmLayout.posicoesInstagram(peca);
     indice=Math.min(indice,posicoes.length-1);
-    elementos.avatar.textContent=siglaMarca();elementos.perfil.textContent=nomePerfil();elementos.legendaPerfil.textContent=nomePerfil();
+    const sigla=siglaMarca();elementos.avatar.textContent=sigla;
+    elementos.avatar.style.fontSize=Math.min(10,30/sigla.length)+'px';
+    elementos.perfil.textContent=nomePerfil();elementos.legendaPerfil.textContent=nomePerfil();
     elementos.legenda.textContent=peca.legenda||'';elementos.hashtags.textContent=peca.hashtags||'';
     criarPontos();marcarPosicao();mostrarImagem();
   }
