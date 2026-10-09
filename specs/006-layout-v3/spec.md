@@ -31,7 +31,7 @@ Reproduzir a função abrir e a moldura .phone do mockup aprovado, sem mudar cap
 
 ### Manutenção visual pós-integração — autorizada em 2026-10-09
 
-Ajuste pequeno autorizado, sem nova feature Spec Kit e sem reabrir as 32 tarefas concluídas da 006. Branch `codex/006-ajustes-visuais`, base main `596dc4f` após fechamento documental PR #26; implementado/testado localmente, não integrado. Checks/review do head final são registrados no PR da manutenção. [Validação sintética](../../docs/reports/006-ajustes-visuais-validacao.md).
+Ajuste pequeno autorizado, sem nova feature Spec Kit e sem reabrir as 32 tarefas concluídas da 006. Branch `codex/006-ajustes-visuais`, base main `596dc4f` após fechamento documental PR #26; implementado/testado localmente, não integrado. Checks/review do head final são registrados no [PR #27](https://github.com/Browsher/crm-social/pull/27). [Validação sintética](../../docs/reports/006-ajustes-visuais-validacao.md).
 
 - Avatar circular de 40 px/fonte 7,5 px comporta siglas sintéticas de três/quatro caracteres, incluindo WWW/WWWW, sem corte.
 - Salvar usa SVG decorativo com traço `currentColor`, aria-hidden e sem foco; substitui o emoji da composição histórica, mantendo contraste nos dois temas.

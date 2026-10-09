@@ -2,7 +2,7 @@
 
 Como pequenos ajustes numa página da agenda, esta manutenção melhora a apresentação sem mudar a leitura dos dados. A 006 segue concluída e integrada, 32/32 tarefas, pelo PR #25/merge `c4660d78c188793dddac3f44f4d42401a3542a83`; seu fechamento documental pelo PR #26 é a base main `596dc4f`.
 
-Manutenção autorizada em 09/10/2026, sem nova feature Spec Kit nem reabertura de tarefas. Branch `codex/006-ajustes-visuais`: implementada/testada localmente, não integrada. Checks e review do head final são registrados no PR da manutenção; esta prova local não declara aprovação de CI remoto.
+Manutenção autorizada em 09/10/2026, sem nova feature Spec Kit nem reabertura de tarefas. Branch `codex/006-ajustes-visuais`: implementada/testada localmente, não integrada. Checks e review do head final são registrados no [PR #27](https://github.com/Browsher/crm-social/pull/27); esta prova local não declara aprovação de CI remoto.
 
 ## Escopo e fonte
 
@@ -49,4 +49,3 @@ A evidência sintética não demonstra acesso real ao Drive/Instagram, arrasto f
 | 25/M6 | Decisão já registrada, sem nova emenda ou autorização. |
 
 Doc-sync-onboarding aplicado como última etapa após o gate, somente Markdown. Sonnet/Haiku indisponíveis neste host: documentação usa o modelo herdado disponível. Não houve nova execução de testes por este fechamento documental.
-
