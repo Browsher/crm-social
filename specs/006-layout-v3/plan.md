@@ -2,7 +2,7 @@
 
 **Branch**: `codex/006-layout-v3-parte-b` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
 **Input**: especificação única em `specs/006-layout-v3/spec.md`.
-**Estado**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, integrada após aprovação do autor. [Validação de execução](validacao.md) preserva código/gate/PNG e adjudicação factual.
+**Estado**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação de execução](validacao.md) preserva código/gate/PNG e adjudicação factual.
 
 ## Execução autorizada nesta rodada — Parte B
 
@@ -43,7 +43,7 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 | I Local e simples | PASS documental | PASS documental | mesmo servidor e tecnologia, sem instalação |
 | II Fontes e identidade | Conforme ao contrato de captura | Conforme ao escopo explícito, com trade-off visual documentado | Fonte/cobertura/instante/falhas/IDs/versões/Histórico permanecem na captura/API; UI mostra instante/falha e sinal mínimo Dados a confirmar global/no resumo da peça, sem sucesso aparente. Remoção de tabelas/agentes foi fornecida pelo autor e reiterada em B; detalhes técnicos ficam na API, sem novo estado operacional. |
 | III Papéis | PASS documental | PASS documental | sem execução editorial, nomes técnicos removidos da UI |
-| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, revisão visual código 08ba10b/gate bc74d6e PASS/756 testes, 4 PNG Instagram 08ba10b/16 PNG preservados 800d7ca; push realizado, CI estrito do head aprovado a5c964c SUCCESS/Semgrep PASS e revisão independente aprovada, Minor documental corrigido; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Rodadas750/7a0/9e40 são históricas, sem atribuir aprovação à fonte nova |
+| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, revisão visual código 08ba10b/gate bc74d6e PASS/756 testes, 4 PNG Instagram 08ba10b/16 PNG preservados 800d7ca; push realizado, CI estrito a5c964c SUCCESS/Semgrep PASS; revisão independente do delta a5c964c sem achados; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Rodadas750/7a0/9e40 são históricas, sem atribuir aprovação à fonte nova |
 | V Feature única | PASS documental | PASS documental | somente pasta 006, sem design paralelo; desenho já autorizado pelo autor |
 | VI Leitura privada | PASS documental | PASS documental | mesma rota de mídia, mesmos escopos e cache; thumbnails são demanda da tela visível |
 | Governança | Conforme às decisões existentes | Sem emenda ou autorização nova | A integrada após aprovação separada; B entregue sem merge, depois aprovada e integrada PR #25/c4660d7. O pedido explícito prevalece na composição visual; contratos/constituição permanecem. 32 IDs mantidos. |
@@ -136,7 +136,7 @@ Cinco camadas: funções puras, invariância em arquivos TEMP, integração/deri
 
 A contagem completa é 32 IDs, preservada pelo autor após a parada inicial. T001–T016 e fechamento correspondente T024–T032 pertencem à A autorizada; T017–T023 e fechamento B foram autorizados em 09/10 após aprovação/integração da A. Checkboxes globais T024–T032 só encerram depois de ambas, sem marcar jornadas futuras concluídas.
 
-Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A foi integrada após aprovação explícita; B usa codex/006-layout-v3-parte-b sobre main a5be355, sem merge B. Provas e pendências atuais em validacao.md.
+Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A foi integrada após aprovação explícita; B foi entregue na branch codex/006-layout-v3-parte-b sobre main a5be355, sem merge. A aprovação posterior do autor autorizou sua integração em c4660d7. Provas e fontes por head em validacao.md.
 
 ## Complexity Tracking
 

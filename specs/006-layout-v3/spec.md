@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/006-layout-v3`
 **Created**: 2026-10-08
-**Status**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, integrada após aprovação do autor. [Validação](validacao.md) preserva fontes 08ba10b/bc74d6e e PNG divididos 08ba10b/800d7ca.
+**Status**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação](validacao.md) preserva fontes 08ba10b/bc74d6e e PNG divididos 08ba10b/800d7ca.
 **Input**: Pedido do autor em 08/10/2026: reorganizar a apresentação do CRM pessoal em Planejamento, Produção e Publicar, com referência visual aprovada, sem mudar dados/captura ou escrita operacional.
 
 ## User Scenarios & Testing *(mandatory)*

@@ -2,7 +2,7 @@
 
 Como o nome impresso no topo de um cartão, esta configuração identifica a prévia local. Ela não conecta uma conta nem autentica serviços.
 
-[src/web/perfil-config.js](../../src/web/perfil-config.js) define somente `globalThis.CrmPerfil={nomePerfil:'perfil.exemplo',siglaMarca:'DEMO'}`. O valor é sintético, público e versionado; não incluir credenciais, endereço de conta, ID de serviço ou dados operacionais. Implementado e testado na Parte B da 006, integrada em c4660d7 após aprovação expressa do autor, com 32 IDs mantidos. A revisão visual 08ba10b acrescenta siglaMarca ao avatar, validada localmente; gate bc74d6e PASS/756 testes, push realizado, CI estrito do head aprovado a5c964c SUCCESS/Semgrep PASS e revisão independente aprovada, Minor documental corrigido; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Provas remotas anteriores são históricas.
+[src/web/perfil-config.js](../../src/web/perfil-config.js) define somente `globalThis.CrmPerfil={nomePerfil:'perfil.exemplo',siglaMarca:'DEMO'}`. O valor é sintético, público e versionado; não incluir credenciais, endereço de conta, ID de serviço ou dados operacionais. Implementado e testado na Parte B da 006, integrada em c4660d7 após aprovação expressa do autor, com 32 IDs mantidos. A revisão visual 08ba10b acrescenta siglaMarca ao avatar, validada localmente; gate bc74d6e PASS/756 testes, push realizado, CI estrito a5c964c SUCCESS/Semgrep PASS; revisão independente do delta a5c964c sem achados; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Provas remotas anteriores são históricas.
 
 | Campo | Validação no consumidor |
 | --- | --- |

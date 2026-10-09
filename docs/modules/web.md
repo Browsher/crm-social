@@ -4,7 +4,7 @@ Como uma agenda mensal com cartões e páginas semanais, a interface permite loc
 
 ## Layout v3 — 006 concluída e integrada
 
-Como páginas de uma agenda, Semana/Mês localizam peças, Produção acompanha projetos e Publicar reúne material para publicação manual. A integrada PR #24. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, integrada após aprovação do autor. [Validação](../../specs/006-layout-v3/validacao.md). As seções históricas 001–005 conservam a apresentação substituída.
+Como páginas de uma agenda, Semana/Mês localizam peças, Produção acompanha projetos e Publicar reúne material para publicação manual. A integrada PR #24. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação](../../specs/006-layout-v3/validacao.md). As seções históricas 001–005 conservam a apresentação substituída.
 
 index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model → perfil-config → instagram → app. app.js usa [dez funções puras](layout-model.md), mantendo DOM, atualização e gaveta. [instagram.js](instagram.md) cuida do dialog/navegação/foco, e [perfil-config.js](perfil-config.md) fornece o nome e a sigla sintéticos públicos.
 
