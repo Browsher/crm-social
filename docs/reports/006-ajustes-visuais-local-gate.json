@@ -1,0 +1,37 @@
+{
+  "source": "028778a63e417da3a0c4115bc1b952595fafd106",
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "tests": {
+    "name": "tests",
+    "state": "PASS",
+    "reason": "",
+    "count": 766
+  },
+  "coverage": {
+    "name": "coverage",
+    "state": "PASS",
+    "reason": "",
+    "percent": 95.52169898430286,
+    "drop": 0
+  },
+  "complexity": {
+    "state": "PASS",
+    "metrics": 689,
+    "max": 16,
+    "warnings": 18
+  },
+  "semgrep": {
+    "name": "semgrep",
+    "state": "SKIP",
+    "reason": "Semgrep ausente; instalar CE 1.179.0",
+    "findings": [],
+    "missingFiles": []
+  },
+  "audit": {
+    "name": "audit",
+    "state": "N/A",
+    "reason": "sem package.json/dependencias do app"
+  }
+}
