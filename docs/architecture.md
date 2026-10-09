@@ -6,7 +6,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-A 006 Parte A foi integrada pelo PR #24 em a5be355; B implementada/testada localmente, não integrada, com revisão visual do Instagram solicitada pelo autor em 09/10/2026 e validada localmente. 32 IDs mantidos; revisão/entrega do novo head pendentes. [PR #25](https://github.com/Browsher/crm-social/pull/25) aberto/anexado. Fonte de código/testes 08ba10b; gate oficial executado em bc74d6e: 756 PASS/0 SKIP, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Quatro PNG Instagram novos em 08ba10b; dezesseis PNG B preservados em 800d7ca. Push/CI/review do novo head pendentes; merge B proibido. Menu Planejamento/Produção/Publicar, API/captura/projeção/coleta/cache/constituição/CI/gate intactos; apenas o módulo/estilo/configuração pública da prévia mudaram nesta revisão. [Validação e fontes](../specs/006-layout-v3/validacao.md).
+A 006 Parte A foi integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. API/captura/coleta/cache/tecnologia/mapas permanecem; [validação e fontes](../specs/006-layout-v3/validacao.md).
 
 **Histórico da entrega 005:** **005 — Prévias de imagens**, implementado/testado localmente em 08/10/2026, no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Acrescenta mídia sob demanda pelo servidor, cache privado e galeria/ampliação na gaveta. O autor aprovou as 21 tarefas após a parada inicial; 21/21 concluídas. T002 confirmada pelo autor em 08/10/2026: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. [Validação por fonte e checks/review da entrega](../specs/005-previas-imagens/validacao.md). Versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review; Pronta já integrada pelo PR #21. O registro da 004 na introdução preserva sua rodada histórica.
 
@@ -271,10 +271,10 @@ apareciam somente Histórico e orientação à Central. O link da gaveta abria P
 rolagem/foco ao painel da peça, sem recortar as seis tabelas; menu/selo/Todos os
 avisos restauravam os avisos gerais. O painel ficava oculto em Histórico ou sem avisos. Esses renderizadores/atalhos não existem na 006 B.
 
-`celulaPlanilha` no mesmo [app.js](../src/web/app.js) troca somente URL dedicada recusada por
+Na interface histórica 001–005, `celulaPlanilha` no mesmo [app.js](../src/web/app.js) trocava somente URL dedicada recusada por
 **link não permitido**, mantendo o marcador exato de supressão. A API pode conservar
 URL já triada fora da allowlist visual; textos livres legítimos mantêm suas URLs
-como texto segundo o contrato. Células não criam links ou navegação automática.
+como texto segundo o contrato. Células não criavam links ou navegação automática.
 
 ## Páginas e cenas: vigência e mídia explícita
 

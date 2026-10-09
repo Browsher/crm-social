@@ -1,7 +1,7 @@
 # Estrutura do CRM Social
 
 Como um álbum de fotografias, o CRM consulta capturas da operação; não controla a fila.
-Trabalho atual: 006 Layout v3; A integrada PR #24/main a5be355; B revisada/testada localmente na branch codex/006-layout-v3-parte-b, [PR #25](https://github.com/Browsher/crm-social/pull/25), não integrada; 32 IDs mantidos. Gate bc74d6e PASS/756 testes, código 08ba10b; 4 PNG Instagram 08ba10b/16 PNG 800d7ca; push/CI/review atuais pendentes, merge proibido. [Validação](../../specs/006-layout-v3/validacao.md).
+Trabalho atual: 006 Layout v3; A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. Código 08ba10b; 4 PNG Instagram 08ba10b/16 PNG B 800d7ca. [Validação](../../specs/006-layout-v3/validacao.md).
 T001–T041 concluídas (41/41), com demonstração privada; 003 concluída (15/15), T002/T015 conferidas com registro fictício, 004 implementada/testada localmente, [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente, resultados por head na [validação da 004](../../specs/004-pautas-planejamento/validacao.md); 002 concluída com T021 demonstrada; histórico na [validação da 001](../../specs/001-consulta-local-producao/validacao.md) e aceite real na [validação da 002](../../specs/002-consulta-planilhas/validacao.md). A captura histórica conserva o limite; a tipagem da coleta direta foi resolvida na T021.
 
 - AGENTS.md e .specify/memory/constitution.md governam o desenvolvimento.

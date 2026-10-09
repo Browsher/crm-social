@@ -4,9 +4,9 @@ Como uma agenda mensal com cartões e páginas semanais, a interface permite loc
 
 ## Layout v3 — Parte A integrada; Parte B entregável, não integrada
 
-Como páginas de uma agenda, Semana/Mês localizam peças, Produção acompanha projetos e Publicar reúne material para publicação manual. A integrada PR #24; B implementada/testada localmente, não integrada, com revisão visual do Instagram solicitada pelo autor em 09/10/2026 e validada localmente. 32 IDs mantidos; revisão/entrega do novo head pendentes. Fonte de código/testes 08ba10b; gate oficial executado em bc74d6e: 756 PASS/0 SKIP, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Quatro PNG Instagram novos em 08ba10b; dezesseis PNG B preservados em 800d7ca. Push/CI/review do novo head pendentes; merge B proibido. [Validação](../../specs/006-layout-v3/validacao.md). As seções históricas 001–005 conservam a apresentação substituída.
+Como páginas de uma agenda, Semana/Mês localizam peças, Produção acompanha projetos e Publicar reúne material para publicação manual. A integrada PR #24. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação](../../specs/006-layout-v3/validacao.md). As seções históricas 001–005 conservam a apresentação substituída.
 
-index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model → perfil-config → instagram → app. app.js usa [dez funções puras](layout-model.md), mantendo DOM, atualização e gaveta. [instagram.js](instagram.md) cuida do dialog/navegação/foco, e [perfil-config.js](perfil-config.md) fornece somente o nome sintético público.
+index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model → perfil-config → instagram → app. app.js usa [dez funções puras](layout-model.md), mantendo DOM, atualização e gaveta. [instagram.js](instagram.md) cuida do dialog/navegação/foco, e [perfil-config.js](perfil-config.md) fornece o nome e a sigla sintéticos públicos.
 
 | Controle | Comportamento vigente |
 | --- | --- |
@@ -149,40 +149,40 @@ existente, sem nova consulta remota nem escrita. Na 006 B esses destinos visuais
 | Avisos de dados | Aba/Linha/Campo/Motivo; — quando não há localização; oculto em Histórico ou sem avisos |
 | Releitura | Conserva a aba disponível e filtro da peça ainda existente; erro HTTP conserva a visão anterior |
 
-`tabelaLocal` cria a região focável e tabela por `textContent`;
-`historicoPlanilha` usa toda a lista confirmada, sem inferir novas tentativas
-de GET/no-op nem mostrar órfãos. `renderPlanilha` acrescenta Histórico após
-as seis abas e Meses/Pautas se capturadas; `tabPlanilha` e `escolherAba` sincronizam seleção, foco,
+Na interface histórica 001–005, `tabelaLocal` criava a região focável e tabela por `textContent`;
+`historicoPlanilha` usava toda a lista confirmada, sem inferir novas tentativas
+de GET/no-op nem mostrar órfãos. `renderPlanilha` acrescentava Histórico após
+as seis abas e Meses/Pautas se capturadas; `tabPlanilha` e `escolherAba` sincronizavam seleção, foco,
 `aria-selected` e `aria-labelledby`, com rolagem da aba até a área visível. Se a
-aba deixa de existir, a primeira disponível é selecionada.
+aba deixava de existir, a primeira disponível era selecionada.
 
 `avisosPeca` fechava a gaveta, chamava `navegar` com a produção, abria
-Produções e dava rolagem/foco a `#avisos-dados` na interface histórica. `renderAvisosPlanilha` usa os
-avisos relacionados da peça; todas as tabelas permanecem globais à captura NTV.
-Menu e selo entram sem filtro; **Todos os avisos** restaura os gerais no painel.
-O link **N avisos de dados** de Origem também restaura os gerais, seleciona Produções
-e dá foco/rolagem ao painel, inclusive ao sair de Histórico. O contador usa a
+Produções e dava rolagem/foco a `#avisos-dados` na interface histórica. `renderAvisosPlanilha` usava os
+avisos relacionados da peça; todas as tabelas permaneciam globais à captura NTV.
+Menu e selo entravam sem filtro; **Todos os avisos** restaurava os gerais no painel.
+O link **N avisos de dados** de Origem também restaurava os gerais, selecionava Produções
+e dava foco/rolagem ao painel, inclusive ao sair de Histórico. O contador usava a
 quantidade global de avisos, sem deduplicar linhas ou acompanhar o filtro da peça.
 
-`motivoAviso` consolida o texto de mídia de cada aviso apenas na apresentação:
+`motivoAviso` consolidava o texto de mídia de cada aviso apenas na apresentação:
 **Imagens e vídeo ausentes**, **Imagem final ausente**, **Nenhum arquivo da produção
-registrado** e **Imagem ausente** para páginas são exemplos. Retira a repetição
-do prefixo e reúne causas distintas em uma célula; conserva a quantidade de linhas
-e Aba/Linha/Campo. Outros motivos permanecem como recebidos; a API não é alterada.
+registrado** e **Imagem ausente** para páginas eram exemplos. Retirava a repetição
+do prefixo e reunia causas distintas em uma célula; conservava a quantidade de linhas
+e Aba/Linha/Campo. Outros motivos permaneciam como recebidos; a API não era alterada.
 
-`motivoHistorico` traduz falhas para linguagem de tela: **Cenas complete:
-inválido** vira **Aba Cenas incompleta**; outras validações de aba usam **Aba X
-inválida**, incluindo Meses/Pautas: complete inválido vira **Aba Meses incompleta** ou **Aba Pautas incompleta**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
-inválido recebem rótulos próprios; motivo desconhecido usa **Captura não pôde ser
-importada**, vazio permanece vazio. Resultado desconhecido usa **Resultado
+`motivoHistorico` traduzia falhas para linguagem de tela: **Cenas complete:
+inválido** virava **Aba Cenas incompleta**; outras validações de aba usavam **Aba X
+inválida**, incluindo Meses/Pautas: complete inválido virava **Aba Meses incompleta** ou **Aba Pautas incompleta**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
+inválido recebiam rótulos próprios; motivo desconhecido usava **Captura não pôde ser
+importada**, vazio permanecia vazio. Resultado desconhecido usava **Resultado
 desconhecido**. Os motivos originais do recibo continuam na API e na persistência.
 
-`celulaPlanilha` aplica a allowlist somente a `url`/`url_video_final`:
-valor dedicado preenchido recusado por `urlAutorizada` vira **link não permitido**;
-o marcador exato **[conteúdo suprimido]** permanece. A API conserva seus valores
+`celulaPlanilha` aplicava a allowlist somente a `url`/`url_video_final`:
+valor dedicado preenchido recusado por `urlAutorizada` virava **link não permitido**;
+o marcador exato **[conteúdo suprimido]** permanecia. A API conserva seus valores
 triados, incluindo URL dedicada válida fora da allowlist visual. Texto livre
 legítimo mantém suas URLs como texto, conforme a redação do contrato. Células não
-criam links, navegação ou carga automática. A garantia de não ecoar URL recusada
+criavam links, navegação ou carga automática. A garantia de não ecoar URL recusada
 refere-se aos campos dedicados e links de arquivos; não varre todas as frases.
 
 ## Gaveta do dia, texto e acessibilidade

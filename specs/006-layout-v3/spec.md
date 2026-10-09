@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/006-layout-v3`
 **Created**: 2026-10-08
-**Status**: Parte A aprovada/integrada PR #24/main a5be355 em 09/10/2026. B implementada/testada localmente, não integrada, com revisão visual do Instagram solicitada pelo autor em 09/10/2026 e validada localmente. 32 IDs mantidos; revisão/entrega do novo head pendentes. Branch `codex/006-layout-v3-parte-b`, [PR #25](https://github.com/Browsher/crm-social/pull/25) aberto/anexado. Fonte de código/testes 08ba10b; gate oficial executado em bc74d6e: 756 PASS/0 SKIP, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Quatro PNG Instagram novos em 08ba10b; dezesseis PNG B preservados em 800d7ca. Push/CI/review do novo head pendentes; merge B proibido. Evidências em [validacao.md](validacao.md); fechamento32/32 e CI/review anteriores são históricos.
+**Status**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação](validacao.md) preserva fontes 08ba10b/bc74d6e e PNG divididos 08ba10b/800d7ca.
 **Input**: Pedido do autor em 08/10/2026: reorganizar a apresentação do CRM pessoal em Planejamento, Produção e Publicar, com referência visual aprovada, sem mudar dados/captura ou escrita operacional.
 
 ## User Scenarios & Testing *(mandatory)*

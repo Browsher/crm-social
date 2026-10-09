@@ -2,7 +2,7 @@
 
 **Branch**: `codex/006-layout-v3-parte-b` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
 **Input**: especificação única em `specs/006-layout-v3/spec.md`.
-**Estado**: A integrada PR #24/main a5be355; B implementada/testada localmente, não integrada, com revisão visual do Instagram solicitada pelo autor em 09/10/2026 e validada localmente. 32 IDs mantidos; revisão/entrega do novo head pendentes. Fonte de código/testes 08ba10b; gate oficial executado em bc74d6e: 756 PASS/0 SKIP, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Quatro PNG Instagram novos em 08ba10b; dezesseis PNG B preservados em 800d7ca. Push/CI/review do novo head pendentes; merge B proibido. [Validação de execução](validacao.md).
+**Estado**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação de execução](validacao.md) preserva código/gate/PNG e adjudicação factual.
 
 ## Execução autorizada nesta rodada — Parte B
 
@@ -43,7 +43,7 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 | I Local e simples | PASS documental | PASS documental | mesmo servidor e tecnologia, sem instalação |
 | II Fontes e identidade | Conforme ao contrato de captura | Conforme ao escopo explícito, com trade-off visual documentado | Fonte/cobertura/instante/falhas/IDs/versões/Histórico permanecem na captura/API; UI mostra instante/falha e sinal mínimo Dados a confirmar global/no resumo da peça, sem sucesso aparente. Remoção de tabelas/agentes foi fornecida pelo autor e reiterada em B; detalhes técnicos ficam na API, sem novo estado operacional. |
 | III Papéis | PASS documental | PASS documental | sem execução editorial, nomes técnicos removidos da UI |
-| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, revisão visual código 08ba10b/gate bc74d6e PASS/756 testes, 4 PNG Instagram 08ba10b/16 PNG preservados 800d7ca; push/CI/review atuais pendentes. Rodadas750/7a0/9e40 são históricas, sem atribuir aprovação à fonte nova |
+| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, revisão visual código 08ba10b/gate bc74d6e PASS/756 testes, 4 PNG Instagram 08ba10b/16 PNG preservados 800d7ca; push realizado, CI estrito de 1bcb4a8 SUCCESS/Semgrep PASS e revisão independente aprovada, Minor documental corrigido; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Rodadas750/7a0/9e40 são históricas, sem atribuir aprovação à fonte nova |
 | V Feature única | PASS documental | PASS documental | somente pasta 006, sem design paralelo; desenho já autorizado pelo autor |
 | VI Leitura privada | PASS documental | PASS documental | mesma rota de mídia, mesmos escopos e cache; thumbnails são demanda da tela visível |
 | Governança | Conforme às decisões existentes | Sem emenda ou autorização nova | A integrada após aprovação separada; B autorizada em 09/10, PR #25 sem merge. O pedido explícito prevalece na composição visual; contratos/constituição permanecem. 32 IDs mantidos. |

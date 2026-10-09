@@ -571,6 +571,13 @@ usam **—**, sem inventar a localização de um aviso global.
 
 ### Apresentação de Planilha e alcance das URLs
 
+**Interface histórica 001–005:** a apresentação de Planilha, abas, painel de avisos
+e atalhos descrita nesta seção foi substituída pela 006 Parte B, conforme
+[FR-001 da especificação vigente](../../006-layout-v3/spec.md) e seu
+[contrato de apresentação](../../006-layout-v3/contracts/apresentacao.md).
+Esta nota não altera a captura, a projeção, os avisos, o Histórico ou os dados
+completos mantidos na API, nem as regras de saneamento e segurança das URLs.
+
 Como páginas de consulta do mesmo álbum, as abas mantêm os dados NTV completos;
 um atalho da gaveta localiza somente os avisos da peça. Não há nova rota, importação
 ou escrita por trocar aba, filtrar avisos ou reler a captura.
