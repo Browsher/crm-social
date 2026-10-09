@@ -115,8 +115,8 @@ era válido, e JSON originalmente inválido continua identificado.
 
 ## Formato, dia e objetivo
 
-- Slot confirmado `imagem_a`/`imagem_b` define Imagem, `carrossel` define Carrossel,
-  `reels` define Reels. `tipo_producao` permanece faceta original. Desconhecido é Outro,
+- Slot confirmado `imagem_a`/`imagem_b`/`imagem_oferta` define Imagem, `carrossel` define Carrossel,
+  `reels` define Reels. Slot e `tipo_producao` originais permanecem preservados. Desconhecido é Outro,
   incluído no filtro Todos. Não copiar o filtro `institucional` do executor.
 - Data prevista é `YYYY-MM-DD` civil válida. Sem data, serial sem regra e inválida
   vão para Sem data com original/aviso. UTC não pode mover a data editorial.

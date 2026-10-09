@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-gate-summary",
+  "sourceCodeCommit": "16afb1ca0081c8262ee8a1c3c5d69d7848a4afda",
+  "baseMainCommit": "cdd03c79a56c94a430993e9680a1b74193c9d73b",
+  "platform": "Windows",
+  "nodeVersion": "24.19.0",
+  "command": "node --require ./.review-context/guardar-tap-imagem-oferta.txt tools/quality-gate.mjs",
+  "runnerInstrumentation": "Preload privado somente no processo pai para guardar stdout TAP. Testes, argumentos do processo de testes, retornos e critérios do gate não foram alterados.",
+  "tests": {
+    "state": "PASS",
+    "pass": 767,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "coverage": {
+    "state": "PASS",
+    "percent": 95.52169898430286,
+    "drop": 0,
+    "limitation": "Drop 0 em modo full não é comparação histórica."
+  },
+  "complexity": {
+    "state": "PASS",
+    "metricCount": 689,
+    "maximum": 16.0,
+    "warningCount": 18
+  },
+  "semgrep": {
+    "state": "SKIP",
+    "reason": "Semgrep ausente; instalar CE 1.179.0"
+  },
+  "audit": {
+    "state": "N/A",
+    "reason": "sem package.json/dependencias do app"
+  },
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "initialAttempt": {
+    "command": "node tools/quality-gate.mjs",
+    "exitCode": 1,
+    "testsState": "FAIL",
+    "coverageState": "FAIL",
+    "limitation": "O runner não preservou o TAP nessa primeira execução; caso e causa não identificados. A falha não se repetiu na mesma fonte de código e testes."
+  },
+  "evidenceLimit": "Somente fixtures sintéticas. Prova local da fonte indicada; documentação posterior não altera código ou testes. Não substitui CI estrito/review do head final."
+}
