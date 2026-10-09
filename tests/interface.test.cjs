@@ -445,7 +445,7 @@ test('U-final singular de página, cena e aviso e faixa sem separador pendurado'
   },()=>{},capturaDetalhada);
   await page.locator('#lista [data-producao-id="peca-3"]').click();
   assert.match(await page.locator('#dia [data-peca="peca-3"] .piece-hint').textContent(),/^1 página ·/);
-  assert.equal(await page.locator('#dia [data-peca="peca-4"] .piece-hint').textContent(),'1 cena · sem revisão');
+  assert.equal(await page.locator('#dia [data-peca="peca-4"] .piece-hint').textContent(),'1 cena · sem revisão · Dados a confirmar');
   await page.locator('#dia [data-peca="peca-4"]>summary').click();
   const notice=page.locator('#dia [data-peca="peca-4"] .data-notice');
   assert.equal(await notice.count(),0);
