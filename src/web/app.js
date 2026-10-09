@@ -318,8 +318,8 @@ function acordeaoPeca(p,aberto) {
   summary.append(node('span',p.formato,'format-label'),node('strong',p.titulo || 'Título não informado'),node('span',layout.estadoSimples(p),'status'),
     node('small',resumoPeca(d),'piece-hint'));
   const body=node('div',undefined,'piece-body');
-  body.append(botaoInstagram(p));
   if(p.quadro.coluna==='Pronta')body.append(prontaParaPublicar(p));
+  body.append(botaoInstagram(p));
   body.append(fatosPeca(p));
   if(p.quadro.coluna!=='Pronta') {const gallery=galeriaPrevias(p);if(gallery)body.append(gallery);}
   if(d.publicacaoRegistrada) body.append(node('p','Publicação: '+valor(p.publicado_em)+' · registro explícito','publication'));
