@@ -5,7 +5,7 @@ const {mudarPorId,adicionarRegistro,recalcularHashes}=require('./layout-fixtures
 
 const combinacoes=['light','dark'].flatMap(theme=>[1440,390].map(width=>({theme,width})));
 for(const config of combinacoes) {
-  test('Layout B avisos sinalizam dados a confirmar no topo, peça e modal '+config.theme+'/'+config.width,{skip},async t=>{
+  test('Layout B avisos sinalizam dados a confirmar no topo e peça sem ocupar a prévia '+config.theme+'/'+config.width,{skip},async t=>{
     const context=await abrirLayout(t,{...config,editar:raw=>mudarPorId(raw,'Produções','peca-3','versao','inválida sintética')}),{page}=context;
     const before=await (await page.request.get(context.origin+'/api/visao')).json();
     assert.ok(before.avisos.length>0);assert.ok(before.producoes.find(p=>p.producao_id==='peca-3').detalhes.avisos.length>0);
@@ -17,7 +17,8 @@ for(const config of combinacoes) {
     await navegar(page,'producao');await page.locator('#quadro .project-open[data-producao-id="peca-3"]').click();
     assert.match(await page.locator('#dia .peca-acordeao[data-peca="peca-3"] .piece-hint').textContent(),/Dados a confirmar/);
     await page.locator('#dia [data-instagram-id="peca-3"]').click();
-    assert.equal(await page.locator('#instagram #dados-a-confirmar').isVisible(),true);assert.equal(await page.locator('#dados-a-confirmar').count(),1);
+    assert.equal(await page.locator('#instagram #dados-a-confirmar').count(),0);assert.equal(await page.locator('.page-heading #dados-a-confirmar').count(),1);
+    assert.equal(await page.locator('#dados-a-confirmar').count(),1);
     context.setMode('sem_alteracao');await atualizar(context);assert.equal(await page.locator('#selo').textContent(),stamp);
     context.setMode('falha');await atualizar(context);assert.match(await page.locator('#selo').textContent(),/^Atualização falhou · dados de/);
     assert.equal(await page.locator('#dados-a-confirmar').isVisible(),true);
@@ -58,7 +59,8 @@ for(const config of combinacoes) {
     assert.equal(await page.locator('#selo').textContent(),esperado);context.setMode('sem_alteracao');await atualizar(context);
     assert.equal(await page.locator('#selo').textContent(),esperado);await page.reload();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
     for(const tela of ['planejamento','producao','publicar']) {await navegar(page,tela);assert.equal(await page.locator('#selo').textContent(),esperado);await semOverflow(page);}
-    await page.locator('#publicar [data-instagram-id="peca-3"]').click();assert.equal(await page.locator('#instagram #selo').textContent(),esperado);await semOverflow(page);
+    await page.locator('#publicar [data-instagram-id="peca-3"]').click();assert.equal(await page.locator('#instagram #selo').count(),0);
+    assert.equal(await page.locator('.page-heading #selo').textContent(),esperado);await semOverflow(page);
     if(config.width===390) {
       await page.setViewportSize({width:390,height:480});await semOverflow(page);
       for(const name of ['Fechar prévia','Próxima página']) {const box=await page.getByRole('button',{name,exact:true}).boundingBox();assert.ok(box.y>=0&&box.y+box.height<=480,'controle acessível em altura baixa');}

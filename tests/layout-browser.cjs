@@ -51,7 +51,11 @@ async function navegar(page,tela) {
   const button=page.locator('[data-tela="'+tela+'"]');await button.focus();await page.keyboard.press('Enter');
 }
 async function atualizar(context) {
-  const {page}=context;await page.locator('#atualizar').click();
+  const {page}=context,button=page.locator('#atualizar');
+  // Com modal nativo aberto, o topo está inerte: este ramo é atualização
+  // programática pelo mesmo handler e POST reais, não uma ação acessível na prévia.
+  if(await page.locator('#instagram[open]').count())await button.evaluate(n=>n.click());
+  else await button.click();
   await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao').textContent==='Atualizando dados…');
   context.release();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
 }

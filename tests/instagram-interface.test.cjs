@@ -59,11 +59,69 @@ for(const theme of ['light','dark'])for(const width of [1440,390]) {
     assert.equal(await dialog.locator('img[src]').count(),0,'fechamento encerra mídia do pop-up');
     assert.ok(pedidosMidia(context).every(r=>r.method==='GET'));
   });
+  test('Instagram celular do mockup tem composição visual e topo externo '+theme+'/'+width,{skip},async t=>{
+    const context=await preparar(t,{theme,width}),{page}=context,dialog=await abrir(context,'peca-3',{
+      legenda:'Legenda visual sintética',hashtags:'#exemplo #colecao'});
+    const phone=dialog.locator('.phone.instagram-phone');
+    assert.equal(await phone.count(),1,'celular do mockup presente');
+    assert.match(await dialog.getAttribute('aria-label'),/Prévia/);
+    assert.equal(await dialog.getByRole('heading').count(),0,'sem título visível dentro do modal');
+    const visual=await phone.evaluate(n=>{const s=getComputedStyle(n);return {background:s.backgroundColor,radius:s.borderTopLeftRadius,border:s.borderTopWidth};});
+    assert.deepEqual(visual,{background:'rgb(0, 0, 0)',radius:'38px',border:'10px'});
+    const frame=await phone.boundingBox();assert.ok(frame.width>=350&&frame.width<=361,'celular de 360 px');
+    assert.ok(frame.x>=12&&frame.x+frame.width<=width-12,'margens do celular');
+    const close=dialog.getByRole('button',{name:'Fechar prévia',exact:true});
+    assert.equal((await close.textContent()).trim(),'Fechar');
+    assert.equal(await close.evaluate(n=>n.closest('.phone')===null),true,'Fechar fica fora da moldura');
+    const closeBox=await close.boundingBox();assert.ok(closeBox.y>=0&&closeBox.y+closeBox.height<=frame.y+1,'Fechar acima do celular');
+    assert.equal(await dialog.locator('.instagram-header #instagram-avatar').textContent(),'DEMO');
+    assert.equal(await dialog.locator('.instagram-header #instagram-perfil').evaluate(n=>n.tagName==='STRONG'&&Number(getComputedStyle(n).fontWeight)>=600),true);
+    assert.equal(await dialog.locator('.instagram-header small').textContent(),'Prévia · não publicado');
+    assert.equal(await dialog.locator('.instagram-header [aria-hidden="true"]').last().textContent(),'⋯');
+    const slider=dialog.locator('.instagram-slider'),media=await slider.boundingBox();
+    assert.ok(Math.abs(media.width/media.height-0.8)<0.01,'slider 4:5');
+    for(const id of ['instagram-anterior','instagram-proximo']) {
+      const button=slider.locator('#'+id),box=await button.boundingBox();
+      assert.equal(await button.evaluate(n=>getComputedStyle(n).position),'absolute');
+      assert.ok(box.x>=media.x&&box.x+box.width<=media.x+media.width&&Math.abs(box.y+box.height/2-media.y-media.height/2)<3,'seta sobre a arte');
+    }
+    const count=await dialog.locator('#instagram-contador').boundingBox();
+    assert.ok(count.x>=media.x+media.width/2&&count.x+count.width<=media.x+media.width&&count.y>=media.y&&count.y+count.height<media.y+50,'contador no alto à direita');
+    const dots=await dialog.locator('#instagram-pontos').boundingBox();assert.ok(dots.y>=media.y+media.height-1,'pontos abaixo da arte');
+    const actions=dialog.locator('.instagram-actions');assert.equal(await actions.getAttribute('aria-hidden'),'true');
+    for(const icon of ['♡','💬','↗','🔖'])assert.ok((await actions.textContent()).includes(icon),'ícone decorativo '+icon);
+    const caption=dialog.locator('#instagram-legenda-perfil');
+    assert.equal(await caption.textContent(),'perfil.exemplo');assert.equal(await caption.evaluate(n=>n.tagName==='STRONG'),true);
+    assert.equal(await caption.locator('..').textContent(),'perfil.exemplo Legenda visual sintética');
+    const color=await dialog.locator('#instagram-hashtags').evaluate(n=>getComputedStyle(n).color),rgb=color.match(/\d+/g).map(Number);
+    assert.ok(rgb[2]>rgb[0]+40&&rgb[2]>=180,'hashtags azuis');
+    assert.equal(await dialog.locator('#selo,#atualizar,#dados-a-confirmar,#resultado-atualizacao,#erro').count(),0,'topo e feedback continuam na página');
+    assert.equal(await page.locator('.page-heading #atualizar').count(),1);
+    assert.equal(await page.locator('.page-heading #atualizar').evaluate(n=>{n.focus();return n===document.activeElement;}),false,'topo nativo inerte enquanto modal aberto');
+    assert.equal(await close.evaluate(n=>n===document.activeElement),true,'foco permanece no modal');
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  });
 }
+test('Instagram avatar usa sigla configurada, normaliza maiúsculas e recusa controles',{skip},async t=>{
+  const context=await preparar(t),{page}=context;await abrir(context);
+  assert.equal(await page.locator('#instagram-avatar').count(),1,'avatar de perfil disponível');
+  for(const value of [undefined,null,{},[],0,'','   ','abcdef','ab\u0000','ab\u007f']) {
+    await page.evaluate(value=>{globalThis.CrmPerfil.siglaMarca=value;},value);await abrir(context);
+    assert.equal(await page.locator('#instagram-avatar').textContent(),'•');
+  }
+  for(const [value,expected] of [[' demo ','DEMO'],['a1b2c','A1B2C'],['é','É'],['<b>','<B>']]) {
+    await page.evaluate(value=>{globalThis.CrmPerfil.siglaMarca=value;},value);await abrir(context);
+    assert.equal(await page.locator('#instagram-avatar').textContent(),expected);
+    assert.equal(await page.locator('#instagram-avatar b').count(),0,'sigla é texto literal');
+    assert.equal(await page.locator('#instagram-perfil').textContent(),'perfil.exemplo');
+  }
+});
 test('Instagram imagem única permanece 1/1 inclusive sem mídia, Reels placeholder',{skip},async t=>{
   const context=await preparar(t),{page}=context;
   let dialog=await abrir(context,'peca-1');await indice(page,'1/1');await imagem(page,'imagem-peca-1');
-  assert.equal(await dialog.getByRole('button',{name:'Próxima página',exact:true}).isDisabled(),true);
+  assert.equal(await dialog.getByRole('button',{name:'Próxima página',exact:true,includeHidden:true}).isDisabled(),true);
+  assert.equal(await dialog.locator('#instagram-anterior,#instagram-proximo').evaluateAll(ns=>ns.length===2&&ns.every(n=>n.hidden&&n.disabled)),true,'imagem única não oferece setas');
+  assert.equal(await dialog.locator('#instagram-pontos').isVisible(),false,'imagem única não oferece pontos');
   await page.keyboard.press('ArrowRight');await indice(page,'1/1');
   dialog=await abrir(context,'peca-sem-data');await indice(page,'1/1');
   assert.equal(await page.locator('#instagram-indisponivel').textContent(),'prévia indisponível');
@@ -180,21 +238,31 @@ test('Instagram limites transferem imediatamente foco para a seta habilitada',{s
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#instagram-acionador-teste').evaluate(node=>node===document.activeElement),true);
 });
-test('Instagram releitura que desabilita ambas as setas devolve foco a Fechar',{skip},async t=>{
+test('Instagram releitura 1/1 com seta ou ponto focado devolve foco a Fechar',{skip},async t=>{
   const context=await preparar(t),{page}=context,dialog=await abrir(context);
-  await dialog.getByRole('button',{name:'Ir para página 5',exact:true}).click();
-  await dialog.getByRole('button',{name:'Página anterior',exact:true}).focus();
-  await page.evaluate(async()=>{
+  const limitarAUma=()=>page.evaluate(async()=>{
     const view=await (await fetch('/api/visao')).json(),p=view.producoes.find(p=>p.producao_id==='peca-3');
     p.detalhes.paginas=p.detalhes.paginas.filter(pagina=>pagina.indice<=1);globalThis.CrmInstagram.atualizar(p);
   });
+  await dialog.getByRole('button',{name:'Ir para página 5',exact:true}).click();
+  await dialog.getByRole('button',{name:'Página anterior',exact:true}).focus();
+  await limitarAUma();
   await indice(page,'1/1');
-  assert.equal(await dialog.getByRole('button',{name:'Página anterior',exact:true}).isDisabled(),true);
-  assert.equal(await dialog.getByRole('button',{name:'Próxima página',exact:true}).isDisabled(),true);
+  assert.equal(await dialog.getByRole('button',{name:'Página anterior',exact:true,includeHidden:true}).isDisabled(),true);
+  assert.equal(await dialog.getByRole('button',{name:'Próxima página',exact:true,includeHidden:true}).isDisabled(),true);
+  assert.equal(await dialog.locator('#instagram-anterior,#instagram-proximo').evaluateAll(ns=>ns.length===2&&ns.every(n=>n.hidden)),true);
+  assert.equal(await dialog.locator('#instagram-pontos').isVisible(),false);
   assert.equal(await dialog.getByRole('button',{name:'Fechar prévia',exact:true}).evaluate(node=>node===document.activeElement),true);
   for(const tecla of ['Shift+Tab','Tab']) {await page.keyboard.press(tecla);assert.equal(await page.evaluate(()=>!!document.activeElement.closest('#instagram')),true);}
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#instagram-acionador-teste').evaluate(node=>node===document.activeElement),true);
+  await abrir(context);
+  const ponto=dialog.getByRole('button',{name:'Ir para página 5',exact:true});await ponto.click();
+  assert.equal(await ponto.evaluate(node=>node===document.activeElement),true,'ponto é o foco antes da releitura');
+  await limitarAUma();await indice(page,'1/1');
+  assert.equal(await dialog.locator('#instagram-pontos').isVisible(),false);
+  assert.equal(await dialog.getByRole('button',{name:'Fechar prévia',exact:true}).evaluate(node=>node===document.activeElement),true,'ponto ocultado devolve foco a Fechar');
+  await page.keyboard.press('Escape');assert.equal(await page.locator('#instagram-acionador-teste').evaluate(node=>node===document.activeElement),true);
 });
 test('Instagram releitura mesma peça preserva índice/limita total e remoção restaura foco ao título',{skip},async t=>{
   const context=await preparar(t),{page}=context;await abrir(context);
@@ -209,10 +277,11 @@ test('Instagram releitura mesma peça preserva índice/limita total e remoção 
   await page.evaluate(()=>{document.querySelector('#instagram-acionador-teste').remove();document.querySelector('#titulo').tabIndex=-1;globalThis.CrmInstagram.atualizar(null);});
   assert.equal(await page.locator('#instagram').isVisible(),false);assert.equal(await page.locator('#titulo').evaluate(n=>n===document.activeElement),true);
 });
-test('Instagram Atualizar único é operável no modal e retorna ao topo após Esc',{skip},async t=>{
+test('Instagram atualização programática mantém versão e topo único fora do modal',{skip},async t=>{
   const context=await preparar(t),{page}=context;await abrir(context);
   assert.equal(await page.locator('#atualizar').count(),1);
-  assert.equal(await page.locator('#instagram #atualizar').isVisible(),true);
+  assert.equal(await page.locator('#instagram #atualizar').count(),0);
+  assert.equal(await page.locator('.page-heading #atualizar').count(),1);
   context.setMode('nova');mudarPorId(context.raw,'Produções','peca-3','legenda','Legenda atualizada sintética');
   await page.getByRole('button',{name:'Ir para página 5',exact:true}).click();await atualizar(context);
   assert.equal(await page.locator('#instagram').isVisible(),true);await indice(page,'5/5');
@@ -220,6 +289,24 @@ test('Instagram Atualizar único é operável no modal e retorna ao topo após E
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('.page-heading #atualizar').isVisible(),true);
   assert.equal(await page.locator('#instagram-acionador-teste').evaluate(n=>n===document.activeElement),true);
+});
+test('Instagram atualização iniciada pelo botão antes de abrir preserva nova versão da peça',{skip},async t=>{
+  const context=await preparar(t),{page}=context;
+  const before=await (await page.request.get(context.origin+'/api/visao')).json(),anterior=before.producoes.find(p=>p.producao_id==='peca-3');
+  context.setMode('nova');
+  mudarPorId(context.raw,'Produções','peca-3','legenda','Legenda nova após atualização já iniciada');
+  mudarPorId(context.raw,'Produções','peca-3','versao',anterior.versao+1);
+  await page.locator('#atualizar').click();
+  await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao').textContent==='Atualizando dados…');
+  await abrir(context);await page.getByRole('button',{name:'Ir para página 4',exact:true}).click();
+  assert.equal(await page.locator('#instagram-legenda').textContent(),anterior.legenda,'modal abre captura anterior durante atualização');
+  context.release();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+  assert.equal(await page.locator('#instagram').isVisible(),true);await indice(page,'4/5');
+  assert.equal(await page.locator('#instagram-legenda').textContent(),'Legenda nova após atualização já iniciada');
+  const after=await (await page.request.get(context.origin+'/api/visao')).json();
+  assert.equal(after.producoes.find(p=>p.producao_id==='peca-3').versao,anterior.versao+1);
+  const posts=context.requests.filter(r=>r.path==='/api/atualizar'&&r.method==='POST');assert.equal(posts.length,1);assert.equal(posts[0].body,'{}');
+  await page.keyboard.press('Escape');assert.equal(await page.locator('#instagram-acionador-teste').evaluate(n=>n===document.activeElement),true);
 });
 test('Instagram falha de Atualizar conserva modal, página e conteúdo anterior',{skip},async t=>{
   const context=await preparar(t),{page}=context;await abrir(context);context.setMode('falha');

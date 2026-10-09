@@ -13,6 +13,9 @@
   --reels-fill:#f7f4fb;--reels-line:#e5dcf0;--reels-accent:#9d86bd;--reels-label:#7760a9;--reels-hover:#7760a9;
   --board-image-fill:var(--image-fill);--board-carousel-fill:var(--carousel-fill);--board-reels-fill:var(--reels-fill);
   --soft-shadow:#263c2910;--sidebar-shadow:#24312d22;--backdrop:#24312d66;--sidebar:240px;
+  --instagram-phone:#000;--instagram-frame:#1d2230;--instagram-ink:#fff;--instagram-caption:#eee;--instagram-muted:#aaa;
+  --instagram-media:#111;--instagram-avatar:#e8720c;--instagram-avatar-ink:#0f1826;--instagram-counter:#000a;
+  --instagram-dot:#555;--instagram-blue:#3897f0;--instagram-hashtag:#8fb4ff;--instagram-backdrop:#000b;--instagram-shadow:#0008;
 }
 [data-theme=dark]{
   color-scheme:dark;
@@ -299,31 +302,35 @@ summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .publish-sidebar h2{font-size:15px;margin:0 0 12px}.publish-sidebar .empty{padding:0;font-size:12px;text-align:left}
 .publish-recent{display:grid;gap:6px;border-top:1px solid var(--line);padding:12px 0}.publish-recent:last-child{padding-bottom:0}
 .publish-recent button{text-align:left;font-size:13px;overflow-wrap:anywhere}.publish-recent small{font-size:11px;color:var(--muted)}
-dialog.instagram-preview{inset:0;margin:auto;width:min(390px,calc(100% - 24px));height:min(800px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);border:1px solid var(--line-strong);border-radius:18px;padding:16px;overflow:hidden}
-dialog.instagram-preview[open]{display:flex;flex-direction:column;gap:8px}
-.instagram-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-shrink:0}
-.instagram-top h2{font-size:15px;margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.instagram-top button{font-size:12px;padding:6px 8px;color:var(--green-dark);border:1px solid var(--line-strong);border-radius:6px;flex-shrink:0}
-#instagram-atualizacao{flex-shrink:0}#instagram-atualizacao .capture-actions{justify-content:space-between;gap:6px;width:100%}
-#instagram-atualizacao .badge{font-size:11px}#instagram-atualizacao .refresh-button{font-size:11px;padding:6px 9px}
-#instagram-atualizacao #resultado-atualizacao{margin:4px 0 0;font-size:11px}#instagram-atualizacao #resultado-atualizacao:empty{display:none}
-#instagram-atualizacao #erro{font-size:11px;padding:5px;margin:4px 0 0}
-#instagram-perfil{font-size:13px;font-weight:600;margin:2px 0;flex-shrink:0;overflow-wrap:anywhere}
-#instagram-midia{position:relative;aspect-ratio:4/5;width:100%;flex-shrink:0;background:var(--surface-secondary);border-radius:8px;overflow:hidden;display:grid;place-items:center;touch-action:pan-y}
+dialog.instagram-preview{inset:0;margin:auto;width:min(360px,calc(100vw - 32px));height:fit-content;max-height:calc(100dvh - 32px);max-width:none;border:0;border-radius:0;padding:0;overflow:visible;background:var(--clear);color:var(--instagram-ink)}
+dialog.instagram-preview::backdrop{background:var(--instagram-backdrop)}
+dialog.instagram-preview[open]{display:flex;flex-direction:column;gap:12px}
+.instagram-close{align-self:flex-end;flex-shrink:0;border-radius:20px;padding:6px 14px;background:var(--instagram-ink);color:var(--instagram-phone);font-weight:600}
+.instagram-phone{width:100%;height:min(760px,calc(100dvh - 76px));border:10px solid var(--instagram-frame);border-radius:38px;background:var(--instagram-phone);box-shadow:0 20px 60px var(--instagram-shadow);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.instagram-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 8px;font-size:13px;flex-shrink:0}
+.instagram-identity{display:flex;align-items:center;gap:8px;min-width:0}
+.instagram-identity>div{min-width:0}.instagram-header strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.instagram-header small{display:block;font-size:10px;color:var(--instagram-muted)}
+#instagram-avatar{width:30px;height:30px;border-radius:50%;border:2px solid var(--instagram-ink);background:var(--instagram-avatar);color:var(--instagram-avatar-ink);display:grid;place-items:center;flex-shrink:0;font-size:10px;font-weight:800}
+.instagram-slider{position:relative;aspect-ratio:4/5;width:100%;flex-shrink:0;align-self:center;overflow:hidden;background:var(--instagram-media)}
+#instagram-midia{position:absolute;inset:0;display:grid;place-items:center;touch-action:pan-y}
 #instagram-midia img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-#instagram-midia img[hidden]{display:none}#instagram-indisponivel{font-size:12px;color:var(--muted);text-align:center}
-.instagram-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
-.instagram-controls button{border:1px solid var(--line-strong);border-radius:6px;padding:4px 10px;color:var(--green-dark)}
-.instagram-controls button:disabled{color:var(--muted);cursor:default}
-#instagram-contador{font-size:12px;font-variant-numeric:tabular-nums}
-#instagram-pontos{display:flex;justify-content:center;gap:4px;flex-shrink:0}
-#instagram-pontos button{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;font-size:0}
-#instagram-pontos button::before{content:"";width:6px;height:6px;background:var(--muted);border-radius:50%}
-#instagram-pontos button[aria-current=true]::before{background:var(--green-dark)}
-#instagram-textos{overflow:auto;min-height:38px;flex:1;font-size:12px;line-height:1.5;overscroll-behavior:contain}
-#instagram-textos p{margin:0 0 10px;white-space:pre-wrap;overflow-wrap:anywhere}#instagram-hashtags{color:var(--green-dark)}
+#instagram-midia img[hidden]{display:none}#instagram-indisponivel{font-size:12px;color:var(--instagram-muted);text-align:center}
+#instagram-anterior,#instagram-proximo{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;padding:0;border-radius:50%;background:var(--instagram-ink);color:var(--instagram-phone);font-size:26px;line-height:1;display:grid;place-items:center}
+#instagram-anterior{left:8px}#instagram-proximo{right:8px}
+#instagram-anterior:disabled,#instagram-proximo:disabled{opacity:.55;cursor:default}
+#instagram-contador{position:absolute;top:10px;right:10px;border-radius:20px;padding:2px 8px;background:var(--instagram-counter);font-size:11px;font-variant-numeric:tabular-nums}
+#instagram-pontos{display:flex;justify-content:center;gap:4px;flex-shrink:0;padding:4px 0}
+#instagram-pontos button{width:24px;height:24px;padding:0;display:grid;place-items:center;border-radius:50%;font-size:0}
+#instagram-pontos button::before{content:"";width:6px;height:6px;background:var(--instagram-dot);border-radius:50%}
+#instagram-pontos button[aria-current=true]::before{background:var(--instagram-blue)}
+.instagram-preview button:focus-visible{outline-color:var(--instagram-blue)}
+.instagram-actions{display:flex;align-items:center;gap:14px;padding:0 14px;font-size:20px;flex-shrink:0}.instagram-actions span:last-child{margin-left:auto}
+#instagram-textos{overflow:auto;min-height:0;flex:1;padding:8px 14px;color:var(--instagram-caption);font-size:12.5px;line-height:1.5;overscroll-behavior:contain}
+#instagram-textos p{margin:0 0 8px;white-space:pre-wrap;overflow-wrap:anywhere}#instagram-textos strong{color:var(--instagram-ink);font-weight:700}
+#instagram-hashtags{color:var(--instagram-hashtag)}
 @media(max-width:760px){.publish-layout{grid-template-columns:minmax(0,1fr)}.publish-card{grid-template-columns:58px minmax(0,1fr);gap:12px;padding:16px}.publish-card .piece-thumbnail{width:58px}.publish-content h2{font-size:16px}.publish-actions .publication-action,.publish-actions .instagram-action{font-size:11px;padding:8px}.publish-sidebar{grid-template-columns:minmax(0,1fr)}}
-@media(max-height:760px){dialog.instagram-preview{width:min(330px,calc(100% - 24px));padding:12px;gap:5px}#instagram-midia{width:min(100%,calc((100dvh - 300px)*.8));align-self:center}.instagram-top h2{font-size:13px}#instagram-perfil{font-size:12px}}
+@media(max-height:760px){.instagram-slider{width:min(100%,calc((100dvh - 232px)*.8))}}
 .capture-actions .refresh-button{margin:0;padding:8px 14px;white-space:nowrap}
 #resultado-atualizacao:empty{display:none}
 #resultado-atualizacao{color:var(--muted);margin:-12px 0 16px;font-size:12px}

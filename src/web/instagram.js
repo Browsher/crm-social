@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  let dialog,elementos,peca=null,posicoes=[],indice=0,acionador=null,origemAtualizacao=null,gesto=null;
+  let dialog,elementos,peca=null,posicoes=[],indice=0,acionador=null,gesto=null;
   function el(tag,id,texto) {
     const node=document.createElement(tag);
     if(id)node.id=id;
@@ -14,6 +14,24 @@
     const nome=globalThis.CrmPerfil?.nomePerfil;
     if(typeof nome!=='string'||!nome.trim()||nome.trim().length>80||/[\u0000-\u001f\u007f]/.test(nome))return 'Perfil não configurado';
     return nome.trim();
+  }
+  function siglaMarca() {
+    const sigla=globalThis.CrmPerfil?.siglaMarca;
+    if(typeof sigla!=='string'||!sigla.trim()||sigla.trim().length>5||/[\u0000-\u001f\u007f]/.test(sigla))return '•';
+    return sigla.trim().toUpperCase();
+  }
+  function cabecalho() {
+    const topo=el('header');topo.className='instagram-header';
+    const identidade=el('div');identidade.className='instagram-identity';
+    const avatar=el('span','instagram-avatar'),nome=el('div'),perfil=el('strong','instagram-perfil');
+    nome.append(perfil,el('small',null,'Prévia · não publicado'));identidade.append(avatar,nome);
+    const mais=el('span',null,'⋯');mais.setAttribute('aria-hidden','true');topo.append(identidade,mais);
+    return {topo,avatar,perfil};
+  }
+  function icones() {
+    const acoes=el('div');acoes.className='instagram-actions';acoes.setAttribute('aria-hidden','true');
+    for(const icone of ['♡','💬','↗','…','🔖'])acoes.append(el('span',null,icone));
+    return acoes;
   }
   function iniciarGesto(tipo,ponto,id) {gesto={tipo,id,x:ponto.clientX,y:ponto.clientY};}
   function terminarGesto(tipo,ponto,id) {
@@ -54,32 +72,26 @@
   function criar() {
     if(dialog)return;
     dialog=el('dialog','instagram');dialog.className='instagram-preview';
-    dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','instagram-titulo');
-    const topo=el('header');topo.className='instagram-top';
-    const titulo=el('h2','instagram-titulo','Prévia do Instagram'),fecharBotao=botao('×','Fechar prévia');
-    fecharBotao.addEventListener('click',fechar);topo.append(titulo,fecharBotao);
-    const atualizacao=el('div','instagram-atualizacao'),perfil=el('strong','instagram-perfil');
-    const midia=el('div','instagram-midia'),controles=el('div');controles.className='instagram-controls';
+    dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Prévia do Instagram');
+    const fecharBotao=botao('Fechar','Fechar prévia');fecharBotao.className='instagram-close';
+    fecharBotao.addEventListener('click',fechar);
+    const phone=el('div');phone.className='phone instagram-phone';
+    const {topo,avatar,perfil}=cabecalho();
+    const midia=el('div','instagram-midia'),slider=el('div');slider.className='instagram-slider';
     const anterior=botao('‹','Página anterior'),proximo=botao('›','Próxima página');
+    anterior.id='instagram-anterior';proximo.id='instagram-proximo';
     const contador=el('span','instagram-contador');contador.setAttribute('role','status');contador.setAttribute('aria-live','polite');
     anterior.addEventListener('click',()=>selecionar(indice-1));proximo.addEventListener('click',()=>selecionar(indice+1));
-    controles.append(anterior,contador,proximo);
+    slider.append(midia,anterior,proximo,contador);
     const pontos=el('div','instagram-pontos');pontos.setAttribute('role','group');pontos.setAttribute('aria-label','Páginas da prévia');
-    const textos=el('div','instagram-textos'),legenda=el('p','instagram-legenda'),hashtags=el('p','instagram-hashtags');textos.append(legenda,hashtags);
-    dialog.append(topo,atualizacao,perfil,midia,controles,pontos,textos);document.body.append(dialog);
-    elementos={atualizacao,perfil,midia,anterior,proximo,contador,pontos,legenda,hashtags,fecharBotao};
+    const textos=el('div','instagram-textos'),texto=el('p'),legendaPerfil=el('strong','instagram-legenda-perfil');
+    const legenda=el('span','instagram-legenda'),hashtags=el('p','instagram-hashtags');
+    texto.append(legendaPerfil,document.createTextNode(' '),legenda);textos.append(texto,hashtags);
+    phone.append(topo,slider,pontos,icones(),textos);dialog.append(fecharBotao,phone);document.body.append(dialog);
+    elementos={avatar,perfil,legendaPerfil,midia,anterior,proximo,contador,pontos,legenda,hashtags,fecharBotao};
     dialog.addEventListener('keydown',teclado);
     dialog.addEventListener('cancel',event=>{event.preventDefault();fechar();});
     dialog.addEventListener('close',limpar);gestos(midia);
-  }
-  function moverAtualizacao() {
-    if(origemAtualizacao)return;
-    origemAtualizacao=[];
-    for(const seletor of ['.capture-actions','#resultado-atualizacao','#erro']) {
-      const node=document.querySelector(seletor);if(!node)continue;
-      const marcador=document.createComment('Local do topo da consulta');node.before(marcador);
-      origemAtualizacao.push({node,marcador});elementos.atualizacao.append(node);
-    }
   }
   function liberarImagem() {
     const img=elementos.midia.querySelector('img');if(img)img.removeAttribute('src');
@@ -102,6 +114,7 @@
   function marcarPosicao() {
     const foco=document.activeElement,setas=[elementos.anterior,elementos.proximo];
     elementos.contador.textContent=(indice+1)+'/'+posicoes.length;
+    setas.forEach(seta=>{seta.hidden=posicoes.length===1;});elementos.pontos.hidden=posicoes.length===1;
     elementos.anterior.disabled=indice===0;elementos.proximo.disabled=indice===posicoes.length-1;
     elementos.anterior.setAttribute('aria-label',rotuloPosicao(indice-1,'Anterior: ','Página anterior'));
     elementos.proximo.setAttribute('aria-label',rotuloPosicao(indice+1,'Próxima: ','Próxima página'));
@@ -122,16 +135,17 @@
     if(elementos.pontos.children.length===posicoes.length)return;
     const foco=document.activeElement,restaurar=elementos.pontos.contains(foco);elementos.pontos.replaceChildren();
     posicoes.forEach((_,i)=>{const ponto=botao('●',rotuloPosicao(i,'Ir para ','Ir para página '+(i+1)));ponto.addEventListener('click',()=>selecionar(i));elementos.pontos.append(ponto);});
-    if(restaurar)elementos.pontos.children[indice].focus({preventScroll:true});
+    if(restaurar)(posicoes.length===1?elementos.fecharBotao:elementos.pontos.children[indice]).focus({preventScroll:true});
   }
   function apresentar() {
     posicoes=globalThis.CrmLayout.posicoesInstagram(peca);
     indice=Math.min(indice,posicoes.length-1);
-    elementos.perfil.textContent=nomePerfil();elementos.legenda.textContent=peca.legenda||'';elementos.hashtags.textContent=peca.hashtags||'';
+    elementos.avatar.textContent=siglaMarca();elementos.perfil.textContent=nomePerfil();elementos.legendaPerfil.textContent=nomePerfil();
+    elementos.legenda.textContent=peca.legenda||'';elementos.hashtags.textContent=peca.hashtags||'';
     criarPontos();marcarPosicao();mostrarImagem();
   }
   function abrir({peca:nova,acionador:origem}) {
-    criar();peca=nova;acionador=origem;indice=0;apresentar();moverAtualizacao();
+    criar();peca=nova;acionador=origem;indice=0;apresentar();
     if(!dialog.open)dialog.showModal();elementos.fecharBotao.focus({preventScroll:true});
   }
   function atualizar(nova) {
@@ -142,7 +156,6 @@
   function limpar() {
     if(!peca||dialog.open)return;
     liberarImagem();peca=null;posicoes=[];gesto=null;
-    if(origemAtualizacao){origemAtualizacao.forEach(({node,marcador})=>marcador.replaceWith(node));origemAtualizacao=null;}
     const foco=acionador?.isConnected?acionador:document.querySelector('#titulo');acionador=null;
     if(foco){if(!foco.hasAttribute('tabindex')&&foco.tagName==='H1')foco.tabIndex=-1;foco.focus({preventScroll:true});}
   }

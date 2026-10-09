@@ -6,7 +6,7 @@
 
 ## Execução autorizada nesta rodada — Parte B
 
-O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B está no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. Atualizar/selo/feedback únicos são movidos para o diálogo aberto e restaurados ao fechar, permitindo teclado com fundo inerte.
+O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B está no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. A revisão visual posterior do autor substitui o transporte temporário de Atualizar/selo/feedback para o diálogo: esses nós permanecem somente no topo da página, inerte durante showModal. Releituras recebidas com pop-up aberto mantêm as regras da mesma peça, inclusive atualização iniciada antes da abertura.
 
 ## Recorte histórico da Parte A
 
@@ -120,7 +120,7 @@ Extrair imagensDaPeca/imagensDasUnidades mantendo o algoritmo da 005/PR #22, inc
 
 Listas carregam miniaturas apenas na tela ativa e quando a peça entra na região visível, por IntersectionObserver; img loading=lazy reforça a demanda. A galeria completa da gaveta continua sob abertura; pop-up carrega a página corrente e conserva placeholders por posição. Mês exibe pontos sem imagens. Não alterar a autorização/cache da rota local.
 
-Dialog nativo showModal(), foco inicial em Fechar, ←/→ restritos ao pop-up ativo, sem wrap, pontos acessíveis, contador aria-live. Arrasto horizontal mínimo de 40 px e maior que deslocamento vertical; vertical mantém rolagem da legenda. Fechar retira src das posições do pop-up; não destrói gaveta. Se o acionador sumir na atualização, foco retorna ao título da tela, que é focável programaticamente.
+Dialog nativo showModal(), foco inicial em Fechar acima/fora da moldura .phone, ←/→ restritos ao pop-up ativo, sem wrap, pontos acessíveis, contador aria-live. Moldura preta de 360 px com borda escura/cantos arredondados; cabeçalho com siglaMarca e nomePerfil configurados, subtítulo e ⋯ decorativo. Slider 4:5 separado do contêiner de mídia permite substituir imagem/placeholder sem remover setas/contador sobrepostos. Pontos ficam abaixo; imagem única oculta setas/pontos e conserva 1/1. Ícones decorativos precedem texto literal com perfil em negrito e hashtags azuis. Cores ficam em tokens; viewport baixa reduz proporcionalmente a arte e rola a legenda dentro do celular. Arrasto horizontal mínimo de 40 px e maior que deslocamento vertical; vertical mantém rolagem da legenda. Fechar retira src das posições do pop-up; não destrói gaveta. Se o acionador sumir na atualização, foco retorna ao título da tela, que é focável programaticamente; controle focado ocultado pela redução a uma posição transfere foco a Fechar.
 
 ### Layout e temas
 
