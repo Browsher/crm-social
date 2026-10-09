@@ -3,8 +3,7 @@ const $=selector=>document.querySelector(selector);
 const layout=globalThis.CrmLayout;
 const hojeCivil=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 const state={view:null,mes:new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).format(new Date()),
-  formato:'Todos',modo:'Semana',inicioSemana:layout.segundaDaSemana(hojeCivil()),tela:'planejamento',
-  abaPlanilha:'Semanas',avisosProducaoId:null};
+  formato:'Todos',modo:'Semana',inicioSemana:layout.segundaDaSemana(hojeCivil()),tela:'planejamento'};
 function node(tag,text,className) {
   const el=document.createElement(tag);
   if (text!==undefined) el.textContent=text;
@@ -237,18 +236,7 @@ function resumoPeca(d) {
     .map(([tipo,n])=>plural(n,tipo==='paginas'?'página':'cena'));
   const revisao=d.revisoes.vigentes.length?'revisão aberta':
     (d.revisoes.ambiguas.length || d.revisoes.anteriores.length?'revisão a confirmar':'sem revisão');
-  return [...unidades,revisao,plural(d.avisos.length,'aviso')].join(' · ');
-}
-function avisosPeca(p) {
-  const avisos=p.detalhes.avisos;
-  const box=node('div',undefined,'data-notice');
-  box.append(node('span',plural(avisos.length,'aviso')+' de dados nesta peça'));
-  const link=node('a','ver na Planilha');link.href='#planilha';
-  link.addEventListener('click',e=>{
-    e.preventDefault();focoDia=$('#avisos-dados');$('#dia').close();navegar('planilha',p.producao_id);
-    $('#avisos-dados').scrollIntoView({block:'start'});$('#avisos-dados').focus({preventScroll:true});
-  });
-  box.append(link);return box;
+  return [...unidades,revisao,...(d.avisos.length?['Dados a confirmar']:[])].join(' · ');
 }
 function prontaParaPublicar(p) {
   const section=secaoDetalhe('Pronta para publicar');section.dataset.publicacao='';section.classList.add('publication-ready');
@@ -269,6 +257,54 @@ function prontaParaPublicar(p) {
   const gallery=galeriaPrevias(p);if(gallery)section.append(gallery);
   return section;
 }
+function botaoInstagram(p) {
+  const button=node('button','Ver no Instagram','instagram-action');button.type='button';button.dataset.instagramId=p.producao_id;
+  button.addEventListener('click',()=>{
+    const atual=state.view.producoes.find(item=>item.producao_id===button.dataset.instagramId);
+    if(atual)globalThis.CrmInstagram.abrir({peca:atual,acionador:button});
+  });return button;
+}
+function textosPublicacao(p,section) {
+  section.append(node('p',preenchido(p.legenda)?p.legenda:'Legenda não informada','publication-caption'),
+    node('p',preenchido(p.hashtags)?p.hashtags:'Hashtags não informadas','publication-hashtags'));
+}
+function acoesPublicacao(p) {
+  const box=node('div',undefined,'publish-actions'),status=node('p','','copy-status'),copy=node('button','Copiar legenda','publication-action');
+  const texto=[p.legenda,p.hashtags].filter(preenchido).join('\n\n');copy.type='button';copy.disabled=!texto;status.setAttribute('role','status');
+  copy.addEventListener('click',async()=>{
+    try {await navigator.clipboard.writeText(texto);status.textContent='Legenda copiada.';}
+    catch {status.textContent='Não foi possível copiar. Selecione e copie o texto acima.';}
+  });
+  const pacote=p.detalhes.pacotePublicacao,href=urlAutorizada(pacote?.url);
+  const link=href && new URL(href).host==='drive.google.com'?linkArquivo(pacote,'Baixar pacote'):null;
+  if(link)link.classList.add('publication-action');
+  box.append(copy,link || node('span','Pacote indisponível','package-unavailable'),botaoInstagram(p),status);return box;
+}
+function cartaoPublicacao(p) {
+  const article=node('article',undefined,'publish-card'+(p.dataCivil===hojeCivil()?' today':''));article.dataset.producaoId=p.producao_id;
+  const text=node('div',undefined,'publish-content'),header=node('header');
+  header.append(node('span',p.dataCivil===hojeCivil()?'Hoje · '+civil(p.dataCivil,{day:'2-digit',month:'2-digit'}):
+    p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'2-digit'}):'Sem data','publish-date'),node('span',p.formato,'format-label'));
+  text.append(header,node('h2',p.titulo || 'Título não informado'));textosPublicacao(p,text);text.append(acoesPublicacao(p));
+  article.append(miniatura(p),text);return article;
+}
+function lateralPublicacao(p,travada) {
+  const article=node('article',undefined,'publish-recent');article.dataset[travada?'travadaId':'publicadaId']=p.producao_id;
+  const button=node('button',p.titulo || 'Título não informado');button.type='button';button.addEventListener('click',()=>abrirDiaDaPeca(p));
+  const instante=layout.instantePublicacao(p.publicado_em);
+  article.append(button,node('small',travada?layout.motivoTravado(p):
+    (instante!==null?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit'}).format(new Date(instante)):'Data de publicação a confirmar')));
+  return article;
+}
+function renderPublicar() {
+  const queue=layout.filaPublicar(state.view.producoes),recent=layout.publicadasRecentes(state.view.producoes);
+  const blocked=state.view.producoes.filter(p=>layout.motivoTravado(p));
+  $('#contador-publicar').textContent=String(queue.length);$('#contador-publicar').hidden=queue.length===0;
+  $('[data-tela="publicar"]').setAttribute('aria-label','Publicar, '+plural(queue.length,'peça a publicar','peças a publicar'));
+  $('#fila-publicar').replaceChildren(...(queue.length?queue.map(cartaoPublicacao):[node('p',state.view.captura?'Nenhuma peça a publicar':'Nenhuma captura disponível','empty')]));
+  $('#publicadas-recentes').replaceChildren(...(recent.length?recent.map(p=>lateralPublicacao(p,false)):[node('p','Nenhuma publicação registrada','empty')]));
+  $('#travadas').replaceChildren(...(blocked.length?blocked.map(p=>lateralPublicacao(p,true)):[node('p','Nenhuma peça travada','empty')]));
+}
 function detalhesUnidades(p) {
   const pronta=p.quadro.coluna==='Pronta',sections=[];
   for(const tipo of ['paginas','cenas']) if(p.detalhes[tipo].length)sections.push(secaoUnidades(p.detalhes[tipo],tipo,!pronta));
@@ -283,6 +319,7 @@ function acordeaoPeca(p,aberto) {
     node('small',resumoPeca(d),'piece-hint'));
   const body=node('div',undefined,'piece-body');
   if(p.quadro.coluna==='Pronta')body.append(prontaParaPublicar(p));
+  body.append(botaoInstagram(p));
   body.append(fatosPeca(p));
   if(p.quadro.coluna!=='Pronta') {const gallery=galeriaPrevias(p);if(gallery)body.append(gallery);}
   if(d.publicacaoRegistrada) body.append(node('p','Publicação: '+valor(p.publicado_em)+' · registro explícito','publication'));
@@ -292,7 +329,7 @@ function acordeaoPeca(p,aberto) {
   const historico=recolhido('Histórico');historico.dataset.historico='';
   for(const grupo of ['resolvidas','anteriores','ambiguas']) if(d.revisoes[grupo].length) historico.append(secaoRevisoes(d.revisoes[grupo],grupo));
   if(historico.children.length>1) body.append(historico);
-  if(d.avisos.length) body.append(avisosPeca(p));
+
   el.append(summary,body);el.addEventListener('toggle',()=>iniciarPrevias(el));return el;
 }
 
@@ -379,8 +416,10 @@ function calendario() {
       day.dataset.data=date;day.append(node('span',String(Number(date.slice(-2))),'month-date'));
       const dots=node('span',undefined,'month-dots');
       for(const p of pecasDaData(date).filter(aceito)) {
-        const dot=node('span',undefined,'month-dot state-'+estadoClasse(p)),label=(p.titulo || p.formato)+' · '+layout.estadoSimples(p);
-        dot.setAttribute('role','img');dot.setAttribute('aria-label',label);dot.title=label;dots.append(dot);
+        const item=node('span',undefined,'month-piece'),dot=node('span','●','month-dot state-'+estadoClasse(p));
+        const label=(p.titulo || p.formato)+' · '+layout.estadoSimples(p);
+        dot.setAttribute('role','img');dot.setAttribute('aria-label',label);dot.title=label;
+        item.append(dot,node('span',' '+(p.formato==='Imagem'?'Oferta':p.formato),'month-type'));dots.append(item);
         labels.push(civil(date,{day:'numeric',month:'long'})+' · '+label);
       }
       day.append(dots);week.append(day);
@@ -407,10 +446,11 @@ function passosProducao(p) {
   });return steps;
 }
 function linhaProjeto(p) {
-  const row=node('button',undefined,'project-row');row.type='button';row.dataset.producaoId=p.producao_id;
+  const row=node('div',undefined,'project-row'),open=node('button',undefined,'project-open');open.type='button';open.dataset.producaoId=p.producao_id;
   const text=node('span',undefined,'project-piece');text.append(node('strong',p.titulo || 'Título não informado'),
     node('small',p.formato+' · '+(p.dataCivil?civil(p.dataCivil,{day:'2-digit',month:'2-digit'}):'Sem data')));
-  row.append(miniatura(p),text,passosProducao(p));row.addEventListener('click',()=>abrirDiaDaPeca(p));return row;
+  open.append(miniatura(p),text,passosProducao(p));open.addEventListener('click',()=>abrirDiaDaPeca(p));
+  row.append(open,botaoInstagram(p));return row;
 }
 function projetoSemana(week) {
   const project=node('section',undefined,'project');project.dataset.semanaId=week.semana_id ?? '';
@@ -509,20 +549,15 @@ function render() {
   for (const b of document.querySelectorAll('[data-modo]')) { const active=b.dataset.modo===state.modo;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active)); }
   if(state.modo==='Mês') {calendario();$('#lista').replaceChildren();}
   else {semanaPlanejamento();$('#calendario').replaceChildren();}
-  listaSemData();renderProducao();posicionarSemana();carregarMiniaturas();
+  listaSemData();renderProducao();renderPublicar();posicionarSemana();carregarMiniaturas();
 }
-function navegar(tela,producaoId=null) {
+function navegar(tela) {
   state.tela=tela;
-  for (const id of ['planejamento','producao','planilha']) $('#'+id).hidden=id!==tela;
+  for (const id of ['planejamento','producao','publicar']) $('#'+id).hidden=id!==tela;
   for (const b of document.querySelectorAll('[data-tela]')) b.classList.toggle('active',b.dataset.tela===tela);
-  const nome={planejamento:'Planejamento',producao:'Produção',planilha:'Planilha'}[tela];
+  const nome={planejamento:'Planejamento',producao:'Produção',publicar:'Publicar'}[tela];
   $('#titulo').textContent=nome;$('#caminho').textContent=nome;
   $('#sidebar').classList.remove('open');$('#menu').setAttribute('aria-expanded','false');
-  if(tela==='planilha') {
-    state.avisosProducaoId=producaoId;
-    if(producaoId!==null) state.abaPlanilha='Produções';
-    if(state.view) renderPlanilha();
-  }
   if(state.view)carregarMiniaturas();
 }
 function controles() {
@@ -546,130 +581,18 @@ function controles() {
   $('#fechar-dia').addEventListener('click',()=>$('#dia').close());
   $('#dia').addEventListener('close',()=>{if(focoDia?.isConnected) focoDia.focus();});
   $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');$('#menu').setAttribute('aria-expanded',String(open));});
-  $('#selo').addEventListener('click',()=>navegar('planilha'));
   $('#atualizar').addEventListener('click',atualizar);
-  $('#todos-avisos').addEventListener('click',()=>{state.avisosProducaoId=null;renderAvisosPlanilha();$('#avisos-dados').focus();});
-}
-function tabelaLocal(cabecalhos,linhas,nome) {
-  const region=node('div',undefined,'table-scroll');region.setAttribute('role','region');
-  region.setAttribute('aria-label',nome+' · rolagem horizontal');region.tabIndex=0;
-  const table=node('table'),head=node('thead'),header=node('tr'),body=node('tbody');
-  for(const campo of cabecalhos) {const th=node('th',campo);th.scope='col';header.append(th);}
-  head.append(header);
-  for(const linha of linhas) {
-    const row=node('tr');for(const value of linha) row.append(node('td',String(value ?? '')));
-    body.append(row);
-  }
-  table.append(head,body);region.append(table);return region;
-}
-function horarioLocal(value) {
-  const time=Date.parse(value);
-  if(!Number.isFinite(time)) return 'Horário não informado';
-  return new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',
-    day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(time));
-}
-function historicoPlanilha() {
-  const records=state.view.historico;
-  if(!records.length) return node('p','Nenhuma tentativa confirmada.','empty');
-  const rotulos={completa:'Completa',falhou:'Falhou'};
-  const table=tabelaLocal(['Concluída em · São Paulo','Resultado','Motivo resumido'],
-    records.map(r=>[horarioLocal(r.concluidaEm),Object.hasOwn(rotulos,r.resultado)?rotulos[r.resultado]:'Resultado desconhecido',motivoHistorico(r.motivoResumo)]),'Histórico');
-  [...table.querySelectorAll('tbody tr')].forEach((row,i)=>{row.dataset.resultado=records[i].resultado;});
-  return table;
-}
-function motivoHistorico(motivo) {
-  if(!motivo) return '';
-  const aba=motivo.match(/^(Semanas|Produções|Páginas|Cenas|Arquivos|Revisoes|Meses|Pautas) (.+): inválido$/);
-  if(aba) return 'Aba '+aba[1]+(aba[2]==='complete'?' incompleta':' inválida');
-  const rotulos={
-    'captura inválida: completedAt excede o relógio local em mais de 10 minutos':'Horário da captura mais de 10 minutos no futuro',
-    'captura desatualizada: completedAt igual ou anterior ao da vigente':'Captura desatualizada; a vigente foi preservada',
-    'Captura desatualizada; a vigente foi preservada':'Captura desatualizada; a vigente foi preservada',
-    'Horário da captura mais de 10 minutos no futuro':'Horário da captura mais de 10 minutos no futuro',
-    'arquivo local ausente ou ilegível':'Arquivo local ausente ou ilegível',
-    'JSON inválido no arquivo local':'Formato do arquivo local inválido'
-  };
-  return Object.hasOwn(rotulos,motivo)?rotulos[motivo]:'Captura não pôde ser importada';
-}
-function motivoAviso(aviso) {
-  if(!aviso.motivo.includes('Mídia ausente:')) return aviso.motivo;
-  const partes=[...new Set(aviso.motivo.split('; ').filter(m=>!m.startsWith('Mídia ausente:')))];
-  if(partes.length) {
-    const texto=partes.join(' e ').replace('imagens ausentes e vídeo ausente','imagens e vídeo ausentes');
-    return texto.charAt(0).toUpperCase()+texto.slice(1);
-  }
-  if(aviso.motivo.includes('nenhum arquivo da produção registrado')) return 'Nenhum arquivo da produção registrado';
-  return aviso.aba==='Páginas'?'Imagem ausente':'Nenhum arquivo registrado';
-}
-function renderAvisosPlanilha() {
-  const p=state.view.producoes.find(p=>p.producao_id===state.avisosProducaoId);
-  if(!p) state.avisosProducaoId=null;
-  const avisos=p?p.detalhes.avisos:state.view.avisos;
-  if(state.view.captura) $('#avisos-dados').dataset.producaoId=state.avisosProducaoId ?? '';
-  else delete $('#avisos-dados').dataset.producaoId;
-  $('#avisos-dados').hidden=state.abaPlanilha==='Histórico' || avisos.length===0;
-  $('#avisos-filtro').textContent=(p?(p.titulo || 'Peça sem título')+' · ':'Todas as peças · ')+plural(avisos.length,'aviso');
-  $('#todos-avisos').hidden=!p;
-  $('#avisos-tabela').replaceChildren(tabelaLocal(['Aba','Linha','Campo','Motivo'],
-    avisos.map(a=>[a.aba ?? '—',a.linha ?? '—',a.campo ?? '—',motivoAviso(a)]),'Avisos de dados'));
-}
-function escolherAba(nome) {
-  state.abaPlanilha=nome;renderPlanilha();
-  const selected=$('#abas-planilha [aria-selected="true"]');selected.focus();
-  selected.scrollIntoView({block:'nearest',inline:'nearest'});
-}
-function tabPlanilha(aba,index,abas) {
-  const button=node('button',aba.nome+' · '+aba.quantidadeLinhas);button.type='button';
-  button.id='aba-planilha-'+index;button.dataset.aba=aba.nome;button.setAttribute('role','tab');
-  button.setAttribute('aria-controls','dados-planilha');button.setAttribute('aria-selected',String(aba.nome===state.abaPlanilha));
-  button.tabIndex=aba.nome===state.abaPlanilha?0:-1;
-  button.addEventListener('click',()=>escolherAba(aba.nome));
-  button.addEventListener('keydown',event=>{
-    const destinos={ArrowRight:(index+1)%abas.length,ArrowLeft:(index+abas.length-1)%abas.length,Home:0,End:abas.length-1};
-    if(!Object.hasOwn(destinos,event.key)) return;
-    event.preventDefault();escolherAba(abas[destinos[event.key]].nome);
-  });return button;
-}
-function renderPlanilha() {
-  const abas=[...state.view.planilha,{nome:'Histórico',quantidadeLinhas:state.view.historico.length}];
-  if(!abas.some(a=>a.nome===state.abaPlanilha)) state.abaPlanilha=abas[0].nome;
-  $('#planilha-vazia').hidden=state.view.captura!==null;
-  $('#abas-planilha').replaceChildren(...abas.map((aba,i)=>tabPlanilha(aba,i,abas)));
-  const index=abas.findIndex(a=>a.nome===state.abaPlanilha),aba=abas[index],panel=$('#dados-planilha');
-  panel.setAttribute('aria-labelledby','aba-planilha-'+index);
-  const heading=node('header',undefined,'sheet-heading');
-  heading.append(node('h2',aba.nome),node('p',plural(aba.quantidadeLinhas,aba.nome==='Histórico'?'tentativa confirmada':'linha da NTV',
-    aba.nome==='Histórico'?'tentativas confirmadas':'linhas da NTV')));
-  const contents=aba.nome==='Histórico'?historicoPlanilha():
-    (aba.linhas.length?tabelaLocal(aba.cabecalhos,aba.linhas.map(r=>aba.cabecalhos.map(h=>celulaPlanilha(h,r[h]))),aba.nome):node('p','Nenhuma linha da NTV nesta tabela.','empty'));
-  panel.replaceChildren(heading,contents);renderAvisosPlanilha();
-}
-function celulaPlanilha(campo,value) {
-  const dedicada=['url','url_video_final'].includes(campo);
-  if(dedicada && preenchido(value) && value!=='[conteúdo suprimido]' && !urlAutorizada(value)) return 'link não permitido';
-  return value;
 }
 function detalhesCaptura() {
-  const view=state.view,captura=view.captura;
-  $('#selo').textContent=view.selo.texto;$('#selo').className='badge '+view.selo.cor;
-  $('#fonte-captura').textContent=view.fonte;
-  $('#fim-captura').textContent=captura?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',
-    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(captura.completedAt)):'Sem captura disponível';
-  const periodo=captura?.periodo;
-  $('#periodo-captura').textContent=periodo?.inicio && periodo?.fim?
-    civil(periodo.inicio,{day:'2-digit',month:'2-digit',year:'numeric'})+' a '+civil(periodo.fim,{day:'2-digit',month:'2-digit',year:'numeric'}):'Cobertura não disponível';
-  const notice=$('#avisos-captura'),items=[];
-  if(view.ultimaTentativa?.resultado==='falhou') items.push(node('p',captura?
-    'Última importação falhou; captura anterior preservada':'Última importação falhou; nenhuma captura válida disponível'));
-  if(view.avisos.length) {
-    const link=node('a',plural(view.avisos.length,'aviso de dados','avisos de dados'));link.href='#avisos-dados';
-    link.addEventListener('click',event=>{
-      event.preventDefault();state.avisosProducaoId=null;state.abaPlanilha='Produções';renderPlanilha();
-      $('#avisos-dados').focus();$('#avisos-dados').scrollIntoView({block:'start'});
-    });items.push(link);
-  }
-  notice.replaceChildren(...items);notice.hidden=items.length===0;
-  renderPlanilha();
+  const {selo,captura,ultimaTentativa,estado}=state.view;
+  const falhou=ultimaTentativa?.resultado==='falhou';
+  const instante=captura?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'})
+    .format(new Date(captura.completedAt)).replace(', ',' às '):null;
+  const texto=falhou?'Atualização falhou · '+(instante?'dados de '+instante:'sem dados'):
+    estado==='anterior_hoje'?'Dados de '+instante:selo.texto;
+  $('#selo').textContent=texto;$('#selo').className='badge '+(falhou?'vermelho':selo.cor);
+  $('#selo').title=instante?'Dados de '+instante:'';
+  $('#dados-a-confirmar').hidden=!(captura&&state.view.avisos.length);
 }
 async function reler({manterDesabilitado=false}={}) {
   $('#atualizar').disabled=true;
@@ -678,6 +601,8 @@ async function reler({manterDesabilitado=false}={}) {
     if (!response.ok) throw new Error('consulta indisponível');
     state.view=await response.json();
     detalhesCaptura();render();$('#erro').hidden=true;
+    const id=globalThis.CrmInstagram.pecaId;
+    if(id)globalThis.CrmInstagram.atualizar(state.view.producoes.find(p=>p.producao_id===id)||null);
     return true;
   } catch {
     $('#erro').textContent='Não foi possível ler a captura local. Confira o servidor e tente novamente.';$('#erro').hidden=false;

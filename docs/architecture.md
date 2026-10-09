@@ -6,7 +6,7 @@ Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado p
 
 ## Módulos, imports e relações de execução
 
-A 006 Parte A está implementada/testada localmente, não integrada. Acrescenta o [modelo visual puro](modules/layout-model.md), topo com Atualizar único, Semana/Mês e Produção por projetos. Planilha/atalhos e API completa permanecem. Parte B (perfil/pop-up/Instagram/Publicar e remoção de Planilha) aguarda ok explícito na A. A única mudança do servidor é o estático /layout-model.js; captura/projeção/coleta/cache/constituição/configuração/CI/gate e dependências permanecem. [Validação e limites](../specs/006-layout-v3/validacao.md).
+A 006 Parte A foi integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. API/captura/coleta/cache/tecnologia/mapas permanecem; [validação e fontes](../specs/006-layout-v3/validacao.md).
 
 **Histórico da entrega 005:** **005 — Prévias de imagens**, implementado/testado localmente em 08/10/2026, no [PR #23](https://github.com/Browsher/crm-social/pull/23), com merge/exclusão da branch autorizados após gate/review aprovados no head final. Acrescenta mídia sob demanda pelo servidor, cache privado e galeria/ampliação na gaveta. O autor aprovou as 21 tarefas após a parada inicial; 21/21 concluídas. T002 confirmada pelo autor em 08/10/2026: pasta Produções compartilhada com a conta de serviço como Leitor, sem teste de acesso real pelo agente. [Validação por fonte e checks/review da entrega](../specs/005-previas-imagens/validacao.md). Versões de páginas e cenas integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`, após gate/review; Pronta já integrada pelo PR #21. O registro da 004 na introdução preserva sua rodada histórica.
 
@@ -40,6 +40,8 @@ flowchart LR
   ScreenshotsPautas -->|cria servidor isolado, porta efêmera| Server
   Screenshots -->|mídia falsa 503, sem cliente Google| Server
   ScreenshotsPautas -->|mídia falsa 503, sem cliente Google| Server
+  Screenshots -->|saída padrão dedicada, históricos preservados| TemaGallery[tema-layout-v3]
+  ScreenshotsPautas -->|saída padrão dedicada, históricos preservados| PautasGallery[pautas-layout-v3]
   Snapshot --> Captura["src/captura.cjs"]
   Snapshot --> Triagem["src/triagem.cjs"]
   Server["src/servidor.cjs"] --> Snapshot
@@ -75,7 +77,13 @@ flowchart LR
   Theme -->|data-theme| CSS
   HTML --> CSS["/styles.css"]
   HTML -->|defer antes de app.js| LayoutModel["/layout-model.js"]
-  JS -->|seis funções puras| LayoutModel
+  HTML -->|defer antes de instagram.js| Perfil["/perfil-config.js"]
+  HTML -->|defer antes de app.js| Instagram["/instagram.js"]
+  JS --> Instagram
+  Instagram --> LayoutModel
+  Instagram --> Perfil
+  Instagram -->|GET /api/midia/ID selecionado| Server
+  JS -->|funções puras| LayoutModel
   JS -->|GET /api/visao, POST /api/atualizar e img local /api/midia/ID| Server
   Snapshot --> FS["node:fs / node:path"]
   Captura --> Crypto["node:crypto"]
@@ -95,10 +103,12 @@ flowchart LR
 | google | Configuração externa, JWT RS256 com scope por finalidade, tokens separados em RAM; Sheets tipado e Drive binário limitado | [Google](modules/google.md) |
 | midia | Resolve arquivo no snapshot NTV vigente, confere bytes/hash, cache privado e fingerprint final; cliente Drive lazy | [Mídia](modules/midia.md) |
 | coleta | Duas leituras de seis grades e Meses/Pautas quando existem, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
-| servidor | HTTP local com rotas existentes, cinco estáticos explícitos e rota dinâmica restrita de mídia; Host/Origin, Sec-Fetch-Site na mídia e respostas resumidas | [Servidor](modules/servidor.md) |
+| servidor | HTTP local com rotas existentes, sete estáticos explícitos e rota dinâmica restrita de mídia; Host/Origin, Sec-Fetch-Site na mídia e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Entrada Abrir CRM.cmd por duplo clique, reconhecimento de instância existente por GET local; Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| layout-model | Seis funções puras de estado/travamento/progresso/seleção de imagens/datas/ordem, sem I/O ou mutação | [Modelo visual](modules/layout-model.md) |
-| web | Parte A com Semana/Mês/objetivo/projetos, topo único, Planilha/atalhos e gaveta; Pautas, Pronta, tema, miniaturas visíveis e galeria/ampliação | [Interface](modules/web.md) |
+| layout-model | Dez funções puras de estado/travamento/progresso/seleção e slots de imagens/datas/ordem/fila/publicadas, sem I/O ou mutação | [Modelo visual](modules/layout-model.md) |
+| instagram | Dialog local compartilhado, perfil, slots, navegação/foco e atualização, sem contato com Instagram | [Prévia](modules/instagram.md) |
+| perfil-config | Objeto global público sintético, carregado antes da prévia | [Configuração visual](modules/perfil-config.md) |
+| web | Semana/Mês/objetivo/projetos, Publicar, topo único e gaveta; dados técnicos completos somente na API | [Interface](modules/web.md) |
 
 Aplicação em CommonJS e JavaScript/HTML/CSS nativos, sem framework, banco ou `package.json` de aplicação. Node 24.19.0 e Playwright já existentes; nenhuma dependência nova instalada. Configuração versionada não contém dados de linhas.
 
@@ -147,7 +157,8 @@ flowchart TD
   Confirmar --> Ler[lerEstado consulta apenas IDs confirmados]
   Ler --> Projetar[projetarVisao seleciona registros permitidos]
   Projetar --> API[GET /api/visao]
-  API --> UI[Planejamento, Produção, gaveta e Planilha com tabelas, avisos e Histórico]
+  API --> UI[Planejamento, Produção, Publicar, gaveta e prévia local]
+  API --> Tecnicos[Planilha, avisos e Histórico completos na API]
 ```
 
 `atual.json` contém `{capturaId, ultimaTentativaId, historicoIds}`. Capturas e recibos são preparados com abertura exclusiva e fsync antes do rename. Falha na gravação/rename do ponteiro tenta remover somente seu temporário, preservando o erro original se a limpeza também falhar. Resumo `ultima-tentativa.json` é derivado; falha dele não muda o estado confirmado. Arquivo órfão de interrupção não comprova aceitação nem entra no Histórico.
@@ -211,22 +222,22 @@ Comandos reais e demo sintética isolada estão no [quickstart](../specs/001-con
 
 ## O que já aparece e o que falta
 
-A Parte A substituiu calendário/lista de entrada e quadro técnico por Semana/Mês e projetos. O selo continua levando à Planilha, mantida nesta parte, e Atualizar está no topo comum. Miniaturas das peças visíveis também pedem mídia local; gaveta mantém seleção/versões/conteúdo e retirou responsáveis/ferramentas da apresentação. O restante desta seção conserva a implementação histórica 001–005; o módulo web descreve o recorte vigente.
+A Parte A substituiu calendário/lista de entrada e quadro técnico por Semana/Mês e projetos. B removeu a Planilha visual e o destino do selo, acrescentou fila Publicar e prévia compartilhada por Produção/Publicar/gaveta. O Mês usa rótulos curtos junto ao ponto, com Imagem → Oferta somente nessa apresentação. A revisão visual posterior conserva Atualizar/selo/feedback somente no topo da página, que fica inerte durante showModal. A prévia usa moldura preta .phone, siglaMarca/nomePerfil sintéticos configurados, Fechar acima e navegação sobreposta à arte; Imagem única 1/1 oculta setas/pontos. Releitura recebida atualiza a mesma peça ou fecha se removida, sem tornar o botão do fundo acionável pelo usuário. O selo conserva data/hora/falha da captura, inclusive falha inicial; a API preserva o destino legado planilha, ignorado pelo cliente. Dados a confirmar, único status global e no resumo de peça com aviso, mantém a incerteza visível na página, sem entrar no modal; fonte/cobertura/avisos técnicos completos continuam nos dados por decisão explícita do autor, com trade-off documentado no Constitution Check da 006. O restante desta seção conserva a implementação histórica 001–005; o módulo web descreve a interface vigente.
 
 Planejamento apresenta calendário/lista/filtros, imagem B, “N sem data” global, objetivo/pautas do mês exibido em Meses opcional, estados indefinido/A confirmar e gaveta do dia inteiro em acordeões. Peça remarcada segue sua data civil no mês e continua agrupada pela semana registrada. Seis status literais recebem rótulos legíveis só na UI; desconhecidos e API mantêm o original. Mês usa somente inicial maiúscula; calendário inclui apenas semanas com dia do mês e sidebar desktop acompanha a altura da página. Desktop usa calendário; 390 px começa em lista e menu recolhido. [Screenshots](design/screenshots/LEIA-ME.md) são da aplicação com dados fictícios.
 
-US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
+**Histórico 001–005:** US2/T019–T022 entrega `sem_captura`, `falha_atualizacao`, `atualizada_hoje` e `anterior_hoje`, com textos/cores contratuais e clique do selo até Planilha em todas as telas. Sem captura, eventual primeira falha conserva **Sem dados**. Com captura, a última tentativa falha tem precedência sobre frescor e acrescenta aviso curto de preservação da anterior. Datas/horas vêm de `completedAt` em `America/Sao_Paulo`, sem usar datas das linhas ou renovar instante por consulta.
 
-Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas obrigatórias, Meses/Pautas opcionais nessa ordem depois de Revisoes e Histórico final. As opcionais acompanham teclado/rolagem, com retorno à primeira aba disponível se a selecionada desaparecer; falhas usam mensagem legível no Histórico. **Atualizar dados** desabilita o botão durante POST /api/atualizar e o GET posterior; role=status informa atualização/sucesso/falha e aviso fixo da trava, quando houver. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
+**Histórico 001–005 da interface, antes da remoção na 006 B:** Planilha mostra fonte, fim da captura e cobertura semanal. Origem resume somente a falha ativa e **N avisos de dados** como link; os motivos ficam em uma única tabela Aba/Linha/Campo/Motivo, sem lista repetida no cabeçalho. Há seis abas obrigatórias, Meses/Pautas opcionais nessa ordem depois de Revisoes e Histórico final. As opcionais acompanham teclado/rolagem, com retorno à primeira aba disponível se a selecionada desaparecer; falhas usam mensagem legível no Histórico. **Atualizar dados** desabilita o botão durante POST /api/atualizar e o GET posterior; role=status informa atualização/sucesso/falha e aviso fixo da trava, quando houver. Sucesso atualiza a visão mantendo a tela e uma aba disponível; erro HTTP, inclusive 503, apresenta mensagem local e conserva visão/selo/dados já carregados, liberando o botão para tentar novamente. Sem visão anterior, aparece **Consulta indisponível**. GET/no-op conservam falha ativa; só nova captura completa aceita a encerra.
 
 US3/T023–T026 entrega todas as peças do dia, independentemente do filtro do resumo, na [gaveta compacta aprovada](design/mockups/gaveta-v2.html): primeira seção aberta, demais resumidas, faixa de quatro dados preenchidos, publicação registrada em uma linha e unidades compactas por versão. Etapas conhecidas têm rótulos legíveis só na apresentação. Resumo distingue revisão aberta, a confirmar e ausência; a revisão visual mostra decisão/versão/motivo e correção/tratamento sem IDs técnicos, conservados na API. Adicionais ficam em +N revisão aberta/revisões abertas, e resolvidas/antigas dentro de Histórico recolhido. Texto registrado e versões anteriores também abrem por clique. Cena conserva três slots de mídia e um aviso humano agregado das imagens/vídeo ausentes; validações de índice/tempo/versão são independentes. Documentos Plano/Redação/Visual aparecem uma vez por semana representada, no fim do dia, com — na ausência. A projeção reutiliza sua resolução na mesma consulta: aviso semanal aparece uma vez no conjunto global e continua localizado em cada peça afetada.
 
-A API conserva detalhes e avisos com aba/linha física/campo; a gaveta mostra quantidade e link para os avisos da peça na Planilha. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; na 005, abrir a peça inicia suas imagens por rota local, mantendo quadro e peças fechadas sem busca. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. A ampliação usa segundo dialog e o primeiro Escape fecha somente a imagem. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta nos cartões de Planejamento/Redação/Visual. Pronta troca toda pendência do cartão por Pronta para publicar e recolhe páginas/cenas, sem avisos de mídia nas unidades; detalhes e avisos continuam na API e na Planilha. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico. Iniciador, escala sintética e regressões de T035–T038 foram verificados localmente; captura real, gate após demonstração e onboarding final (T039–T041) concluídos. Evidências e limites ficam somente na validação.
+**Histórico 001–005 da interface:** a API conserva detalhes e avisos com aba/linha física/campo; a gaveta então mostrava quantidade e link para os avisos da peça na Planilha. Na 006 B, dados da API permanecem, destino visual foi removido e há sinal mínimo Dados a confirmar. Publicação preenchida inconsistente conserva o registro e o aviso, sem confirmação remota. Links só HTTPS nos hosts Drive/Docs exatos e sem credenciais; na 005, abrir a peça inicia suas imagens por rota local, mantendo quadro e peças fechadas sem busca. O diálogo tem 520 px no desktop, fecha com Esc e devolve foco; no celular ocupa a tela inteira. A ampliação usa segundo dialog e o primeiro Escape fecha somente a imagem. US4/T027–T030 entrega quadro por semana/tema, oito colunas e Outras por rótulos distintos; responsável/correção separados e primeira pendência/+N visíveis. Mídia fica oculta nos cartões de Planejamento/Redação/Visual. Pronta troca toda pendência do cartão por Pronta para publicar e recolhe páginas/cenas, sem avisos de mídia nas unidades; detalhes e avisos continuam na API e na Planilha. Clique abre dia inteiro ou Sem data da semana, sem arrastar/editar. Grid tem quatro colunas em 1440 px, duas até 1100 px e uma até 720 px. US5/T031–T034 implementa seis tabelas/Histórico. Iniciador, escala sintética e regressões de T035–T038 foram verificados localmente; captura real, gate após demonstração e onboarding final (T039–T041) concluídos. Evidências e limites ficam somente na validação.
 
-## Planilha: mínimos, avisos e Histórico
+## Planilha: mínimos, avisos e Histórico — projeção preservada; interface histórica
 
-Como folhas de consulta do mesmo álbum, as seis tabelas mostram a captura NTV
-completa; o atalho da gaveta localiza os avisos relacionados à peça.
+Na apresentação histórica 001–005, como folhas de consulta do mesmo álbum, as seis tabelas mostravam a captura NTV
+completa; o atalho da gaveta localizava os avisos relacionados à peça. A projeção permanece na API; esses destinos visuais foram removidos na 006 B. O diagrama abaixo conserva o fluxo histórico da interface.
 
 ```mermaid
 flowchart TD
@@ -254,16 +265,16 @@ vazia permanece nos mínimos, exceto `etapa_producao`; o original fica privado.
 Histórico mostra todas as tentativas confirmadas, sem órfãos nem novo recibo por
 no-op. As tabelas e o Histórico não criam rotas ou escritores adicionais; a triagem compartilhada está descrita acima.
 
-`renderPlanilha` em [src/web/app.js](../src/web/app.js) conserva a aba disponível; setas, Home e End
-mudam seleção e foco, e tabelas largas têm região própria de rolagem. Sem captura,
-somente Histórico e orientação à Central. O link da gaveta abre Produções e dá
+Na interface histórica 001–005, `renderPlanilha` em [src/web/app.js](../src/web/app.js) conservava a aba disponível; setas, Home e End
+mudavam seleção e foco, e tabelas largas tinham região própria de rolagem. Sem captura,
+apareciam somente Histórico e orientação à Central. O link da gaveta abria Produções e dava
 rolagem/foco ao painel da peça, sem recortar as seis tabelas; menu/selo/Todos os
-avisos restauram os avisos gerais. Painel fica oculto em Histórico ou sem avisos.
+avisos restauravam os avisos gerais. O painel ficava oculto em Histórico ou sem avisos. Esses renderizadores/atalhos não existem na 006 B.
 
-`celulaPlanilha` no mesmo [app.js](../src/web/app.js) troca somente URL dedicada recusada por
+Na interface histórica 001–005, `celulaPlanilha` no mesmo [app.js](../src/web/app.js) trocava somente URL dedicada recusada por
 **link não permitido**, mantendo o marcador exato de supressão. A API pode conservar
 URL já triada fora da allowlist visual; textos livres legítimos mantêm suas URLs
-como texto segundo o contrato. Células não criam links ou navegação automática.
+como texto segundo o contrato. Células não criavam links ou navegação automática.
 
 ## Páginas e cenas: vigência e mídia explícita
 
@@ -273,7 +284,7 @@ Como um texto que conserva sua fotografia, cada unidade resolve os arquivos pelo
 
 Em `src/web/app.js`, `secaoUnidades` agrupa por `[vigente,versao]`, mostrando grupos atuais antes dos históricos recolhidos, inclusive quando uma mesma versão contém unidades atuais e antigas. `adicionarVersaoImagem`, chamado por `unidadeDetalhe`, mostra **imagem vN** quando a versão do arquivo ligado é inteira positiva; vazia/inválida mostra **imagem: versão a confirmar**, sem converter o original. A regra de Pronta continua recolhendo a seção inteira e mantendo seus avisos na API/Planilha. [Projeção](modules/projecao.md#detalhes-versões-e-relações), [interface](modules/web.md#versões-das-unidades) e [evidência local](reports/versoes-unidades-validacao.md). Os imports do mapa acima permanecem os mesmos; não há mapa Graphify neste checkout.
 
-## Pronta: pacote e ações locais da gaveta
+## Pronta: pacote e ações locais da gaveta — histórico 001–005
 
 Como consultar uma pasta já preparada, `pacotePublicacao` em `src/projecao.cjs` procura um único Arquivos com produção exata, tipo `pacote`, extensão `zip` e versão igual a `Produções.pacote_versao`, inteiro positivo seguro. Não depende de `Produções.versao`, não escolhe maior versão ou empate; seleção não confirma bytes ou acesso. A coleta direta normaliza o inteiro textual canônico seguro antes dos hashes, sem migrar capturas históricas.
 

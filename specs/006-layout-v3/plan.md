@@ -1,10 +1,14 @@
 # Implementation Plan: 006 — Layout v3
 
-**Branch**: `codex/006-layout-v3` | **Date**: 2026-10-08 | **Spec**: [spec.md](spec.md)
+**Branch**: `codex/006-layout-v3-parte-b` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
 **Input**: especificação única em `specs/006-layout-v3/spec.md`.
-**Estado**: Parte A T001–T016 implementadas/testadas localmente, não integrada; escopo global de 32 tarefas mantido; B não iniciada. [Validação de execução](validacao.md).
+**Estado**: A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação de execução](validacao.md) preserva código/gate/PNG e adjudicação factual.
 
-## Execução autorizada nesta rodada — Parte A
+## Execução autorizada nesta rodada — Parte B
+
+O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B está no [PR #25](https://github.com/Browsher/crm-social/pull/25), sem merge. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. A revisão visual posterior do autor substitui o transporte temporário de Atualizar/selo/feedback para o diálogo: esses nós permanecem somente no topo da página, inerte durante showModal. Releituras recebidas com pop-up aberto mantêm as regras da mesma peça, inclusive atualização iniciada antes da abertura.
+
+## Recorte histórico da Parte A
 
 A parada inicial foi resolvida pelo autor, que autorizou duas partes com PRs próprios e sem merge. Preservar os 32 IDs, com T001–T016 na Parte A, T017–T023 na B e T024–T032 executados por recorte em ambas. Parte A mantém Planilha/atalhos/API, move Atualizar para o topo e implementa Semana/Mês/objetivo/projetos; não adiciona perfil/instagram.js/Publicar/Ver no Instagram. Somente layout-model.js entra na allowlist agora; configuração/modal e remoção de Planilha ficam na B. Nenhum trabalho futuro é marcado concluído pela execução da A.
 
@@ -16,7 +20,7 @@ As duas decisões sobre falta de imagem/contador e releitura do pop-up estão em
 
 Trocar a apresentação das três telas pelo desenho v3, preservando a consulta completa, coleta e resolução privada das imagens. Reaproveitar HTML/CSS/JavaScript nativos, gaveta, seleção de mídia e ações de publicação existentes. Separar apenas funções puras de apresentação e o pop-up, pois serão compartilhados pelas telas e verificáveis sem navegador. Não alterar projeção, coleta, snapshot, mapa de etapas ou contratos Google.
 
-A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3.html). A especificação prevalece sobre Dados e avisos, downloads e textos do mockup. A decisão do autor manteve 32 tarefas e autorizou somente A nesta rodada; B aguarda seu ok explícito na A.
+A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3.html). A especificação prevalece sobre Dados e avisos, downloads e textos do mockup. A decisão do autor manteve 32 tarefas; A foi aprovada/integrada e B autorizada em 09/10, com PR próprio sem merge.
 
 ## Technical Context
 
@@ -27,7 +31,7 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 **Target Platform**: computador Windows do autor; navegador em 1440×1050 e 390×844; cenário adicional de viewport baixa.
 **Project Type**: aplicativo local de consulta, sem deploy.
 **Performance Goals**: uma miniatura por peça visível, nenhuma imagem de tela oculta; Mês não busca mídia; reutilizar URL/cache da 005, sem polling ou prefetch global.
-**Constraints**: captura/API iguais, só três telas, sem agentes/metadados operacionais, XSS via texto literal, allowlist de links, teclado/foco, sem dados reais, gate/review e nenhum merge.
+**Constraints**: captura/API iguais, só três telas, sem agentes/metadados operacionais, XSS via texto literal, allowlist de links, teclado/foco, sem dados reais, gate/review e nenhum merge B.
 **Scale/Scope**: quatro jornadas; vinte screenshots de cinco vistas × dois temas × duas larguras. Quantidade de tarefas definida por speckit-tasks, sem condensação para caber no teto.
 
 ## Constitution Check
@@ -37,14 +41,14 @@ A referência sanitizada é [layout-v3.html](../../docs/design/mockups/layout-v3
 | Princípio | Antes | Após desenho | Evidência/limite |
 | --- | --- | --- | --- |
 | I Local e simples | PASS documental | PASS documental | mesmo servidor e tecnologia, sem instalação |
-| II Fontes e identidade | PASS documental | PASS documental | API, planilha, versões e hashes não mudam; derivados só no navegador |
+| II Fontes e identidade | Conforme ao contrato de captura | Conforme ao escopo explícito, com trade-off visual documentado | Fonte/cobertura/instante/falhas/IDs/versões/Histórico permanecem na captura/API; UI mostra instante/falha e sinal mínimo Dados a confirmar global/no resumo da peça, sem sucesso aparente. Remoção de tabelas/agentes foi fornecida pelo autor e reiterada em B; detalhes técnicos ficam na API, sem novo estado operacional. |
 | III Papéis | PASS documental | PASS documental | sem execução editorial, nomes técnicos removidos da UI |
-| IV Evidência | PASS documental | PASS documental | Parte A: RED/GREEN, TEMP, cinco camadas, 12 screenshots e gate final executados; B não iniciada |
+| IV Evidência | PASS documental | PASS documental | A: históricos preservados; B: RED/GREEN, TEMP, cinco camadas, revisão visual código 08ba10b/gate bc74d6e PASS/756 testes, 4 PNG Instagram 08ba10b/16 PNG preservados 800d7ca; push realizado, CI estrito de 1bcb4a8 SUCCESS/Semgrep PASS e revisão independente aprovada, Minor documental corrigido; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR. Rodadas750/7a0/9e40 são históricas, sem atribuir aprovação à fonte nova |
 | V Feature única | PASS documental | PASS documental | somente pasta 006, sem design paralelo; desenho já autorizado pelo autor |
 | VI Leitura privada | PASS documental | PASS documental | mesma rota de mídia, mesmos escopos e cache; thumbnails são demanda da tela visível |
-| Governança | PASS documental | PASS documental | sem emenda, merge proibido; 32 IDs mantidos pelo autor em A/B, B depende de ok explícito |
+| Governança | Conforme às decisões existentes | Sem emenda ou autorização nova | A integrada após aprovação separada; B autorizada em 09/10, PR #25 sem merge. O pedido explícito prevalece na composição visual; contratos/constituição permanecem. 32 IDs mantidos. |
 
-“PASS documental” verifica conformidade do plano, não comportamento executado.
+“PASS documental” verifica conformidade do plano, não comportamento executado. O princípio II exige capturas identificáveis e estados honestos, preservados no contrato/API e no selo; a [decisão já fornecida pelo autor](spec.md#decisão-de-apresentação-e-alcance-constitucional-já-fornecidos-pelo-autor) remove a inspeção técnica da interface pessoal, com perda de acesso direto a fonte/cobertura/avisos pela tela. Isso não foi convertido em uma nova resposta de clarify nem em emenda: dados/contratos permanecem e a UI não inventa sincronização: Dados a confirmar preserva visibilidade mínima de avisos globais e por peça, sem tabela/metadados técnicos. Revisão por head deve conferir esse alcance e o trade-off, em vez de inferir conformidade só pela ausência de alteração no backend.
 
 ## Project Structure
 
@@ -63,7 +67,7 @@ specs/006-layout-v3/
 └── validacao.md
 ```
 
-[validacao.md](validacao.md) registra a execução da Parte A e pendências da B. O relatório analyze é emitido sem gravar arquivo, conforme a skill.
+[validacao.md](validacao.md) registra fontes/execução de ambas e pendências remotas da B. O relatório analyze é emitido sem gravar arquivo, conforme a skill.
 
 ### Source Code (repository root)
 
@@ -76,21 +80,21 @@ src/
     ├── theme.js                 # comportamento preservado
     ├── app.js                   # renderização, navegação, atualização e gaveta
     ├── layout-model.js          # NOVO, derivados puros e seleção de imagens
-    ├── perfil-config.js         # FUTURO B, configuração pública sintética
-    └── instagram.js             # FUTURO B, pop-up e navegação/foco
+    ├── perfil-config.js         # IMPLEMENTADO B, configuração pública sintética
+    └── instagram.js             # IMPLEMENTADO B, pop-up e navegação/foco
 tests/
 ├── layout-browser.cjs           # NOVO A, servidor/serviço TEMP e transporte falso
 ├── layout-fixtures.cjs          # NOVO, deriva das fixtures existentes
 ├── layout-model.test.cjs        # NOVO, estados/grupos/contagens/ordem
 ├── layout-http.test.cjs         # NOVO, estáticos/API/persistência intactas
 ├── layout-interface.test.cjs    # NOVO, topo/Planejamento/Produção/Publicar
-└── instagram-interface.test.cjs # FUTURO B, modal/teclado/gesto/falha
+└── instagram-interface.test.cjs # IMPLEMENTADO B, modal/teclado/gesto/falha
 scripts/screenshots-layout-v3.cjs # NOVO, TEMP/porta efêmera/mídia falsa
 tests/screenshots-layout-v3.test.cjs # NOVO, guardas reais do gerador
 docs/design/screenshots/layout-v3-parte-a/*.png # 12 evidências A executadas
 ```
 
-**Structure Decision**: módulos pequenos reutilizáveis, sem dividir em muitos componentes. Configuração em JS declarativo servido como estático para evitar endpoint/alteração de API. layout-model.js exporta as mesmas funções para navegador e CommonJS, sem ler DOM/arquivos/rede. instagram.js recebe peça, imagens resolvidas, perfil e acionador; não consulta Google. app.js mantém a integração DOM.
+**Structure Decision**: módulos pequenos reutilizáveis, sem dividir em muitos componentes. Configuração em JS declarativo servido como estático para evitar endpoint/alteração de API. layout-model.js exporta as mesmas funções para navegador e CommonJS, sem ler DOM/arquivos/rede. instagram.js recebe peça e acionador, deriva posições com layout-model e lê perfil-config; não consulta Google. app.js resolve ID na vista vigente no clique, inclusive gaveta após releitura. app.js mantém a integração DOM.
 
 ## Phase 0 — Research
 
@@ -104,7 +108,7 @@ Pesquisa registrada em [research.md](research.md): funções e acoplamentos atua
 
 Peças aparecem uma vez por projeto da semana registrada; sem vínculo ficam em Semana não identificada. Planejamento usa dataCivil, incluindo remarcações, sem duplicar a peça em uma semana diferente por associação original. São agrupamentos distintos, explicitados no contrato. Progresso de Planejamento usa a semana civil após o filtro de formato, concordando com os cartões visíveis; Produção usa o projeto inteiro pela semana registrada, independente desse filtro. Futuro compara segundas-feiras civis normalizadas; semana registrada sem período conserva identidade e mostra Período não identificado.
 
-### Integração sem Planilha visual — planejada para Parte B
+### Integração sem Planilha visual — implementada na Parte B
 
 Retirar HTML/controles de Planilha e funções de renderização de tabelas. objetivoMensal continua lendo Meses de view.planilha; preservá-lo na API. Selo torna-se indicador de estado, sem destino de navegação. Mover resultado-atualizacao e botão para o topo, com mensagem curta acessível. Remover atalhos “ver na Planilha”, fatos de responsável, nomes de ferramentas e histórico técnico visual; gaveta continua apresentando conteúdo, unidades, versões e revisão em linguagem simples.
 
@@ -116,7 +120,7 @@ Extrair imagensDaPeca/imagensDasUnidades mantendo o algoritmo da 005/PR #22, inc
 
 Listas carregam miniaturas apenas na tela ativa e quando a peça entra na região visível, por IntersectionObserver; img loading=lazy reforça a demanda. A galeria completa da gaveta continua sob abertura; pop-up carrega a página corrente e conserva placeholders por posição. Mês exibe pontos sem imagens. Não alterar a autorização/cache da rota local.
 
-Dialog nativo showModal(), foco inicial em Fechar, ←/→ restritos ao pop-up ativo, sem wrap, pontos acessíveis, contador aria-live. Arrasto horizontal mínimo de 40 px e maior que deslocamento vertical; vertical mantém rolagem da legenda. Fechar retira src das posições do pop-up; não destrói gaveta. Se o acionador sumir na atualização, foco retorna ao título da tela, que é focável programaticamente.
+Dialog nativo showModal(), foco inicial em Fechar acima/fora da moldura .phone, ←/→ restritos ao pop-up ativo, sem wrap, pontos acessíveis, contador aria-live. Moldura preta de 360 px com borda escura/cantos arredondados; cabeçalho com siglaMarca e nomePerfil configurados, subtítulo e ⋯ decorativo. Slider 4:5 separado do contêiner de mídia permite substituir imagem/placeholder sem remover setas/contador sobrepostos. Pontos ficam abaixo; imagem única oculta setas/pontos e conserva 1/1. Ícones decorativos precedem texto literal com perfil em negrito e hashtags azuis. Cores ficam em tokens; viewport baixa reduz proporcionalmente a arte e rola a legenda dentro do celular. Arrasto horizontal mínimo de 40 px e maior que deslocamento vertical; vertical mantém rolagem da legenda. Fechar retira src das posições do pop-up; não destrói gaveta. Se o acionador sumir na atualização, foco retorna ao título da tela, que é focável programaticamente; seta ou ponto focados e ocultados pela redução a uma posição transferem foco a Fechar; pontos recriados com mais posições recebem foco no corrente.
 
 ### Layout e temas
 
@@ -124,15 +128,15 @@ Reutilizar tokens e comportamento de theme.js. Objetivo com botão/aria-expanded
 
 ### Testes e compatibilidade
 
-[Quickstart](quickstart.md) define validação sintética. Testes precedem cada comportamento. Na A, atualizar somente quadro de oito colunas, entrada Calendário/Lista, topo e gatilho de miniaturas; Planilha/atalhos permanecem. Na B, adaptar expectativas de Planilha removida e novas jornadas; preservar testes de backend/API, identidade, versões, segurança e falhas. Geradores históricos que participam do gate terão seletores ajustados para testar o layout vigente, sem reescrever evidências antigas ou atribuir-lhes prova da 006.
+[Quickstart](quickstart.md) define validação sintética. Testes precedem cada comportamento. Na A, atualizar somente quadro de oito colunas, entrada Calendário/Lista, topo e gatilho de miniaturas; Planilha/atalhos permanecem. Na B, adaptar expectativas de Planilha removida e novas jornadas; preservar testes de backend/API, identidade, versões, segurança e falhas. Geradores históricos que participam do gate tiveram seletores ajustados para testar o layout vigente, sem reescrever evidências antigas ou atribuir-lhes prova da 006.
 
 Cinco camadas: funções puras, invariância em arquivos TEMP, integração/derivados, HTTP real, navegador. Não escrever testes que apenas comparem markup de implementação. Verificar ausência de rede externa, duplo POST, captura/hashes antes/depois de GET, token/perfil inválido, foco, clipboard e URL recusada.
 
 ## Delivery and execution boundary
 
-A contagem completa é 32 IDs, preservada pelo autor após a parada inicial. T001–T016 e fechamento correspondente T024–T032 pertencem à A autorizada; T017–T023 e fechamento B aguardam ok explícito na A. Checkboxes globais T024–T032 só encerram depois de ambas, sem marcar jornadas futuras concluídas.
+A contagem completa é 32 IDs, preservada pelo autor após a parada inicial. T001–T016 e fechamento correspondente T024–T032 pertencem à A autorizada; T017–T023 e fechamento B foram autorizados em 09/10 após aprovação/integração da A. Checkboxes globais T024–T032 só encerram depois de ambas, sem marcar jornadas futuras concluídas.
 
-Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A usa codex/006-layout-v3; a branch/base B serão decididas após o ok, sem integração antecipada. Provas e pendências atuais em validacao.md.
+Por parte: RED/GREEN → adaptar regressões → screenshots → revisão independente → quality-gate como penúltima etapa local → doc-sync-onboarding como última etapa de alterações de código → commit noreply sem coautoria → push somente Browsher/crm-social e PR próprio → acompanhar CI/review do head final → entregar evidências sem merge. A foi integrada após aprovação explícita; B usa codex/006-layout-v3-parte-b sobre main a5be355, sem merge B. Provas e pendências atuais em validacao.md.
 
 ## Complexity Tracking
 

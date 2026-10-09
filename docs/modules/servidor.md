@@ -28,7 +28,9 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | --- | --- |
 | GET / | `index.html`, `text/html` |
 | GET /app.js | JavaScript da aplicação |
-| GET /layout-model.js | JavaScript puro compartilhado da 006 Parte A, carregado antes de app.js |
+| GET /layout-model.js | Modelo puro da 006, carregado antes de app.js |
+| GET /perfil-config.js | Configuração pública sintética do nome visual, antes de instagram.js |
+| GET /instagram.js | Prévia local compartilhada de navegador, antes de app.js |
 | GET /theme.js | JavaScript de preferência visual, carregado antes do CSS |
 | GET /styles.css | CSS da aplicação |
 | POST /api/atualizar | JSON {} até1KiB, Origin obrigatório; coleta injetável, 200/422/503/409 conforme contrato |
@@ -40,11 +42,11 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | Host/Origin recusados | 403, antes da avaliação de método/rota |
 | Estado/recibo confirmado inválido ou identidade/vínculo recusado na projeção | 503 genérico, sem alteração da última captura ou reparo dos arquivos |
 
-A allowlist de `STATIC` contém cinco arquivos explícitos: HTML, aplicativo, modelo visual, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A escolha das rotas existentes descarta query sem alterar configuração/caminho; atualização e mídia recusam query no contrato próprio. A mídia é uma rota dinâmica restrita por ID interno; nunca expõe data/ como diretório estático ou proxy genérico.
+A allowlist de `STATIC` contém sete arquivos explícitos: HTML, aplicativo, modelo visual, configuração de perfil, prévia Instagram, tema e CSS. Não é ampliada pela presença de arquivos no diretório. A escolha das rotas existentes descarta query sem alterar configuração/caminho; atualização e mídia recusam query no contrato próprio. A mídia é uma rota dinâmica restrita por ID interno; nunca expõe data/ como diretório estático ou proxy genérico.
 
-## Estático da 006 — Parte A
+## Estáticos da 006 — Partes A/B
 
-A única alteração do servidor na Parte A é servir /layout-model.js como JavaScript sob a mesma allowlist explícita, GET/HEAD, MIME, CSP e guardas de Host/método. São agora cinco arquivos: HTML, aplicativo, modelo visual, tema e CSS. Não há novos endpoints de dados, configuração de perfil ou instagram.js; estes dois últimos pertencem à B, não iniciada. tests/layout-http.test.cjs passou de RED 1 PASS/3 FAIL para 4 PASS, conferindo estático/guardas, invariância de bytes de capturas/recibos em TEMP e API completa. [Validação](../../specs/006-layout-v3/validacao.md).
+A acrescentou `/layout-model.js`; B acrescenta somente `/perfil-config.js` e `/instagram.js`, sob a mesma allowlist explícita, GET/HEAD, MIME, CSP e guardas de Host/método. São sete arquivos: HTML, aplicativo, modelo visual, configuração de perfil, prévia Instagram, tema e CSS. Nenhum endpoint de dados, ambiente, dependência ou captura/cache mudou. `tests/layout-http.test.cjs` cobre seis casos, incluindo os dois novos estáticos, métodos recusados, Host e invariância de bytes de captura/recibos/API em TEMP. B implementada/testada localmente no PR #25 e não integrada; revisão visual 08ba10b também local/testada, gate bc74d6e PASS/756 testes, push realizado, CI estrito de 1bcb4a8 SUCCESS/Semgrep PASS e revisão independente aprovada, Minor documental corrigido; review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR; nenhum novo estático/endpoint nesta revisão; a API conserva selo.destino = planilha como dado legado, ignorado pelo cliente. Captura/fonte/cobertura/instante/falhas e avisos técnicos continuam no GET existente; a retirada dessas tabelas visuais não alterou o contrato. O novo sinal visual Dados a confirmar apenas deriva avisos já retornados; não acrescenta rota, writer ou dado no backend. [Validação](../../specs/006-layout-v3/validacao.md).
 
 ## Origem e conteúdo
 

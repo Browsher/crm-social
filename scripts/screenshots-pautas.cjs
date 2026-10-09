@@ -1,4 +1,4 @@
-// Evidência visual da 004: somente fixture sintética em servidor TEMP efêmero.
+// Regressão visual de pautas no Layout v3: somente fixture sintética em servidor TEMP efêmero.
 const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
@@ -9,7 +9,7 @@ const {adicionarRegistro,mapaQuadroSintetico,recalcularHashes,redefinirHorario,m
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 
-const destination=path.resolve(__dirname,'../docs/design/screenshots');
+const destination=path.resolve(__dirname,'../docs/design/screenshots/pautas-layout-v3');
 function preparar(root) {
   const dataDir=path.join(root,'dados'),quadroConfigPath=path.join(root,'quadro.json');
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroSintetico()));
@@ -59,9 +59,10 @@ async function capturarContexto(browser,origin,theme,width) {
     assert.equal(await page.locator('#objetivo-mes .pauta-link').count(),0);
     assert.match(await page.locator('#objetivo-mes').innerText(),/Resumo textual sintético de dezembro/);
     await capture('mes-sem-pautas');
-    await navegar(page,width,'Planilha');
-    await page.getByRole('tab',{name:/^Pautas/}).click();
-    await capture('planilha');
+    if(width===390)await page.locator('#menu').click();
+    await page.locator('[data-tela="publicar"]').click();
+    assert.equal(await page.locator('#planilha').count(),0);
+    await capture('publicar');
     assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
   } finally {await context.close();}
 }

@@ -1,41 +1,41 @@
 # Reprodução sintética — Layout v3
 
-Parte A implementada/testada localmente em 08/10/2026, não integrada; [resultados e fonte](validacao.md). O autor manteve 32 tarefas em duas entregas. Parte A é fundação/topo/Planejamento/Produção e regressões correspondentes; Planilha permanece. Parte B aguarda ok explícito na A.
+Como uma agenda de demonstração, os testes e screenshots usam somente peças fictícias para verificar o acompanhamento. A integrada pelo PR #24 em a5be355; B implementada/testada localmente em 09/10/2026, no [PR #25](https://github.com/Browsher/crm-social/pull/25), ainda não integrada. [Fontes, resultados e limites](validacao.md); os 32 IDs permanecem.
 
 ## Pré-requisitos
 
-Windows do projeto, Node 24.19.0 existente em CRM_NODE_PATH e Playwright existente em CRM_PLAYWRIGHT_MODULE. Diretório do Node à frente do PATH para subprocessos. Não instalar pacotes, usar o CRM do autor, ler data/ ou consultar Google/Instagram. Testes criam somente TEMP e servidor loopback com porta efêmera. Sem CI=true, Playwright ausente falha; não mascarar com SKIP.
+Windows do projeto, Node 24.19.0 existente em CRM_NODE_PATH e Playwright existente em CRM_PLAYWRIGHT_MODULE; diretório Node à frente do PATH para subprocessos. Não instalar pacotes, usar o CRM do autor, ler data/ ou consultar Google/Instagram. Tests criam TEMP e servidor loopback em porta efêmera. Sem CI=true, Playwright ausente falha.
 
-## Comandos da Parte A
+## Comandos vigentes da Parte B
 
 ```powershell
 & $env:CRM_NODE_PATH --test tests/layout-model.test.cjs tests/layout-http.test.cjs
-& $env:CRM_NODE_PATH --test tests/layout-interface.test.cjs
+& $env:CRM_NODE_PATH --test tests/layout-interface.test.cjs tests/instagram-interface.test.cjs
 & $env:CRM_NODE_PATH --test tests/screenshots-layout-v3.test.cjs
 & $env:CRM_NODE_PATH scripts/screenshots-layout-v3.cjs
 & $env:CRM_NODE_PATH tools/quality-gate.mjs
 ```
 
-Os comandos acima foram executados nesta rodada; números, fontes e limites somente em validacao.md. O gerador grava 12 PNG em docs/design/screenshots/layout-v3-parte-a/: Semana/Mês/Produção × claro/escuro × 1440/390. Servidor/serviço reais, captura/PNG/credencial efêmera/transporte falsos e rede externa bloqueada; não toca Google ou o CRM do autor. Guardas de prefixo/TEMP e limpeza após fechar navegador/servidor protegem somente os diretórios temporários criados. Saída de screenshots é um destino explícito de evidências.
+Esses comandos foram executados; medições por fonte somente em validacao.md. Fonte de código/testes 08ba10b; gate oficial executado em bc74d6e: 756 PASS/0 SKIP, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Quatro PNG Instagram novos em 08ba10b; dezesseis PNG B preservados em 800d7ca. Push realizado e CI estrito de 1bcb4a8 SUCCESS/Semgrep PASS; revisão independente aprovada, Minor documental corrigido. Review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR; merge B proibido. O gerador atual grava20 PNG em docs/design/screenshots/layout-v3-parte-b/ (Semana/Mês/Produção/Publicar/Instagram×temas×1440/390); nesta revisão só 4 Instagram foram efetivamente renovados, e 16 B preservam fonte 800d7ca. Servidor/serviço reais em TEMP validado, transporte/credencial falsos, rede externa bloqueada e limpeza restrita. Galeria A/históricos permanecem na fonte original; gerador atual não recria automaticamente checkout antigo.
 
-## Cinco camadas do recorte A
+Os geradores de regressão de tema/pautas usam agora destinos padrão dedicados docs/design/screenshots/tema-layout-v3/ e pautas-layout-v3/, com nome publicar, preservando as 16/20 imagens históricas na raiz. Em uso normal, a saída é a galeria do workspace; somente os testes CLI executam cópias inteiras em TEMP para provar preservação byte a byte de arquivos com nomes históricos/marcadores sintéticos e limpeza restrita. Não confundir servidor/dados TEMP com destino padrão dos PNG.
 
-1. Funções puras: estados, bloqueio, progresso, ordenação/datas e seleção de imagens/vigência sem mutação.
-2. Persistência: arquivos reais em TEMP, bytes/hashes de captura/recibos preservados por consultas/estáticos. Cache mantém o comportamento da 005.
-3. Integração: projeção atual alimenta derivados; API completa, Planilha/avisos/responsáveis/Histórico preservados.
-4. HTTP: GET/HEAD e guardas do único estático novo layout-model.js, rotas atuais, atualização com serviço falso/falha/no-op.
-5. Interface: claro/escuro, 1440/390, teclado/foco/contraste, objetivo, Semana/Mês/projetos, miniatura contain/falha e carregamento restrito. Galeria/pacote/cópia e versões são regressões preservadas.
+## Cinco camadas verificadas
+
+1. Funções puras: estados/bloqueios/progresso, datas/ordem, fila/publicadas, seleção de imagens e slots ausentes sem mutação.
+2. Persistência: arquivos reais em TEMP, bytes/hashes de captura/recibos preservados por consultas/estáticos; cache mantém contrato 005.
+3. Integração: projeção atual alimenta derivados; view.planilha/avisos/responsáveis/Histórico completos na API, mesmo removidos da interface.
+4. HTTP: GET/HEAD e guardas de layout-model/perfil-config/instagram, demais rotas preservadas; atualização falsa/falha/no-op.
+5. Interface: temas, 1440/390, teclado/foco/contraste, objetivo, sete dias/Mês/projetos/fila, imagem contain/falha, modal/slots/gesto/viewport baixa; versões/pacote/clipboard/galeria são regressões preservadas.
 
 ## Fixture e conferência
 
-Relógio fixo em 08/10/2026; semana atual com oferta, carrossel de cinco páginas PNG 1080×1350 e Reels travado; próxima com quatro peças em dias variados; futura vazia; passada publicada; sem data/sem semana; correção vigente/histórica e Meses/Pautas opcionais. Tudo sintético, sem ID, conta ou texto operacional.
+Relógio fixo em 08/10/2026; oferta, carrossel com cinco páginas PNG sintéticas 1080×1350, Reels travado, próxima semana com quatro peças em dias variados, futura vazia, publicada, sem data/sem semana, correções vigentes/históricas e opcionais Meses/Pautas. Perfil inicial público sintético perfil.exemplo / siglaMarca DEMO; personalização real apenas local, nunca commit, sem mecanismo ignored/env. Miniatura pode mostrar imagem seguinte disponível da galeria da 005 enquanto Imagem 1/1 no modal conserva primeira posição lógica ausente. Nenhuma conta/planilha/texto operacional.
 
-Conferir topo único/POST único/falha/no-op, expandir objetivo sem espaço recolhido, navegar pautas/períodos, sete dias e dia inteiro, hoje centrado/rolagem preservada em 390, Mês sem imagens/semana acessível com data/título/estado filtrados, navegação Mês→Semana e semanas de borda mantendo mês/objetivo, Sem data com tema/período/fallback, dias/prévias acessíveis e tema com início normalizado, Produção com X de N/cinco passos/motivo, futura vazia com período/frase, Planilha e seus atalhos. Rede permanece na origem temporária, sem erro JS/overflow da página. O coordenador inspecionou os [12 PNG finais](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-a).
+Conferir topo/POST único, data/hora antiga e falha inicial visíveis no selo, reload/no-op sem renovar instante, Dados a confirmar global/peça somente na página, sem selo/Atualizar/feedback no modal, conforme avisos e nova captura limpa, objetivo hidden, pautas/períodos/bordas, hoje/rolagem em 390, Mês com Oferta/Carrossel/Reels completos e sem mídia, dia inteiro e projetos reais sem meta fixa. Conferir fila/contador/cópia/pacote/URL recusada, publicadas inválidas/travadas e ausência de Planilha/metadados de agentes.
 
-## Parte B — somente planejada
-
-Não executar nesta rodada testes inexistentes de instagram-interface nem criar perfil/modal/Instagram/Publicar. Após ok explícito na A, B implementará fila/contador/cópia/pacote, pop-up de cinco páginas/imagem única/slots indisponíveis, teclado/setas/pontos/arrasto, foco/Esc/viewport baixa e atualização com modal aberto, além da remoção visual de Planilha. B terá screenshots Publicar/pop-up e regressões finais, gate/review e PR próprios.
+Abrir prévia por Produção/Publicar/gaveta, verificar cinco páginas e imagem única com primeira posição ausente preservada, slots indisponíveis incluídos, cenas início/final e nomes atualizados mesmo com total constante, botões/pontos/←→, limites sem wrap, arrasto horizontal versus vertical, Esc/Tab/restauração e viewport baixa; foco migra à outra seta habilitada/Fechar quando a seta anterior se torna disabled. Conferir moldura preta 360/borda 10/cantos 38, Fechar fora/acima, avatar/perfil/subtítulo, setas/contador sobrepostos e pontos abaixo, ícones decorativos, legenda literal/hashtags azuis e imagem única 1/1 sem setas/pontos. Ponto ou seta ocultados pela redução a 1 recebem foco em Fechar. Clique real em Atualizar antes de abrir comprova POST recebido com modal aberto; helper programático no botão real testa releitura durante modal, sem afirmar que usuário aciona fundo inerte. Mesma identidade recebe texto/versão nova e índice limitado, remoção fecha/foco; falha mantém vista anterior. Para nova atualização pelo botão, fechar e usar topo. Botão da gaveta resolve ID vigente no clique após atualização. Testes sintéticos de gesto não demonstram uso físico.
 
 ## Entrega
 
-Cada parte requer gate/review do head final, doc-sync e CI/review; push/PR somente Browsher/crm-social, commits 204295625+Browsher@users.noreply.github.com sem coautoria. Deixar os PRs abertos, **sem merge**. Testes sintéticos e screenshots não demonstram operação editorial real. UI/PowerShell no CI Linux mantêm a fronteira M8, sem substituir a prova Windows local.
+A foi integrada somente após autorização explícita do autor. B está no PR #25 e exige gate/doc-sync/review/CI no head final, push somente Browsher/crm-social; commits com noreply autorizado e sem coautoria. **Deixar PR B aberto, sem merge.** [Galeria B](../../docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b). Fixtures/screenshots não demonstram operação editorial real; pulos UI/PowerShell do CI Linux na dívida M8 não substituem prova Windows local.

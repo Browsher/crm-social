@@ -1,29 +1,36 @@
-# Interface de Planejamento, gaveta do dia, Produção e Planilha
+# Interface de Planejamento, Produção e Publicar
 
 Como uma agenda mensal com cartões e páginas semanais, a interface permite localizar uma peça e abrir seu dia. Ela mostra a captura recebida pela API local.
 
-## Layout v3 — Parte A vigente localmente
+## Layout v3 — Parte A integrada; Parte B entregável, não integrada
 
-Como páginas de uma agenda, Semana e Mês localizam as peças; Produção acompanha projetos por semana. Parte A da 006 implementada/testada localmente, **não integrada**; [validação](../../specs/006-layout-v3/validacao.md). A Parte B aguarda ok explícito na A para perfil/pop-up/Instagram/Publicar e remoção visual de Planilha. As seções históricas 001–005 abaixo conservam contratos de dados e provas, com a apresentação substituída identificada.
+Como páginas de uma agenda, Semana/Mês localizam peças, Produção acompanha projetos e Publicar reúne material para publicação manual. A integrada PR #24. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 aberto e não integrada. Gate local bc74d6e e CI de 1bcb4a8 verdes; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Resultados do head final reconferidos no PR, sem merge. [Validação](../../specs/006-layout-v3/validacao.md). As seções históricas 001–005 conservam a apresentação substituída.
 
-`index.html` carrega `/theme.js` antes do CSS e `/layout-model.js` antes de `/app.js`, ambos os últimos com defer. `app.js` usa as [seis funções puras compartilhadas](layout-model.md), mantendo integração DOM, atualização e gaveta. Principais funções vigentes: `semanaPlanejamento`, `calendario`, `objetivoMensal`, `renderProducao`/`projetoSemana`, `passosProducao`, `carregarMiniaturas`, `abrirDia`/`acordeaoPeca`, `renderPlanilha`/`celulaPlanilha` e `detalhesCaptura`.
+index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model → perfil-config → instagram → app. app.js usa [dez funções puras](layout-model.md), mantendo DOM, atualização e gaveta. [instagram.js](instagram.md) cuida do dialog/navegação/foco, e [perfil-config.js](perfil-config.md) fornece o nome e a sigla sintéticos públicos.
 
-| Controle | Comportamento da Parte A |
+| Controle | Comportamento vigente |
 | --- | --- |
-| Entrada e menu | Planejamento em Semana; menu Planejamento, Produção e Planilha, sem Publicar/Instagram. |
-| Atualização | ⟳ Atualizar único no topo das três telas, feedback acessível, um POST {} seguido de GET; desabilitado até terminar. Selo conserva clique até Planilha. Falha/no-op preservam captura, horário e falha ativa conforme API. |
-| Objetivo/pautas | Linha única com nome completo acessível, truncamento visual; botão aria-expanded e painel hidden sem espaço recolhido. Objetivo vem de Meses em view.planilha, pautas estruturadas sem status/agente, fallback textual sem numeração inventada. |
-| Semana | Segunda a domingo; grupos por dia sem landmarks adicionais, botão do dia com data completa e aria-current=date em hoje. Sete colunas em região horizontal focável no celular, inicialmente centrada em hoje e com rolagem por semana preservada ao retornar/trocar tela, inclusive após nova captura em Produção. Esse comportamento já existia: o contêiner semanal permanece e só seus filhos são recriados. Cartões mostram miniatura/formato/título/estado e abrem o dia inteiro. Progresso do Planejamento conta somente as peças da semana civil visíveis pelo filtro de formato ativo. |
-| Mês | Usa altura disponível e pontos por estado. O nome acessível do botão da semana inclui data, título e estado das peças do filtro ativo, ou Sem peças; clique/Enter/Espaço abre qualquer semana. Não carrega mídia. |
-| Período Semana/Mês | Alternar sem navegar conserva a semana; setas no Mês selecionam a segunda-feira da primeira linha do mês navegado. Abrir semana de borda conserva o mês escolhido para objetivo/pautas; setas na Semana mantêm esse mês enquanto houver interseção, depois usam o mês da quinta-feira (maioria dos dias). Ativar pauta usa pauta.mes explicitamente. O tema semanal normaliza o início registrado para segunda-feira; pauta confirmada disponível aparece como S# · tema. Sem registro Semanas no período, pauta navegável usa Pauta S# de mês · tema; havendo Semana sem confirmação, não apresenta origem inferida como confirmada. |
-| Sem data | Cada linha identifica tema da semana; sem tema usa período e, sem ambos, Semana não identificada. Mantém vínculo e abertura do dia completo. |
-| Produção | Projetos pela semana registrada: atual/futuras antes de passadas; órfãs e Sem data permanecem acessíveis. Progresso X de N prontas conta Pronta/Publicada no projeto inteiro, sem herdar o filtro de Planejamento. Semana registrada sem período mostra Período não identificado; grupo órfão tem h2 Semana não identificada e subtítulo compacto Sem semana. Cinco passos com aria-current ou motivo curto de correção/mídia. |
-| Futuro vazio | Futuro compara segundas-feiras civis normalizadas; um início posterior na mesma semana não é futuro. Cabeçalho com período, corpo somente **Planejamento na sexta-feira**; sem tema, pauta, contador ou percentual inventado. |
-| Miniaturas | Caixa com role=img e nome Prévia da peça/Prévia indisponível; glifo decorativo aria-hidden. Primeira imagem da seleção da 005, imagem inteira 4:5 com contain. IntersectionObserver carrega apenas peças visíveis da tela ativa pela rota local; falha individual mostra Prévia indisponível. |
-| Gaveta | Dia inteiro, unidades/versões, textos, pacote/cópia, avisos/atalhos de Planilha e galeria/ampliação preservados. Fatos visuais: Estado, Prevista e Versão; metadados de responsáveis/ferramentas removidos. Revisões mantêm decisão/motivo editorial. |
-| Planilha | Mesmos mínimos/opcionais, avisos, Histórico, teclado e atalhos; atualização foi realocada para o topo. |
+| Entrada/menu | Semana padrão; Planejamento, Produção e Publicar, contador acessível da fila integral. Planilha/tabelas/Histórico técnico/atalhos removidos da interface; dados permanecem na API. |
+| Atualização | ⟳ Atualizar único: POST {} e GET posterior, desabilitado até ambos terminarem; selo indicador e feedback acessível. Selo/Atualizar/feedback permanecem somente no topo da página, inerte durante showModal; para iniciar outra atualização pelo botão, fechar a prévia. Uma atualização iniciada antes da abertura ou releitura recebida conserva as regras da mesma peça/remoção/falha. Falha/no-op conservam dados/horário/falha ativa. Captura antiga mostra data/hora em São Paulo; falha com captura conserva esse instante, e falha inicial aparece vermelha como Atualização falhou · sem dados. title mantém a data/hora completa quando há captura. |
+| Dados a confirmar | Único badge global role=status em capture-actions, visível se há captura e view.avisos; permanece na página e não aparece no modal. Resumo da peça acrescenta a frase quando detalhes.avisos está preenchido. Oculta após captura nova sem avisos; falha/no-op/releitura seguem a vista da API, inclusive aviso global sem peças. Sem contagem, tabela, valor técnico ou nome de agente. |
+| Objetivo/pautas | Uma linha, nome completo acessível, botão aria-expanded e painel hidden sem espaço fechado. Meses permanece em view.planilha; S# · tema · modelo sem metadados de agentes, fallback textual sem estrutura inventada. |
+| Semana | Sete dias, botão/data/hoje acessíveis, miniatura/formato/título/estado. Região móvel horizontal focável centrada em hoje, rolagem por semana preservada; clique abre dia inteiro. Progresso segue peças visíveis pelo filtro de formato. |
+| Mês | Altura disponível, sete dias por linha, ponto colorido e tipo curto: Imagem → Oferta, Carrossel/Reels; alias somente visual. Rótulos completos em 390; nome acessível inclui peças/data/estado. Clique/Enter/Espaço abre semana, inclusive vazia; não carrega imagens. |
+| Períodos | Alternar Semana/Mês conserva a semana; setas de Mês usam a primeira linha, abrir borda preserva mês; Semana preserva mês enquanto houver interseção, depois usa quinta-feira. Ativar pauta usa seu mês. Não deduz vínculo confirmado por tema/data. |
+| Produção | Projetos da semana registrada, atual/futuras antes de passadas; progresso Pronta/Publicada no projeto inteiro. Sem data e órfãs acessíveis; cinco passos ou motivo curto travado. Botão Ver no Instagram é irmão do botão da linha, sem botões aninhados. |
+| Futuro vazio | Comparação por segunda-feira civil; cabeçalho com período e corpo somente Planejamento na sexta-feira, sem inventar tema/meta/peças. |
+| Miniaturas | Primeira imagem disponível da seleção 005, caixa 4:5 contain; IntersectionObserver solicita somente peças visíveis da tela ativa pela rota local. Falha individual usa placeholder. Pode escolher a próxima imagem disponível na seleção 005; o modal de Imagem única mantém a primeira posição lógica mesmo null. Essa divergência é deliberada. |
+| Publicar | Liberação literal liberado e publicação vazia, data civil crescente, sem data ao final; hoje destacado. Miniatura/textos, cópia local, pacote contratual seguro e prévia. Ao lado, até dez publicadas recentes e travadas com motivo simples; em 390 seguem a fila. |
+| Gaveta | Dia inteiro, unidades/versões/textos, galeria/ampliação e pacote/cópia preservados; Ver no Instagram depois do bloco Pronta. Sem agentes/avisos técnicos/atalhos Planilha. A abertura resolve ID na vista atual, não reusa objeto antigo após atualizar. |
+| Prévia | Mesmo dialog em Produção/Publicar/gaveta, moldura preta .phone 360/borda 10/cantos 38, Fechar fora/acima, avatar configurado DEMO/perfil/subtítulo, arte 4:5 contain com setas/contador sobrepostos e pontos abaixo, ícones decorativos/legenda literal/hashtags azuis. Imagem única 1/1 oculta setas/pontos; posição ausente entra no total. Mantém ←→/arrasto/Esc/foco; seta desabilitada vai à outra habilitada/Fechar, ponto ou seta ocultados por redução a 1/1 vão a Fechar. Releitura recebida mantém mesma peça/limita índice; remoção fecha/foco, falha conserva. Sem título/selo/Dados/Atualizar dentro do modal. |
 
-Cobertura LCOV não inclui src/web/app.js nem src/web/theme.js; layout-model.js e geradores sintéticos já eram medidos antes deste review. A UI dessas telas é verificada por Playwright, sem atribuir a variação de cobertura desta rodada à entrada desses arquivos no LCOV. Captura/API/projeção/coleta/cache/configuração/tema permanecem; não há nova dependência, conta ou estado editorial. O servidor acrescenta somente o estático `/layout-model.js`. [12 screenshots sintéticos](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-a) e testes de modelo/HTTP/interface/regressão comprovam o recorte A; o gate local não substitui CI/review do head final.
+renderPlanilha, celulaPlanilha e atalhos foram removidos; detalhesCaptura permanece simplificada para atualizar o selo. Principais integrações: renderPublicar, textosPublicacao, acoesPublicacao, botaoInstagram, renderProducao/projetoSemana, semanaPlanejamento, calendario, objetivoMensal e abrirDia/acordeaoPeca. A data inválida em publicação recente usa **Data de publicação a confirmar**, sem normalizar dia impossível; publicação preenchida continua fora da fila.
+
+API mantém o campo legado selo.destino = planilha; o cliente ignora esse destino, sem recriar a página removida. Travadas conserva ordem recebida da API sem limite próprio; formato vazio conserva texto vazio, sem novo rótulo inventado. Falha de GET com modal aberto preserva vista/controle/erro existente; a mensagem de resultado do botão ainda resume o POST. Esses limites não criam operação editorial.
+
+Dívidas de manutenção sugeridas no review: prontaParaPublicar e acoesPublicacao ainda repetem ações de cópia/pacote; uma consolidação futura deve preservar os contratos de clipboard e allowlist. Há tokens/estilos CSS legados sem uso a revisar em limpeza própria. Essas sugestões não são falhas reproduzidas do contrato e não alteraram código nesta entrega. A verificação de acessibilidade foi por Playwright; anúncios de role=status quando um nó deixa hidden e possíveis redundâncias precisam de ensaio futuro com leitor de tela real, que não foi realizado.
+
+LCOV não inclui app/theme/instagram/perfil-config; layout-model e geradores sintéticos são medidos. Playwright verifica 1440/390, temas, foco/teclado/contraste, conteúdo literal e invariância; CI Linux mantém pulos UI/PowerShell na dívida M8. [20 screenshots da B](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-b), [12 históricos da A](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-a); gate local não substitui CI/review no head final.
 
 ## Inicialização e navegação — histórico 001–005
 
@@ -72,7 +79,7 @@ O bootstrap externo síncrono mantém `script-src 'self'`, sem script inline ou 
 
 Gate Windows histórico de 06/10: **350 PASS**. Em 07/10, o gate final da árvore local teve **356 PASS**, incluindo **três testes preexistentes do iniciador fora do PR**; cobertura **96,3498%** (antes **98,3871%**; o LCOV passou a incluir `scripts/screenshots-tema.cjs` pelos dois testes VM, ampliando o escopo medido sem alterar o código da aplicação), complexidade PASS com **17 avisos**, baseline preservada e exit **0**. Semgrep SKIP no Windows/audit N/A; a integração posterior foi concluída pelo [PR #18](https://github.com/Browsher/crm-social/pull/18). A revisão local anterior do ajuste não encontrou Critical, Important ou Minor nos insumos examinados; o review publicado do head anterior apontou correções de documentação/limpeza sintética, atendidas na rodada descrita antes da integração.
 
-O gerador tem [três testes próprios](../../tests/screenshots-tema.test.cjs), **3 PASS sem SKIP** localmente. Dois casos VM leem/executam `scripts/screenshots-tema.cjs` real, interrompem antes da captura e comprovam que a limpeza não remove caminho fora de TEMP ou com prefixo inválido. O CLI executa uma cópia em TEMP, gera 16 PNG com larguras 1440/390 e comprova a remoção somente do TEMP criado pelo script, preservando diretório alheio com prefixo semelhante. O CI executa os dois casos VM; o CLI com navegador declara SKIP pela pendência M8. O teste HTTP H02 passou percorrendo os quatro estáticos, inclusive `/theme.js`, com GET/HEAD e MIME correspondente. Nesta rodada não houve alteração do código de produção, PNG, configuração de CI/gate ou baseline. [Galeria de 16 screenshots sintéticos](../design/screenshots/LEIA-ME.md#tema-claro-e-escuro), regenerada por [scripts/screenshots-tema.cjs](../../scripts/screenshots-tema.cjs) com Node/Playwright existentes. Sem nova dependência, polling, alteração dos contratos de captura ou validação editorial.
+Registro histórico do gerador de tema anterior à 006 B. O gerador tem [três testes próprios](../../tests/screenshots-tema.test.cjs), **3 PASS sem SKIP** localmente. Dois casos VM leem/executam `scripts/screenshots-tema.cjs` real, interrompem antes da captura e comprovam que a limpeza não remove caminho fora de TEMP ou com prefixo inválido. O CLI executa uma cópia em TEMP, gera 16 PNG com larguras 1440/390 e comprova a remoção somente do TEMP criado pelo script, preservando diretório alheio com prefixo semelhante. O CI executa os dois casos VM; o CLI com navegador declara SKIP pela pendência M8. O teste HTTP H02 passou percorrendo os quatro estáticos, inclusive `/theme.js`, com GET/HEAD e MIME correspondente. Nesta rodada não houve alteração do código de produção, PNG, configuração de CI/gate ou baseline. [Galeria de 16 screenshots sintéticos](../design/screenshots/LEIA-ME.md#tema-claro-e-escuro), regenerada por [scripts/screenshots-tema.cjs](../../scripts/screenshots-tema.cjs) com Node/Playwright existentes. Sem nova dependência, polling, alteração dos contratos de captura ou validação editorial.
 
 ## Objetivo e pautas do mês — histórico 003/004
 
@@ -125,12 +132,12 @@ Grid preserva oito colunas em ordem: quatro em 1440 px, duas até 1100 px e uma 
 
 ## Planilha, Histórico e avisos
 
-Como folhas de consulta do mesmo álbum, seis abas obrigatórias e as opcionais capturadas mantêm o conjunto NTV completo.
-O atalho da gaveta localiza somente os avisos relacionados à peça, sem reduzir as
-tabelas. A tela usa `planilha`, `historico`, `avisos` e `detalhes.avisos` da API
-existente; não há nova consulta remota nem escrita.
+Na apresentação histórica 001–005, como folhas de consulta do mesmo álbum, seis abas obrigatórias e as opcionais capturadas mantinham o conjunto NTV completo.
+O atalho da gaveta localizava somente os avisos relacionados à peça, sem reduzir as
+tabelas. A tela usava `planilha`, `historico`, `avisos` e `detalhes.avisos` da API
+existente, sem nova consulta remota nem escrita. Na 006 B esses destinos visuais foram removidos; os dados continuam completos na API.
 
-| Seção / controle | Apresentação atual |
+| Seção / controle | Apresentação histórica 001–005 |
 | --- | --- |
 | Subtítulo | Dados capturados da planilha, por aba; ao voltar às demais telas, Peças registradas, semana a semana. |
 | Origem e atualização | Fonte, fim e cobertura; falha ativa em uma linha e contador de avisos gerais como link, sem repetir os motivos |
@@ -142,40 +149,40 @@ existente; não há nova consulta remota nem escrita.
 | Avisos de dados | Aba/Linha/Campo/Motivo; — quando não há localização; oculto em Histórico ou sem avisos |
 | Releitura | Conserva a aba disponível e filtro da peça ainda existente; erro HTTP conserva a visão anterior |
 
-`tabelaLocal` cria a região focável e tabela por `textContent`;
-`historicoPlanilha` usa toda a lista confirmada, sem inferir novas tentativas
-de GET/no-op nem mostrar órfãos. `renderPlanilha` acrescenta Histórico após
-as seis abas e Meses/Pautas se capturadas; `tabPlanilha` e `escolherAba` sincronizam seleção, foco,
+Na interface histórica 001–005, `tabelaLocal` criava a região focável e tabela por `textContent`;
+`historicoPlanilha` usava toda a lista confirmada, sem inferir novas tentativas
+de GET/no-op nem mostrar órfãos. `renderPlanilha` acrescentava Histórico após
+as seis abas e Meses/Pautas se capturadas; `tabPlanilha` e `escolherAba` sincronizavam seleção, foco,
 `aria-selected` e `aria-labelledby`, com rolagem da aba até a área visível. Se a
-aba deixa de existir, a primeira disponível é selecionada.
+aba deixava de existir, a primeira disponível era selecionada.
 
-`avisosPeca` fecha a gaveta, chama `navegar` com a produção, abre
-Produções e dá rolagem/foco a `#avisos-dados`. `renderAvisosPlanilha` usa os
-avisos relacionados da peça; todas as tabelas permanecem globais à captura NTV.
-Menu e selo entram sem filtro; **Todos os avisos** restaura os gerais no painel.
-O link **N avisos de dados** de Origem também restaura os gerais, seleciona Produções
-e dá foco/rolagem ao painel, inclusive ao sair de Histórico. O contador usa a
+`avisosPeca` fechava a gaveta, chamava `navegar` com a produção, abria
+Produções e dava rolagem/foco a `#avisos-dados` na interface histórica. `renderAvisosPlanilha` usava os
+avisos relacionados da peça; todas as tabelas permaneciam globais à captura NTV.
+Menu e selo entravam sem filtro; **Todos os avisos** restaurava os gerais no painel.
+O link **N avisos de dados** de Origem também restaurava os gerais, selecionava Produções
+e dava foco/rolagem ao painel, inclusive ao sair de Histórico. O contador usava a
 quantidade global de avisos, sem deduplicar linhas ou acompanhar o filtro da peça.
 
-`motivoAviso` consolida o texto de mídia de cada aviso apenas na apresentação:
+`motivoAviso` consolidava o texto de mídia de cada aviso apenas na apresentação:
 **Imagens e vídeo ausentes**, **Imagem final ausente**, **Nenhum arquivo da produção
-registrado** e **Imagem ausente** para páginas são exemplos. Retira a repetição
-do prefixo e reúne causas distintas em uma célula; conserva a quantidade de linhas
-e Aba/Linha/Campo. Outros motivos permanecem como recebidos; a API não é alterada.
+registrado** e **Imagem ausente** para páginas eram exemplos. Retirava a repetição
+do prefixo e reunia causas distintas em uma célula; conservava a quantidade de linhas
+e Aba/Linha/Campo. Outros motivos permaneciam como recebidos; a API não era alterada.
 
-`motivoHistorico` traduz falhas para linguagem de tela: **Cenas complete:
-inválido** vira **Aba Cenas incompleta**; outras validações de aba usam **Aba X
-inválida**, incluindo Meses/Pautas: complete inválido vira **Aba Meses incompleta** ou **Aba Pautas incompleta**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
-inválido recebem rótulos próprios; motivo desconhecido usa **Captura não pôde ser
-importada**, vazio permanece vazio. Resultado desconhecido usa **Resultado
+`motivoHistorico` traduzia falhas para linguagem de tela: **Cenas complete:
+inválido** virava **Aba Cenas incompleta**; outras validações de aba usavam **Aba X
+inválida**, incluindo Meses/Pautas: complete inválido virava **Aba Meses incompleta** ou **Aba Pautas incompleta**. Horário futuro, captura desatualizada e arquivo ausente/ilegível ou
+inválido recebiam rótulos próprios; motivo desconhecido usava **Captura não pôde ser
+importada**, vazio permanecia vazio. Resultado desconhecido usava **Resultado
 desconhecido**. Os motivos originais do recibo continuam na API e na persistência.
 
-`celulaPlanilha` aplica a allowlist somente a `url`/`url_video_final`:
-valor dedicado preenchido recusado por `urlAutorizada` vira **link não permitido**;
-o marcador exato **[conteúdo suprimido]** permanece. A API conserva seus valores
+`celulaPlanilha` aplicava a allowlist somente a `url`/`url_video_final`:
+valor dedicado preenchido recusado por `urlAutorizada` virava **link não permitido**;
+o marcador exato **[conteúdo suprimido]** permanecia. A API conserva seus valores
 triados, incluindo URL dedicada válida fora da allowlist visual. Texto livre
 legítimo mantém suas URLs como texto, conforme a redação do contrato. Células não
-criam links, navegação ou carga automática. A garantia de não ecoar URL recusada
+criavam links, navegação ou carga automática. A garantia de não ecoar URL recusada
 refere-se aos campos dedicados e links de arquivos; não varre todas as frases.
 
 ## Gaveta do dia, texto e acessibilidade
@@ -211,7 +218,7 @@ O diálogo nativo recebe título de data/sem data, quantidade e **todas** as pe�
 | Avisos da peça | Quantidade de aviso(s) de dados nesta peça e link ver na Planilha, com plural correto e sem separador pendurado; aba/linha/campo permanecem na API |
 | Documentos da semana | Uma seção no fim do dia; cada semana representada tem Plano/Redação/Visual uma vez, com — para ausentes, inclusive sem semana identificada |
 
-O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. O link dos avisos fecha a gaveta, abre Produções na Planilha e dá rolagem/foco ao painel detalhado da peça; Origem conserva a falha ativa e o contador geral, com os motivos somente no painel.
+O botão de fechar usa `dialog.close`; Esc usa o comportamento nativo. O evento `close` devolve o foco ao acionador se ele continuar no DOM. `summary` recebe foco visível e pode alternar o acordeão por teclado. Em desktop a gaveta fica à direita, com largura máxima de 520 px; abaixo de 720 px ocupa a tela inteira, com corpo de rolagem própria. O calendário/lista por trás não recebe um segundo recorte dos dados. Na interface histórica 001–005, o link dos avisos fechava a gaveta, abria Produções na Planilha e dava rolagem/foco ao painel detalhado da peça; Origem conservava a falha ativa e o contador geral, com os motivos somente no painel. Esses atalhos foram removidos na 006 B.
 
 Publicação preenchida permanece como registro explícito e conserva o valor original. Quando formato/fuso são inválidos ou o instante excede o fim da captura, a projeção acrescenta um aviso localizado em `publicado_em`; a gaveta conserva o registro e resume a quantidade de avisos, sem verificar publicação remotamente. Campo vazio omite a linha, sem comprovar publicação. IDs de escopo/revisão e seus valores completos continuam na API, sem rótulos técnicos na linha visual. A API ainda conserva `detalhes.responsavelRegistrado='A confirmar'` quando vazio, mas a faixa usa `responsavel_atual` e omite esse campo vazio.
 
@@ -229,7 +236,7 @@ A projeção preserva a frase legítima e substitui somente o pedaço HTTP(S) se
 
 Como um texto atualizado que reaproveita uma fotografia, a página mostra **imagem vN** quando a versão original do arquivo ligado é inteira positiva, sem comparar com a produção ou o texto. `adicionarVersaoImagem` (`src/web/app.js`) mostra **imagem: versão a confirmar** para versão vazia/inválida, preservando o original na API e o link do vínculo válido. `secaoUnidades` agrupa por `[vigente,versao]`; os grupos vigentes são seções abertas e os demais são `details` recolhidos com **impacto atual a confirmar**. Os grupos atuais conservam a ordem numérica crescente de versão recebida da projeção; dentro deles, índice e ID estabilizam a ordem. Uma mesma versão pode ter unidades atuais e históricas em grupos separados quando outro índice já avançou. Índice e versão válidos e a maior versão por índice vêm da projeção; a UI não escolhe mídia ou recalcula vigência.
 
-[tests/versoes-interface.test.cjs](../../tests/versoes-interface.test.cjs) confere cinco páginas de texto v3 com imagens v2/v1/v1/v2/v3, grupos atuais/históricos com o mesmo número de versão, rótulo de versão inválida/vazia sem perder o link, links exatos, Escape e ausência de corte horizontal. Quatro cenários cobrem claro/escuro em 1440/390, com somente GET local, estado TEMP, porta efêmera, requests externos bloqueados e erros do navegador verificados. A suíte atual tem sete casos de UI; as quatro imagens continuam inalteradas. [Validação da correção](../reports/versoes-unidades-validacao.md) e [quatro screenshots sintéticos](../design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas); integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`. Revisões, pacote e recolhimento de Pronta conservam suas regras próprias.
+[tests/versoes-interface.test.cjs](../../tests/versoes-interface.test.cjs) confere cinco páginas de texto v3 com imagens v2/v1/v1/v2/v3, grupos atuais/históricos com o mesmo número de versão, rótulo de versão inválida/vazia sem perder o link, links exatos, Escape e ausência de corte horizontal. Quatro cenários cobrem claro/escuro em 1440/390, com somente GET local, estado TEMP, porta efêmera, requests externos bloqueados e erros do navegador verificados. Na rodada histórica registrada, a suíte tinha sete casos de UI; as quatro imagens continuam inalteradas. [Validação da correção](../reports/versoes-unidades-validacao.md) e [quatro screenshots sintéticos](../design/screenshots/LEIA-ME.md#versões-de-páginas-e-cenas); integrada pelo [PR #22](https://github.com/Browsher/crm-social/pull/22), merge `b90980a`. Revisões, pacote e recolhimento de Pronta conservam suas regras próprias.
 
 ## Verificação e limites
 

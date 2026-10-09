@@ -65,9 +65,10 @@ for(const theme of ['light','dark'])for(const width of [1440,390])test(`Pronta q
   assert.equal(await section.getByRole('status').innerText(),'Legenda copiada.');
   await fold.locator(':scope>summary').click();assert.ok(await p.locator('.unit-record:visible').count()>0);
   assert.equal(await p.locator('.notice').count(),0);
-  await p.getByRole('link',{name:'ver na Planilha',exact:true}).click();
-  assert.ok(await page.locator('#avisos-tabela tbody tr').count()>0);
-  assert.match(await page.locator('#avisos-tabela').innerText(),/Imagem ausente/);
+  assert.equal(await p.getByRole('link',{name:'ver na Planilha',exact:true}).count(),0);
+  const view=await page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));
+  assert.ok(view.producoes.find(p=>p.producao_id==='peca-3').detalhes.avisos.some(a=>a.motivo.includes('Mídia ausente')));
+  assert.equal(await page.locator('#dia').isVisible(),true);
 });
 test('Pronta preserva revisão vigente na gaveta após a seção de publicação',{skip},async t=>{
   const page=await abrir(t,{editar:raw=>adicionarRegistro(raw,'Revisoes',{

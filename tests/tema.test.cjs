@@ -202,13 +202,13 @@ for(const scheme of ['light','dark'])for(const width of [1440,390])test('Tema: c
   await page.locator('#lista [data-producao-id="peca-4"]').click();
   await conferirContraste(page);
   await page.keyboard.press('Escape');
-  for(const screen of ['Produção','Planilha']) {
+  for(const screen of ['Produção','Publicar']) {
     if(width===390)await page.locator('#menu').click();
-    await page.getByRole('button',{name:screen,exact:true}).click();
+    await page.locator('[data-tela="'+(screen==='Produção'?'producao':'publicar')+'"]').click();
     await conferirContraste(page);
   }
-  await page.locator('[data-aba="Meses"]').click();await conferirContraste(page);
-  await page.locator('[data-aba="Histórico"]').click();await conferirContraste(page);
+  assert.equal(await page.locator('#planilha,[data-tela="planilha"]').count(),0);
+  assert.equal(await page.locator('#selo').getAttribute('role'),'status');
 });
 for(const scheme of ['light','dark']) {
   test('Tema: erro de consulta mantém texto AA em '+scheme,{skip},async t=>{

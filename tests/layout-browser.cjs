@@ -8,9 +8,9 @@ const google=require('../src/google.cjs');
 const {criarServicoMidia}=require('../src/midia.cjs');
 const skip=process.env.CI==='true'?'Interface exclusiva do computador; Playwright não é instalado no CI':false;
 
-async function abrirLayout(t,{width=390,theme='light',editar=()=>{},captura=capturaLayout,download}={}) {
+async function abrirLayout(t,{width=390,theme='light',editar=()=>{},captura=capturaLayout,download,semCaptura=false}={}) {
   const dir=temporario(t),raw=captura();editar(raw);
-  assert.equal(promoverCaptura(recalcularHashes(raw),dir).resultado,'completa','fixture completa em TEMP');
+  if(!semCaptura)assert.equal(promoverCaptura(recalcularHashes(raw),dir).resultado,'completa','fixture completa em TEMP');
   const credentials=credencialSintetica(t),transport=transporteFalso({download:download||(async(url,options)=>{
     const id=decodeURIComponent(new URL(url).pathname.split('/').at(-1));
     assert.match(id,/^drive-sintetico-/);
@@ -51,7 +51,11 @@ async function navegar(page,tela) {
   const button=page.locator('[data-tela="'+tela+'"]');await button.focus();await page.keyboard.press('Enter');
 }
 async function atualizar(context) {
-  const {page}=context;await page.locator('#atualizar').click();
+  const {page}=context,button=page.locator('#atualizar');
+  // Com modal nativo aberto, o topo está inerte: este ramo é atualização
+  // programática pelo mesmo handler e POST reais, não uma ação acessível na prévia.
+  if(await page.locator('#instagram[open]').count())await button.evaluate(n=>n.click());
+  else await button.click();
   await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao').textContent==='Atualizando dados…');
   context.release();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
 }

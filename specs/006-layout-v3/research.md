@@ -1,6 +1,6 @@
 # Pesquisa — Layout v3
 
-Data: 08/10/2026. Pesquisa documental anterior à implementação; não é prova de execução. A Parte A foi depois implementada/testada localmente, com [validação própria](validacao.md); decisões de perfil/modal/fila e retirada de Planilha pertencem à B, ainda não iniciada.
+Data: 08/10/2026. Pesquisa documental anterior à implementação, sem prova de execução. A integrada após aprovação em 09/10; B implementada/testada localmente e não integrada. Revisão visual solicitada pelo autor em 09/10 preserva32 IDs e PR #25, semmerge; Fonte de código/testes 08ba10b; gate oficial executado em bc74d6e: 756 PASS/0 SKIP, cobertura 95,5217%, 688 métricas/máximo 16/18 avisos, exit 0/baseline preservada; Semgrep SKIP local/audit N/A. Quatro PNG Instagram novos em 08ba10b; dezesseis PNG B preservados em 800d7ca. Push realizado e CI estrito de 1bcb4a8 SUCCESS/Semgrep PASS; revisão independente aprovada, Minor documental corrigido. Review remoto adjudicado sem bloqueio: I1 não reproduzido, I2 histórico corrigido; resultados do head final são conferidos no PR; merge B proibido. [Validação](validacao.md) preserva as fontes/resultados anteriores como história.
 
 ## Decisão 1 — preservar a tecnologia existente
 
@@ -26,7 +26,7 @@ Versões e vínculos permanecem como PR #22/005: unidades vigentes por índice, 
 
 ## Decisão 5 — configuração de perfil declarativa
 
-**Decisão:** src/web/perfil-config.js será um arquivo de configuração público, com nomePerfil sintético perfil.exemplo, carregado antes de instagram.js/app.js. **Motivo:** atende ao nome fora da lógica sem endpoint, conta autenticada ou dado operacional versionado. **Alternativas:** literal dentro do pop-up viola o requisito; configurar pelo snapshot muda dados; JSON remoto/API nova é desnecessário. Configuração ausente/inválida mostra “Perfil não configurado”.
+**Decisão:** src/web/perfil-config.js é um arquivo de configuração público, com nomePerfil sintético perfil.exemplo, carregado antes de instagram.js/app.js. **Motivo:** atende ao nome fora da lógica sem endpoint, conta autenticada ou dado operacional versionado. **Alternativas:** literal dentro do pop-up viola o requisito; configurar pelo snapshot muda dados; JSON remoto/API nova é desnecessário. Configuração ausente/inválida mostra “Perfil não configurado”.
 
 ## Decisão 6 — referências e responsividade
 
@@ -37,6 +37,10 @@ Versões e vínculos permanecem como PR #22/005: unidades vigentes por índice, 
 **Decisão:** usar a instalação atual do Playwright, node:test e assert/strict; teclado real de automação, dialog nativo e eventos touch sintéticos para comprovar o handler de arrasto. **Motivo:** documentação atual confirma Escape em dialog e dispatchEvent para gestos. Eventos touch disparados não têm isTrusted; a prova é de comportamento automatizado, não gesto físico em aparelho real.
 
 Context7: resolve-library-id Playwright → /microsoft/playwright (fonte High; documentação oficial); query-docs focada em dialog, Escape, foco, teclado e arrasto. Fontes primárias: [testes oficiais de teclado](https://github.com/microsoft/playwright/blob/main/tests/page/page-keyboard.spec.ts) e [documentação de eventos touch](https://github.com/microsoft/playwright/blob/main/docs/src/touch-events.md). Não se instala @playwright/test: adaptar os exemplos ao runner já existente.
+
+## Complementos verificados na Parte B
+
+Atualização em 09/10/2026: a prévia nativa torna o fundo inerte. Na revisão visual posterior, selo/Dados/Atualizar/feedback permanecem somente na página, sem transporte/clonagem; nova atualização pelo botão exige fechar a prévia. Releitura recebida de clique iniciado antes da abertura ou programática durante modal mantém as regras de identidade/remoção/falha. Botões resolvem ID na vista vigente no clique, conservando decisão de nova versão/remoção. A data de publicação usa validação ISO com dia civil real compartilhada, evitando Date.parse normalizar 30 de fevereiro. Mês usa o alias visual Imagem → Oferta conforme mockup e pedido, sem inferência de pauta/elegibilidade. Slots completos do modal são derivados separados da seleção histórica da galeria; Imagem única conserva o primeiro lógico mesmo indisponível. Reels usa nomes de Cena/início/final. Os geradores tema/pautas agora gravam em subdiretórios dedicados por padrão, com Publicar, para preservar as galerias históricas; apenas as cópias CLI dos testes têm galeria TEMP. O selo antigo e falha inicial conservaram data/hora/falha explícitas após review. Fonte/cobertura/avisos permanecem na captura/API por decisão visual explícita já fornecida pelo autor, sem novo clarify ou emenda. Review do head b5 apontou necessidade de um sinal mínimo de incerteza: Dados a confirmar agora deriva avisos globais/no resumo da peça e permanece somente na página, sem restabelecer a página técnica. Setas desabilitadas transferem foco; seta/ponto ocultados ao reduzir a 1 vão a Fechar. A revisão visual usa .phone preta 360/borda 10/cantos 38, Fechar fora, siglaMarca configurada DEMO, perfil/subtítulo, arte 4:5 com setas/contador sobrepostos e pontos abaixo, ícones decorativos e legenda literal/hashtags azuis; single 1/1 oculta navegação. Avatar valida trim/até 5/C0DEL, uppercase e fallback •. A divergência miniatura disponível versus primeira posição ausente no modal é deliberada para preservar 005 e slots. Perfil versionado permanece sintético; nome real seria somente personalização local, sem mecanismo ignored/env implementado. [Contrato](contracts/apresentacao.md).
 
 ## Assunções de produto
 

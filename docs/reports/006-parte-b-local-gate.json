@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "feature": "006-layout-v3",
+  "part": "B",
+  "revision": "Composição visual do pop-up conforme .phone do mockup",
+  "sourceCommit": "bc74d6e91af6089e673d65d4be6754a4cc7ec9ec",
+  "codeSourceCommit": "08ba10b561ad3c4d818e3ceacbc75a8adae93b53",
+  "screenshotSourceCommit": "08ba10b561ad3c4d818e3ceacbc75a8adae93b53",
+  "retainedScreenshotSourceCommit": "800d7ca2930284da4566f33dae5f3699e0eecc84",
+  "updatedScreenshots": 4,
+  "retainedScreenshots": 16,
+  "date": "2026-10-09",
+  "environment": "Windows local, somente fixtures sintéticas e TEMP",
+  "command": "node tools/quality-gate.mjs",
+  "nodeVersion": "24.19.0",
+  "exitCode": 0,
+  "baselineUpdated": false,
+  "results": [
+    {
+      "name": "tests",
+      "state": "PASS",
+      "reason": "",
+      "count": 756,
+      "skipped": 0
+    },
+    {
+      "name": "coverage",
+      "state": "PASS",
+      "reason": "",
+      "percent": 95.52169898430286,
+      "drop": 0
+    },
+    {
+      "name": "complexity",
+      "state": "PASS",
+      "reason": "",
+      "metricCount": 688,
+      "maximum": 16,
+      "warningCount": 18
+    },
+    {
+      "name": "semgrep",
+      "state": "SKIP",
+      "reason": "Semgrep ausente; instalar CE 1.179.0"
+    },
+    {
+      "name": "audit",
+      "state": "N/A",
+      "reason": "sem package.json/dependencias do app"
+    }
+  ],
+  "limits": [
+    "UI app.js/theme.js/instagram.js/perfil-config.js fora do LCOV; comportamento verificado por Playwright local",
+    "drop zero no modo full não representa comparação histórica",
+    "prova local não substitui CI e review do head final",
+    "quatro PNG Instagram regenerados e inspecionados na fonte 08ba10b; os outros dezesseis da B permanecem byte a byte na fonte 800d7ca",
+    "Atualizar permanece só no topo; com diálogo nativo aberto o fundo é inerte. Atualização já iniciada e releitura programática preservam a mesma peça/remoção/falha."
+  ]
+}

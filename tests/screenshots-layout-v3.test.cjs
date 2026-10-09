@@ -16,7 +16,7 @@ for(const captureFails of [true,false])test('Screenshots Layout v3 encerra todos
       t.after(()=>cleaned.push('TEMP'));
       t.after(()=>{cleaned.push('servidor');throw cleanupError;});
       t.after(()=>cleaned.push('navegador'));
-      return {page:{locator:()=>({click:async()=>{},all:async()=>[],count:async()=>0}),evaluate:async()=>true,
+      return {page:{locator:()=>({click:async()=>{},all:async()=>[],count:async()=>0,textContent:async()=>'1/5'}),evaluate:async()=>true,
         waitForFunction:async()=>{if(captureFails)throw primary;},screenshot:async()=>{}}};
     }};
     return localRequire(name);
@@ -27,14 +27,14 @@ for(const captureFails of [true,false])test('Screenshots Layout v3 encerra todos
   assert.deepEqual(cleaned,['navegador','servidor','TEMP'],'uma falha não interrompe a limpeza dos demais recursos');
 });
 
-test('Screenshots Layout v3 Parte A gera 12 PNG sintéticos e preserva arquivo alheio',{
+test('Screenshots Layout v3 Parte B gera 20 PNG sintéticos e preserva arquivo alheio',{
   skip:process.env.CI==='true'?'Interface exclusiva do computador; Playwright não é instalado no CI':false,timeout:60000
 },async t=>{
   const root=temporario(t),output=path.join(root,'evidencias'),marker=path.join(root,'preservar.txt');
   fs.writeFileSync(marker,'arquivo alheio sintético');
-  assert.equal(await gerar({output}),12);
-  assert.equal(fs.readdirSync(output).length,12);
-  for(const theme of ['light','dark'])for(const vista of ['semana','mes','producao'])for(const width of [1440,390]) {
+  assert.equal(await gerar({output}),20);
+  assert.equal(fs.readdirSync(output).length,20);
+  for(const theme of ['light','dark'])for(const vista of ['semana','mes','producao','publicar','instagram'])for(const width of [1440,390]) {
     const bytes=fs.readFileSync(path.join(output,`layout-v3-${theme}-${vista}-${width}.png`));
     assert.deepEqual(bytes.subarray(0,8),Buffer.from([137,80,78,71,13,10,26,10]));
     assert.equal(bytes.readUInt32BE(16),width);

@@ -8,7 +8,7 @@ const {capturaQuadro,capturaMeses,mapaQuadroSintetico,recalcularHashes,redefinir
 const {promoverCaptura}=require('../src/snapshot.cjs');
 const {criarServidor}=require('../src/servidor.cjs');
 
-const destination=path.resolve(__dirname,'../docs/design/screenshots');
+const destination=path.resolve(__dirname,'../docs/design/screenshots/tema-layout-v3');
 function preparar(root) {
   const dataDir=path.join(root,'dados'),quadroConfigPath=path.join(root,'quadro.json');
   fs.writeFileSync(quadroConfigPath,JSON.stringify(mapaQuadroSintetico()));
@@ -42,9 +42,9 @@ async function capturarContexto(browser,origin,theme,width) {
       await capture('planejamento');
       await page.locator('#lista [data-producao-id="peca-4"]').click();
       await capture('gaveta');await page.keyboard.press('Escape');
-      for(const [label,name] of [['Produção','producao'],['Planilha','planilha']]) {
+      for(const [label,name] of [['Produção','producao'],['Publicar','publicar']]) {
         if(width===390)await page.locator('#menu').click();
-        await page.getByRole('button',{name:label,exact:true}).click();
+        await page.locator('[data-tela="'+(label==='Produção'?'producao':'publicar')+'"]').click();
         await capture(name);
       }
       assert.deepEqual(errors,[]);assert.deepEqual(external,[]);

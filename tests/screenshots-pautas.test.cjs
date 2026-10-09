@@ -60,7 +60,7 @@ test('Pautas screenshots: falha do navegador encerra servidor, limpa TEMP e info
   assert.deepEqual(fs.readdirSync(base),[],'Falha remove apenas o TEMP criado pelo gerador');
 });
 
-test('Pautas screenshots: CLI gera 20 PNG e preserva galeria e TEMP alheios',{
+test('Pautas screenshots: CLI padrão preserva 20 PNG históricos e gera pautas-layout-v3 com Publicar em TEMP',{
   skip:process.env.CI==='true'?'Interface exclusiva do computador; Playwright não é instalado no CI':false,
   timeout:90000
 },t=>{
@@ -69,8 +69,13 @@ test('Pautas screenshots: CLI gera 20 PNG e preserva galeria e TEMP alheios',{
   fs.copyFileSync(script,path.join(copy,'scripts/screenshots-pautas.cjs'));
   for(const fixture of ['fixtures.cjs','pautas-fixtures.cjs'])fs.copyFileSync(path.join(__dirname,fixture),path.join(copy,'tests',fixture));
   fs.cpSync(path.join(project,'src'),path.join(copy,'src'),{recursive:true});
-  const output=path.join(copy,'docs/design/screenshots');fs.mkdirSync(output,{recursive:true});
-  const existing=path.join(output,'tema-light-planejamento-1440.png');
+  const gallery=path.join(copy,'docs/design/screenshots');fs.mkdirSync(gallery,{recursive:true});
+  const historical=new Map();
+  for(const theme of ['light','dark'])for(const screen of ['card','semana-origem','gaveta','mes-sem-pautas','planilha'])for(const width of [1440,390]){
+    const name=`pautas-${theme}-${screen}-${width}.png`,bytes=Buffer.from('PNG histórico sintético preservado: '+name);
+    historical.set(name,bytes);fs.writeFileSync(path.join(gallery,name),bytes);
+  }
+  const existing=path.join(gallery,'tema-light-planejamento-1440.png');
   fs.writeFileSync(existing,'galeria anterior preservada');
   const other=path.join(temp,'crm-pautas-sintetico-preservar');fs.mkdirSync(other,{recursive:true});
   fs.writeFileSync(path.join(other,'preservar.txt'),'arquivo sintético preservado');
@@ -80,8 +85,14 @@ test('Pautas screenshots: CLI gera 20 PNG e preserva galeria e TEMP alheios',{
   assert.equal(result.error,undefined);
   assert.equal(result.status,0,result.stderr);
   assert.equal(result.stdout,'Screenshots de pautas sintéticos: 20; passou\n');
-  assert.equal(fs.readdirSync(output).filter(name=>name.startsWith('pautas-')).length,20);
-  for(const theme of ['light','dark'])for(const screen of ['card','semana-origem','gaveta','mes-sem-pautas','planilha'])for(const width of [1440,390]){
+  for(const [name,bytes] of historical)assert.ok(fs.readFileSync(path.join(gallery,name)).equals(bytes),
+    'A execução padrão não pode sobrescrever a evidência histórica '+name);
+  assert.equal(fs.readFileSync(existing,'utf8'),'galeria anterior preservada');
+  assert.deepEqual(fs.readdirSync(gallery).sort(),[...historical.keys(),path.basename(existing),'pautas-layout-v3'].sort());
+  const output=path.join(gallery,'pautas-layout-v3');
+  assert.equal(fs.readdirSync(output).length,20);
+  assert.ok(fs.readdirSync(output).every(name=>!name.includes('planilha')));
+  for(const theme of ['light','dark'])for(const screen of ['card','semana-origem','gaveta','mes-sem-pautas','publicar'])for(const width of [1440,390]){
     const png=fs.readFileSync(path.join(output,`pautas-${theme}-${screen}-${width}.png`));
     assert.deepEqual(png.subarray(0,8),Buffer.from([137,80,78,71,13,10,26,10]));
     assert.equal(png.readUInt32BE(16),width);
