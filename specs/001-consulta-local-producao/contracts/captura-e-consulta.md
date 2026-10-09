@@ -169,8 +169,8 @@ ou momento de atualização da tela. O selo em todas as telas abre Planilha.
 
 - Data prevista é `YYYY-MM-DD` civil válida; não converter UTC mudando o dia. Seriais
   sem conversão documentada, vazios e datas inválidas vão para Sem data com aviso.
-- Formato usa os slots confirmados `imagem_a`/`imagem_b` → Imagem, `carrossel` → Carrossel,
-  `reels` → Reels. `tipo_producao` permanece registrado separado; não importar o filtro
+- Formato usa os slots confirmados `imagem_a`/`imagem_b`/`imagem_oferta` → Imagem, `carrossel` → Carrossel,
+  `reels` → Reels. Slot e `tipo_producao` originais permanecem registrados separados; não importar o filtro
   `institucional` do seletor. Slot desconhecido fica Outro, visível em Todos, com original.
 - Grupo de dia inclui todas as peças NTV com a mesma data, mesmo se o filtro resumido
   ocultar alguma. Ordem determinística por `producao_id` com comparação ordinal;
