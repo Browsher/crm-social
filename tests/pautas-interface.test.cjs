@@ -75,8 +75,8 @@ test('U004 calendário e gaveta reúnem todas as origens únicas do dia, sem inf
   const page=await abrir(t,{raw});
   await page.locator('.planning-day[data-data="2026-11-10"] .planning-day-heading').click();
   assert.deepEqual(await page.locator('#dia-pecas .pauta-origin').allTextContents(),['Pauta S2 de novembro','Pauta S3 de novembro']);
-  await page.keyboard.press('Escape');await page.locator('#selo').click();
-  assert.match(await page.locator('#avisos-tabela').textContent(),/Semanas.*pauta_id/s);
+  await page.keyboard.press('Escape');const view=await visao(page);
+  assert.ok(view.avisos.some(a=>a.aba==='Semanas'&&a.campo==='pauta_id'));
 });
 
 for(const width of [1440,390])for(const scheme of ['light','dark'])test('U004 semana focada conserva região e texto integral '+width+' '+scheme,{skip},async t=>{
@@ -119,24 +119,22 @@ test('U004 Pautas sem Meses conserva texto literal, tabela completa, teclado e r
   }});
   assert.match(await page.locator('#objetivo-mes').textContent(),/Ainda não definido/);
   assert.equal(await page.locator('#objetivo-mes img').count(),0);assert.match(await page.locator('.pauta-link').first().textContent(),/<img/);
-  await page.locator('#selo').click();await page.locator('[data-aba="Revisoes"]').focus();await page.keyboard.press('ArrowRight');
-  assert.equal(await page.locator('[data-aba="Pautas"]').getAttribute('aria-selected'),'true');
-  assert.deepEqual(await page.locator('#dados-planilha th').allTextContents(),camposPautas);
-  assert.match(await page.locator('#dados-planilha').textContent(),/4 linhas da NTV/);
-  assert.equal(await page.locator('#dados-planilha tbody tr').count(),4);
-  await page.keyboard.press('Home');assert.ok((await page.locator('#dados-planilha th').allTextContents()).includes('pauta_id'));
-  await page.locator('[data-aba="Pautas"]').click();await page.locator('#atualizar').click();
-  await page.waitForFunction(()=>document.querySelector('[role=tab][aria-selected=true]')?.dataset.aba==='Semanas');
-  assert.equal(await page.locator('[data-aba="Pautas"]').count(),0);
-  assert.equal((await page.locator('#dados-planilha th').allTextContents()).includes('pauta_id'),false);
+  const antes=await visao(page),pautas=antes.planilha.find(a=>a.nome==='Pautas');
+  assert.deepEqual(pautas.cabecalhos,camposPautas);assert.equal(pautas.quantidadeLinhas,4);
+  assert.equal(pautas.linhas.length,4);assert.equal(await page.locator('#planilha').count(),0);
+  await page.locator('.pauta-link').first().focus();await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#lista').evaluate(n=>document.activeElement===n),true);
+  await page.locator('#atualizar').click();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
+  assert.equal((await visao(page)).planilha.some(a=>a.nome==='Pautas'),false);
+  assert.match(await page.locator('#objetivo-mes').textContent(),/Fallback após releitura/);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 });
 
 test('U004 Histórico identifica falha estrutural de Pautas e preserva card vigente',{skip},async t=>{
   const page=await abrir(t,{depois:dir=>{const bad=capturaPautas();bad.tables.Pautas.complete=false;promoverCaptura(bad,dir);}});
   assert.equal(await page.locator('#objetivo-mes .pauta-link').count(),4);
-  await page.locator('#selo').click();await page.locator('[data-aba="Histórico"]').click();
-  assert.match(await page.locator('tr[data-resultado="falhou"]').textContent(),/Aba Pautas incompleta/);
+  const view=await visao(page);assert.equal(view.historico[0].resultado,'falhou');
+  assert.match(view.historico[0].motivoResumo,/Pautas complete: inválido/);
 });
 
 test('U004 vocabulários desconhecidos são texto da fonte e não viram rótulos herdados',{skip},async t=>{
@@ -192,6 +190,8 @@ test('U004 pauta sem peças não cria semana capturada e conserva a consulta',{s
   assert.equal(await page.locator('#lista [data-producao-id]').count(),0);
   assert.equal(await page.locator('#lista').evaluate(n=>document.activeElement===n),true);
   await page.locator('.pauta-link').nth(1).click();assert.equal(await page.locator('#week-title').textContent(),'S2 · Tema sintético 2');
-  await page.locator('#selo').click();assert.equal(await page.locator('#dados-planilha tbody tr').count(),1);
-  assert.equal(await page.locator('#dados-planilha tbody tr td').first().textContent(),'semana-01');
+  const semanas=(await visao(page)).planilha.find(a=>a.nome==='Semanas');
+  assert.equal(semanas.quantidadeLinhas,1);assert.equal(semanas.linhas[0].semana_id,'semana-01');
 });
+
+async function visao(page) {return page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));}

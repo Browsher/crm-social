@@ -59,8 +59,9 @@ async function capturarContexto(browser,origin,theme,width) {
     assert.equal(await page.locator('#objetivo-mes .pauta-link').count(),0);
     assert.match(await page.locator('#objetivo-mes').innerText(),/Resumo textual sintético de dezembro/);
     await capture('mes-sem-pautas');
-    await navegar(page,width,'Planilha');
-    await page.getByRole('tab',{name:/^Pautas/}).click();
+    if(width===390)await page.locator('#menu').click();
+    await page.locator('[data-tela="publicar"]').click();
+    assert.equal(await page.locator('#planilha').count(),0);
     await capture('planilha');
     assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
   } finally {await context.close();}

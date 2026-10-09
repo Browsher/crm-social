@@ -4,13 +4,13 @@
 **Prerequisites**: spec.md, plan.md, research.md, data-model.md e contracts/apresentacao.md.
 **Tests**: solicitados pelo autor e pelas regras locais; RED → GREEN antes de cada comportamento.
 **Organization**: por jornada, com responsabilidades/arquivos delimitados.
-**Estado**: 32 tarefas mantidas; Parte A T001–T016 implementadas/testadas localmente, não integradas; Parte B não iniciada e aguardando ok explícito na A.
+**Estado**: 32 tarefas mantidas; Parte A integrada em 09/10/2026 pelo PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada e em implementação na branch codex/006-layout-v3-parte-b. Fechamento e evidências pendentes são acompanhados abaixo.
 
 ## Format: ID, P, Story, description
 
 ## Recortes autorizados — prevalecem sobre o planejamento inicial
 
-32 IDs mantidos. A = T001–T016; B = T017–T023. T024–T032 são fechamento/regressões compartilhados, executados por recorte e registrados abaixo; checkbox global só fecha após B. A preserva Planilha, não cria Publicar/perfil/modal/botão Instagram e gera 12 screenshots Semana/Mês/Produção. B depende do ok explícito do autor na A e tem seu PR próprio. Sem merge em ambas. A parada inicial foi resolvida por esta autorização de duas partes; preservar a contagem e os limites de cada recorte.
+32 IDs mantidos. A = T001–T016; B = T017–T023. T024–T032 são fechamento/regressões compartilhados, executados por recorte e registrados abaixo; checkbox global só fecha após B. A preserva Planilha, não cria Publicar/perfil/modal/botão Instagram e gera 12 screenshots Semana/Mês/Produção. B foi autorizada em 09/10/2026 após aprovação de A e tem seu PR próprio, sem merge. O merge de A foi autorizado separadamente. A parada inicial foi resolvida por esta autorização de duas partes; preservar a contagem e os limites de cada recorte.
 
 | Item compartilhado | Parte A | Parte B |
 | --- | --- | --- |
@@ -120,7 +120,7 @@
 
 ## Dependencies & Execution Order
 
-- A decisão do autor resolveu a parada inicial: T001–T016 e fechamento correspondente A autorizados. B depende do ok explícito na A; não iniciar testes, código ou PR B.
+- A decisão inicial resolveu a parada das 32 tarefas. Após entrega e aprovação de A, o autor autorizou sua integração e T017–T023 com o fechamento B em 09/10/2026. B segue sem merge.
 - T001 → T002 → T003. T004 e T006 podem ter RED em arquivos exclusivos após T001. T005 depende de T003/T004; a rota instagram.js terá conteúdo concluído em T019. T007 depende de T005/T006; verificar apenas shell/estáticos já existentes até então, sem declarar testes finais da rota inexistente como verdes.
 - US1: T008/T009 RED → T010–T013 GREEN. US2: T014 RED → T015/T016 GREEN. US3: T017/T018 RED → T019/T020 GREEN. US4: T021 RED → T022/T023 GREEN.
 - US2 compartilha miniaturas/gaveta com US1; testar projetos com fixture própria. US3 usa derivados/miniaturas, mas seu teste abre diretamente o componente. US4 usa modal concluído da US3; dependência expressa evita duplicação.
@@ -137,7 +137,7 @@
 
 ## Implementation Strategy
 
-Parte A entrega fundação, topo, US1 e US2 sem Instagram. Parte B entrega modal e Publicar após ok explícito do autor na A. O escopo global permanece completo; cada parte tem seu PR e nenhum merge está autorizado.
+Parte A entrega fundação, topo, US1 e US2 sem Instagram. Parte B entrega modal, Publicar e rótulos no Mês após o ok explícito do autor na A em 09/10/2026. O escopo global permanece completo; B tem PR próprio sem merge.
 
 Executar RED observável antes de código, GREEN mínimo e refatoração preservando os contratos. Fixtures só sintéticas; não instalar ferramenta ou tocar operação real. Não criar testes espelhando markup quando um teste de ação/resultado comprova o comportamento.
 
@@ -154,6 +154,6 @@ Contagem dos IDs gerados: **32**.
 | US4 Publicar | T021–T023 | 3 |
 | Regressões, acessibilidade, evidências e entrega | T024–T032 | 9 |
 
-**32 tarefas: parada inicial resolvida pelo autor; execução autorizada somente da Parte A**, conforme FR-030/SC-008 e instrução direta do autor. Marcar T001–T016 quando verificadas; registrar o fechamento A de T024–T032 na tabela, mantendo seus checkboxes globais abertos até B. Não compactar suítes ou gestos/foco/mídia para alterar artificialmente a contagem.
+**32 tarefas: parada inicial resolvida pelo autor; Parte B autorizada em 09/10/2026**, conforme FR-030/SC-008 e instrução direta do autor. Marcar T001–T016 quando verificadas; registrar o fechamento A de T024–T032 na tabela, mantendo seus checkboxes globais abertos até B. Não compactar suítes ou gestos/foco/mídia para alterar artificialmente a contagem.
 
 O peso principal é a troca de três telas, o modal compartilhado com teclado/gesto/foco e a migração de regressões das 001–005. O autor manteve esse escopo de 32 IDs e autorizou a divisão em duas entregas.

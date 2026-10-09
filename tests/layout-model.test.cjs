@@ -9,7 +9,8 @@ const {validarCaptura}=require('../src/captura.cjs');
 const {projetarVisao}=require('../src/projecao.cjs');
 const mapa=require('../config/quadro-etapas.json');
 const arquivo=path.resolve(__dirname,'../src/web/layout-model.js');
-const nomes=['estadoSimples','motivoTravado','progresso','imagensDaPeca','segundaDaSemana','ordenarSemanas'];
+const nomes=['estadoSimples','motivoTravado','progresso','imagensDaPeca','segundaDaSemana','ordenarSemanas',
+  'filaPublicar','publicadasRecentes','posicoesInstagram','instantePublicacao'];
 const layout=require(arquivo);
 function projetar(raw=capturaLayout()) {
   return projetarVisao({captura:validarCaptura(recalcularHashes(raw)),historico:[],ultimaTentativa:null},AGORA,mapa);
@@ -189,4 +190,135 @@ test('Layout exporta a mesma API no navegador sem DOM, rede ou módulos Node',()
   for(const nome of nomes)assert.equal(typeof context.CrmLayout?.[nome],'function',nome);
   assert.equal(context.CrmLayout.estadoSimples(peca('Pronta')),'Pronta');
   assert.equal(context.CrmLayout.segundaDaSemana(HOJE),'2026-10-05');
+});
+
+function publicavel(id,dataCivil,publicado_em='',estado_liberacao='liberado') {
+  return {producao_id:id,dataCivil,publicado_em,estado_liberacao};
+}
+test('Layout fila usa somente liberação literal e publicação vazia, independente de mídia e coluna',()=>{
+  assert.equal(typeof layout.filaPublicar,'function');
+  const entradas=congelar([
+    {...publicavel('sem-pacote',HOJE),quadro:{coluna:'Mídia',pendencias:[{tipo:'midia'}]},detalhes:{pacotePublicacao:null}},
+    publicavel('null',HOJE,null),publicavel('undefined',HOJE,undefined),publicavel('espacos',HOJE,' \n '),
+    publicavel('publicada',HOJE,'registro inválido'),publicavel('numero',HOJE,0),
+    publicavel('aparente',HOJE,'','pronto'),publicavel('capitalizada',HOJE,'','Liberado'),
+    publicavel('trailing',HOJE,'','liberado '),publicavel('ausente',HOJE,'',null)
+  ]);
+  const resultado=layout.filaPublicar(entradas);
+  assert.deepEqual(resultado.map(p=>p.producao_id),['espacos','null','sem-pacote','undefined']);
+  assert.equal(resultado.find(p=>p.producao_id==='sem-pacote'),entradas[0]);
+  assert.notEqual(resultado,entradas);
+});
+test('Layout fila ordena data civil real e ID exato, com inválidas ou sem data ao final sem mutação',()=>{
+  const entradas=congelar([
+    publicavel('sem-data',null),publicavel('B','2026-10-09'),publicavel('b','2026-10-09'),
+    publicavel('anterior','2026-10-07'),publicavel('a','2026-10-09'),publicavel('posterior','2027-01-01'),
+    publicavel('invalida','2026-02-30'),publicavel('nao-canonica','2026-2-09'),publicavel('vazia',''),
+    publicavel('hora','2026-10-08T00:00:00Z')
+  ]);
+  assert.deepEqual(layout.filaPublicar(entradas).map(p=>p.producao_id),[
+    'anterior','B','a','b','posterior','hora','invalida','nao-canonica','sem-data','vazia'
+  ]);
+  assert.equal(entradas[0].producao_id,'sem-data');
+});
+test('Layout fila vazia e recorte projetado incluem prontas sem exigir pacote ou filtro de formato',()=>{
+  assert.deepEqual(layout.filaPublicar([]),[]);
+  const view=congelar(projetar());
+  assert.deepEqual(layout.filaPublicar(view.producoes).map(p=>p.producao_id),['peca-1','peca-3','proxima-1']);
+});
+test('Layout recentes usam instante ISO com fuso em ordem decrescente, preservando época e empates',()=>{
+  assert.equal(typeof layout.publicadasRecentes,'function');
+  const entradas=congelar([
+    publicavel('Z','2026-10-08','2026-10-08T13:00:00Z'),
+    publicavel('a','2026-10-08','2026-10-08T10:00:00-03:00'),
+    publicavel('depois','2026-10-07','2026-10-08T13:00:00.001Z'),
+    publicavel('antes','2026-10-09','2026-10-08T13:00:00+01:00'),
+    publicavel('epoca','2026-10-08','1970-01-01T00:00:00Z'),
+    publicavel('nao-publicada','2026-10-08',''),publicavel('espacos','2026-10-08',' \t ')
+  ]);
+  assert.deepEqual(layout.publicadasRecentes(entradas).map(p=>p.producao_id),['depois','Z','a','antes','epoca']);
+  assert.equal(layout.publicadasRecentes(entradas)[0],entradas[2]);
+  assert.equal(entradas[0].producao_id,'Z');
+});
+test('Layout recentes preservam publicação preenchida inválida no fim sem normalizar dia, hora ou fuso',()=>{
+  const entradas=congelar([
+    publicavel('dia-invalido',null,'2026-02-30T10:00:00Z'),
+    publicavel('hora-invalida',null,'2026-10-08T24:00:00Z'),
+    publicavel('sem-fuso',null,'2026-10-08T10:00:00'),
+    publicavel('apenas-data',null,'2026-10-08'),publicavel('numero',null,0),
+    publicavel('texto',null,'publicada'),publicavel('fuso-invalido',null,'2026-10-08T10:00:00+25:00'),
+    publicavel('valida',null,'2024-02-29T10:00:00-03:00')
+  ]);
+  assert.deepEqual(layout.publicadasRecentes(entradas).map(p=>p.producao_id),[
+    'valida','apenas-data','dia-invalido','fuso-invalido','hora-invalida','numero','sem-fuso','texto'
+  ]);
+});
+test('Layout recentes limitam dez após ordenar todos os registros, sem mutar ou excluir inválidos prematuramente',()=>{
+  assert.deepEqual(layout.publicadasRecentes([]),[]);
+  const entradas=congelar(Array.from({length:12},(_,i)=>publicavel('p'+i,null,'2026-10-'+String(i+1).padStart(2,'0')+'T12:00:00Z')));
+  assert.deepEqual(layout.publicadasRecentes(entradas).map(p=>p.producao_id),['p11','p10','p9','p8','p7','p6','p5','p4','p3','p2']);
+  const invalidas=congelar(Array.from({length:12},(_,i)=>publicavel(String(i).padStart(2,'0'),null,'registro inválido')));
+  assert.deepEqual(layout.publicadasRecentes(invalidas).map(p=>p.producao_id),['00','01','02','03','04','05','06','07','08','09']);
+});
+test('Layout Instagram conserva cinco posições de carrossel mesmo sem arquivo, sem alterar a galeria005',()=>{
+  assert.equal(typeof layout.posicoesInstagram,'function');
+  const raw=capturaLayout();mudarPorId(raw,'Páginas','pagina-v3-2','arquivo_imagem_id','arquivo-ausente');
+  const p=congelar(projetar(raw).producoes.find(p=>p.producao_id==='peca-3'));
+  assert.deepEqual(layout.posicoesInstagram(p).map(i=>[i.arquivo?.arquivo_id??null,i.contexto]),[
+    ['imagem-pagina-1','Página 1'],[null,'Página 2'],['imagem-pagina-3','Página 3'],
+    ['imagem-pagina-4','Página 4'],['imagem-pagina-5','Página 5']
+  ]);
+  assert.equal(layout.imagensDaPeca(p).length,4);
+  assert.equal(layout.posicoesInstagram(p)[0].arquivo,p.detalhes.paginas[0].arquivos[0]);
+});
+test('Layout Instagram ordem índice/ID preserva empates vigentes, não inclui versões históricas ou índices inválidos',()=>{
+  const raw=capturaLayout();
+  adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-empate',producao_id:'peca-3',versao:3,indice:1,arquivo_imagem_id:''});
+  adicionarRegistro(raw,'Páginas',{pagina_id:'pagina-indice-invalido',producao_id:'peca-3',versao:3,indice:0,arquivo_imagem_id:''});
+  const p=congelar(projetar(raw).producoes.find(p=>p.producao_id==='peca-3'));
+  const slots=layout.posicoesInstagram(p);
+  assert.equal(slots.length,6);
+  assert.deepEqual(slots.slice(0,2).map(i=>[i.arquivo?.arquivo_id??null,i.contexto]),[[null,'Página 1'],['imagem-pagina-1','Página 1']]);
+  assert.equal(slots.filter(i=>i.contexto==='Página 2').length,1);
+});
+test('Layout Instagram imagem única conserva 1/1 com seleção exata e primeira imagem em ordem de ID',()=>{
+  const p=congelar({producao_id:'imagem',formato:'Imagem',versao:2,detalhes:{paginas:[],cenas:[],arquivos:[
+    {arquivo_id:'b',producao_id:'imagem',tipo:'imagem',versao:2},
+    {arquivo_id:'a',producao_id:'imagem',tipo:'imagem',versao:2},
+    {arquivo_id:'antiga',producao_id:'imagem',tipo:'imagem',versao:1},
+    {arquivo_id:'outra',producao_id:'outra',tipo:'imagem',versao:2}
+  ]}});
+  assert.deepEqual(layout.posicoesInstagram(p),[{arquivo:p.detalhes.arquivos[1],contexto:'Imagem 1'}]);
+  assert.equal(layout.imagensDaPeca(p).length,2);
+  for(const versao of [0,'2',null,2.5])assert.deepEqual(layout.posicoesInstagram({...p,versao}),[{arquivo:null,contexto:'Imagem 1'}]);
+});
+test('Layout Instagram imagem única sem mídia ou com só unidade histórica mantém placeholder sem buscar arquivo avulso',()=>{
+  const p={producao_id:'sem-imagem',formato:'Imagem',versao:1,detalhes:{paginas:[],cenas:[],arquivos:[]}};
+  assert.deepEqual(layout.posicoesInstagram(congelar(p)),[{arquivo:null,contexto:'Imagem 1'}]);
+  const historica={...p,detalhes:{...p.detalhes,paginas:[{vigente:false,arquivos:[]}],arquivos:[
+    {arquivo_id:'avulsa',producao_id:p.producao_id,tipo:'imagem',versao:1}
+  ]}};
+  assert.deepEqual(layout.posicoesInstagram(congelar(historica)),[{arquivo:null,contexto:'Imagem 1'}]);
+});
+test('Layout Instagram Reels conta início e final por cena vigente mesmo com ausências e ignora vídeo',()=>{
+  const p=congelar(projetar(capturaPrevias()).producoes.find(p=>p.producao_id==='peca-4'));
+  assert.deepEqual(layout.posicoesInstagram(p).map(i=>[i.arquivo?.arquivo_id??null,i.contexto]),[
+    ['cena-inicio','Cena 1 · início'],['cena-final','Cena 1 · final']
+  ]);
+  const semInicio=structuredClone(p);semInicio.detalhes.cenas[0].arquivos[0]=null;
+  assert.deepEqual(layout.posicoesInstagram(congelar(semInicio)).map(i=>[i.arquivo?.arquivo_id??null,i.contexto]),[
+    [null,'Cena 1 · início'],['cena-final','Cena 1 · final']
+  ]);
+  const travado=congelar(projetar().producoes.find(p=>p.producao_id==='peca-4'));
+  assert.deepEqual(layout.posicoesInstagram(travado),[
+    {arquivo:null,contexto:'Cena 1 · início'},{arquivo:null,contexto:'Cena 1 · final'}
+  ]);
+});
+test('Layout Instagram carrossel ou Reels sem unidades vigentes conserva uma posição indisponível',()=>{
+  for(const formato of ['Carrossel','Reels','Outro']) {
+    const p=congelar({producao_id:'sem-unidade',formato,versao:1,detalhes:{paginas:[],cenas:[],arquivos:[
+      {arquivo_id:'avulsa',producao_id:'sem-unidade',tipo:'imagem',versao:1}
+    ]}});
+    assert.deepEqual(layout.posicoesInstagram(p),[{arquivo:null,contexto:'Prévia indisponível'}]);
+  }
 });

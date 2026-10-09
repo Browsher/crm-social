@@ -2,7 +2,7 @@
 
 **Feature Branch**: `codex/006-layout-v3`
 **Created**: 2026-10-08
-**Status**: Parte A implementada/testada localmente, não integrada; Parte B não iniciada e depende do ok explícito do autor na A. Evidências e pendências em [validacao.md](validacao.md).
+**Status**: Parte A aprovada e integrada pelo PR #24 em 09/10/2026, main `a5be3553a26f6a7af9fdb9e84bbd24851a561ce2`. Parte B autorizada e em implementação na branch `codex/006-layout-v3-parte-b`, com PR próprio sem merge. Evidências e pendências em [validacao.md](validacao.md).
 **Input**: Pedido do autor em 08/10/2026: reorganizar a apresentação do CRM pessoal em Planejamento, Produção e Publicar, com referência visual aprovada, sem mudar dados/captura ou escrita operacional.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -11,7 +11,12 @@
 
 Escopo integral mantido com 32 tarefas. Parte A: fundação, topo com ⟳ Atualizar, Planejamento Semana/Mês/objetivo em linha e Produção por semana, com regressões dessas telas. Menu intermediário mantém Planejamento, Produção e Planilha; não oferece Publicar ou Ver no Instagram. Planilha e sua consulta/atalhos permanecem funcionais, com o botão de atualização realocado para o topo comum, sem duplicação.
 
-Parte B, somente após ok explícito do autor na A: pop-up, Publicar, Ver no Instagram na Produção, remoção visual da Planilha e regressões restantes. Requisitos de menu final/remoção valem para B. Cada parte tem PR próprio, gate/review do head final e screenshots das vistas entregues, sem merge. Não abrir o PR B ou começar sua implementação nesta rodada.
+Parte B: pop-up, Publicar, Ver no Instagram na Produção, remoção visual da Planilha e regressões restantes. O autor aprovou A e autorizou seu merge e o início de B em 09/10/2026. Requisitos de menu final/remoção valem para B. B tem PR próprio, gate/review do head final e screenshots, sem merge.
+
+### Ajustes autorizados — Session 2026-10-09
+
+- Mês mostra o ponto colorido e o tipo curto ao lado: “● Oferta”, “● Carrossel”, “● Reels”, conforme o mockup. Nesta visão, o formato Imagem usa o rótulo curto Oferta; isso não altera o formato nem classifica conteúdo operacional. Cor continua representando o estado simples, e o nome acessível conserva título/data/estado.
+- O botão único ⟳ Atualizar e o selo são temporariamente apresentados dentro do pop-up aberto e retornam ao topo ao fechar, preservando seus controles e o POST existente. Isso permite acionar a atualização por teclado mesmo com o fundo inerte do diálogo nativo.
 
 ### Clarifications — Session 2026-10-08
 
@@ -100,7 +105,7 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 - **FR-006**: Planejamento DEVE oferecer Semana | Mês e iniciar em Semana; navegar períodos e pautas DEVE conservar o período selecionado.
 - **FR-007**: Semana DEVE ter sete colunas de segunda a domingo, hoje destacado e peças com miniatura, formato, título e estado simples; em 390 px, as sete colunas permanecem em região de rolagem própria.
 - **FR-008**: O cabeçalho da semana e cada projeto DEVEM mostrar tema/pauta disponíveis e progresso “X de N prontas”, calculado só com peças reais: em Planejamento, somente peças visíveis pelo filtro de formato na semana civil; em Produção, o projeto inteiro da semana registrada. Zero peças não implica meta ou percentual concluído.
-- **FR-009**: Mês DEVE usar a altura disponível da tela e pontos coloridos por estado simples; ativar qualquer semana DEVE abrir sua visão Semana, com identificação acessível independente de cor.
+- **FR-009**: Mês DEVE usar a altura disponível da tela e pontos coloridos por estado simples, acompanhados pelo tipo curto Oferta (formato Imagem)/Carrossel/Reels; ativar qualquer semana DEVE abrir sua visão Semana, com identificação acessível independente de cor. Formatos desconhecidos conservam o texto registrado; nenhum rótulo muda a API.
 - **FR-010**: Ativar peça DEVE abrir a gaveta do dia completo; peças sem data ou semana DEVEM continuar acessíveis, identificadas como “Sem data”/“Semana não identificada”. Em Produção, o grupo órfão tem título h2 “Semana não identificada” e subtítulo compacto “Sem semana”; semana registrada sem período usa “Período não identificado”.
 - **FR-011**: Produção DEVE organizar projetos por semana, atual primeiro, próxima depois; outras semanas registradas continuam acessíveis e não são descartadas.
 - **FR-012**: Linha de produção DEVE mostrar miniatura, título, formato e data, com os cinco passos Planejada → Criação → Revisão → Pronta → Publicada.
@@ -121,7 +126,7 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 - **FR-027**: A referência visual aprovada DEVE ser copiada como mockup sanitizado em docs/design/mockups/layout-v3.html e citada em docs/design/telas.md; o pedido escrito prevalece nas divergências da referência.
 - **FR-028**: Testes e evidências DEVEM usar somente fixtures sintéticas, incluindo semana com oferta, carrossel de cinco páginas e Reels travado; nenhuma leitura da operação real é necessária.
 - **FR-029**: Entrega DEVE incluir screenshots das vistas de cada parte nos dois temas e larguras, quality-gate verde e review do head final em dois PRs, um por parte, sem merge. A inclui Semana/Mês/Produção; B inclui Publicar/pop-up e regressões visuais finais.
-- **FR-030**: A contagem gerada é 32, mantida pelo autor após a parada inicial. Executar somente Parte A; Parte B exige ok explícito na A, sem antecipar implementação/PR.
+- **FR-030**: A contagem gerada é 32, mantida pelo autor após a parada inicial. A foi integrada após aprovação explícita; B foi autorizada em 09/10/2026 e deve ser entregue em PR separado sem merge.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -140,8 +145,8 @@ Quero encontrar peças liberadas, copiar legenda e acessar o pacote, vendo ao la
 - **SC-004**: Nas cinco páginas do carrossel sintético, setas, pontos, teclado e arrasto selecionam a posição correta; imagem única fica em 1/1 e Esc devolve o foco em todos os acionadores testados.
 - **SC-005**: As vinte combinações de cinco vistas × dois temas × duas larguras têm screenshots sintéticos inspecionados; pop-up de imagem única e falha também têm verificação comportamental.
 - **SC-006**: Todas as verificações locais exigidas de dados, persistência, apresentação, HTTP e interface passam sem pulos no computador; nenhuma operação de escrita/publicação externa ocorre.
-- **SC-007**: Cada parte tem seu PR com fonte de código, gate verde, review sem Critical, segurança ou regressão, evidências e limites; os PRs não recebem merge nesta autorização.
-- **SC-008**: A lista preserva 32 IDs; Parte A entrega seu recorte com prova própria e Parte B permanece não iniciada até o ok do autor na A.
+- **SC-007**: Cada parte tem seu PR com fonte de código, gate verde, review sem Critical, segurança ou regressão, evidências e limites; B não recebe merge nesta autorização. O merge de A foi autorizado em 09/10/2026.
+- **SC-008**: A lista preserva 32 IDs; A tem prova própria e B executa o recorte restante após o ok explícito do autor em 09/10/2026.
 
 ## Assumptions
 

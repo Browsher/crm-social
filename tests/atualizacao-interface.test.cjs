@@ -28,7 +28,7 @@ async function abrir(t,width,fixture=capturaValida,proxima=capturaValida){
   await page.route('**/*',r=>{if(!r.request().url().startsWith(origin+'/')){outside.push(r.request().url());return r.abort();}return r.continue();});
   t.after(()=>{assert.deepEqual(errors,[]);assert.deepEqual(outside,[]);});
   await page.goto(origin);await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
-  await page.locator('[data-formato="Reels"]').click();await page.locator('#selo').click();
+  await page.locator('[data-formato="Reels"]').click();
   return {page,seen,setMode:value=>{mode=value;},setWarning:()=>{warning=true;},release:()=>release?.()};
 }
 for(const width of [1440,390]) test('U003 POST GET atualiza card, falha conserva data e ausência recupera aba em '+width,{skip},async t=>{
@@ -36,15 +36,14 @@ for(const width of [1440,390]) test('U003 POST GET atualiza card, falha conserva
   const a=await abrir(t,width,()=>capturaMeses([['2026-10','ntv','Objetivo anterior','Pauta anterior']]),()=>remover?capturaValida():capturaMeses([['2026-10','ntv','Objetivo novo','Pauta nova']]));
   const {page}=a;
   const atualizar=async()=>{await page.locator('#atualizar').click();await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);};
-  await atualizar();const fim=await page.locator('#fim-captura').textContent();
-  await page.locator('#selo').click();await page.locator('[data-aba="Meses"]').click();
-  a.setMode('falha');await atualizar();assert.equal(await page.locator('#fim-captura').textContent(),fim);
+  await atualizar();const fim=(await visao(page)).captura.completedAt;
+  assert.ok((await visao(page)).planilha.some(a=>a.nome==='Meses'));
+  a.setMode('falha');await atualizar();assert.equal((await visao(page)).captura.completedAt,fim);
   await page.evaluate(()=>document.querySelector('[data-tela="planejamento"]').click());
   assert.match(await page.locator('#objetivo-mes').textContent(),/Objetivo novo.*Pauta nova/s);
-  await page.locator('#selo').click();a.setMode('sucesso');remover=true;await atualizar();
-  assert.equal(await page.locator('[data-aba="Meses"]').count(),0);
-  assert.equal(await page.locator('[data-aba="Semanas"]').getAttribute('aria-selected'),'true');
-  assert.equal(await page.locator('#abas-planilha [role=tab]').count(),7);
+  a.setMode('sucesso');remover=true;await atualizar();
+  assert.equal((await visao(page)).planilha.some(a=>a.nome==='Meses'),false);
+  assert.equal(await page.locator('#planilha').count(),0);
   await page.evaluate(()=>document.querySelector('[data-tela="planejamento"]').click());
   assert.match(await page.locator('#objetivo-mes').textContent(),/Ainda não definido/);
 });
@@ -53,23 +52,23 @@ for(const width of [1440,390])test('U002 POST pendente, sucesso, falha e recuper
   await button.click();await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');
   assert.equal(await button.isDisabled(),true);assert.equal(await status.getAttribute('role'),'status');
   a.release();await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
-  assert.equal(await status.textContent(),'Dados atualizados');assert.equal(await page.locator('#fonte-captura').textContent(),'Leitura direta pelo servidor local');
+  assert.equal(await status.textContent(),'Dados atualizados');assert.equal((await visao(page)).fonte,'Leitura direta pelo servidor local');
   assert.equal(await page.locator('[data-formato="Reels"]').getAttribute('class'),'active');
-  const previous=await page.locator('#fim-captura').textContent();a.setMode('falha');await button.click();
+  const previous=(await visao(page)).captura.completedAt;a.setMode('falha');await button.click();
   await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
   await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
   assert.equal(await status.textContent(),'Não foi possível ler a planilha; tente novamente');
-  assert.equal(await page.locator('#fim-captura').textContent(),previous);assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
+  assert.equal((await visao(page)).captura.completedAt,previous);assert.equal(await page.locator('#selo').textContent(),'Atualização falhou');
   a.setMode('sucesso');await button.click();await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
   await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);assert.equal(await status.textContent(),'Dados atualizados');
   assert.ok(a.seen.some(([url,method])=>url==='/api/atualizar'&&method==='POST'));
 });
 test('U002 GET falha depois do POST: conserva vista e libera botao',{skip},async t=>{
-  const a=await abrir(t,1440),{page}=a,previous=await page.locator('#fim-captura').textContent();
+  const a=await abrir(t,1440),{page}=a,previous=await page.locator('#selo').textContent();
   await page.route('**/api/visao',r=>r.fulfill({status:503,contentType:'application/json',body:'{}'}));
   await page.locator('#atualizar').click();await page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
   await page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
-  assert.equal(await page.locator('#fim-captura').textContent(),previous);assert.equal(await page.locator('#erro').isVisible(),true);
+  assert.equal(await page.locator('#selo').textContent(),previous);assert.equal(await page.locator('#erro').isVisible(),true);
   assert.equal(await page.locator('#resultado-atualizacao').textContent(),'Atualização concluída; consulta local indisponível');
 });
 test('U002 aviso fixo de trava nao altera sucesso e aparece na tela',{skip},async t=>{
@@ -86,12 +85,14 @@ test('U002 POST falhou e GET falhou: motivo original nao vira sucesso',{skip},as
 });
 
 for(const width of [1440,390])test('U002 recusa temporal mostra motivo no status e no Historico em '+width,{skip},async t=>{
-  const a=await abrir(t,width),previous=await a.page.locator('#fim-captura').textContent();
+  const a=await abrir(t,width),previous=(await visao(a.page)).captura.completedAt;
   a.setMode('desatualizada');await a.page.locator('#atualizar').click();
   await a.page.waitForFunction(()=>document.querySelector('#resultado-atualizacao')?.textContent==='Atualizando dados…');a.release();
   await a.page.waitForFunction(()=>!document.querySelector('#atualizar').disabled);
   assert.equal(await a.page.locator('#resultado-atualizacao').textContent(),'Captura desatualizada; a vigente foi preservada');
-  assert.equal(await a.page.locator('#fim-captura').textContent(),previous);
-  await a.page.locator('#abas-planilha [data-aba="Histórico"]').click();
-  assert.ok((await a.page.locator('tr[data-resultado="falhou"]').textContent()).includes('Captura desatualizada; a vigente foi preservada'));
+  assert.equal((await visao(a.page)).captura.completedAt,previous);
+  const view=await visao(a.page);assert.equal(view.historico[0].resultado,'falhou');
+  assert.match(view.historico[0].motivoResumo,/Captura desatualizada/);
 });
+
+async function visao(page) {return page.evaluate(()=>fetch('/api/visao').then(r=>r.json()));}

@@ -7,6 +7,8 @@
   <script src="/theme.js"></script>
   <link rel="stylesheet" href="/styles.css">
   <script src="/layout-model.js" defer></script>
+  <script src="/perfil-config.js" defer></script>
+  <script src="/instagram.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
 <body>
@@ -17,7 +19,7 @@
     <nav aria-label="Navegação principal">
       <button type="button" class="nav-item active" data-tela="planejamento" aria-label="Planejamento">Planejamento</button>
       <button type="button" class="nav-item" data-tela="producao" aria-label="Produção">Produção</button>
-      <button type="button" class="nav-item" data-tela="planilha" aria-label="Planilha">Planilha</button>
+      <button type="button" class="nav-item" data-tela="publicar" aria-label="Publicar, 0 peças a publicar">Publicar <span id="contador-publicar" class="publish-count" aria-hidden="true">0</span></button>
     </nav>
     <div class="sidebar-bottom"><strong>Consulta local</strong><p>Somente neste computador</p></div>
   </aside>
@@ -27,7 +29,7 @@
     <div class="topbar-actions"><span class="computer">Neste computador <span class="presence" aria-hidden="true"></span></span><button type="button" id="theme-toggle" aria-label="Ativar tema escuro">☾ Escuro</button></div>
   </header>
   <main>
-    <div class="page-heading"><h1 id="titulo">Planejamento</h1><div class="capture-actions"><button type="button" id="selo" class="badge cinza">Carregando</button><button type="button" id="atualizar" class="refresh-button">⟳ Atualizar</button></div></div>
+    <div class="page-heading"><h1 id="titulo" tabindex="-1">Planejamento</h1><div class="capture-actions"><span id="selo" class="badge cinza" role="status">Carregando</span><button type="button" id="atualizar" class="refresh-button">⟳ Atualizar</button></div></div>
     <p id="resultado-atualizacao" role="status" aria-live="polite"></p>
     <p id="erro" role="alert" hidden></p>
     <section id="planejamento" aria-label="Planejamento" hidden>
@@ -48,25 +50,7 @@
       <div id="quadro" class="production-projects"></div>
       <p id="quadro-total" class="board-total"></p>
     </section>
-    <section id="planilha" hidden>
-      <section class="capture-info" aria-label="Origem e atualização">
-        <h2>Origem e atualização</h2>
-        <dl>
-          <div><dt>Fonte</dt><dd id="fonte-captura">Aguardando leitura local</dd></div>
-          <div><dt>Fim da captura · São Paulo</dt><dd id="fim-captura">Aguardando leitura local</dd></div>
-          <div><dt>Cobertura das semanas</dt><dd id="periodo-captura">Aguardando leitura local</dd></div>
-        </dl>
-        <div id="avisos-captura" class="capture-notice" role="status" hidden></div>
-        <p id="releitura-aviso">Leitura da planilha pelo servidor local, somente leitura</p>
-      </section>
-      <p id="planilha-vazia" class="empty" hidden>Sem captura disponível. Peça a primeira captura completa à Central.</p>
-      <div id="abas-planilha" class="sheet-tabs" role="tablist" aria-label="Tabelas capturadas e Histórico"></div>
-      <section id="dados-planilha" class="sheet-panel" role="tabpanel" tabindex="0"></section>
-      <section id="avisos-dados" class="sheet-panel data-warnings" aria-labelledby="avisos-titulo" tabindex="-1" hidden>
-        <header class="sheet-heading"><div><h2 id="avisos-titulo">Avisos de dados</h2><p id="avisos-filtro"></p></div><button type="button" id="todos-avisos">Todos os avisos</button></header>
-        <div id="avisos-tabela"></div>
-      </section>
-    </section>
+    <section id="publicar" aria-label="Publicar" hidden><div class="publish-layout"><section aria-label="Peças a publicar"><div id="fila-publicar"></div></section><aside class="publish-sidebar"><section aria-labelledby="publicadas-titulo"><h2 id="publicadas-titulo">Publicadas recentes</h2><div id="publicadas-recentes"></div></section><section aria-labelledby="travadas-titulo"><h2 id="travadas-titulo">Travadas</h2><div id="travadas"></div></section></aside></div></section>
   </main>
   <dialog id="dia" aria-labelledby="dia-titulo" aria-describedby="dia-quantidade"><header class="drawer-top"><div><small>NTV · Consulta do dia</small><h2 id="dia-titulo"></h2><p id="dia-quantidade"></p></div><button type="button" id="fechar-dia" aria-label="Fechar dia">×</button></header><div id="dia-pecas" class="drawer-body"></div></dialog>
 </body>

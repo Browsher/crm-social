@@ -2,9 +2,13 @@
 
 **Branch**: `codex/006-layout-v3` | **Date**: 2026-10-08 | **Spec**: [spec.md](spec.md)
 **Input**: especificação única em `specs/006-layout-v3/spec.md`.
-**Estado**: Parte A T001–T016 implementadas/testadas localmente, não integrada; escopo global de 32 tarefas mantido; B não iniciada. [Validação de execução](validacao.md).
+**Estado**: Parte A integrada no PR #24, main a5be3553a26f6a7af9fdb9e84bbd24851a561ce2. Parte B autorizada em 09/10/2026 e em implementação na branch codex/006-layout-v3-parte-b; 32 tarefas mantidas. [Validação de execução](validacao.md).
 
-## Execução autorizada nesta rodada — Parte A
+## Execução autorizada nesta rodada — Parte B
+
+O autor aprovou A, autorizou o merge do PR #24 e iniciou B em 09/10/2026. T017–T023, regressões e fechamento T024–T032 agora estão autorizados; B terá PR próprio sem merge. Mês acrescenta rótulos Oferta (Imagem)/Carrossel/Reels junto ao ponto colorido. Atualizar/selo/feedback únicos são movidos para o diálogo aberto e restaurados ao fechar, permitindo teclado com fundo inerte.
+
+## Recorte histórico da Parte A
 
 A parada inicial foi resolvida pelo autor, que autorizou duas partes com PRs próprios e sem merge. Preservar os 32 IDs, com T001–T016 na Parte A, T017–T023 na B e T024–T032 executados por recorte em ambas. Parte A mantém Planilha/atalhos/API, move Atualizar para o topo e implementa Semana/Mês/objetivo/projetos; não adiciona perfil/instagram.js/Publicar/Ver no Instagram. Somente layout-model.js entra na allowlist agora; configuração/modal e remoção de Planilha ficam na B. Nenhum trabalho futuro é marcado concluído pela execução da A.
 

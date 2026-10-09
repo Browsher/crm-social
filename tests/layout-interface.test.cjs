@@ -4,19 +4,89 @@ const {abrirLayout,navegar,atualizar,pedidosMidia,skip}=require('./layout-browse
 const {mudarPorId,adicionarRegistro}=require('./layout-fixtures.cjs');
 
 const combinacoes=['light','dark'].flatMap(theme=>[1440,390].map(width=>({theme,width})));
+for(const config of combinacoes) {
+  test('Layout B Publicar fila literal, hoje, contador e ações '+config.theme+'/'+config.width,{skip},async t=>{
+    const context=await abrirLayout(t,config),{page}=context;await navegar(page,'publicar');
+    const queue=page.locator('#fila-publicar .publish-card');
+    assert.deepEqual(await queue.evaluateAll(ns=>ns.map(n=>n.dataset.producaoId)),['peca-1','peca-3','proxima-1']);
+    assert.equal(await page.locator('#contador-publicar').textContent(),'3');
+    assert.equal(await page.getByRole('button',{name:'Publicar, 3 peças a publicar',includeHidden:true}).count(),1);
+    assert.match(await queue.first().getAttribute('class'),/today/);
+    for(const card of await queue.all()) {
+      assert.equal(await card.getByRole('button',{name:'Copiar legenda',exact:true}).count(),1);
+      assert.equal(await card.getByRole('button',{name:'Ver no Instagram',exact:true}).count(),1);
+      assert.ok((await card.innerText()).includes('Baixar pacote')||(await card.innerText()).includes('Pacote indisponível'));
+    }
+    assert.deepEqual(await page.locator('#publicadas-recentes [data-publicada-id]').evaluateAll(ns=>ns.map(n=>n.dataset.publicadaId)),['proxima-2','peca-publicada']);
+    assert.deepEqual(await page.locator('#travadas [data-travada-id]').evaluateAll(ns=>ns.map(n=>n.dataset.travadaId)),['peca-2','peca-4']);
+    assert.doesNotMatch(await page.locator('#publicar').innerText(),/Com quem está|Central|Diretor|n8n|Equipe sintética/);
+    await queue.nth(1).getByRole('button',{name:'Ver no Instagram',exact:true}).click();
+    assert.equal(await page.locator('#instagram-contador').textContent(),'1/5');await page.keyboard.press('Escape');
+    assert.equal(await queue.nth(1).getByRole('button',{name:'Ver no Instagram',exact:true}).evaluate(n=>n===document.activeElement),true);
+    await semOverflow(page);
+  });
+  test('Layout B Mês rótulos preservam estado e teclado '+config.theme+'/'+config.width,{skip},async t=>{
+    const {page}=await abrirLayout(t,config);await modo(page,'Mês');
+    const offer=page.locator('.month-day[data-data="2026-10-08"] .month-piece').first();
+    assert.equal((await offer.textContent()).trim(),'● Oferta');assert.equal(await offer.locator('.month-dot.state-3').count(),1);
+    assert.match(await page.locator('.month-day[data-data="2026-10-09"]').textContent(),/● Carrossel/);
+    assert.match(await page.locator('.month-day[data-data="2026-10-11"]').textContent(),/● Reels/);
+    assert.equal(await page.locator('.month-type').evaluateAll(ns=>ns.every(n=>n.scrollWidth<=n.clientWidth)),true,'tipos curtos legíveis sem corte');
+    assert.equal(await page.locator('#calendario img').count(),0);
+    await page.locator('#calendario [data-inicio-semana="2026-10-05"]').focus();await page.keyboard.press('Enter');
+    assert.equal(await page.locator('.planning-day').first().getAttribute('data-data'),'2026-10-05');await semOverflow(page);
+  });
+}
+test('Layout B copiar texto seguro, clipboard falha, pacote e liberação sem data',{skip},async t=>{
+  const {page}=await abrirLayout(t,{width:1440,editar:raw=>{
+    mudarPorId(raw,'Produções','peca-1','legenda','<b>Legenda sintética</b>');mudarPorId(raw,'Produções','peca-1','hashtags','#teste');
+    mudarPorId(raw,'Produções','peca-sem-data','estado_liberacao','liberado');
+    mudarPorId(raw,'Produções','peca-sem-data','legenda','');mudarPorId(raw,'Produções','peca-sem-data','hashtags','');
+  }});await navegar(page,'publicar');
+  const cards=page.locator('#fila-publicar .publish-card'),first=cards.first();
+  assert.equal(await cards.last().getAttribute('data-producao-id'),'peca-sem-data');
+  assert.equal(await cards.last().getByRole('button',{name:'Copiar legenda',exact:true}).isDisabled(),true);
+  assert.equal(await first.locator('.publication-caption').textContent(),'<b>Legenda sintética</b>');assert.equal(await first.locator('b').count(),0);
+  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{globalThis.copiado=value;}}}));
+  await first.getByRole('button',{name:'Copiar legenda',exact:true}).click();assert.equal(await page.evaluate(()=>globalThis.copiado),'<b>Legenda sintética</b>\n\n#teste');
+  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw Error('sintético');}}}));
+  await first.getByRole('button',{name:'Copiar legenda',exact:true}).click();assert.match(await first.locator('.copy-status').textContent(),/Selecione e copie/);
+});
+test('Layout B Instagram Produção é irmão do acionador de gaveta',{skip},async t=>{
+  const {page}=await abrirLayout(t,{width:1440});await navegar(page,'producao');
+  const button=page.locator('#producao [data-instagram-id="peca-3"]');assert.equal(await button.count(),1);
+  assert.equal(await button.locator('button').count(),0);await button.click();assert.equal(await page.locator('#instagram-contador').textContent(),'1/5');
+  assert.equal(await page.locator('#dia').isVisible(),false);await page.keyboard.press('Escape');assert.equal(await button.evaluate(n=>n===document.activeElement),true);
+});
+test('Layout B publicação com data civil inválida não inventa data e vai ao fim',{skip},async t=>{
+  const {page}=await abrirLayout(t,{width:1440,editar:raw=>mudarPorId(raw,'Produções','proxima-2','publicado_em','2026-02-30T12:00:00Z')});
+  await navegar(page,'publicar');const rows=page.locator('#publicadas-recentes [data-publicada-id]');
+  assert.equal(await rows.last().getAttribute('data-publicada-id'),'proxima-2');
+  assert.match(await rows.last().textContent(),/Data de publicação a confirmar/);
+});
+test('Layout B nova publicação atualiza fila e modal conserva peça com foco de retorno',{skip},async t=>{
+  const context=await abrirLayout(t,{width:1440}),{page}=context;await navegar(page,'publicar');
+  await page.locator('#publicar [data-instagram-id="peca-1"]').click();
+  context.setMode('nova');mudarPorId(context.raw,'Produções','peca-1','publicado_em','2026-10-08T14:00:00Z');
+  await atualizar(context);assert.equal(await page.locator('#instagram').isVisible(),true);
+  assert.equal(await page.locator('#contador-publicar').textContent(),'2');await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#titulo').evaluate(n=>n===document.activeElement),true,'acionador removido usa título');
+  assert.equal(await page.locator('#fila-publicar [data-producao-id="peca-1"]').count(),0);
+  assert.equal(await page.locator('#publicadas-recentes [data-publicada-id="peca-1"]').count(),1);
+});
 async function semOverflow(page) {assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'página sem rolagem horizontal');}
 async function modo(page,value) {
   const button=page.locator('[data-modo="'+value+'"]');assert.equal(await button.count(),1,'modo '+value+' disponível');
   await button.focus();await page.keyboard.press('Enter');
 }
-function row(page,id) {return page.locator('#quadro .project-row[data-producao-id="'+id+'"]');}
+function row(page,id) {return page.locator('#quadro .project-open[data-producao-id="'+id+'"]');}
 
 for(const config of combinacoes) {
   const label=config.theme+'/'+config.width;
   test('Layout A topo comum e menu preservam atualização única em '+label,{skip},async t=>{
     const {page}=await abrirLayout(t,config);
-    assert.deepEqual(await page.locator('nav [data-tela]').allTextContents(),['Planejamento','Produção','Planilha']);
-    for(const tela of ['planejamento','producao','planilha']) {
+    assert.deepEqual(await page.locator('nav [data-tela]').evaluateAll(ns=>ns.map(n=>n.dataset.tela)),['planejamento','producao','publicar']);
+    for(const tela of ['planejamento','producao','publicar']) {
       await navegar(page,tela);
       const button=page.locator('#atualizar');assert.equal(await button.isVisible(),true,'atualização visível em '+tela);
       assert.equal((await button.textContent()).trim(),'⟳ Atualizar');
@@ -24,11 +94,11 @@ for(const config of combinacoes) {
       assert.equal(await page.locator('#atualizar').count(),1);
       assert.equal(await page.locator('#resultado-atualizacao').getAttribute('role'),'status');
       assert.equal(await page.locator('#selo').isVisible(),true);
-      assert.equal(await page.getByRole('button',{name:'Ver no Instagram',exact:true}).count(),0);
-      assert.equal(await page.locator('[data-tela="publicar"]').count(),0);await semOverflow(page);
+      assert.equal(await page.locator('[data-tela="publicar"]').count(),1);await semOverflow(page);
     }
-    await page.locator('#selo').click();assert.equal(await page.locator('#planilha').isVisible(),true);
-    assert.ok(await page.locator('#abas-planilha [role=tab]').count()>=7,'consulta continua acessível');
+    assert.equal(await page.locator('#selo').getAttribute('role'),'status');
+    assert.equal(await page.locator('#planilha,#avisos-dados').count(),0);
+    assert.ok((await page.evaluate(async()=>await (await fetch('/api/visao')).json())).planilha.length>=7,'dados continuam na API');
   });
   test('Layout A Semana padrão, objetivo recolhível e dia inteiro em '+label,{skip},async t=>{
     const {page}=await abrirLayout(t,config);
@@ -144,8 +214,7 @@ test('Layout A atualização pendente faz um POST, preserva falha no no-op e obj
   assert.notEqual(stamp,'Atualização falhou');
   const posts=context.requests.filter(r=>r.path==='/api/atualizar'&&r.method==='POST');
   assert.equal(posts.length,2);assert.ok(posts.every(r=>r.body==='{}'));
-  await navegar(page,'planilha');await page.locator('[data-aba="Meses"]').click();
-  assert.ok(await page.locator('#dados-planilha tbody tr').count()>0);
+  assert.ok((await page.evaluate(async()=>await (await fetch('/api/visao')).json())).planilha.find(a=>a.nome==='Meses').linhas.length>0);
 });
 
 test('Layout A pauta sem peças conserva seleção e calendário cruza mês/ano',{skip},async t=>{
