@@ -68,7 +68,7 @@ Seu schema e conteúdo inicial estão no [contrato](contracts/captura-e-consulta
 | --- | --- |
 | `semanas` | agrupamento NTV, tema, início/fim civil e objetivo semanal registrado |
 | `producoes` | resumos e detalhes com facetas separadas, unidades por versão, quatro grupos de revisões, arquivos/documentos e avisos localizados |
-| `producoes[].detalhes.pacotePublicacao` | arquivo único da produção exata, tipo `pacote`, extensão `zip` e versão igual a `pacote_versao` positiva segura; null em ausência, ambiguidade ou versão inválida |
+| `producoes[].detalhes.pacotePublicacao` | arquivo único da produção exata, tipo `pacote`, identificação ZIP contratual e versão igual a `pacote_versao` positiva segura; null em ausência, ambiguidade ou versão inválida |
 | `dias` | peças por data civil válida; grupos Sem data por semana e sem semana |
 | `quadro` | semana, oito colunas fixas, IDs por classificação prioritária; Outras tem quantidadeValoresNovos e título derivados de seus rótulos distintos |
 | `planilha` | seis abas com nomes, 66 cabeçalhos/valores mínimos e contagem de linhas NTV apresentadas |
@@ -269,7 +269,7 @@ próprias. [Contrato de versões das unidades](contracts/captura-e-consulta.md#v
 
 ## Tabelas e avisos da Planilha
 
-**Extensão da manutenção de 08/10/2026:** a tabela abaixo preserva a descrição dos 66 mínimos da 001. A consulta atual usa `camposCapturados` e acrescenta `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` somente quando seus cabeçalhos existem, inclusive em capturas antigas. Selecionar os valores triados não regrava o envelope nem altera bytes, hashes ou tipos históricos; demais extras continuam privados. [Contrato da manutenção](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
+**Extensão da manutenção de 08/10/2026:** a tabela abaixo preserva a descrição dos 66 mínimos da 001. A consulta atual usa `camposCapturados` e acrescenta `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` e `Arquivos.mime_type` somente quando seus cabeçalhos existem, inclusive em capturas antigas. Selecionar os valores triados não regrava o envelope nem altera bytes, hashes ou tipos históricos; demais extras continuam privados. [Contrato da manutenção](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
 
 Como folhas de consulta do mesmo álbum, `planilha` mantém as seis tabelas NTV
 inteiras; o filtro do atalho da gaveta recorta somente avisos.
@@ -330,3 +330,5 @@ Precedência: sem captura → cinza; captura + falha ativa posterior → vermelh
 captura sem falha + data civil hoje em São Paulo → verde HH:MM; outro dia → âmbar DD/MM.
 Data usa `completedAt`, nunca máximos das linhas ou instante da requisição.
 Essas transições são de consulta/persistência local; não alteram fila operacional.
+
+Identificação de pacote por MIME (13/10/2026): segue a [regra ZIP contratual](contracts/captura-e-consulta.md#identificação-do-pacote-por-mime--manutenção-local-de-13102026). Os opcionais `Arquivos.extensao`/`mime_type` só existem quando capturados; ausência não migra o histórico. Com extensão presente exige `zip` e MIME, quando presente, `application/zip`; sem extensão exige MIME `application/zip`. Valores vazios presentes, outros MIMEs, caixa/espaços diferentes e conflitos são recusados intencionalmente. Produção/tipo/versão exatos e candidato único continuam obrigatórios, sem inferência por nome/URL nem prova de bytes/acesso/aprovação.

@@ -32,7 +32,24 @@ test('Pronta captura MIME ZIP sem extensão atravessa persistência, triagem e P
   const arquivos=view.planilha.find(a=>a.nome==='Arquivos');
   assert.ok(arquivos.cabecalhos.includes('mime_type'));
   assert.equal(arquivos.cabecalhos.includes('extensao'),false);
+  const linha=arquivos.linhas.find(a=>a.arquivo_id==='pacote-sintetico-3');
+  assert.equal(linha.mime_type,'application/zip');
+  for(const a of arquivos.linhas)assert.equal(Object.hasOwn(a,'extensao'),false);
   assert.equal(JSON.stringify(raw),before);
+});
+test('Pronta legado sem extensão nem MIME recusa pacote mesmo com pacote_versao válida',t=>{
+  const raw=capturaPronta(),table=raw.tables.Arquivos,index=table.values[0].indexOf('extensao');
+  for(const row of table.values)row.splice(index,1);
+  for(const meta of [raw.metadataBefore,raw.metadataAfter])meta.Arquivos.columnCount--;
+  table.range='A1:'+String.fromCharCode(64+table.values[0].length)+'20';
+  const view=visao(t,recalcularHashes(raw)),p=view.producoes[2];
+  assert.equal(p.pacote_versao,3);
+  assert.equal(p.detalhes.pacotePublicacao,null);
+  const arquivos=view.planilha.find(a=>a.nome==='Arquivos');
+  for(const campo of ['extensao','mime_type']) {
+    assert.equal(arquivos.cabecalhos.includes(campo),false);
+    for(const a of arquivos.linhas)assert.equal(Object.hasOwn(a,campo),false);
+  }
 });
 for(const [nome,editar] of [
   ['MIME errado',raw=>mudarPacote(raw,'mime_type','application/octet-stream')],
@@ -45,12 +62,10 @@ for(const [nome,editar] of [
   const raw=capturaPacoteMime();editar(raw);
   assert.equal(visao(t,raw).producoes[2].detalhes.pacotePublicacao,null);
 });
-test('Pronta ZIP por extensão exige MIME exato quando presente',t=>{
+for(const mime of ['application/zip','application/octet-stream',''])test('Pronta ZIP por extensão exige MIME exato: '+(mime||'vazio'),t=>{
   const raw=capturaPronta();campoOpcional(raw,'Arquivos','mime_type');
-  for(const mime of ['application/zip','application/octet-stream','']) {
-    mudarPacote(raw,'mime_type',mime);
-    assert.equal(visao(t,raw).producoes[2].detalhes.pacotePublicacao?.arquivo_id ?? null,mime==='application/zip'?'pacote-sintetico-3':null);
-  }
+  mudarPacote(raw,'mime_type',mime);
+  assert.equal(visao(t,raw).producoes[2].detalhes.pacotePublicacao?.arquivo_id ?? null,mime==='application/zip'?'pacote-sintetico-3':null);
 });
 test('Pronta mapa real mantém publicação acima de liberado e etapas abaixo',t=>{
   const raw=capturaPronta();mudarCelula(raw,'Produções',3,'estado_revisao','revisar');
