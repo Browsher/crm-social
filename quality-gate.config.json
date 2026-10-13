@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "nodeVersion": "24.19.0",
-  "testCommand": ["node", "--test"],
+  "testCommand": ["node", "--test", "--test-concurrency=2"],
   "baseBranch": "main",
   "mode": "full",
   "include": ["**/*.js", "**/*.cjs", "**/*.mjs"],
