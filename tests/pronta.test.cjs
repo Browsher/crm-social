@@ -37,7 +37,7 @@ test('Pronta captura MIME ZIP sem extensão atravessa persistência, triagem e P
   for(const a of arquivos.linhas)assert.equal(Object.hasOwn(a,'extensao'),false);
   assert.equal(JSON.stringify(raw),before);
 });
-test('Pronta legado sem extensão nem MIME recusa pacote mesmo com pacote_versao válida',t=>{
+test('Pronta sem identificadores capturados recusa pacote mesmo com pacote_versao válida',t=>{
   const raw=capturaPronta(),table=raw.tables.Arquivos,index=table.values[0].indexOf('extensao');
   for(const row of table.values)row.splice(index,1);
   for(const meta of [raw.metadataBefore,raw.metadataAfter])meta.Arquivos.columnCount--;
