@@ -60,7 +60,7 @@ Relação órfã, versão inválida e JSON malformado geram aviso localizado sem
 Colunas adicionais são conservadas na captura privada, sem exigir criação remota
 nem exposição automática por HTTP. A allowlist compartilhada `camposCapturados`
 preserva os 66 mínimos e acrescenta à triagem/Planilha somente `Semanas.pauta_id`,
-`Produções.pacote_versao`, `Produções.hashtags` e `Arquivos.extensao` quando os
+`Produções.pacote_versao`, `Produções.hashtags`, `Arquivos.extensao` e `Arquivos.mime_type` quando os
 respectivos cabeçalhos foram capturados. Ausência não cria propriedade nem migra
 capturas antigas; demais extras continuam privados. Meses/Pautas opcionais seguem
 seus contratos da 003/004. Na coleta direta, `pacote_versao` textual canônico seguro
@@ -337,7 +337,7 @@ Mídia ausente e referência quebrada aparecem como tais; sem preview automátic
 Como uma pasta preparada para a publicação manual, a peça cuja coluna é Pronta
 abre a gaveta com **Pronta para publicar** no topo. O servidor acrescenta
 `detalhes.pacotePublicacao`: único registro de Arquivos da produção exata, com
-`tipo='pacote'`, `extensao='zip'` e `versao` exatamente igual a `Produções.pacote_versao`,
+`tipo='pacote'`, identificação ZIP contratual e `versao` exatamente igual a `Produções.pacote_versao`,
 inteiro positivo seguro. A versão do pacote pode diferir de `Produções.versao`.
 Ausência, versão inválida ou mais de um candidato retorna null; não escolher maior
 versão, primeiro empate ou outro arquivo. Avisos e registros continuam na API.
@@ -376,7 +376,7 @@ substituto para um ponteiro ausente ou incompatível.
 | Cena `arquivos` / `avisoMidia` | Três slots fixos na ordem imagem inicial/imagem final/vídeo, cada um arquivo ligado ou null; avisoMidia null quando todos ligados, senão string humana fixa das ausências |
 | `revisoes` | `{vigentes,resolvidas,anteriores,ambiguas}`; mínimos selecionados, sem fabricar correção atual |
 | `arquivos` | registros da produção, com `nomeApresentacao` por tipo/papel e fallback Arquivo registrado; todas as versões continuam identificadas |
-| `pacotePublicacao` | único arquivo da produção com tipo pacote, extensão zip e versão igual à pacote_versao positiva segura; null em ausência/ambiguidade/versão inválida |
+| `pacotePublicacao` | único arquivo da produção com tipo pacote, identificação ZIP contratual e versão igual à pacote_versao positiva segura; null em ausência/ambiguidade/versão inválida |
 | `documentosSemana` | `[{papel,arquivo}]` para Plano, Redação e Visual, ligados pelo ponteiro interno da semana; ausência = null |
 | `avisos` | avisos localizados da peça/unidades/vínculos, com aba/linha física/campo e motivo; conteúdo privado não é anexado |
 
@@ -662,3 +662,7 @@ Cada tabela tem rolagem horizontal própria; em 390 px a página não rola later
 repositório, emenda futura da constituição e captura de Agentes/Controle/Execucoes.
 003: planejamento mensal. 004: revisões e solicitações. 005: prévias/biblioteca.
 006: Equipe/Workflow. Nenhuma dessas integrações foi implementada por esta documentação.
+
+### Identificação do pacote por MIME — manutenção local de 13/10/2026
+
+Arquivos aceita os campos opcionais `extensao` e `mime_type` somente quando os cabeçalhos estão capturados, preservando os 66 mínimos e capturas históricas. Com extensão presente, exige o valor literal `zip` e, se MIME também estiver presente, `application/zip`. Sem extensão, exige MIME literal `application/zip`. Campo presente vazio, MIME incorreto ou conflito recusa o candidato. Não infere por nome nem URL. Produção, tipo `pacote`, versão exata positiva segura e candidato único continuam obrigatórios. A seleção não confirma bytes, acesso ou aprovação editorial. Implementado e testado localmente; integração e nova captura real dependem da etapa autorizada do coordenador.

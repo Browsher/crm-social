@@ -189,9 +189,15 @@ function arquivosRegistrados(producao,records,ctx) {
   }
   return files.map(arquivoApresentado).sort((a,b)=>ordinal(a.arquivo_id,b.arquivo_id));
 }
+function identificacaoZip(a) {
+  const temExt=Object.hasOwn(a,'extensao');
+  const temMime=Object.hasOwn(a,'mime_type');
+  if(temExt)return a.extensao==='zip' && (!temMime || a.mime_type==='application/zip');
+  return temMime && a.mime_type==='application/zip';
+}
 function pacotePublicacao(p,arquivos) {
   if(!Number.isSafeInteger(p.pacote_versao) || p.pacote_versao<=0)return null;
-  const pacotes=arquivos.filter(a=>a.producao_id===p.producao_id && a.tipo==='pacote' && a.extensao==='zip' && a.versao===p.pacote_versao);
+  const pacotes=arquivos.filter(a=>a.producao_id===p.producao_id && a.tipo==='pacote' && identificacaoZip(a) && a.versao===p.pacote_versao);
   return pacotes.length===1?pacotes[0]:null;
 }
 function documentosSemana(p,ntv,ctx) {
