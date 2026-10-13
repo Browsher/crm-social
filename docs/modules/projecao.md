@@ -49,7 +49,7 @@ outras telas.
 | Campo | Regra |
 | --- | --- |
 | `nome` | Nome literal da aba |
-| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 obrigatórios; `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` e `Arquivos.mime_type` somente quando capturados; quatro de Meses e doze de Pautas se presentes |
+| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 obrigatórios; `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags`, `Arquivos.extensao` e `Arquivos.mime_type` somente quando capturados; quatro de Meses e doze de Pautas se presentes |
 | `quantidadeLinhas` | Comprimento da lista de linhas NTV, não a alocação da fonte |
 | `linhas` | Objetos com somente mínimos e opcionais contratuais capturados, já triados; nenhum campo calculado da semana ou da produção |
 

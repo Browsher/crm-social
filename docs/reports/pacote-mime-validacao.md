@@ -2,7 +2,7 @@
 
 Esta manutenção permite consultar o pacote registrado com MIME, preservando a leitura da fonte. A seleção não confere bytes, acesso, conteúdo ou aprovação editorial. Sem rota, dependência, escrita remota, migração ou feature nova.
 
-**Estado vigente local — round 4:** gate Windows completo aprovado na árvore descrita abaixo. A integração e os checks/revisão do novo head continuam pendentes; os vermelhos das rodadas anteriores permanecem como histórico.
+**Estado vigente local — round 5 documental:** preservada a prova do gate Windows completo da round 4; método auditável abaixo. A execução Linux com cap=2 via `workflow_dispatch`, os checks/revisão do novo head e a integração continuam pendentes neste registro. Os vermelhos das rodadas anteriores permanecem como histórico.
 
 ## Evidência da implementação inicial
 
@@ -56,8 +56,76 @@ Em 13/10/2026, a árvore testada partiu de `70ec0991eac9bfcb942869302a04291976dd
 
 A configuração anterior permitia 11 arquivos simultâneos neste ambiente de 12 processadores disponíveis, pelo padrão do Node 24. Vários arquivos também iniciam navegadores/subprocessos. Limitar a dois trata a hipótese de disputa de recursos entre arquivos; a utilização efetiva de CPU/RAM não foi medida e nenhuma causa exclusiva foi demonstrada. O flag foi conferido no `node --help` e carregado pelo `loadConfig` existente. O argv reconstruído e o efetivamente executado preservaram exatamente os mesmos 31 arquivos, reporters, include/exclude e flags de cobertura do diagnóstico anterior, com a única adição de concorrência e o destino LCOV temporário próprio da execução. Timeouts, assertions, quantidade de casos, maxDrop e limiares ficaram intactos.
 
-Foi executado **uma única vez** `node tools/quality-gate.mjs`, com Node/PATH 24.19.0 no Windows, TEMP/TMP/TMPDIR nativos externos ao checkout e Playwright bundled existente; variáveis privadas CRM foram removidas somente do ambiente de teste. O processo do gate recebeu um preload externo que envolve `spawnSync`: encaminha os mesmos argumentos/opções ao original uma vez, salva stdout/stderr do comando de testes e retorna o mesmo objeto de resultado. Não modifica status, TAP, testes ou ferramentas versionadas. Script, argv efetivo, TAP, stderr, JSON e exit real estão preservados no ledger local da tarefa.
+Foi executado **uma única vez** o gate `tools/quality-gate.mjs`, com Node/PATH 24.19.0 no Windows, TEMP/TMP/TMPDIR nativos externos ao checkout e Playwright bundled existente; variáveis privadas CRM foram removidas somente do ambiente de teste. A invocação incluiu `--require` para carregar um observador externo somente no processo do gate, conforme método auditável da round 5 abaixo. O observador envolve `spawnSync`: encaminha os mesmos argumentos/opções ao original uma vez, salva stdout/stderr do comando de testes e retorna o mesmo objeto de resultado. Não modifica status, TAP, testes ou ferramentas versionadas. Script, argv efetivo, TAP, stderr, JSON e exit real estão preservados no ledger local da tarefa.
 
 Resultado entre 12:29:46 e 12:34:12 America/Sao_Paulo: **778 PASS, 0 FAIL, 0 cancelled, 0 SKIP, 0 TODO**, duração TAP **255,05 s**, exit real do runner e do gate **0**. Cobertura **95,5340699815838%**, drop **0 em modo full**; complexidade **PASS/18 avisos**; **Semgrep SKIP por ausência local** e **audit N/A** por não haver dependências da aplicação. Drop full não é comparação histórica. `.quality-gate/baseline.json` estava ausente antes e depois (SHA-256 não aplicável); `baselineUpdated=false`, nenhuma baseline criada ou alterada. O diretório temporário de cobertura desta execução foi removido pelo gate; um resíduo anterior foi identificado antes e preservado. TEMP externo terminou somente com cache de compilação Node.
 
 Esta execução aprova a camada Windows completa dessa árvore sem pulos; não prova eliminação estatística de flakiness. Não houve rerun, filtro, retry, aumento de tempo limite, instalação ou alteração de dados reais. O CI estrito do PR restaura `quality-gate.config.json` e `tools/*.mjs` da base por proteção, que foi preservada; portanto seu resultado usa a política da base, enquanto esta prova Windows exercita cap=2. Semgrep e revisão do novo head ainda dependem dos checks correspondentes. A mudança permanece local, sem push, merge ou integração por este implementador.
+
+## Round 5 — transparência da prova e pendência Linux
+
+Esta rodada parte de `ec6079fddaaf80ee83a0bc0e7ab70a8a876bd1ca` e altera somente documentação. Não executa nova suíte nem novo gate Windows; os 778 PASS citados pertencem à execução única da round 4. Produção, testes, ferramentas, configuração, workflow CI e baseline permanecem intactos nesta rodada.
+
+### I2 — método do observador do gate Windows
+
+Foram relidos os arquivos locais `task-1-round4-run.ps1`, `task-1-round4-capture.cjs`, `task-1-round4-actual-command.json`, os registros de saída/exit e o postflight. O launcher verificou Node/PATH 24.19.0 e recusava iniciar se `CI`, `NODE_OPTIONS` ou `NODE_V8_COVERAGE` estivessem preenchidos; a execução chegou ao gate após essa guarda. A chamada abaixo é o trecho do launcher com os caminhos substituídos por variáveis descritivas; `$taskNode` aponta ao executável Node e `$taskLedger` ao diretório externo de evidências:
+
+```powershell
+if ($env:CI -or $env:NODE_OPTIONS -or $env:NODE_V8_COVERAGE) {
+  throw 'Unexpected inherited test control; inspect before gate'
+}
+& $taskNode --require (Join-Path $taskLedger 'task-1-round4-capture.cjs') tools/quality-gate.mjs 2>&1 |
+  Tee-Object -FilePath (Join-Path $taskLedger 'task-1-round4-gate.txt')
+$taskExit = $LASTEXITCODE
+```
+
+O observador não foi colocado em `NODE_OPTIONS`. O gate constrói o comando de testes explicitamente em `tools/gate-tests.mjs` e o executa via `spawnSync` em `tools/gate-core.mjs`; não repassa `process.execArgv`. O argv efetivo registrado contém reporters TAP/LCOV, cobertura e seus include/exclude, `--test`, `--test-concurrency=2` e os 31 arquivos de teste. Não contém `--require`, caminho do observador ou `NODE_OPTIONS`. Assim, esse preload não foi carregado no runner de testes nem herdado pelos subprocessos dos testes de iniciador/PowerShell/navegador. Isso descreve a instrumentação desta execução, não uma alegação de execução sem instrumentação.
+
+Corpo completo do observador usado (formatação expandida para leitura; nomes dos artefatos locais preservados, sem caminhos pessoais):
+
+```javascript
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const { syncBuiltinESMExports } = require('node:module');
+const original = cp.spawnSync;
+cp.spawnSync = function (...call) {
+  const observed = Array.isArray(call[1]) &&
+    call[1].includes('--test') && call[1].includes('--test-reporter=tap');
+  if (observed) fs.writeFileSync(
+    path.join(__dirname, 'task-1-round4-actual-command.json'),
+    JSON.stringify({
+      node: call[0], args: call[1], cwd: call[2]?.cwd,
+      timeout: call[2]?.timeout, maxBuffer: call[2]?.maxBuffer,
+      encoding: call[2]?.encoding, shell: call[2]?.shell,
+      windowsHide: call[2]?.windowsHide, startedAt: new Date().toISOString()
+    }, null, 2) + '\n'
+  );
+  const result = Reflect.apply(original, this, call);
+  if (observed) {
+    fs.writeFileSync(path.join(__dirname, 'task-1-round4-gate.tap'), result.stdout ?? '');
+    fs.writeFileSync(path.join(__dirname, 'task-1-round4-gate.stderr'), result.stderr ?? '');
+    fs.writeFileSync(path.join(__dirname, 'task-1-round4-tests-exit.json'),
+      JSON.stringify({
+        status: result.status, signal: result.signal, error: result.error?.code ?? null,
+        finishedAt: new Date().toISOString()
+      }, null, 2) + '\n');
+  }
+  return result;
+};
+syncBuiltinESMExports();
+```
+
+`Reflect.apply` chama o original uma vez com o mesmo receptor, argumentos e opções. As gravações leem o resultado, sem substituir stdout/stderr/status nem criar outro objeto de retorno. `syncBuiltinESMExports()` torna o wrapper visível ao import ESM de `spawnSync` no processo pai. Não há retry, tratamento que converta falha em sucesso ou alteração de ambiente nesse observador. Uma falha de gravação interromperia o processo; ela não é suprimida para produzir verde.
+
+O registro efetivo confirma `timeout=1200000`, `maxBuffer=67108864`, `encoding=utf8`, `shell=false` e `windowsHide=true`. O runner retornou `status=0`, `signal=null`, `error=null`; o launcher registrou exit 0 do gate. O postflight conferiu argv contra preflight, entradas intactas durante o gate e produção idêntica a `f55282e`. Os originais integrais continuam no ledger privado; este trecho permite revisar publicamente a lógica do observador, mas não substitui nem publica os artefatos brutos. Nenhum gate adicional sem preload foi executado nesta rodada.
+
+### I1 — o que falta conferir no Linux
+
+O evento `pull_request` restaura configuração e ferramentas da base confiável antes do gate. Um check verde desse evento valida o código do PR sob essa política; não demonstra cap=2 no Linux. O workflow existente também aceita `workflow_dispatch`: nessa execução sobre a branch do PR, a restauração condicionada a `pull_request` não ocorre, e o gate usa a configuração da própria branch. O job continua em Ubuntu 24.04, com limite total de 20 minutos e gate estrito/Semgrep; o dispatch não remove nem substitui a proteção do check de PR.
+
+A conferência via `workflow_dispatch` no head após esta documentação fica pendente para o coordenador. O fechamento deve registrar link da execução, evento, SHA da branch, configuração cap=2 efetivamente usada, duração e conclusão do job/etapas. Este texto não antecipa resultado. M8 permanece: UI/PowerShell têm pulos no Linux; a prova Windows da round 4 cobre essa camada local. Cap=2 mitiga a hipótese de disputa de recursos, sem comprovar causa nem eliminar a pendência de diagnóstico da UI.
+
+### M4/M5 — precisão documental
+
+Módulos web/triagem agora descrevem suas responsabilidades próprias; data-model explicita a atualização em 13/10/2026 e as listas de opcionais usam pontuação consistente. As durações **255,05 s** (round 4, cap=2) e **318,15 s** (diagnóstico da round 2, sem cap) vêm de execuções distintas, com resultados distintos e sem controle de carga/CPU/RAM. Não constituem benchmark, ganho de desempenho medido ou comparação causal da concorrência. M1/M2/M3 do review round 5 permanecem recomendações não implementadas nesta rodada documental.

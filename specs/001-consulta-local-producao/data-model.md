@@ -269,7 +269,7 @@ próprias. [Contrato de versões das unidades](contracts/captura-e-consulta.md#v
 
 ## Tabelas e avisos da Planilha
 
-**Extensão da manutenção de 08/10/2026:** a tabela abaixo preserva a descrição dos 66 mínimos da 001. A consulta atual usa `camposCapturados` e acrescenta `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` e `Arquivos.mime_type` somente quando seus cabeçalhos existem, inclusive em capturas antigas. Selecionar os valores triados não regrava o envelope nem altera bytes, hashes ou tipos históricos; demais extras continuam privados. [Contrato da manutenção](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
+**Extensão da manutenção de 08/10/2026, atualizada em 13/10/2026:** a tabela abaixo preserva a descrição dos 66 mínimos da 001. A consulta atual usa `camposCapturados` e acrescenta `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags`, `Arquivos.extensao` e `Arquivos.mime_type` somente quando seus cabeçalhos existem, inclusive em capturas antigas. Selecionar os valores triados não regrava o envelope nem altera bytes, hashes ou tipos históricos; demais extras continuam privados. [Contrato da manutenção](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
 
 Como folhas de consulta do mesmo álbum, `planilha` mantém as seis tabelas NTV
 inteiras; o filtro do atalho da gaveta recorta somente avisos.
