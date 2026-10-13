@@ -194,7 +194,7 @@ preservando dados privados apenas neste computador.
 66 cabeçalhos mínimos, com seus valores triados renderizados como dados seguros,
 conforme os limites de normalização e apresentação de URL do contrato.
 
-**Nota da manutenção de 08/10/2026:** os cenários abaixo preservam o recorte inicial da 001. A consulta atual mantém os 66 mínimos e acrescenta somente os opcionais contratuais cujo cabeçalho foi capturado: `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao`. Isso vale também para capturas antigas que já contêm esses cabeçalhos, sem regravar bytes ou hashes; demais extras continuam privados. `producoes[].detalhes.pacotePublicacao` representa o pacote único compatível ou null, conforme [Pronta para publicar — manutenção de 08/10/2026](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026).
+**Nota da manutenção de 08/10/2026, atualizada em 13/10/2026:** os cenários abaixo preservam o recorte inicial da 001. A consulta atual mantém os 66 mínimos e acrescenta somente os opcionais contratuais cujo cabeçalho foi capturado: `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags`, `Arquivos.extensao` e `Arquivos.mime_type`. Isso vale também para capturas antigas que já contêm esses cabeçalhos, sem regravar bytes ou hashes; demais extras continuam privados. `producoes[].detalhes.pacotePublicacao` representa o pacote único compatível ou null, conforme [Pronta para publicar — manutenção de 08/10/2026](contracts/captura-e-consulta.md#pronta-para-publicar--manutenção-de-08102026) e a [identificação ZIP por MIME](contracts/captura-e-consulta.md#identificação-do-pacote-por-mime--manutenção-local-de-13102026).
 
 **Acceptance Scenarios**:
 

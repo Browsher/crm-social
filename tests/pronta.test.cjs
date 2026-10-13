@@ -1,7 +1,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const path=require('node:path');
-const {capturaPronta,mudarPacote}=require('./pronta-fixtures.cjs');
+const {capturaPronta,campoOpcional,mudarPacote}=require('./pronta-fixtures.cjs');
 const {capturaValida,temporario,mudarCelula,adicionarRegistro,recalcularHashes}=require('./fixtures.cjs');
 const {carregarMapaQuadro}=require('../src/quadro-config.cjs');
 const {promoverCaptura,lerEstado}=require('../src/snapshot.cjs');
@@ -14,6 +14,59 @@ function visao(t,raw=capturaPronta()) {
   const dir=temporario(t);assert.equal(promoverCaptura(recalcularHashes(raw),dir).resultado,'completa');
   return projetarVisao(lerEstado(dir),NOW,mapa());
 }
+function capturaPacoteMime() {
+  const raw=capturaPronta(),table=raw.tables.Arquivos;
+  // Mesmo contrato real: MIME capturado, sem cabeçalho de extensão.
+  const index=table.values[0].indexOf('extensao');
+  table.values[0][index]='mime_type';
+  for(const row of table.values.slice(1))row[index]=row[index]==='zip'?'application/zip':'';
+  return recalcularHashes(raw);
+}
+test('Pronta captura MIME ZIP sem extensão atravessa persistência, triagem e Planilha',t=>{
+  const raw=capturaPacoteMime(),before=JSON.stringify(raw),view=visao(t,raw);
+  const pacote=view.producoes[2].detalhes.pacotePublicacao;
+  assert.notEqual(pacote,null);
+  assert.equal(pacote.arquivo_id,'pacote-sintetico-3');
+  assert.equal(pacote.mime_type,'application/zip');
+  assert.equal(Object.hasOwn(pacote,'extensao'),false);
+  const arquivos=view.planilha.find(a=>a.nome==='Arquivos');
+  assert.ok(arquivos.cabecalhos.includes('mime_type'));
+  assert.equal(arquivos.cabecalhos.includes('extensao'),false);
+  const linha=arquivos.linhas.find(a=>a.arquivo_id==='pacote-sintetico-3');
+  assert.equal(linha.mime_type,'application/zip');
+  for(const a of arquivos.linhas)assert.equal(Object.hasOwn(a,'extensao'),false);
+  assert.equal(JSON.stringify(raw),before);
+});
+test('Pronta sem identificadores capturados recusa pacote mesmo com pacote_versao válida',t=>{
+  const raw=capturaPronta(),table=raw.tables.Arquivos,index=table.values[0].indexOf('extensao');
+  for(const row of table.values)row.splice(index,1);
+  for(const meta of [raw.metadataBefore,raw.metadataAfter])meta.Arquivos.columnCount--;
+  table.range='A1:'+String.fromCharCode(64+table.values[0].length)+'20';
+  const view=visao(t,recalcularHashes(raw)),p=view.producoes[2];
+  assert.equal(p.pacote_versao,3);
+  assert.equal(p.detalhes.pacotePublicacao,null);
+  const arquivos=view.planilha.find(a=>a.nome==='Arquivos');
+  for(const campo of ['extensao','mime_type']) {
+    assert.equal(arquivos.cabecalhos.includes(campo),false);
+    for(const a of arquivos.linhas)assert.equal(Object.hasOwn(a,campo),false);
+  }
+});
+for(const [nome,editar] of [
+  ['MIME errado',raw=>mudarPacote(raw,'mime_type','application/octet-stream')],
+  ['MIME vazio',raw=>mudarPacote(raw,'mime_type','')],
+  ['versão diferente via MIME',raw=>mudarPacote(raw,'versao',2)],
+  ['dois candidatos via MIME',raw=>adicionarRegistro(raw,'Arquivos',{arquivo_id:'pacote-mime-duplicado',producao_id:'peca-3',tipo:'pacote',mime_type:'application/zip',versao:3})],
+  ['extensão conflitante',raw=>{campoOpcional(raw,'Arquivos','extensao');mudarPacote(raw,'extensao','png');}],
+  ['extensão vazia presente',raw=>campoOpcional(raw,'Arquivos','extensao')]
+])test('Pronta recusa '+nome,t=>{
+  const raw=capturaPacoteMime();editar(raw);
+  assert.equal(visao(t,raw).producoes[2].detalhes.pacotePublicacao,null);
+});
+for(const mime of ['application/zip','application/octet-stream',''])test('Pronta ZIP por extensão exige MIME exato: '+(mime||'vazio'),t=>{
+  const raw=capturaPronta();campoOpcional(raw,'Arquivos','mime_type');
+  mudarPacote(raw,'mime_type',mime);
+  assert.equal(visao(t,raw).producoes[2].detalhes.pacotePublicacao?.arquivo_id ?? null,mime==='application/zip'?'pacote-sintetico-3':null);
+});
 test('Pronta mapa real mantém publicação acima de liberado e etapas abaixo',t=>{
   const raw=capturaPronta();mudarCelula(raw,'Produções',3,'estado_revisao','revisar');
   mudarCelula(raw,'Produções',3,'etapa_producao','arte_aprovada');

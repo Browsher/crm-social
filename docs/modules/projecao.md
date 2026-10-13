@@ -49,7 +49,7 @@ outras telas.
 | Campo | Regra |
 | --- | --- |
 | `nome` | Nome literal da aba |
-| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 obrigatórios; `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags` e `Arquivos.extensao` somente quando capturados; quatro de Meses e doze de Pautas se presentes |
+| `cabecalhos` | Nova lista dos mínimos daquela aba, na ordem contratual; 66 obrigatórios; `Semanas.pauta_id`, `Produções.pacote_versao`/`hashtags`, `Arquivos.extensao` e `Arquivos.mime_type` somente quando capturados; quatro de Meses e doze de Pautas se presentes |
 | `quantidadeLinhas` | Comprimento da lista de linhas NTV, não a alocação da fonte |
 | `linhas` | Objetos com somente mínimos e opcionais contratuais capturados, já triados; nenhum campo calculado da semana ou da produção |
 
@@ -105,7 +105,7 @@ Como páginas numeradas de um álbum, unidades de versões diferentes permanecem
 | `designNovo` | A confirmar nas páginas; versão/template/arquivo não prova classificação de design |
 | `revisoes` | Grupos vigentes, resolvidas, anteriores e ambíguas, sem substituir responsável da peça por responsável da correção |
 | `arquivos` | Registros da produção ordenados por arquivo_id; nome de apresentação é tipo/papel ou Arquivo registrado, sem fabricar nome original |
-| `pacotePublicacao` | Único registro de `arquivos` com `producao_id` exato, `tipo='pacote'`, `extensao='zip'` e `versao` igual a `Produções.pacote_versao`, inteiro positivo seguro; null em ausência, ambiguidade ou versão inválida |
+| `pacotePublicacao` | Único registro de `arquivos` com `producao_id` exato, `tipo='pacote'`, identificação ZIP contratual e `versao` igual a `Produções.pacote_versao`, inteiro positivo seguro; null em ausência, ambiguidade ou versão inválida |
 | `documentosSemana` | Três papéis Plano/Redação/Visual resolvidos por arquivo_id e semana_id; ausentes/incompatíveis null, inclusive sem semana identificada |
 | `avisos` | Avisos próprios e relacionados já globais, mais avisos novos do detalhe, com origem física e motivo fixo; associação não duplica o conjunto global |
 
@@ -156,3 +156,7 @@ Uma pegadinha permanece explícita: a função `registros` em `src/captura.cjs` 
 002 mantém seis tabelas/66 mínimos e tipos recebidos; origem direta não expõe source bruto ou ID privado. Teste P002 em tests/projecao.test.cjs; [validação](../../specs/002-consulta-planilhas/validacao.md).
 
 003 acrescenta Meses em `montarPlanilha` somente quando a triagem retorna `meses`, mesmo sem linhas. São quatro mínimos NTV, sem propriedade raiz/contagem mensal nova, vínculo com semanas ou mudanças nos 66 mínimos anteriores. Avisos de mês/tipo/duplicata vêm da triagem, com linha física preservada em WeakMap pelo parser. O browser deriva o card pelo mês exibido a partir dessa tabela; `semanas[].objetivoMensal` não passa a ter autoridade mensal. [Validação da 003](../../specs/003-planejamento-mensal/validacao.md) registra provas sintéticas e T002/T015 concluídas com uma linha fictícia marcada como teste na fonte real, sem comprovar uso editorial real.
+
+### Identificação do pacote por MIME — manutenção local de 13/10/2026
+
+Arquivos aceita os campos opcionais `extensao` e `mime_type` somente quando os cabeçalhos estão capturados, preservando os 66 mínimos e capturas históricas. Com extensão presente, exige o valor literal `zip` e, se MIME também estiver presente, `application/zip`. Sem extensão, exige MIME literal `application/zip`. Campo presente vazio, MIME incorreto ou conflito recusa o candidato. Não infere por nome nem URL. Produção, tipo `pacote`, versão exata positiva segura e candidato único continuam obrigatórios. A seleção não confirma bytes, acesso ou aprovação editorial. Implementado, ainda sem integração; resultados vigentes e checks pendentes ficam no relatório. [Validação por fonte e limites de UI](../reports/pacote-mime-validacao.md). Integração depende da etapa autorizada do coordenador.

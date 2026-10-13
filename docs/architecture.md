@@ -262,7 +262,7 @@ flowchart TD
   Avisos -->|menu, selo ou Todos os avisos| Painel
 ```
 
-`camposCapturados` em [src/captura.cjs](../src/captura.cjs) compartilha a allowlist de mínimos e opcionais entre triagem e Planilha: Semanas.pauta_id, Produções.pacote_versao/hashtags e Arquivos.extensao só existem na consulta se seus cabeçalhos foram capturados. Demais extras continuam privados. A allowlist vale também para capturas antigas que já contêm esses cabeçalhos: seus valores entram na seleção triada e na Planilha, sem regravar o envelope, alterar bytes/hashes ou converter tipos históricos. `montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
+`camposCapturados` em [src/captura.cjs](../src/captura.cjs) compartilha a allowlist de mínimos e opcionais entre triagem e Planilha: Semanas.pauta_id, Produções.pacote_versao/hashtags, Arquivos.extensao e Arquivos.mime_type só existem na consulta se seus cabeçalhos foram capturados. Demais extras continuam privados. A allowlist vale também para capturas antigas que já contêm esses cabeçalhos: seus valores entram na seleção triada e na Planilha, sem regravar o envelope, alterar bytes/hashes ou converter tipos históricos. `montarPlanilha` em [src/projecao.cjs](../src/projecao.cjs) copia cabeçalhos e objetos de linha já
 triados, depois da resolução de pautas e antes de planejar/detalhar o quadro, evitando
 `pautaOrigem`, `quadro`, `detalhes`, envelope e extras nas tabelas.
 Contagens são das linhas NTV, não da alocação no Google. Normalização null→string
@@ -291,7 +291,7 @@ Como um texto que conserva sua fotografia, cada unidade resolve os arquivos pelo
 
 ## Pronta: pacote e ações locais da gaveta — histórico 001–005
 
-Como consultar uma pasta já preparada, `pacotePublicacao` em `src/projecao.cjs` procura um único Arquivos com produção exata, tipo `pacote`, extensão `zip` e versão igual a `Produções.pacote_versao`, inteiro positivo seguro. Não depende de `Produções.versao`, não escolhe maior versão ou empate; seleção não confirma bytes ou acesso. A coleta direta normaliza o inteiro textual canônico seguro antes dos hashes, sem migrar capturas históricas.
+Como consultar uma pasta já preparada, `pacotePublicacao` em `src/projecao.cjs` procura um único Arquivos com produção exata, tipo `pacote`, identificação ZIP contratual e versão igual a `Produções.pacote_versao`, inteiro positivo seguro. Não depende de `Produções.versao`, não escolhe maior versão ou empate; seleção não confirma bytes ou acesso. A coleta direta normaliza o inteiro textual canônico seguro antes dos hashes, sem migrar capturas históricas.
 
 ```mermaid
 flowchart LR
@@ -350,3 +350,7 @@ A projeção preserva a linha física dos avisos desde a matriz privada, por ID 
 Na leitura de cache de mídia, `lerLimitado` compara o arquivo regular e os campos `dev`/`ino` bigint do descritor aberto com o `lstat` anterior. Troca de arquivo entre a verificação do caminho e a abertura vira miss/refetch, com fechamento do descritor em `finally`; os bytes continuam sujeitos a assinatura/tamanho/SHA. Sem SHA, essa identidade não prova imutabilidade do conteúdo. [Contrato e limites](../specs/005-previas-imagens/contracts/midia.md), [regressão e validação](../specs/005-previas-imagens/validacao.md).
 
 Estado e provas da 002 na [validação](../specs/002-consulta-planilhas/validacao.md). A [003](../specs/003-planejamento-mensal/contracts/meses.md) estende o envelope v1: Meses ausente não acrescenta mapa/array; quando presente participa dos dois hashes com pares ordenados por nome. Não há migração dos bytes/hashes antigos, rota/env nova ou alteração de guardas do POST/GET. Estado/testes e pendências reais na [validação da 003](../specs/003-planejamento-mensal/validacao.md). JWT/fetch sem dependência, timeout/sem redirects e quatro categorias de falha; [contrato](../specs/002-consulta-planilhas/contracts/leitura-planilha.md). Limite lexical de chave/junction e dupla leitura sem transação documentados nos módulos.
+
+### Identificação do pacote por MIME — manutenção local de 13/10/2026
+
+Arquivos aceita os campos opcionais `extensao` e `mime_type` somente quando os cabeçalhos estão capturados, preservando os 66 mínimos e capturas históricas. Com extensão presente, exige o valor literal `zip` e, se MIME também estiver presente, `application/zip`. Sem extensão, exige MIME literal `application/zip`. Campo presente vazio, MIME incorreto ou conflito recusa o candidato. Não infere por nome nem URL. Produção, tipo `pacote`, versão exata positiva segura e candidato único continuam obrigatórios. A seleção não confirma bytes, acesso ou aprovação editorial. Implementado, ainda sem integração; resultados vigentes e checks pendentes ficam no relatório. [Validação por fonte e limites de UI](reports/pacote-mime-validacao.md). Integração depende da etapa autorizada do coordenador.

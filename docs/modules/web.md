@@ -47,7 +47,7 @@ O HTML carrega `/theme.js` de forma síncrona antes de `/styles.css`, seguido de
 | Até 720 px | Lista inicial, menu recolhido; seletor visual Calendário/Lista fica oculto |
 | Menu | Exatamente Planejamento, Produção e Planilha |
 | Produção | Quadro por semana/tema, setas, oito colunas/vazias, pendências e Outras com título/contador da API |
-| Planilha | Fonte, fim em São Paulo, cobertura, releitura, seis abas de mínimos NTV e opcionais contratuais capturados (pauta_id, pacote_versao, hashtags, extensao), Meses/Pautas opcionais, Histórico final e painel detalhado de avisos |
+| Planilha | Fonte, fim em São Paulo, cobertura, releitura, seis abas de mínimos NTV e opcionais contratuais capturados (pauta_id, pacote_versao, hashtags, extensao, mime_type), Meses/Pautas opcionais, Histórico final e painel detalhado de avisos |
 | Filtros | Todos, Imagem, Carrossel e Reels, com aria-pressed |
 | Mês anterior/próximo | Troca somente o mês apresentado |
 | Selo | Quatro textos/cores contratuais da API em todas as telas; clique abre Planilha |
@@ -191,7 +191,7 @@ refere-se aos campos dedicados e links de arquivos; não varre todas as frases.
 
 ### Pronta para publicar
 
-Como uma pasta pronta para a publicação manual, `prontaParaPublicar` (`src/web/app.js`) abre o conteúdo da peça cuja `quadro.coluna` é `Pronta` com a seção **Pronta para publicar**, antes da identificação. `detalhes.pacotePublicacao` já contém o único ZIP compatível com produção/tipo/extensão/versão de pacote. **Baixar pacote** exige HTTPS em `drive.google.com`, sem usuário/senha ou porta diferente da padrão; `docs.google.com` não é permitido nesse botão. O link abre por clique com `noopener noreferrer`; ausência, ambiguidade ou URL recusada mostra **Pacote indisponível**, sem escolher substituto ou comprovar bytes/acesso.
+Como uma pasta pronta para a publicação manual, `prontaParaPublicar` (`src/web/app.js`) abre o conteúdo da peça cuja `quadro.coluna` é `Pronta` com a seção **Pronta para publicar**, antes da identificação. `detalhes.pacotePublicacao` já contém o único ZIP compatível com produção/tipo/identificação ZIP contratual/versão de pacote. **Baixar pacote** exige HTTPS em `drive.google.com`, sem usuário/senha ou porta diferente da padrão; `docs.google.com` não é permitido nesse botão. O link abre por clique com `noopener noreferrer`; ausência, ambiguidade ou URL recusada mostra **Pacote indisponível**, sem escolher substituto ou comprovar bytes/acesso.
 
 Legenda e hashtags usam `textContent` e preservam quebras de linha com `white-space:pre-wrap`; ausências mostram **Legenda não informada**/**Hashtags não informadas**. **Copiar legenda** junta somente os valores presentes com duas quebras de linha. O clique chama `navigator.clipboard.writeText`; sem texto o botão fica desabilitado, sucesso informa **Legenda copiada.** em `role=status` e falha orienta selecionar/copiar manualmente. Essa escrita é local ao clipboard do navegador, sem POST ou alteração editorial.
 
@@ -286,3 +286,5 @@ Ativar por mouse/Enter abre a mesma imagem local no segundo dialog. Fechar image
 O visualizador usa altura calc(100dvh - 32px) e grid com cabeçalho auto/área minmax(0,1fr), considerando a altura real do título e do botão Fechar. A imagem fica inteira, proporcional e centralizada na área disponível, com place-self:center e contain. Imagem, diálogo e botão permanecem dentro da visualViewport, sem corte inferior ou rolagem da imagem, também após reduzir a altura para 390×640 ou 1440×720.
 
 [tests/previas-interface.test.cjs](../../tests/previas-interface.test.cjs): **22 PASS locais** na fonte `4521975`, cobrindo seleção/empates/reaproveitamento, demanda/cache, falhas localizadas e ampliação/foco nos dois temas e 1440/390. As imagens da peça são PNG 1080×1350; asserções conferem dimensões naturais, proporção, centro, bounds da imagem/diálogo/Fechar e ausência de rolagem, inclusive em viewport baixa. Servidor/serviço reais em TEMP, cliente nativo com transporte falso, externos bloqueados; a prova principal não intercepta a resposta da rota de mídia. [12 screenshots sintéticos atualizados dessa fonte](../design/screenshots/LEIA-ME.md#005--prévias-de-imagens), opt-in CRM_SCREENSHOTS_PREVIAS=1, todos inspecionados. UI permanece fora do LCOV e mantém SKIP explícito em CI Linux. T002 confirmada pelo autor em 08/10/2026 (pasta Produções compartilhada como Leitor); sem teste de acesso real pelo agente.
+
+Os opcionais MIME/extensão capturados seguem a [regra ZIP contratual](../../specs/001-consulta-local-producao/contracts/captura-e-consulta.md#identificação-do-pacote-por-mime--manutenção-local-de-13102026); seleção do pacote permanece na projeção. Este módulo apresenta os valores triados recebidos da projeção, sem selecionar candidatos de pacote.

@@ -270,3 +270,5 @@ Implementada/testada localmente, com **449 PASS** no gate Windows, cobertura **9
 - [Validação e limites](../specs/004-pautas-planejamento/validacao.md) e [módulo Pautas](modules/pautas.md).
 - [Relatório histórico do gate Windows](reports/004-local-gate.json), [relatório atual dos ajustes](reports/004-ajustes-local-gate.json) e [galeria dos 20 screenshots](design/screenshots/LEIA-ME.md#004--pautas-no-planejamento).
 - [Gerador sintético](../scripts/screenshots-pautas.cjs), [fixture compartilhada](../tests/pautas-fixtures.cjs), [testes de dados/I/O/projeção/HTTP](../tests/pautas.test.cjs), [testes de interface](../tests/pautas-interface.test.cjs) e [testes do gerador](../tests/screenshots-pautas.test.cjs).
+
+- [Pacote ZIP por MIME — validação sanitizada por fonte](reports/pacote-mime-validacao.md): contrato estrito, gate local/CI identificados por head e revisão do PR #29; dados operacionais fora do Git.

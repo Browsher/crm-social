@@ -9,7 +9,7 @@ const CAMPOS = Object.freeze({
   Revisoes: 'revisao_id producao_id cena_id pagina_id arquivo_id versao decisao motivo responsavel_correcao estado_tratamento'.split(' ')
 });
 const nomes = Object.keys(CAMPOS);
-const CAMPOS_OPCIONAIS=Object.freeze({Semanas:['pauta_id'],'Produções':['pacote_versao','hashtags'],Arquivos:['extensao']});
+const CAMPOS_OPCIONAIS=Object.freeze({Semanas:['pauta_id'],'Produções':['pacote_versao','hashtags'],Arquivos:['extensao','mime_type']});
 function camposCapturados(nome,table) {
   return [...CAMPOS[nome],...(CAMPOS_OPCIONAIS[nome] ?? []).filter(campo=>table.values[0].includes(campo))];
 }
