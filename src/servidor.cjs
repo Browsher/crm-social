@@ -7,10 +7,11 @@ const {coletarCaptura}=require('./coleta.cjs');
 const {projetarVisao}=require('./projecao.cjs');
 const {carregarMapaQuadro}=require('./quadro-config.cjs');
 const {criarServicoMidia}=require('./midia.cjs');
+const {getVideo}=require('./video-http.cjs');
 const STATIC=Object.freeze({'/':['index.html','text/html; charset=utf-8'],'/app.js':['app.js','text/javascript; charset=utf-8'],'/layout-model.js':['layout-model.js','text/javascript; charset=utf-8'],'/perfil-config.js':['perfil-config.js','text/javascript; charset=utf-8'],'/instagram.js':['instagram.js','text/javascript; charset=utf-8'],'/theme.js':['theme.js','text/javascript; charset=utf-8'],'/styles.css':['styles.css','text/css; charset=utf-8']});
 function enviar(req,res,status,type,body,headers={}) {
   res.writeHead(status,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
-    'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",...headers});
+    'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",...headers});
   res.end(req.method==='HEAD'?'':body);
 }
 function permitida(req,port) {
@@ -75,6 +76,7 @@ function criarServidor({dataDir=path.resolve(__dirname,'../data'),port=4318,webD
     const route=req.url.split('?')[0];
     const porta=server.address()?.port ?? port;
     if(route==='/api/midia'||route.startsWith('/api/midia/'))return getMidia(req,res,porta,servicoMidia);
+    if(route==='/api/video'||route.startsWith('/api/video/'))return getVideo(req,res,{permitida:()=>permitida(req,porta),servico:servicoMidia,enviar});
     if (!permitida(req,porta)) return enviar(req,res,403,'text/plain; charset=utf-8','Origem local obrigatória');
     if(route==='/api/atualizar'){
       if(req.method!=='POST')return enviar(req,res,405,'text/plain; charset=utf-8','Método não permitido',{Allow:'POST'});

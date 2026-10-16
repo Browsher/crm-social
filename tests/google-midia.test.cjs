@@ -158,3 +158,17 @@ test('D16 downloads concorrentes compartilham uma aquisição OAuth pendente',as
   assert.equal(fake.calls.filter(call=>call.url===OAUTH).length,1,'downloads simultâneos aguardam o mesmo token em RAM');
   assert.equal(fake.calls.filter(call=>call.url!==OAUTH).length,5);
 });
+test('D17 limite interno de vídeo permite 64 MB e preserva default de imagem em 15 MB',async t=>{
+  const bytes=Buffer.alloc(64_000_000,7),fake=transporteFalso({bytes}),client=cliente(t,{fetchImpl:fake.fetchImpl});
+  assert.equal((await client.getMidia('drive-sintetico',{maxBytes:64_000_000})).length,64_000_000);
+  await assert.rejects(client.getMidia('drive-sintetico'),e=>privado(e,422));
+  let cancelled=0;const excesso=transporteFalso({download:async()=>respostaStream([bytes,Buffer.alloc(1)],{stall:true,onCancel:()=>cancelled++})});
+  await assert.rejects(cliente(t,{fetchImpl:excesso.fetchImpl}).getMidia('drive-sintetico',{maxBytes:64_000_000}),e=>privado(e,422));assert.equal(cancelled,1);
+});
+test('D18 limite interno inválido é recusado antes de OAuth; Content-Length usa limite solicitado',async t=>{
+  const fake=transporteFalso(),client=cliente(t,{fetchImpl:fake.fetchImpl});
+  for(const maxBytes of [0,-1,1.5,'64000000',64_000_001,Infinity,null])await assert.rejects(client.getMidia('drive-sintetico',{maxBytes}),e=>privado(e,422));
+  assert.equal(fake.calls.length,0);
+  let cancelled=0;const excesso=transporteFalso({download:async()=>respostaStream([imagemPng()],{headers:{'Content-Length':'64000001'},onCancel:()=>cancelled++})});
+  await assert.rejects(cliente(t,{fetchImpl:excesso.fetchImpl}).getMidia('drive-sintetico',{maxBytes:64_000_000}),e=>privado(e,422));assert.equal(cancelled,1);
+});

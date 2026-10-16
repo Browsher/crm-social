@@ -111,6 +111,7 @@ function previaPosicao({arquivo,contexto}) {
   return article;
 }
 function galeriaPrevias(p) {
+  if(layout.videoDaPeca(p))return null;
   const posicoes=imagensDaPeca(p);
   if(!posicoes.length)return null;
   const gallery=node('div',undefined,'preview-gallery');gallery.dataset.previas='';gallery.setAttribute('aria-label','Imagens da peça');
@@ -265,6 +266,13 @@ function botaoInstagram(p) {
     if(atual)globalThis.CrmInstagram.abrir({peca:atual,acionador:button});
   });return button;
 }
+function capaDoVideo(p) {
+  const capa=layout.capaVideo(p);if(!capa)return null;
+  const box=node('div',undefined,'video-cover'),img=node('img');box.dataset.videoCapa='';
+  img.alt='Capa do vídeo · '+(p.titulo||'Vídeo');img.decoding='async';
+  img.addEventListener('error',()=>box.replaceChildren(node('p','Capa indisponível','record-text')),{once:true});
+  img.src='/api/midia/'+encodeURIComponent(capa.arquivo_id);box.append(img);return box;
+}
 function textosPublicacao(p,section) {
   section.append(node('p',preenchido(p.legenda)?p.legenda:'Legenda não informada','publication-caption'),
     node('p',preenchido(p.hashtags)?p.hashtags:'Hashtags não informadas','publication-hashtags'));
@@ -319,6 +327,7 @@ function acordeaoPeca(p,aberto) {
   summary.append(node('span',p.formato,'format-label'),node('strong',p.titulo || 'Título não informado'),node('span',layout.estadoSimples(p),'status'),
     node('small',resumoPeca(d),'piece-hint'));
   const body=node('div',undefined,'piece-body');
+  const capa=capaDoVideo(p);if(capa)body.append(capa);
   if(p.quadro.coluna==='Pronta')body.append(prontaParaPublicar(p));
   body.append(botaoInstagram(p));
   body.append(fatosPeca(p));
@@ -363,6 +372,7 @@ function posicionarSemana() {
 }
 function miniatura(p) {
   const box=node('span',undefined,'piece-thumbnail'),posicao=imagensDaPeca(p)[0];
+  if(layout.videoDaPeca(p))box.classList.add('video-thumbnail');
   box.setAttribute('role','img');box.setAttribute('aria-label','Prévia da peça');
   const indisponivel=()=>{const placeholder=node('span','◇','thumbnail-placeholder');placeholder.setAttribute('aria-hidden','true');box.replaceChildren(placeholder);box.setAttribute('aria-label','Prévia indisponível');};
   if(!posicao){indisponivel();return box;}

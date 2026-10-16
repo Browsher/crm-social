@@ -2,6 +2,8 @@
 
 Como um álbum de fotografias da operação, o CRM recebe um arquivo preparado pela Central, guarda a observação aceita e apresenta um índice local da NTV. Consultar o álbum não comanda a produção.
 
+Em 15/10/2026, a 007 acrescenta capa e reprodução do vídeo final por clique, com Tela cheia. Está concluída localmente em 12/12 tarefas: implementada/testada e instalada na instância do autor, com backup e demonstração, sem integração Git. Gate normal final aprovado, 823 testes sem pulos; Semgrep indisponível. O player usa somente mídia local; o servidor mantém captura, cache privado e Drive readonly como fronteiras. [Validação e limites](../specs/007-previas-videos/validacao.md).
+
 001 entregue e demonstrada: [validação da 001](../specs/001-consulta-local-producao/validacao.md). 002 concluída com T021 demonstrada; testes permanecem com cliente falso: [validação da 002](../specs/002-consulta-planilhas/validacao.md). A 003 acrescenta Meses opcional, está concluída e foi demonstrada pelo CRM com uma linha fictícia marcada como teste na aba criada pelo autor; [validação da 003](../specs/003-planejamento-mensal/validacao.md). Código integrado pelo PR #15. A 004 está implementada/testada localmente com Pautas opcional e origem semanal; [PR #20](https://github.com/Browsher/crm-social/pull/20) acompanha entrega e integração, com merge condicionado ao gate/review do head vigente; resultados por head na validação. [Validação da 004](../specs/004-pautas-planejamento/validacao.md).
 
 ## Módulos, imports e relações de execução
@@ -51,6 +53,8 @@ flowchart LR
   Server --> Google["src/google.cjs"]
   Server --> Coleta["src/coleta.cjs"]
   Server --> Midia["src/midia.cjs"]
+  Server --> VideoHTTP["src/video-http.cjs: getVideo"]
+  VideoHTTP -->|serviço e emissor injetados pelo servidor| Midia
   Midia -->|lerEstado antes/depois dos bytes| Snapshot
   Midia -->|selecionarNtv| Triagem
   Midia -->|criarClienteDrive lazy| Google
@@ -84,7 +88,8 @@ flowchart LR
   JS --> Instagram
   Instagram --> LayoutModel
   Instagram --> Perfil
-  Instagram -->|GET /api/midia/ID selecionado| Server
+  Instagram -->|imagem ou poster local /api/midia/ID| Server
+  Instagram -->|clique: GET /api/video/ID e Range| Server
   JS -->|funções puras| LayoutModel
   JS -->|GET /api/visao, POST /api/atualizar e img local /api/midia/ID| Server
   Snapshot --> FS["node:fs / node:path"]
@@ -104,11 +109,12 @@ flowchart LR
 | pautas | Confere pautas NTV triadas, calendário/duplicatas e resolve o ponteiro semanal por ID/marca/início, sem I/O | [Pautas](modules/pautas.md) |
 | google | Configuração externa, JWT RS256 com scope por finalidade, tokens separados em RAM; Sheets tipado e Drive binário limitado | [Google](modules/google.md) |
 | midia | Resolve arquivo no snapshot NTV vigente, confere bytes/hash, cache privado e fingerprint final; cliente Drive lazy | [Mídia](modules/midia.md) |
+| video-http | GET/HEAD de MP4 autorizado, faixa única de bytes, 200/206/416 e falhas sanitizadas; recebe guardas/serviço/emissor do servidor | [HTTP de vídeo](modules/video-http.md) |
 | coleta | Duas leituras de seis grades e Meses/Pautas quando existem, datas, inteiros textuais declarados, hashes e metadados | [Coleta](modules/coleta.md) |
 | servidor | HTTP local com rotas existentes, sete estáticos explícitos e rota dinâmica restrita de mídia; Host/Origin, Sec-Fetch-Site na mídia e respostas resumidas | [Servidor](modules/servidor.md) |
 | iniciador | Entrada Abrir CRM.cmd por duplo clique, reconhecimento de instância existente por GET local; Windows PowerShell 5.1, escolha do Node, porta, processo oculto, confirmação de início e logs privados | [Iniciador](modules/iniciador.md) |
-| layout-model | Dez funções puras de estado/travamento/progresso/seleção e slots de imagens/datas/ordem/fila/publicadas, sem I/O ou mutação | [Modelo visual](modules/layout-model.md) |
-| instagram | Dialog local compartilhado, perfil, slots, navegação/foco e atualização, sem contato com Instagram | [Prévia](modules/instagram.md) |
+| layout-model | Doze funções puras de estado/travamento/progresso/seleção e slots de imagens/datas/ordem/fila/publicadas, final/capa exatos, sem I/O ou mutação | [Modelo visual](modules/layout-model.md) |
+| instagram | Dialog local compartilhado, perfil, imagens/player MP4, tela cheia, navegação/foco e atualização, sem contato com Instagram | [Prévia](modules/instagram.md) |
 | perfil-config | Objeto global público sintético, carregado antes da prévia | [Configuração visual](modules/perfil-config.md) |
 | web | Semana/Mês/objetivo/projetos, Publicar, topo único e gaveta; dados técnicos completos somente na API | [Interface](modules/web.md) |
 
@@ -196,6 +202,7 @@ O ponto de entrada faz bind somente em `127.0.0.1:4318` por padrão. `criarServi
 | /styles.css | GET/HEAD, CSS fixo |
 | /api/visao | GET/HEAD, JSON selecionado; sem captura é 200 com ausência estruturada |
 | /api/midia/ID-interno | GET exclusivo; bytes PNG/JPEG/WEBP pelo serviço privado; HEAD/outros 405 sem serviço |
+| /api/video/ID-interno | GET/HEAD; MP4 validado até 64.000.000 bytes; GET completo 200 ou faixa única 206; faixa inválida 416; HEAD sem corpo ignora Range |
 | /api/atualizar | POST local JSON {}, origem obrigatória e ≤1KiB; leitura/promoção |
 | Outro método com origem válida | 405; Allow POST no atualizador, GET na mídia, GET/HEAD nas outras rotas |
 | Outra rota, privado ou traversal | 404; query não escolhe diretórios |
@@ -207,6 +214,32 @@ Host é exatamente `127.0.0.1:<porta real>`; `localhost` não passa. Origin ause
 O servidor não expõe `data/`, configuração bruta, envelope/metadados de coleta, células extras ou qualquer arquivo arbitrário. Texto é renderizado por `textContent`; supressão conservadora protege formatos conhecidos de conteúdo sensível sem confundir HTTPS com caminho Windows. Antes do HTTP, a projeção analisa `Arquivos.url` e `Produções.url_video_final` com `new URL`: usuário ou senha causam **[conteúdo suprimido]** e aviso fixo localizado, sem expor o valor. String não vazia recusada pelo construtor também é suprimida, com motivo fixo **URL inválida suprimida**; vazio/somente espaços é preservado sem esse aviso. Original permanece só na captura privada. Nenhuma URL registrada é carregada automaticamente; a UI também não ecoa URL recusada como texto bruto.
 
 Por decisão do autor, a triagem em texto livre e recibo substitui somente pedaço HTTP(S) separado por espaços em branco que `new URL` reconhece com usuário/senha, preservando o restante da frase, separadores e pontuação de contorno. Não promete detectar outros esquemas, URL relativa, espaços em userinfo ou forma fora desse pedaço; o guarda dos campos de URL dedicados permanece. JSON é dado: somente tokens de string alterados são reserializados, com demais bytes, números, ordem, espaços e escapes legítimos intactos, sem execução ou expansão da whitelist. A validade original de origens_json fica em WeakMap privado para não confundir supressão com JSON inválido. Avisos globais de registros relacionados passam a integrar o contador de cada peça, sem duplicar o conjunto global. Na tela, arquivo ligado sem URL segura mostra **link não permitido** e Texto registrado identifica Página/Cena por número e versão, conservando IDs na API.
+
+## Capa e player local — 007
+
+Como a etiqueta de uma mídia no álbum, `videoDaPeca` exige um único arquivo `tipo=video` da mesma produção/versão, apontado por `id_drive_video_final`; MIME capturado, se presente, precisa ser `video/mp4`. `capaVideo` exige imagem `papel=capa_video` da mesma produção/versão e `origens_json.video_arquivo_id` exato. Ausência/ambiguidade não escolhe outro arquivo; bancos sem final declarado continuam com a apresentação anterior. Nenhum campo ou hash da captura é migrado.
+
+```mermaid
+flowchart TD
+  Captura[Captura vigente: Produções e Arquivos] --> Selecionar[layout-model: final e capa unívocos]
+  Selecionar --> Capa[Miniatura e painel: GET /api/midia/ID da capa]
+  Selecionar --> Clique[Ver no Instagram]
+  Clique --> Player[HTMLVideoElement com poster local e controls]
+  Player --> Rota[GET /api/video/ID interno e faixa simples]
+  Rota --> Resolver[obterVideo: snapshot NTV e tipo video]
+  Resolver --> Cache{Cache privado validado?}
+  Cache -->|não| Drive[Drive readonly pelo servidor, limite 64 MB]
+  Drive --> Validar[MP4 e SHA opcional, staging e rename]
+  Validar --> Cache
+  Cache -->|sim| Reconferir[Reler referência vigente]
+  Reconferir --> Resposta[200 completo ou 206, no-store e CORP]
+  Resposta --> Player
+  Player --> Fechar[Pausar, remover src e load ao fechar]
+```
+
+`src/video-http.cjs` não importa rede ou persistência: `src/servidor.cjs` injeta a guarda, factory do serviço e emissor. Host/Origin e Sec-Fetch-Site precedem método/ID/bytes. A CSP acrescenta `media-src 'self'`; o DOM do player contém apenas URLs locais, sem credencial ou URL Drive. O arquivo inteiro é baixado/lido e validado antes de recortar Range; não há proxy de Range remoto, stream progressivo do Drive ou transcodificação. Imagens mantêm seu limite de 15 MB e sua rota GET.
+
+O cache usa a referência vigente antes/depois e uma chave de vídeo separada da imagem; não é uma fonte operacional autônoma. A demonstração privada preparou bytes locais autorizados no cache após tentativa Drive retornar 503. Isso não adicionou caminho/variável/fallback ao código: um cache miss continua exigindo acesso Drive. [Módulo HTTP](modules/video-http.md), [mídia](modules/midia.md), [contrato](../specs/007-previas-videos/contracts/video.md) e [prova sanitizada](../specs/007-previas-videos/validacao.md).
 
 ## Configuração e execução
 
@@ -336,6 +369,8 @@ CI ativo com quality-gate obrigatório e review por comentário; histórico e es
 | Mapa restrito aos rótulos aprovados | config/quadro-etapas.json; nove etapas, somente liberado em liberacaoPronta e revisaoEmAndamento vazia; outros rótulos de testes/demonstrações usam mapa sintético em TEMP |
 | I/O síncrono e validação por consulta | lerEstado em src/snapshot.cjs e handler de criarServidor em src/servidor.cjs; cada prévia chama lerEstado antes e depois dos bytes em src/midia.cjs, com duas leituras síncronas integrais da captura, inclusive em cache hit. Cenário sintético de escala verificado não mede acesso operacional ao Drive; limites na validação |
 | Cache de mídia sem política de retenção | src/midia.cjs mantém entradas antigas quando a referência muda; sem eviction, quota ou expiração. Diretório herda a ACL de data/, sem chmod/ACL própria; permissões locais dependem do ambiente do autor |
+| Vídeo validado integralmente antes de Range | src/midia.cjs carrega até 64 MB e src/video-http.cjs recorta o Buffer; primeiro play em cache miss depende do download completo. Cache evita rede, mas não leitura/validação integral; não mede escala concorrente operacional |
+| Dependência de permissão Drive em cache miss | criarClienteDrive em src/google.cjs permanece a única busca remota; demonstração privada da 007 usou cache preparado após 503 remoto. Remover/perder cache exige restaurar acesso Drive; nenhum fallback automático lê pastas locais |
 | Trava sobrevivente à interrupção | exclusiva em src/snapshot.cjs; exige reconciliação manual; aviso de liberação preserva resultado/erro |
 | Teste de rename não prova queda de energia | Fluxo de persistência e validacao.md; registrar somente garantia testada |
 | Avisos de complexidade | Funções do CLI, snapshot, projeção e web; medições atuais somente na validação, manutenção sem retirar validações |

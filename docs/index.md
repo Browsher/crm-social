@@ -1,5 +1,25 @@
 # Documentação
 
+Como um índice do mesmo álbum de produção, esta página reúne o leitor atual e as provas das entregas anteriores.
+
+## Feature 007 — Prévias de vídeos
+
+Concluída localmente em 15/10/2026, 12/12 tarefas: implementada, testada e instalada na instância do autor, com backup e demonstração na porta habitual; branch `codex/007-previas-videos`, sem integração Git. Gate normal final aprovado, 823 testes sem pulos; Semgrep indisponível. Capa, player por clique e tela cheia usam somente a origem local. A validação separa ensaios sintéticos da demonstração privada e registra a dependência de acesso ao Drive em cache miss.
+
+| Documento | Uso |
+| --- | --- |
+| [Spec](../specs/007-previas-videos/spec.md) | Pedido do autor, duas jornadas e critérios mensuráveis |
+| [Plano](../specs/007-previas-videos/plan.md) | Reuso do modal/cache e limites da leitura MP4 |
+| [Pesquisa](../specs/007-previas-videos/research.md) | Decisões e APIs nativas consultadas via Context7 |
+| [Modelo](../specs/007-previas-videos/data-model.md) | Final/capa por produção, versão e origem exatos |
+| [Contrato](../specs/007-previas-videos/contracts/video.md) | GET/HEAD, Range, status, guardas e player |
+| [Tarefas](../specs/007-previas-videos/tasks.md) | Execução e instalação local separadas da integração Git |
+| [Quickstart](../specs/007-previas-videos/quickstart.md) | Testes sintéticos e roteiro privado de demonstração |
+| [Validação](../specs/007-previas-videos/validacao.md) | RED/GREEN, revisão, gate e limites operacionais sanitizados |
+| [Checklist](../specs/007-previas-videos/checklists/requirements.md) | Completude dos requisitos |
+| [Módulo HTTP de vídeo](modules/video-http.md) | Novo adaptador de rota e faixa de bytes |
+| [Emenda 1.3.0](../.specify/memory/constitution.md#emenda-130--leitura-de-vídeos-do-drive) | Extensão explícita de Drive readonly para MP4 |
+
 ## Feature 006 — Layout v3 (concluída e integrada — 32/32 tarefas)
 
 Como novas páginas do mesmo álbum, a 006 reorganiza a consulta. A integrada PR #24/main a5be355. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação](../specs/006-layout-v3/validacao.md) registra adjudicação e fontes distintas de código/gate/PNG.
@@ -47,7 +67,7 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | [ROADMAP](../ROADMAP.md) | Entregas do v1, 005 implementada/testada na branch e backlog futuro/v2 ilustrativo |
 | [AGENTS](../AGENTS.md) | Regras locais e bloco gerenciado preservado |
 | [CLAUDE](../CLAUDE.md) | Importador das instruções canônicas; não é outra regra de produto |
-| [Constituição](../.specify/memory/constitution.md) | 1.2.0 aprovada/aplicada na 005 em 08/10; integração acompanhada no PR #23; preserva a emenda 1.1.0 da leitura de planilhas |
+| [Constituição](../.specify/memory/constitution.md) | 1.3.0 aplica a leitura MP4 solicitada na 007; preserva 1.2.0/imagens e 1.1.0/planilhas |
 | [Regra curta de estrutura](../.claude/rules/project-structure.md) | EntryPoints/pastas/imports/testes observados, até 60 linhas |
 | [architecture.md](architecture.md) | Mapa de módulos/imports, persistência, rotas/env e dívidas |
 | [Este índice](index.md) | Todos os documentos autorais do projeto e referências de ferramenta |
@@ -58,6 +78,7 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | --- | --- |
 | [Google](modules/google.md) | JWT/fetch nativos, Sheets/Drive readonly por finalidade e tokens separados em RAM |
 | [Mídia](modules/midia.md) | src/midia.cjs; resolução NTV, assinatura/tamanho/hash, cache privado e fingerprint final |
+| [HTTP de vídeo](modules/video-http.md) | src/video-http.cjs; GET/HEAD, faixa simples, status fixos e guardas locais |
 | [Coleta](modules/coleta.md) | Seis grades obrigatórias, Meses/Pautas opcionais independentes, duas leituras, metadados/hashes e datas |
 | [Captura](modules/captura.md) | src/captura.cjs; envelope, 66 mínimos, allowlist compartilhada de campos opcionais, Meses/quatro e Pautas/doze opcionais, normalização/hash e origem física |
 | [Triagem compartilhada](modules/triagem.md) | src/triagem.cjs; seleção NTV, redação e identidades validadas antes da promoção e na consulta |
@@ -68,8 +89,8 @@ Histórico da entrega: [004 — Pautas no Planejamento](../specs/004-pautas-plan
 | [Pautas](modules/pautas.md) | src/pautas.cjs; identidade/calendário, duplicatas e origem semanal por ID/marca/início, sem inferência ou I/O |
 | [Servidor](modules/servidor.md) | src/servidor.cjs; API existente, mídia por ID interno, sete estáticos explícitos e guardas de origem |
 | [Iniciador Windows](modules/iniciador.md) | Abrir CRM.cmd por duplo clique, reabertura por GET local e sucesso sem pause; Iniciar CRM.ps1, Node existente, processo oculto, confirmação, retorno e logs privados |
-| [Modelo visual](modules/layout-model.md) | src/web/layout-model.js; dez funções puras para estados, mídia, datas e filas |
-| [Prévia Instagram](modules/instagram.md) | src/web/instagram.js; modal local, slots completos, teclado/gesto/foco e atualização |
+| [Modelo visual](modules/layout-model.md) | src/web/layout-model.js; doze funções puras para estados, mídia, datas e filas, incluindo final/capa exatos |
+| [Prévia Instagram](modules/instagram.md) | src/web/instagram.js; modal local de imagens/vídeo, controles, tela cheia, teclado/gesto/foco e atualização |
 | [Configuração visual do perfil](modules/perfil-config.md) | src/web/perfil-config.js; objeto público sintético e validação no consumidor |
 | [Web/Planejamento, Produção e Publicar](modules/web.md) | src/web; Semana/Mês, objetivo, projetos, fila, topo único e gaveta; API completa sem Planilha visual, histórico 001–005 preservado |
 

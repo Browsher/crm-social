@@ -10,7 +10,7 @@ const {projetarVisao}=require('../src/projecao.cjs');
 const mapa=require('../config/quadro-etapas.json');
 const arquivo=path.resolve(__dirname,'../src/web/layout-model.js');
 const nomes=['estadoSimples','motivoTravado','progresso','imagensDaPeca','segundaDaSemana','ordenarSemanas',
-  'filaPublicar','publicadasRecentes','posicoesInstagram','instantePublicacao'];
+  'filaPublicar','publicadasRecentes','posicoesInstagram','instantePublicacao','videoDaPeca','capaVideo'];
 const layout=require(arquivo);
 function projetar(raw=capturaLayout()) {
   return projetarVisao({captura:validarCaptura(recalcularHashes(raw)),historico:[],ultimaTentativa:null},AGORA,mapa);

@@ -5,6 +5,7 @@ const OAUTH='https://oauth2.googleapis.com/token';
 const SCOPE='https://www.googleapis.com/auth/spreadsheets.readonly';
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.readonly';
 const MAX_MIDIA_BYTES=15_000_000;
+const MAX_VIDEO_BYTES=64_000_000;
 const MOTIVOS=Object.freeze({configuracao:'Configuração da leitura indisponível',acesso:'Acesso à planilha negado',
   rede:'Não foi possível ler a planilha; tente novamente',dados:'Captura inválida ou planilha mudou entre as leituras'});
 function falha(categoria) { return Object.assign(new Error(MOTIVOS[categoria]),{categoria}); }
@@ -89,8 +90,8 @@ async function requisitarDrive(url,options,fetchImpl,timeoutMs,consumir) {
   catch(error) {throw falhaMidia(error?.status===422?422:503);}
   finally {clearTimeout(timer);}
 }
-async function lerBytesMidia(response,aoCancelar) {
-  if(Number(response.headers.get('Content-Length'))>MAX_MIDIA_BYTES) {
+async function lerBytesMidia(response,aoCancelar,maxBytes) {
+  if(Number(response.headers.get('Content-Length'))>maxBytes) {
     cancelarCorpo(response.body);throw falhaMidia(422);
   }
   const reader=response.body?.getReader();
@@ -102,7 +103,7 @@ async function lerBytesMidia(response,aoCancelar) {
       const {done,value}=await reader.read();
       if(done)break;
       tamanho+=value.byteLength;
-      if(tamanho>MAX_MIDIA_BYTES) {cancelarCorpo(reader);throw falhaMidia(422);}
+      if(tamanho>maxBytes) {cancelarCorpo(reader);throw falhaMidia(422);}
       chunks.push(Buffer.from(value));
     }
     return Buffer.concat(chunks,tamanho);
@@ -123,12 +124,13 @@ function criarClienteDrive({env,repoRoot,fetchImpl=fetch,now=Date.now,timeoutMs=
     tokenPendente??=obterToken().finally(()=>{tokenPendente=null;});
     return tokenPendente;
   }
-  return {async getMidia(idDrive) {
+  return {async getMidia(idDrive,{maxBytes=MAX_MIDIA_BYTES}={}) {
     if(typeof idDrive!=='string'||!/^[A-Za-z0-9_-]+$/.test(idDrive))throw falhaMidia(422);
+    if(!Number.isSafeInteger(maxBytes)||maxBytes<=0||maxBytes>MAX_VIDEO_BYTES)throw falhaMidia(422);
     try {
       const authorization='Bearer '+await acesso();
       return await requisitarDrive('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(idDrive)+'?alt=media',
-        {method:'GET',headers:{Authorization:authorization}},fetchImpl,timeoutMs,lerBytesMidia);
+        {method:'GET',headers:{Authorization:authorization}},fetchImpl,timeoutMs,(response,cancelar)=>lerBytesMidia(response,cancelar,maxBytes));
     } catch(error) {throw falhaMidia(error?.status===422?422:503);}
   }};
 }
