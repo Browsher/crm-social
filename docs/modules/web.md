@@ -6,7 +6,7 @@ Como uma agenda mensal com cartões e páginas semanais, a interface permite loc
 
 Como páginas de uma agenda, Semana/Mês localizam peças, Produção acompanha projetos e Publicar reúne material para publicação manual. A integrada PR #24. B implementada, testada e revisada; 32/32 tarefas executadas, PR #25 MERGED e integrada em c4660d7 após aprovação expressa do autor. Gate local bc74d6e e CI do head aprovado a5c964c verde; I1 investigado sem regressão reproduzida, I2 histórico corrigido. Checks e revisão do head aprovado a5c964c conferidos no PR #25. [Validação](../../specs/006-layout-v3/validacao.md). As seções históricas 001–005 conservam a apresentação substituída.
 
-index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model → perfil-config → instagram → app. app.js usa [dez funções puras](layout-model.md), mantendo DOM, atualização e gaveta. [instagram.js](instagram.md) cuida do dialog/navegação/foco, e [perfil-config.js](perfil-config.md) fornece o nome e a sigla sintéticos públicos.
+index.html carrega /theme.js antes do CSS; os scripts defer seguem layout-model → perfil-config → instagram → app. app.js usa o [modelo puro](layout-model.md), mantendo DOM, atualização e gaveta. [instagram.js](instagram.md) cuida do dialog/navegação/foco, e [perfil-config.js](perfil-config.md) fornece o nome e a sigla sintéticos públicos.
 
 A manutenção visual `7939e70` está implementada/testada localmente, não integrada; checks/review do head final ficam no PR. Pauta com tema vazio/somente espaços mostra só seu rótulo, sem separador, no cabeçalho semanal, projeto e fallback. [Validação sintética](../reports/006-ajustes-visuais-validacao.md).
 
@@ -33,6 +33,14 @@ API mantém o campo legado selo.destino = planilha; o cliente ignora esse destin
 Dívidas de manutenção sugeridas no review: prontaParaPublicar e acoesPublicacao ainda repetem ações de cópia/pacote; uma consolidação futura deve preservar os contratos de clipboard e allowlist. Há tokens/estilos CSS legados sem uso a revisar em limpeza própria. Essas sugestões não são falhas reproduzidas do contrato e não alteraram código nesta entrega. A verificação de acessibilidade foi por Playwright; anúncios de role=status quando um nó deixa hidden e possíveis redundâncias precisam de ensaio futuro com leitor de tela real, que não foi realizado.
 
 LCOV não inclui app/theme/instagram/perfil-config; layout-model e geradores sintéticos são medidos. Playwright verifica 1440/390, temas, foco/teclado/contraste, conteúdo literal e invariância; CI Linux mantém pulos UI/PowerShell na dívida M8. [20 screenshots da B](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-b), [12 históricos da A](../design/screenshots/LEIA-ME.md#006--layout-v3-parte-a); gate local não substitui CI/review no head final.
+
+## Capa e prévia do vídeo — 007
+
+Como reconhecer uma peça pela capa antes de assisti-la, `capaDoVideo` em `app.js` acrescenta a imagem confirmada ao corpo do painel e `miniatura` usa a mesma seleção em Planejamento/Produção/Publicar. A proporção 9:16 com `contain` preserva a capa; falha no painel apresenta **Capa indisponível**. Não duplica a capa na galeria histórica quando há vídeo final válido.
+
+**Ver no Instagram** resolve a peça vigente e abre o [player compartilhado](instagram.md#player-de-vídeo--007). Antes desse clique, nenhum byte de vídeo é solicitado; capas usam somente `/api/midia/<ID interno>`. A prévia usa `/api/video/<ID interno>`, controles nativos e Tela cheia; não abre Drive. Bancos sem final único mantêm indisponibilidade/galeria anterior. Dados de arquivo no Texto registrado continuam sendo registros com links seguros por clique, separados do player.
+
+Implementado/testado localmente em 15/10/2026, sem integração Git. Não há alteração de estado editorial, agenda ou geração. [Validação 007](../../specs/007-previas-videos/validacao.md), [modelo](layout-model.md#final-e-capa-de-vídeo--007) e [HTTP](video-http.md).
 
 ## Inicialização e navegação — histórico 001–005
 

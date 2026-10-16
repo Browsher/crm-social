@@ -18,7 +18,7 @@ Servidor e regressões de estado/projeção implementados e verificados localmen
 | `port` | 4318; porta 0 permitida para teste |
 | `webDir` | `src/web/`; argumento confiável para fixture de estáticos em TEMP |
 | `quadroConfigPath` | `config/quadro-etapas.json`; carregado e validado antes de criar servidor |
-| `midia` | Serviço confiável injetável com obter(arquivoId); padrão lazy cria o serviço de mídia local |
+| `midia` | Serviço confiável injetável com obter(arquivoId)/obterVideo(arquivoId); padrão lazy cria o serviço de mídia local |
 
 O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser inteiro de 0 a 65535. Diretórios não são selecionados por requisição HTTP. Imports: `node:http`, `node:fs`, `node:path`, [snapshot](snapshot.md), [projeção](projecao.md), [configuração](quadro-config.md), [cliente Google](google.md), [coleta](coleta.md) e [mídia](midia.md). O módulo exporta `criarServidor` sem iniciar listen; o ponto de entrada inicia exclusivamente em `127.0.0.1`. O POST usa as variáveis privadas de Sheets; GET /api/midia pode carregar a credencial Drive no primeiro cache miss. GET /api/visao e inicialização permanecem locais, sem chave ou Google.
 
@@ -36,6 +36,7 @@ O CLI aceita apenas `--data-dir` e `--port`, ambos com valor. Porta deve ser int
 | POST /api/atualizar | JSON {} até1KiB, Origin obrigatório; coleta injetável, 200/422/503/409 conforme contrato |
 | GET /api/visao | 200, JSON de `projetarVisao(lerEstado(dataDir), nowIso, mapa)`; ausência de captura é resultado estruturado |
 | GET /api/midia/ID-interno | Bytes PNG/JPEG/WEBP autorizados pela captura vigente; falhas 400/403/404/405/422/503 fixas, conforme contrato005 |
+| GET/HEAD /api/video/ID-interno | MP4 autorizado; 200 completo/HEAD, 206 faixa simples, 416 faixa inválida e falhas fixas; HEAD ignora Range e não tem corpo |
 | HEAD nos estáticos e /api/visao | Mesmos controles/tipo/status, sem corpo; /api/atualizar só aceita POST e /api/midia só GET |
 | GET/HEAD de qualquer outra rota | 404, incluindo privados, configuração, importação e traversal |
 | Outros métodos, com Host/Origin válidos | 405; `Allow: POST` na atualização, `GET` na mídia e `GET, HEAD` nas demais; inclusive OPTIONS |
@@ -52,7 +53,7 @@ A acrescentou `/layout-model.js`; B acrescenta somente `/perfil-config.js` e `/i
 
 `permitida` exige Host exatamente `127.0.0.1:<porta real>`; `localhost` é recusado. Na consulta, Origin ausente é permitido; no POST é obrigatório; quando presente, deve ser exatamente `http://127.0.0.1:<porta>`. Não há CORS externo.
 
-Todas as respostas incluem `Cache-Control: no-store`, `X-Content-Type-Options: nosniff` e CSP. A 005 altera somente `img-src 'none'` para `img-src 'self'`: scripts/estilos/conexões continuam na própria origem; objetos, base externa e incorporação por outro site permanecem bloqueados. O navegador obtém imagens somente do servidor local. A chave externa é usada somente pelo cliente no servidor; não há escrita editorial.
+Todas as respostas incluem `Cache-Control: no-store`, `X-Content-Type-Options: nosniff` e CSP. A 005 altera somente `img-src 'none'` para `img-src 'self'`; a 007 explicita `media-src 'self'`. Scripts/estilos/conexões continuam na própria origem; objetos, base externa e incorporação por outro site permanecem bloqueados. O navegador obtém imagens e vídeos somente do servidor local. A chave externa é usada somente pelo cliente no servidor; não há escrita editorial.
 
 A consulta lê e valida ponteiro/recibos/captura a cada GET e gera seleção permitida. O mapa é carregado uma vez ao criar o servidor. A interface tem **Atualizar dados**, que envia POST protegido, promove somente candidata válida e depois relê GET local.
 
@@ -77,3 +78,9 @@ Sem as variáveis Google, o POST com composição padrão confirma recibo de fal
 O serviço relê/valida o snapshot e recorta NTV em todo pedido. Resposta 200 usa Content-Type derivado dos bytes; todo erro é texto UTF-8 constante **Prévia indisponível**, sem ID, conta, URL ou mensagem Google. `Cross-Origin-Resource-Policy: same-origin`, no-store/nosniff e CSP acompanham sucesso e falhas; HEAD conserva ausência de corpo. Não há CORS. A captura/recibo não é alterada pela prévia.
 
 [Contrato005](../../specs/005-previas-imagens/contracts/midia.md), [módulo mídia](midia.md) e [tests/midia-http.test.cjs](../../tests/midia-http.test.cjs) documentam todos os status. Testes usam HTTP real em porta efêmera e cliente nativo com transporte falso, com timeout local e conferência byte a byte de capturas/recibos. [Validação](../../specs/005-previas-imagens/validacao.md); integração não autorizada.
+
+## Rota de vídeo — 007
+
+`criarServidor` importa `getVideo` de [src/video-http.cjs](../../src/video-http.cjs) e lhe passa a guarda `permitida`, o serviço lazy e o emissor `enviar`. GET/HEAD resolvem apenas ID interno de MP4 `tipo=video` pela captura NTV vigente. A rota rejeita query/fragmento/caminho e aplica Host/Origin/Fetch-Site antes de método ou bytes. Serve faixas fechadas, abertas ou sufixo; o arquivo completo é validado antes de recortar o Buffer. Imagens mantêm sua rota GET e limite anteriores.
+
+[Módulo HTTP de vídeo](video-http.md) detalha 200/206/416, Content-Length/Content-Range e falhas sanitizadas; [contrato 007](../../specs/007-previas-videos/contracts/video.md) rege o comportamento. Não há novo estático, variável de ambiente, exposição de diretório privado, CORS ou escrita operacional. Implementado/testado localmente, sem integração Git; [provas](../../specs/007-previas-videos/validacao.md).

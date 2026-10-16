@@ -1,5 +1,7 @@
 # CRM Social
 
+**Atualização local em 15/10/2026 — 007 concluída, 12/12 tarefas:** a consulta agora mostra a capa do vídeo final registrado. **Ver no Instagram** abre a prévia no CRM e inicia o vídeo com controles de pausa, busca e volume; **Tela cheia** expande o player. Fechar interrompe a reprodução. Implementada, testada e instalada na instância local do autor, com backup e demonstração na porta habitual; branch `codex/007-previas-videos`, sem integração Git. Gate normal final aprovado: 823 testes sem pulos; Semgrep indisponível. [Validação e limites](specs/007-previas-videos/validacao.md), [spec](specs/007-previas-videos/spec.md) e [documentação](docs/index.md#feature-007--prévias-de-vídeos).
+
 **Atualização em 09/10/2026:** 001–006 concluídas na main. **006 — Layout v3 integrada, [32/32 tarefas](specs/006-layout-v3/tasks.md)**; A pelo [PR #24](https://github.com/Browsher/crm-social/pull/24), B aprovada pelo autor e integrada pelo [PR #25](https://github.com/Browsher/crm-social/pull/25), merge `c4660d78c188793dddac3f44f4d42401a3542a83`. CI/review do head aprovado a5c964c verificados; main pós-merge verde. [Validação](specs/006-layout-v3/validacao.md), [relatório](docs/reports/006-parte-b-local-gate.json) e [galeria](docs/design/screenshots/LEIA-ME.md#006--layout-v3-parte-b) preservam gate bc74d6e/código 08ba10b, 4 PNG Instagram 08ba10b/16 PNG B 800d7ca e históricos. API/captura continuam somente leitura; a restrição da entrega anterior sem merge foi cumprida, e a autorização posterior permitiu esta integração.
 
 **Manutenção visual de 09/10/2026:** aprovada pelo autor e integrada na main pelo PR #27, merge `cdd03c79a56c94a430993e9680a1b74193c9d73b`. A branch `codex/006-ajustes-visuais` partiu da main `596dc4f` (fechamento documental da 006 pelo PR #26); as provas dessa entrega permanecem históricas. A 006 permanece concluída em 32/32 tarefas. Checks e review da entrega estão registrados no [PR #27](https://github.com/Browsher/crm-social/pull/27). [Validação sintética](docs/reports/006-ajustes-visuais-validacao.md), [gate local](docs/reports/006-ajustes-visuais-local-gate.json) e [antes/depois](docs/design/screenshots/LEIA-ME.md#006--ajustes-visuais).
@@ -29,6 +31,7 @@ US1–US5, iniciador e cenário sintético de escala estão verificados localmen
 
 ## Onde começar
 
+- [Feature 007: Prévias de vídeos](specs/007-previas-videos/spec.md), [contrato](specs/007-previas-videos/contracts/video.md), [tarefas](specs/007-previas-videos/tasks.md) e [validação](specs/007-previas-videos/validacao.md)
 - [Roadmap do v1 e backlog ilustrativo v2](ROADMAP.md)
 - [Feature 001: consulta da produção](specs/001-consulta-local-producao/spec.md)
 - [Plano de implementação](specs/001-consulta-local-producao/plan.md)
@@ -86,13 +89,21 @@ Manutenção autorizada em 08/10/2026, implementada/testada localmente: a rodada
 
 Como uma folha de contato junto do texto, a gaveta mostra as imagens das páginas/cenas vigentes na ordem. Em Pronta para publicar, a galeria fica junto do pacote e da legenda, fora da dobra de páginas/cenas. As imagens vinculadas podem vir de versões anteriores; a prévia não confere os integrantes do ZIP ou aprovação editorial.
 
-Abrir a peça inicia somente suas miniaturas; quadro e peças fechadas não buscam mídia. No celular, a faixa tem rolagem lateral. Clique ou Enter amplia a imagem; **Fechar imagem** ou Escape devolve o foco à miniatura e mantém a gaveta. Falha mostra **Prévia indisponível** na posição afetada, preservando texto, Drive, pacote e avisos. Vídeos continuam por link.
+Abrir a peça inicia somente suas miniaturas; quadro e peças fechadas não buscam mídia. No celular, a faixa tem rolagem lateral. Clique ou Enter amplia a imagem; **Fechar imagem** ou Escape devolve o foco à miniatura e mantém a gaveta. Falha mostra **Prévia indisponível** na posição afetada, preservando texto, Drive, pacote e avisos. Esse é o comportamento histórico da 005; vídeos finais passam a ter player na 007 abaixo.
 
 O navegador pede um ID interno à origem local. O servidor resolve Arquivos na captura vigente, usa cache privado validado em `data/midias/` ou lê o Drive. PNG/JPEG/WEBP são conferidos pelos bytes, até 15.000.000 bytes, com timeout; SHA preenchido é conferido antes de servir. Credencial externa e escopo `drive.readonly` ficam no servidor. O cache herda as permissões locais de `data/`; não cria ACL própria. O autor confirmou em 08/10 a pasta Produções compartilhada como Leitor (T002 concluída). Pasta compartilhada e Shared drive são distintos, e o cliente atual não envia `supportsAllDrives`; acesso operacional e suporte a Shared drives não foram demonstrados, e o agente não executou acesso real. [Limites e conferência](specs/005-previas-imagens/quickstart.md#pré-requisitos-e-ordem).
 
 A rodada inicial da fonte `392e109` teve 577 PASS; ela e os gates intermediários permanecem históricos na validação. Os 12 screenshots atuais foram regenerados na fonte `4521975` com PNG sintéticos 1080×1350: miniaturas 4:5 com contain e ampliação inteira, proporcional e centralizada, inclusive em viewport baixa.
 
 [Uso e repetição dos testes](specs/005-previas-imagens/quickstart.md), [módulo de mídia](docs/modules/midia.md), [validação](specs/005-previas-imagens/validacao.md) e [galeria de 12 screenshots](docs/design/screenshots/LEIA-ME.md#005--prévias-de-imagens). Implementada/testada no PR #23; entrega e integração acompanhadas nesse PR, com merge/exclusão da branch autorizados após gate/review aprovados no head final.
+
+## Prévias de vídeos — 007
+
+Como a capa de um filme antes de assistir, a miniatura e o painel mostram a capa já vinculada ao vídeo. O clique em **Ver no Instagram** reproduz no CRM, sem abrir Drive ou consultar Instagram. A moldura preserva a proporção do vídeo; há controles nativos e **Tela cheia**. Fechar pausa, remove a fonte e devolve o foco ao botão de origem. Se o navegador bloquear a reprodução inicial, os controles continuam disponíveis.
+
+O vídeo precisa ser um único `Arquivos.tipo=video` da mesma produção/versão, com `id_drive` igual a `Produções.id_drive_video_final`. A capa exige `tipo=imagem`, `papel=capa_video` e `origens_json.video_arquivo_id` exato. Bancos com vários arquivos sem final escolhido continuam sem vídeo único na prévia. Não há escolha por nome ou ordem.
+
+O servidor entrega MP4 validado até **64.000.000 bytes** por `GET/HEAD /api/video/<arquivo_id>`, com busca por faixa de bytes; imagens conservam **15.000.000 bytes** em `/api/midia`. O navegador usa somente essas URLs locais. Cache privado validado pode atender sem Google; em cache miss, a conta de serviço precisa ter acesso ao Drive. Na demonstração privada da 007, o acesso remoto retornou 503; os arquivos locais autorizados foram conferidos e preparados no cache privado para demonstrar capa/player. Essa preparação não cria fallback automático a pastas locais: perda do cache volta a exigir acesso ao Drive. [Contrato](specs/007-previas-videos/contracts/video.md), [módulo](docs/modules/video-http.md) e [evidências](specs/007-previas-videos/validacao.md).
 
 ## Tema claro e escuro — ajuste de interface
 

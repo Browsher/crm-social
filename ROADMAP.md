@@ -1,5 +1,16 @@
 # Roadmap — CRM Social local
 
+## 007 — Prévias de vídeos
+
+Como escolher um filme pela capa, o autor reconhece o vídeo final e o reproduz na prévia do CRM. **Concluída localmente, 12/12 tarefas: implementada, testada e instalada**, com backup e demonstração na porta habitual; branch `codex/007-previas-videos`, sem integração Git. Gate normal final aprovado, 823 testes sem pulos; Semgrep indisponível. Pedido explícito de 15/10/2026 autoriza capa, reprodução ao clicar em Ver no Instagram e Tela cheia. [Spec](specs/007-previas-videos/spec.md), [plano](specs/007-previas-videos/plan.md), [tarefas](specs/007-previas-videos/tasks.md) e [validação sanitizada](specs/007-previas-videos/validacao.md).
+
+- Capa da mesma produção/versão e vínculo exato ao vídeo final; bancos sem final escolhido permanecem sem seleção automática.
+- Player nativo, pausa/busca/volume, tela cheia e limpeza ao fechar; releitura do mesmo vídeo conserva pausa e tempo.
+- MP4 de até 64.000.000 bytes por rota local GET/HEAD com Range, cache privado e Drive readonly no servidor; imagens conservam 15.000.000 bytes.
+- Emenda 1.3.0 aplicada; sem nova dependência, ambiente, transcodificação ou escrita editorial pelo app. Demonstração privada por cache validado não comprova acesso remoto; em cache miss, o Drive permanece necessário.
+
+Os registros seguintes preservam as entregas anteriores e suas evidências.
+
 **Atualização desta rodada — 09/10/2026:** 006 concluída e integrada, 32/32 tarefas. A PR #24/main a5be355; B aprovada pelo autor e integrada PR #25/merge c4660d78c188793dddac3f44f4d42401a3542a83. Históricos/provas preservados.
 
 ## 006 — Layout v3 (concluída e integrada — 32/32 tarefas)

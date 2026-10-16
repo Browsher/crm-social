@@ -46,7 +46,7 @@
   }
   function gestos(midia) {
     midia.addEventListener('pointerdown',event=>{
-      if(event.button!==0)return;
+      if(event.button!==0||posicoes[indice]?.tipo==='video')return;
       iniciarGesto('pointer',event,event.pointerId);
       if(event.isTrusted)midia.setPointerCapture(event.pointerId);
     });
@@ -54,6 +54,7 @@
     midia.addEventListener('pointercancel',()=>{gesto=null;});
     // Touch também permite os testes sintéticos; eventos compatíveis não navegam duas vezes.
     midia.addEventListener('touchstart',event=>{
+      if(posicoes[indice]?.tipo==='video')return;
       const ponto=event.touches[0];if(ponto)iniciarGesto('touch',ponto,ponto.identifier);
     },{passive:true});
     midia.addEventListener('touchend',event=>{
@@ -62,7 +63,7 @@
     midia.addEventListener('touchcancel',()=>{gesto=null;});
   }
   function conterFoco(event) {
-    const focaveis=[...dialog.querySelectorAll('button:not([disabled]),[href],[tabindex]:not([tabindex="-1"])')]
+    const focaveis=[...dialog.querySelectorAll('button:not([disabled]),[href],video[controls],[tabindex]:not([tabindex="-1"])')]
       .filter(node=>node.getClientRects().length&&!node.closest('[hidden]'));
     const primeiro=focaveis[0],ultimo=focaveis.at(-1);
     if((event.shiftKey&&document.activeElement===primeiro)||(!event.shiftKey&&document.activeElement===ultimo)) {
@@ -71,6 +72,7 @@
   }
   function teclado(event) {
     if(event.key==='ArrowLeft'||event.key==='ArrowRight') {
+      if(posicoes[indice]?.tipo==='video')return;
       event.preventDefault();selecionar(indice+(event.key==='ArrowRight'?1:-1));
     } else if(event.key==='Tab')conterFoco(event);
   }
@@ -92,19 +94,57 @@
     const textos=el('div','instagram-textos'),texto=el('p'),legendaPerfil=el('strong','instagram-legenda-perfil');
     const legenda=el('span','instagram-legenda'),hashtags=el('p','instagram-hashtags');
     texto.append(legendaPerfil,document.createTextNode(' '),legenda);textos.append(texto,hashtags);
-    phone.append(topo,slider,pontos,icones(),textos);dialog.append(fecharBotao,phone);document.body.append(dialog);
-    elementos={avatar,perfil,legendaPerfil,midia,anterior,proximo,contador,pontos,legenda,hashtags,fecharBotao};
+    const telaCheia=botao('Tela cheia','Ver vídeo em tela cheia'),videoStatus=el('p','instagram-video-status');
+    telaCheia.className='instagram-fullscreen';telaCheia.hidden=true;videoStatus.hidden=true;videoStatus.setAttribute('role','status');
+    telaCheia.addEventListener('click',abrirTelaCheia);
+    phone.append(topo,slider,pontos,telaCheia,videoStatus,icones(),textos);dialog.append(fecharBotao,phone);document.body.append(dialog);
+    elementos={avatar,perfil,legendaPerfil,midia,anterior,proximo,contador,pontos,legenda,hashtags,fecharBotao,telaCheia,videoStatus};
     dialog.addEventListener('keydown',teclado);
     dialog.addEventListener('cancel',event=>{event.preventDefault();fechar();});
     dialog.addEventListener('close',limpar);gestos(midia);
   }
   function liberarImagem() {
+    const video=elementos.midia.querySelector('video');
+    if(video) {
+      video.pause();video.removeAttribute('src');video.load();
+      if(document.fullscreenElement===video)document.exitFullscreen().catch(()=>{});
+    }
     const img=elementos.midia.querySelector('img');if(img)img.removeAttribute('src');
     elementos.midia.replaceChildren();
+    elementos.telaCheia.hidden=true;elementos.videoStatus.hidden=true;elementos.videoStatus.textContent='';
+  }
+  function statusVideo(texto) {elementos.videoStatus.textContent=texto;elementos.videoStatus.hidden=!texto;}
+  function abrirTelaCheia() {
+    const video=elementos.midia.querySelector('video');if(!video)return;
+    const falha=()=>statusVideo('Não foi possível abrir a tela cheia neste navegador.');
+    try {
+      if(video.requestFullscreen)Promise.resolve(video.requestFullscreen()).catch(falha);
+      else if(video.webkitEnterFullscreen)video.webkitEnterFullscreen();
+      else falha();
+    }catch{falha();}
+  }
+  function mostrarVideo(posicao) {
+    if(!posicao.arquivo){indisponivel();return;}
+    const video=el('video','instagram-video');video.controls=true;video.setAttribute('playsinline','');video.preload='none';
+    video.setAttribute('aria-label',peca.titulo||'Prévia do vídeo');
+    if(posicao.capa)video.poster='/api/midia/'+encodeURIComponent(posicao.capa.arquivo_id);
+    video.addEventListener('error',()=>{
+      if(!elementos.midia.contains(video))return;
+      liberarImagem();indisponivel();
+    },{once:true});
+    elementos.midia.append(video);video.src='/api/video/'+encodeURIComponent(posicao.arquivo.arquivo_id);
+    elementos.telaCheia.hidden=false;
+  }
+  function iniciarVideo() {
+    const video=elementos.midia.querySelector('video');if(!video||!dialog.open)return;
+    Promise.resolve(video.play()).catch(()=>{
+      if(elementos.midia.contains(video))statusVideo('Use os controles para iniciar o vídeo.');
+    });
   }
   function indisponivel() {elementos.midia.append(el('p','instagram-indisponivel','prévia indisponível'));}
   function mostrarImagem() {
     liberarImagem();const posicao=posicoes[indice];
+    if(posicao?.tipo==='video'){mostrarVideo(posicao);return;}
     if(!posicao?.arquivo){indisponivel();return;}
     const img=el('img');img.alt=posicao.contexto+' · '+(peca.titulo||peca.formato);img.decoding='async';
     img.addEventListener('error',()=>{
@@ -119,6 +159,7 @@
   function marcarPosicao() {
     const foco=document.activeElement,setas=[elementos.anterior,elementos.proximo];
     elementos.contador.textContent=(indice+1)+'/'+posicoes.length;
+    elementos.contador.hidden=posicoes[indice]?.tipo==='video';
     setas.forEach(seta=>{seta.hidden=posicoes.length===1;});elementos.pontos.hidden=posicoes.length===1;
     elementos.anterior.disabled=indice===0;elementos.proximo.disabled=indice===posicoes.length-1;
     elementos.anterior.setAttribute('aria-label',rotuloPosicao(indice-1,'Anterior: ','Página anterior'));
@@ -142,23 +183,32 @@
     posicoes.forEach((_,i)=>{const ponto=botao('●',rotuloPosicao(i,'Ir para ','Ir para página '+(i+1)));ponto.addEventListener('click',()=>selecionar(i));elementos.pontos.append(ponto);});
     if(restaurar)(posicoes.length===1?elementos.fecharBotao:elementos.pontos.children[indice]).focus({preventScroll:true});
   }
-  function apresentar() {
+  function identidadeVideo(posicao) {
+    if(posicao?.tipo!=='video'||!posicao.arquivo)return null;
+    return JSON.stringify([posicao.arquivo,posicao.capa].map(a=>a?[a.arquivo_id,a.id_drive,a.versao,a.sha256]:null));
+  }
+  function apresentar(preservarVideo=false) {
+    const anteriores=posicoes;
     posicoes=globalThis.CrmLayout.posicoesInstagram(peca);
+    const identidade=identidadeVideo(posicoes[0]);
+    const preservado=preservarVideo&&identidade!==null&&identidade===identidadeVideo(anteriores[0])&&!!elementos.midia.querySelector('video');
+    dialog.classList.toggle('video-preview',posicoes[0]?.tipo==='video');
     indice=Math.min(indice,posicoes.length-1);
     const sigla=siglaMarca();elementos.avatar.textContent=sigla;
     elementos.avatar.style.fontSize=Math.min(10,30/sigla.length)+'px';
     elementos.perfil.textContent=nomePerfil();elementos.legendaPerfil.textContent=nomePerfil();
     elementos.legenda.textContent=peca.legenda||'';elementos.hashtags.textContent=peca.hashtags||'';
-    criarPontos();marcarPosicao();mostrarImagem();
+    criarPontos();marcarPosicao();if(!preservado)mostrarImagem();
+    return preservado;
   }
   function abrir({peca:nova,acionador:origem}) {
     criar();peca=nova;acionador=origem;indice=0;apresentar();
-    if(!dialog.open)dialog.showModal();elementos.fecharBotao.focus({preventScroll:true});
+    if(!dialog.open)dialog.showModal();elementos.fecharBotao.focus({preventScroll:true});iniciarVideo();
   }
   function atualizar(nova) {
     if(!dialog?.open)return;
     if(!nova||nova.producao_id!==peca.producao_id){fechar();return;}
-    peca=nova;apresentar();
+    peca=nova;if(!apresentar(true))iniciarVideo();
   }
   function limpar() {
     if(!peca||dialog.open)return;

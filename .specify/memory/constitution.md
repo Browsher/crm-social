@@ -31,8 +31,8 @@ Ideia, documento, mídia registrada, mídia conferida, aprovação técnica e pu
 DEVEM ser estados distintos. O código DEVE ter testes proporcionais de identidade,
 versão, captura parcial, dados inválidos e fluxos do usuário; testes de regras de dados
 DEVEM ser escritos antes da implementação correspondente. Consultas e testes locais
-NÃO DEVEM produzir mídia editorial, alterar flags ou publicar. Imagens sintéticas
-geradas exclusivamente como fixtures de teste NÃO constituem produção editorial e
+NÃO DEVEM produzir mídia editorial, alterar flags ou publicar. Imagens e vídeos sintéticos
+gerados exclusivamente como fixtures de teste NÃO constituem produção editorial e
 NÃO DEVEM incorporar dados reais. Todo aceite DEVE citar o que foi
 executado e separar planejado, implementado, testado e integrado.
 
@@ -48,7 +48,7 @@ produto por feature; autorizações existentes DEVEM ser preservadas, sem repeti
 
 O servidor local PODE ler a planilha configurada por meio de conta de serviço própria,
 com escopo `https://www.googleapis.com/auth/spreadsheets.readonly` e compartilhamento
-como leitora. Para prévias de imagens, também PODE ler arquivos do Drive com o escopo
+como leitora. Para prévias de imagens e vídeos MP4 registrados, também PODE ler arquivos do Drive com o escopo
 `https://www.googleapis.com/auth/drive.readonly`. Cada finalidade DEVE solicitar somente
 seu escopo de leitura. A conta só acessa o que o autor compartilhar com ela; o escopo
 NÃO concede acesso a arquivos não compartilhados. Toda comunicação com o Google DEVE
@@ -66,6 +66,13 @@ A leitura de mídia DEVE resolver o ID interno pela captura vigente, sem aceitar
 Drive, URL ou caminho fornecido pelo navegador. Cache de bytes DEVE permanecer local,
 privado e fora do versionamento; falha de prévia NÃO DEVE alterar captura, aprovação ou
 publicação. Conferir uma prévia não comprova aprovação editorial ou conteúdo do pacote.
+
+Imagens DEVEM permanecer limitadas a 15.000.000 bytes; vídeos MP4, a 64.000.000 bytes.
+A rota local de vídeo PODE atender GET/HEAD e uma faixa simples de bytes, somente após
+validar o arquivo completo e reconferir a referência vigente. O player DEVE usar URLs
+locais, mostrar a capa registrada antes do clique e iniciar a reprodução somente por
+ação do autor. Seleção de vídeo final e capa DEVE respeitar produção, versão e vínculo
+explícitos; ausência ou ambiguidade NÃO concede escolha automática de outro arquivo.
 
 Essa capacidade NÃO concede escrita no Google/Drive, fila, n8n ou mídia, NÃO instala agenda
 e NÃO transforma o CRM em coordenador. Preparação da conta e compartilhamento exigem ação
@@ -117,4 +124,21 @@ As features 001–004 mantêm seus contratos;
 a 005 define a rota, validação e cache de imagens. A versão minor registra a ampliação
 material da capacidade de leitura, preservando os demais princípios.
 
-**Version**: 1.2.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-08
+### Emenda 1.3.0 — leitura de vídeos do Drive
+
+Em 2026-10-15, o autor solicitou expressamente a feature 007: mostrar a capa, reproduzir
+o vídeo ao clicar em Ver no Instagram e oferecer Tela cheia dentro do CRM. Essa
+autorização amplia a finalidade do princípio VI para vídeos MP4 já registrados, com
+o mesmo escopo Drive readonly, credencial exclusiva do servidor e compartilhamento
+prévio. A rota dedicada GET/HEAD com Range não aceita URL, caminho ou ID remoto do
+navegador; os limites de 64.000.000 bytes para vídeo e 15.000.000 para imagem preservam
+a leitura limitada. O princípio IV também admite a fixture MP4 inteiramente sintética.
+
+O impacto está na 007, que estende cache, validação e modal; contratos e bytes das
+capturas anteriores não são migrados. Final/capa exigem vínculos exatos, e a prévia
+continua sem alterar aprovação ou publicação. Não autoriza geração, transcodificação,
+agendas ou escrita editorial pelo CRM. Preparação privada de cache não cria nova fonte
+operacional nem fallback automático a diretórios locais. A versão minor registra a
+ampliação material da leitura, preservando as emendas anteriores e os demais princípios.
+
+**Version**: 1.3.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-15

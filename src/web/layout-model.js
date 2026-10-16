@@ -24,6 +24,9 @@
   }
   function imagensDaPeca(p) {
     const d=p.detalhes;
+    if(preenchido(p.id_drive_video_final)) {
+      const capa=capaVideo(p);return capa?[{arquivo:capa,contexto:'Capa do vídeo'}]:[];
+    }
     if(d.paginas.length||d.cenas.length)return [...imagensDasUnidades(p,'paginas'),...imagensDasUnidades(p,'cenas')];
     if(p.formato!=='Imagem'||!Number.isSafeInteger(p.versao)||p.versao<=0)return [];
     return d.arquivos.filter(a=>a.tipo==='imagem'&&a.versao===p.versao&&a.producao_id===p.producao_id)
@@ -36,6 +39,7 @@
       contexto:pagina?'Página '+u.indice:'Cena '+u.indice+' · '+(index===0?'início':'final')})));
   }
   function posicoesInstagram(p) {
+    if(preenchido(p.id_drive_video_final))return [{arquivo:videoDaPeca(p),contexto:'Vídeo final',tipo:'video',capa:capaVideo(p)}];
     const posicoes=[...posicoesDasUnidades(p,'paginas'),...posicoesDasUnidades(p,'cenas')];
     if(p.formato==='Imagem') {
       const arquivo=posicoes.length?posicoes[0].arquivo:imagensDaPeca(p)[0]?.arquivo??null;
@@ -44,6 +48,20 @@
     return posicoes.length?posicoes:[{arquivo:null,contexto:'Prévia indisponível'}];
   }
   const preenchido=value=>value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');
+  function videoDaPeca(p) {
+    if(!preenchido(p.id_drive_video_final)||!Number.isSafeInteger(p.versao)||p.versao<=0)return null;
+    const arquivos=p.detalhes.arquivos.filter(a=>a.tipo==='video'&&a.producao_id===p.producao_id&&a.versao===p.versao&&
+      a.id_drive===p.id_drive_video_final&&(!Object.hasOwn(a,'mime_type')||a.mime_type==='video/mp4'));
+    return arquivos.length===1?arquivos[0]:null;
+  }
+  function capaVideo(p) {
+    const video=videoDaPeca(p);if(!video)return null;
+    const capas=p.detalhes.arquivos.filter(a=>{
+      if(a.tipo!=='imagem'||a.papel!=='capa_video'||a.producao_id!==p.producao_id||a.versao!==p.versao)return false;
+      try{return JSON.parse(a.origens_json).video_arquivo_id===video.arquivo_id;}catch{return false;}
+    });
+    return capas.length===1?capas[0]:null;
+  }
   function filaPublicar(pecas) {
     return pecas.filter(p=>p.estado_liberacao==='liberado'&&!preenchido(p.publicado_em))
       .map(peca=>({peca,data:segundaDaSemana(peca.dataCivil)?peca.dataCivil:null}))
@@ -80,7 +98,7 @@
       }).map(item=>item.semana);
   }
   const api={estadoSimples,motivoTravado,progresso,imagensDaPeca,segundaDaSemana,ordenarSemanas,
-    filaPublicar,publicadasRecentes,posicoesInstagram,instantePublicacao};
+    filaPublicar,publicadasRecentes,posicoesInstagram,instantePublicacao,videoDaPeca,capaVideo};
   if(typeof module==='object'&&module.exports)module.exports=api;
   else globalThis.CrmLayout=api;
 })();
